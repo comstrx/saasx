@@ -4,9 +4,9 @@
     <img height="350" src="https://github.com/user-attachments/assets/36443793-5230-4866-9f4a-f768cdabdce3" />
 </div>
 
-![CI](https://github.com/comstrx/aliasx/actions/workflows/ci.yaml/badge.svg?branch=main)
+![CI](https://github.com/comstrx/saasx/actions/workflows/ci.yaml/badge.svg?branch=main)
 ![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)
-![Release](https://img.shields.io/github/v/release/comstrx/aliasx?sort=semver)
+![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)
 
 `saasx` a premium **multi-tenant, multi-panel, multi-business SaaS platform** built to provision complete branded business ecosystems from one unified architecture.
 

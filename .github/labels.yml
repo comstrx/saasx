@@ -1,0 +1,131 @@
+# Type
+
+- name: 'triage'
+  color: 'FBCA04'
+  description: 'Needs initial review or classification'
+
+- name: 'bug'
+  color: 'D73A4A'
+  description: 'Something is not working'
+
+- name: 'feature'
+  color: 'A2EEEF'
+  description: 'New feature'
+
+- name: 'enhancement'
+  color: '84B6EB'
+  description: 'Improvement to existing behavior'
+
+- name: 'dependencies'
+  color: '0366D6'
+  description: 'Dependency updates'
+
+- name: 'refactor'
+  color: 'C5DEF5'
+  description: 'Code restructuring without behavior change'
+
+- name: 'chore'
+  color: 'BFDADC'
+  description: 'Maintenance and non-feature work'
+
+- name: 'security'
+  color: 'B60205'
+  description: 'Security-related changes'
+
+- name: 'performance'
+  color: 'FF9F1C'
+  description: 'Performance-related changes'
+
+- name: 'contract'
+  color: '5319E7'
+  description: 'API contract or interface changes'
+
+# Core
+
+- name: 'workflow'
+  color: '1D76DB'
+  description: 'GitHub workflow changes'
+
+- name: 'automation'
+  color: 'FF6B6B'
+  description: 'GitHub automation changes'
+
+- name: 'docs'
+  color: '0075CA'
+  description: 'Documentation changes'
+
+- name: 'release'
+  color: '0E8A16'
+  description: 'Release and changelog changes'
+
+- name: 'tooling'
+  color: 'BFDADC'
+  description: 'Developer tooling, scripts, and repository configuration'
+
+# Apps
+
+- name: 'server'
+  color: '0B7A75'
+  description: 'Backend API and business core changes'
+
+- name: 'engine'
+  color: 'C85A17'
+  description: 'High-performance engine and heavy workflow changes'
+
+- name: 'admin'
+  color: '7057FF'
+  description: 'Admin dashboard changes'
+
+- name: 'client'
+  color: '1D76DB'
+  description: 'Client website changes'
+
+- name: 'mobile'
+  color: 'D4C5F9'
+  description: 'Mobile app changes'
+
+- name: 'infra'
+  color: '006B75'
+  description: 'Infrastructure directory changes'
+
+# Domains
+
+- name: 'api'
+  color: '0052CC'
+  description: 'API routes, controllers, and HTTP layer changes'
+
+- name: 'database'
+  color: '5319E7'
+  description: 'Database, migrations, seeders, and models-related changes'
+
+- name: 'auth'
+  color: 'B60205'
+  description: 'Authentication, authorization, roles, and permissions'
+
+- name: 'payments'
+  color: '0E8A16'
+  description: 'Payments, billing, wallets, and checkout'
+
+- name: 'vendors'
+  color: 'FBCA04'
+  description: 'Vendors, suppliers, and provider workflows'
+
+- name: 'tenants'
+  color: 'C2E0C6'
+  description: 'Tenant isolation, tenant settings, and SaaS behavior'
+
+- name: 'bookings'
+  color: 'FF9F1C'
+  description: 'Bookings, reservations, and availability'
+
+- name: 'products'
+  color: 'A2EEEF'
+  description: 'Products, catalogs, inventory, and product types'
+
+- name: 'services'
+  color: 'D4C5F9'
+  description: 'Online and offline service workflows'
+
+- name: 'marketplace'
+  color: 'E99695'
+  description: 'Marketplace, stores, auctions, and commercial ecosystem'

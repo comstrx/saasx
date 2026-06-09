@@ -1,0 +1,163 @@
+# Core
+
+workflow:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**'
+
+automation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/*.yml'
+          - '.github/*.yaml'
+          - '.github/CODEOWNERS'
+          - '.github/PULL_REQUEST_TEMPLATE.md'
+          - '.github/ISSUE_TEMPLATE/**'
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**'
+          - '**/docs/**'
+          - 'README.md'
+          - '**/README.md'
+          - 'CONTRIBUTING.md'
+          - 'SECURITY.md'
+          - 'SUPPORT.md'
+          - '**/*.md'
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'SECURITY.md'
+          - '.github/security/**'
+          - '.github/dependabot.yml'
+
+release:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'CHANGELOG.md'
+          - '**/CHANGELOG.md'
+          - '.github/release.yml'
+
+tooling:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'scripts/**'
+          - 'tools/**'
+          - '.editorconfig'
+          - '.gitattributes'
+          - '.gitignore'
+          - '.dockerignore'
+          - 'package.json'
+          - 'package-lock.json'
+          - 'pnpm-lock.yaml'
+          - 'yarn.lock'
+          - 'bun.lockb'
+
+# Apps
+
+server:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/**'
+
+engine:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'engine/**'
+
+admin:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'admin/**'
+
+client:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'client/**'
+
+mobile:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'mobile/**'
+
+infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'infra/**'
+          - 'docker/**'
+          - 'compose/**'
+          - 'docker-compose*.yml'
+          - 'Dockerfile'
+          - '**/Dockerfile'
+
+# Domains
+
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/routes/**'
+          - 'server/app/Http/**'
+          - 'server/app/**/Controllers/**'
+
+database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/database/**'
+          - 'server/**/migrations/**'
+          - 'server/**/seeders/**'
+          - 'server/**/factories/**'
+
+auth:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/app/**/Auth/**'
+          - 'server/app/**/Policies/**'
+          - 'server/config/auth.php'
+          - 'server/config/sanctum.php'
+
+payments:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/payment*/**'
+          - '**/billing/**'
+          - '**/wallet*/**'
+          - '**/checkout/**'
+
+vendors:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/vendor*/**'
+          - '**/supplier*/**'
+
+tenants:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/tenant*/**'
+
+bookings:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/booking*/**'
+          - '**/reservation*/**'
+          - '**/availability/**'
+
+products:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/product*/**'
+          - '**/catalog*/**'
+          - '**/inventory/**'
+
+services:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/service*/**'
+
+marketplace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/marketplace/**'
+          - '**/auction*/**'
+          - '**/store*/**'

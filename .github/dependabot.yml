@@ -1,0 +1,156 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:00'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - workflow
+      - automation
+
+    commit-message:
+      prefix: 'deps(ci)'
+
+    groups:
+      actions:
+        patterns:
+          - '*'
+
+  - package-ecosystem: cargo
+    directory: /engine
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:50'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - engine
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(engine)'
+
+    groups:
+      engine-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '04:00'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - infra
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(docker)'
+
+    groups:
+      docker-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: composer
+    directory: /server
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:10'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - server
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(server)'
+
+    groups:
+      composer-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: npm
+    directory: /admin
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:20'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - admin
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(admin)'
+
+    groups:
+      admin-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: npm
+    directory: /client
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:30'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - client
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(client)'
+
+    groups:
+      client-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: npm
+    directory: /mobile
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:40'
+
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
+    labels:
+      - mobile
+      - dependencies
+
+    commit-message:
+      prefix: 'deps(mobile)'
+
+    groups:
+      mobile-deps:
+        patterns:
+          - '*'
