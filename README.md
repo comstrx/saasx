@@ -22,7 +22,7 @@ It supports:
 
 - **Products:** physical, digital
 - **Services:** online, offline
-- **Bookings & Listings:** tours, tickets, hotels, real estate
+- **Bookings:** tours, tickets, hotels, real estate
 - **Operations:** vendors, delivery, affiliates, content, campaigns, wallets, referrals, support, AI
 - global-ready businesses with native **multi-language**, **multi-currency**, and **multi-theme** support.
 
