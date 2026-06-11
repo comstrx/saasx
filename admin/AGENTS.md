@@ -114,6 +114,11 @@ flag it in the final report. A missing or contradictory product spec is
 not an ambiguity to route around — stop and request the spec. Never
 silently invent architecture or requirements.
 
+[OPERATOR INPUT] semantics: a marker carrying a stated draft value
+means build with the draft and list it under Unverified; a marker
+with no value, or on a decision expensive to reverse, means STOP and
+ask before building.
+
 ## Reporting format (every task)
 
 1. Gate results: command, exit code, error count.

@@ -2,8 +2,10 @@
 
 ## Locales
 
-- v1 ships `en` (LTR) and `ar` (RTL). Default locale: `en`
-  `[OPERATOR INPUT]` confirm the default and any v2 locales.
+- v1 ships `en` (LTR) and `ar` (RTL). The default locale is deployment
+  config via the `DEFAULT_LOCALE` env var, zod-validated against the
+  locales tuple with a hard fallback to `en` on any missing or invalid
+  value; read server-side only — never in client components.
 - Every locale is a first-class citizen: a feature is done only when it
   reads correctly in both directions.
 

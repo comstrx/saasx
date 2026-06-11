@@ -18,6 +18,10 @@ new code →
 If a file does not fit exactly one branch, the design is wrong — split
 it until each piece fits one branch.
 
+- Framework plumbing at vendor-default paths (`src/proxy.ts`,
+  `src/i18n/request.ts`) are the only files allowed outside the tree;
+  introducing a new one requires a flagged deviation.
+
 ## Import direction (one-way; a violation is a bug, not a style issue)
 
 ```
