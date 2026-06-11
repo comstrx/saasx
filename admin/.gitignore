@@ -41,4 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 # local agent harness
-.claude/
+.claude/settings.local.json
