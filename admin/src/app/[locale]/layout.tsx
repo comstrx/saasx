@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import "../globals.css";
+import "@/styles/globals.css";
 import { getDirection, isLocale, locales } from "@/lib/i18n";
 import { Providers } from "../providers";
 

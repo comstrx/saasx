@@ -12,6 +12,7 @@ new code →
 ├─ endpoint metadata or transport?        → src/api/
 ├─ global ephemeral UI state?             → src/stores/
 ├─ request gate (redirect/rewrite)?       → src/proxy/
+├─ global or theme CSS?                   → src/styles/             (entry: globals.css)
 └─ route, layout, metadata?               → src/app/                (composition only)
 ```
 
@@ -20,7 +21,19 @@ it until each piece fits one branch.
 
 - Framework plumbing at vendor-default paths (`src/proxy.ts`,
   `src/i18n/request.ts`) are the only files allowed outside the tree;
-  introducing a new one requires a flagged deviation.
+  introducing a new one requires a flagged deviation. Next metadata
+  image routes (`icon.tsx`, `apple-icon.tsx`, `opengraph-image.tsx`)
+  are plumbing too: they live in `src/app/` by Next convention and are
+  the only files allowed raw inline-styled JSX (ImageResponse cannot
+  read CSS variables).
+- Global and theme CSS lives in `src/styles/` (entry:
+  `src/styles/globals.css`). New stylesheet files are born with their
+  first real consumer, never speculatively; `components/ui/**` styling
+  stays registry-owned.
+- Project-made icon components, when they exist, live in
+  `src/components/shared/icons/` — never inside `components/ui`
+  (registry territory). Icon routes (the favicon family) are `app/`
+  plumbing per the bullet above.
 
 ## Import direction (one-way; a violation is a bug, not a style issue)
 
