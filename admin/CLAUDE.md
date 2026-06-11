@@ -56,3 +56,12 @@ Never bypass with rule-disabling, @ts-ignore, or `any`. Fix root causes.
 ## When uncertain
 State the ambiguity in one line, pick the convention-consistent option,
 flag it in the final report. Do not silently invent architecture.
+
+## Code style (beyond formatter)
+- Breathing room over density: separate logical blocks and JSX sibling
+  groups with a single blank line.
+- Prefer more short lines over fewer clever ones: early returns over deep
+  nesting, no nested ternaries, no inline chained one-liners.
+- Comments only when the "why" is non-obvious; never narrate the "what".
+- Write at the formatter's fixed point: committed code must survive
+  `pnpm exec biome check --write` byte-identical.
