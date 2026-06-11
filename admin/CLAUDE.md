@@ -57,11 +57,78 @@ Never bypass with rule-disabling, @ts-ignore, or `any`. Fix root causes.
 State the ambiguity in one line, pick the convention-consistent option,
 flag it in the final report. Do not silently invent architecture.
 
-## Code style (beyond formatter)
-- Breathing room over density: separate logical blocks and JSX sibling
-  groups with a single blank line.
-- Prefer more short lines over fewer clever ones: early returns over deep
-  nesting, no nested ternaries, no inline chained one-liners.
-- Comments only when the "why" is non-obvious; never narrate the "what".
-- Write at the formatter's fixed point: committed code must survive
-  `pnpm exec biome check --write` byte-identical.
+## Code style (hand-enforced — formatter retired by design)
+Biome formats nothing here; it lints and organizes imports only. The
+vertical style below is mandatory in every file you author or touch.
+- 4-space indent, ~120-col soft limit, double quotes, semicolons,
+  trailing commas in multi-line literals.
+- Pad multi-line bodies: blank line after the opening `{` of a
+  function/component and before its closing `}`. Same for `return (`
+  ... `)`.
+- Multi-line JSX containers: blank line after the opening tag and before
+  the closing tag; blank line between multi-line siblings. Single-line
+  siblings stay adjacent.
+- Tight groups: consecutive hooks/consts of one concern stay adjacent;
+  one blank line between concerns.
+- Spaces inside parens ONLY for named function/helper parameter lists and
+  control-flow conditions: `const toggle = ( id: string ) => {`,
+  `if ( !items.length ) return null;` — never at call sites or inline
+  callbacks.
+- Flat guard chains of repeated single-line `if (...) return;` are
+  preferred over nested conditionals.
+- No comments unless the "why" is non-obvious.
+- src/components/ui/** keeps upstream registry style — never re-space it;
+  styled wrappers live in components/shared and follow house style.
+- Committed code must pass `pnpm lint` and survive
+  `pnpm exec biome check --write .` byte-identical (safe fixes + import
+  order only — there is no formatter to fight).
+
+Canonical example (mirror this shape):
+
+```tsx
+"use client";
+
+import { useState } from "react";
+
+export function Example({ items }: { items: string[] }) {
+
+    const [open, setOpen] = useState(false);
+    const [active, setActive] = useState<string | null>(null);
+
+    const toggle = ( id: string ) => {
+
+        setActive(id);
+        setOpen((e) => !e);
+
+    };
+
+    if ( !items.length ) return null;
+
+    return (
+
+        <div onClick={() => setOpen(false)}>
+
+            <button type="button" onClick={() => toggle("root")}>
+                {open ? "close" : "open"}
+            </button>
+
+            <ul>
+
+                {items.map((item) => (
+
+                    <li key={item} onClick={() => toggle(item)}>
+
+                        <span className={active === item ? "font-semibold" : ""}>{item}</span>
+
+                    </li>
+
+                ))}
+
+            </ul>
+
+        </div>
+
+    );
+
+}
+```

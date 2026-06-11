@@ -12,19 +12,23 @@ const STATUS: Record<HealthStatus, { label: string; dot: string }> = {
 };
 
 export function HealthWidget() {
+
     const { data, isPending, isError } = useHealth();
 
-    if (isPending) {
-        return <Skeleton className="h-7 w-36 rounded-full" />;
-    }
+    if ( isPending ) return <Skeleton className="h-7 w-36 rounded-full" />;
 
     const status: HealthStatus = isError ? "unreachable" : data;
     const { label, dot } = STATUS[status];
 
     return (
+
         <output className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm text-muted-foreground">
+
             <span aria-hidden className={cn("size-2 rounded-full", dot)} />
             API {label}
+
         </output>
+
     );
+
 }

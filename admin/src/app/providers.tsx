@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ children }: { children: React.ReactNode }) {
+
     const [queryClient] = useState(
         () =>
             new QueryClient({
@@ -15,12 +16,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
     );
 
     return (
+
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+
             <QueryClientProvider client={queryClient}>
+
                 {children}
                 <Toaster richColors position="top-right" />
                 <ReactQueryDevtools initialIsOpen={false} />
+
             </QueryClientProvider>
+
         </ThemeProvider>
+
     );
+
 }

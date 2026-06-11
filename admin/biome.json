@@ -9,10 +9,7 @@
         "ignoreUnknown": false
     },
     "formatter": {
-        "enabled": true,
-        "indentStyle": "space",
-        "indentWidth": 4,
-        "lineWidth": 120
+        "enabled": false
     },
     "linter": {
         "domains": { "react": "recommended", "next": "recommended" },
@@ -20,11 +17,6 @@
         "enabled": true,
         "rules": {
             "recommended": true
-        }
-    },
-    "javascript": {
-        "formatter": {
-            "quoteStyle": "double"
         }
     },
     "css": {
