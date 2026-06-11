@@ -2,5 +2,16 @@
     "app": {
         "title": "SaaSX Admin",
         "description": "Enterprise administration console."
+    },
+    "home": {
+        "title": "Dashboard"
+    },
+    "systemHealth": {
+        "status": {
+            "ok": "API operational",
+            "checking": "Checking API…",
+            "unreachable": "API unreachable"
+        },
+        "checkedAgo": "Checked {ago}"
     }
 }

@@ -2,5 +2,16 @@
     "app": {
         "title": "SaaSX Admin",
         "description": "لوحة تحكم إدارة المتجر."
+    },
+    "home": {
+        "title": "لوحة التحكم"
+    },
+    "systemHealth": {
+        "status": {
+            "ok": "الخدمة تعمل",
+            "checking": "جارٍ فحص الخدمة…",
+            "unreachable": "تعذّر الوصول إلى الخدمة"
+        },
+        "checkedAgo": "آخر فحص {ago}"
     }
 }
