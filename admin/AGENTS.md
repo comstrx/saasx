@@ -62,6 +62,12 @@ Zod v4 = every external boundary · next-intl = i18n/RTL · Motion v12 +
 native View Transitions · TanStack Table + Virtual · Better Auth ·
 Biome = lint + import order only (the formatter is retired by design) ·
 pnpm only — never npm/yarn/bun.
+react-hook-form + zod resolvers = all forms (shadcn Form components) ·
+dnd-kit = drag & drop · react-dropzone = upload primitive (house
+Dropzone in components/shared) · shadcn Charts (Recharts) = charts
+default; named escalations, requiring operator approval: Pragmatic DnD
+(1000+ draggables), Uppy+tus (resumable uploads), ECharts (>10k points
+or realtime). All install on first real consumer — never preemptively.
 
 ## The five layers (full law in docs/guides/architecture.md)
 
