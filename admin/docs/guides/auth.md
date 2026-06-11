@@ -41,6 +41,9 @@ and revalidates every request regardless of anything the UI hid.
   guard and the request it protects share one source and cannot drift.
 - Guards are UX only. Hiding a button is a courtesy; the backend
   decides. Never treat a passed guard as authorization.
+- Until the auth feature lands, `use-permissions` ships disabled with
+  an empty set, so every `<Need>` renders its fallback
+  (deny-by-default).
 
 ## Proxy (request gate)
 
