@@ -64,10 +64,15 @@ Biome = lint + import order only (the formatter is retired by design) ·
 pnpm only — never npm/yarn/bun.
 react-hook-form + zod resolvers = all forms (shadcn Form components) ·
 dnd-kit = drag & drop · react-dropzone = upload primitive (house
-Dropzone in components/shared) · shadcn Charts (Recharts) = charts
-default; named escalations, requiring operator approval: Pragmatic DnD
-(1000+ draggables), Uppy+tus (resumable uploads), ECharts (>10k points
-or realtime). All install on first real consumer — never preemptively.
+Dropzone in components/shared) · Recharts via shadcn Charts = charts
+default · Motion v12 = in-page animation · Embla (shadcn Carousel) =
+sliders · cmdk (shadcn Command) = command palette. Named escalations,
+operator approval required: Pragmatic DnD (1000+ draggables), Uppy+tus
+(resumable uploads), ECharts (>10k points or realtime).
+The capability set above is pre-installed by operator decision;
+everything else still installs with its first real consumer. The "no
+dependency duplicating an existing capability" hard rule stands
+unchanged.
 
 ## The five layers (full law in docs/guides/architecture.md)
 
