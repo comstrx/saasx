@@ -7,6 +7,7 @@ const health: ApiEntry<{ status: string }> = {
     method: "GET",
     path: "/health",
     schema: z.object({ status: z.string() }),
+    bare: true,
 };
 
 export const api = { health };

@@ -9,6 +9,7 @@ export type ApiEntry<T = unknown> = {
     path: string;
     need?: string;
     schema?: ZodType<T>;
+    bare?: true;
 };
 
 type ExtraConfig = {

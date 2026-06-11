@@ -117,6 +117,18 @@ export async function request<T>( entry: ApiEntry<T>, opts: RequestOptions = {} 
 
     const invalid = ( message: string ) => new ApiError({ status: response.status, code: "invalid_response", message });
 
+    if ( entry.bare ) {
+
+        if ( !entry.schema ) return { data: payload as T };
+
+        const parsed = entry.schema.safeParse(payload);
+
+        if ( !parsed.success ) throw invalid("response shape mismatch");
+
+        return { data: parsed.data };
+
+    }
+
     const envelope = successEnvelope.safeParse(payload);
 
     if ( !envelope.success ) throw invalid("malformed success envelope");

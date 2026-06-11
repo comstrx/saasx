@@ -23,6 +23,15 @@ const list: ApiEntry = {
     need: "users.view",
 };
 
+const bareHealth: ApiEntry<{ status: string }> = {
+    resource: "health",
+    action: "show",
+    method: "GET",
+    path: "/health",
+    schema: z.object({ status: z.string() }),
+    bare: true,
+};
+
 const json = ( status: number, payload: unknown, headers?: Record<string, string> ) =>
     new Response(JSON.stringify(payload), { status, headers });
 
@@ -124,6 +133,24 @@ describe("request", () => {
         stubFetch(new TypeError("fetch failed"));
 
         await expect(request(list)).rejects.toMatchObject({ status: 0, code: "network_error" });
+
+    });
+
+    it("validates bare entries against the raw body", async () => {
+
+        stubFetch(json(200, { status: "ok" }));
+
+        const result = await request(bareHealth);
+
+        expect(result).toEqual({ data: { status: "ok" } });
+
+    });
+
+    it("throws invalid_response when a bare body misses the schema", async () => {
+
+        stubFetch(json(200, { data: { status: "ok" } }));
+
+        await expect(request(bareHealth)).rejects.toMatchObject({ code: "invalid_response" });
 
     });
 
