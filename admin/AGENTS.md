@@ -27,6 +27,7 @@ or a spec, link to it.
 | animation, transitions, large lists or tables | `docs/guides/motion.md` |
 | login, sessions, permissions, proxy/redirects | `docs/guides/auth.md` |
 | error handling, toasts, failure states | `docs/guides/errors.md` |
+| client state, stores, zustand | `docs/guides/state.md` |
 
 ## Product specs — the WHAT (mandatory before building)
 
