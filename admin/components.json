@@ -11,12 +11,12 @@
         "prefix": ""
     },
     "iconLibrary": "lucide",
-    "rtl": false,
+    "rtl": true,
     "aliases": {
         "components": "@/components",
-        "utils": "@/lib/utils",
-        "ui": "@/components/ui",
-        "lib": "@/lib",
+        "ui": "@/components/ui/elements",
+        "utils": "@/lib/utils/shadcn",
+        "lib": "@/lib/utils/shadcn",
         "hooks": "@/hooks"
     },
     "menuColor": "default",

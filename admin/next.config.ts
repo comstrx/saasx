@@ -3,6 +3,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
     reactCompiler: true,
+    typedRoutes: true,
+    poweredByHeader: false,
 };
 
 const withNextIntl = createNextIntlPlugin();

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function useNow( intervalMs = 60_000 ): Date {
+export function useNow ( intervalMs = 60_000 ): Date {
 
     const [now, setNow] = useState(() => new Date());
 

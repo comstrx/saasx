@@ -7,4 +7,10 @@ export default defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
     },
+    test: {
+        include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
+        restoreMocks: true,
+        unstubEnvs: true,
+        unstubGlobals: true,
+    },
 });

@@ -12,11 +12,28 @@
         "enabled": false
     },
     "linter": {
-        "domains": { "react": "recommended", "next": "recommended" },
-
         "enabled": true,
+        "domains": {
+            "react": "recommended",
+            "next": "recommended",
+            "test": "recommended",
+            "project": "recommended"
+        },
         "rules": {
-            "recommended": true
+            "recommended": true,
+            "suspicious": {
+                "noConsole": "error",
+                "noImportCycles": "error"
+            },
+            "style": {
+                "useFilenamingConvention": {
+                    "level": "error",
+                    "options": {
+                        "filenameCases": ["kebab-case"],
+                        "requireAscii": true
+                    }
+                }
+            }
         }
     },
     "css": {
@@ -31,5 +48,17 @@
                 "organizeImports": "on"
             }
         }
-    }
+    },
+    "overrides": [
+        {
+            "includes": ["src/lib/log/**", "src/app/*.tsx"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
+        }
+    ]
 }

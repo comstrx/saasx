@@ -1,6 +1,6 @@
-# SaaSX Admin — Project Constitution
+# SaaSX — Project Constitution
 
-This is a production enterprise foundation: an ecommerce admin panel
+This is a production enterprise foundation: admin panel or client site
 today, the base for client storefronts tomorrow. Every line you write is
 read by humans and AI agents alike: optimize for instant comprehension,
 security, and performance at once. Boring clarity beats clever brevity.

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/client";
 import { ApiError } from "./error";
 import type { ApiEntry, Method } from "./resource";
 

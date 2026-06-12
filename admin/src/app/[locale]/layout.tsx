@@ -1,51 +1,81 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Readex_Pro } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { env } from "@/lib/env/client";
+import { getDirection, isLocale, locales } from "@/lib/utils/i18n";
+import { Providers } from "./providers";
 import "@/styles/globals.css";
-import { getDirection, isLocale, locales } from "@/lib/i18n";
-import { Providers } from "../providers";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
+    display: "swap",
 });
-
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
+    display: "swap",
+});
+const readexPro = Readex_Pro({
+    variable: "--font-readex",
+    subsets: ["arabic"],
+    display: "swap",
 });
 
-export function generateStaticParams() {
+type Props = {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+};
+
+export function generateStaticParams () {
 
     return locales.map((locale) => ({ locale }));
 
 }
-
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata ({ params }: Omit<Props, "children">): Promise<Metadata> {
 
     const { locale } = await params;
+
+    if ( !isLocale(locale) ) notFound();
+
     const t = await getTranslations({ locale, namespace: "app" });
 
     return {
-        title: t("title"),
+        metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
+        title: { default: t("title"), template: `%s · ${t("title")}` },
         description: t("description"),
+        applicationName: env.NEXT_PUBLIC_APP_NAME,
+        alternates: {
+            canonical: `/${locale}`,
+            languages: {
+                ...Object.fromEntries(locales.map((item) => [item, `/${item}`])),
+                "x-default": "/",
+            },
+        },
+        icons: {
+            icon: "/favicon.ico",
+            apple: "/assets/images/brand/apple-icon.png",
+        },
+        openGraph: {
+            type: "website",
+            siteName: env.NEXT_PUBLIC_APP_NAME,
+            title: t("title"),
+            description: t("description"),
+            locale,
+        },
+        twitter: { card: "summary_large_image" },
     };
 
 }
-
-export default async function LocaleLayout({
-    children,
-    params,
-}: {
-    children: React.ReactNode;
-    params: Promise<{ locale: string }>;
-}) {
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+        { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    ],
+};
+export default async function Layout ({ children, params }: Props) {
 
     const { locale } = await params;
 
@@ -53,20 +83,22 @@ export default async function LocaleLayout({
 
     setRequestLocale(locale);
 
+    const dir = getDirection(locale);
+
     return (
 
         <html
             lang={locale}
-            dir={getDirection(locale)}
-            className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+            dir={dir}
+            className={`${geistSans.variable} ${geistMono.variable} ${readexPro.variable} h-full antialiased`}
             suppressHydrationWarning
         >
 
-            <body className="min-h-full flex flex-col">
+            <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
 
                 <NextIntlClientProvider>
 
-                    <Providers>{children}</Providers>
+                    <Providers dir={dir}>{children}</Providers>
 
                 </NextIntlClientProvider>
 

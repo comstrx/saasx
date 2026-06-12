@@ -1,8 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PageHeader } from "@/components/shared/page-header";
-import { HealthBadge } from "@/features/system-health/health-badge";
+import { Header } from "@/components/layout/header";
+import { Health } from "@/features/health";
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Page ({ params }: { params: Promise<{ locale: string }> }) {
 
     const { locale } = await params;
 
@@ -14,8 +14,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         <>
 
-            <PageHeader title={t("title")} />
-            <HealthBadge />
+            <Header title={t("title")} />
+            <Health />
 
         </>
 

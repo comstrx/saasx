@@ -1,11 +1,7 @@
 import createMiddleware from "next-intl/middleware";
-import { defaultLocale, locales } from "@/lib/i18n";
+import { routing } from "@/lib/utils/i18n";
 import type { Guard } from "./chain";
 
-const intl = createMiddleware({
-    locales,
-    defaultLocale,
-    localePrefix: "always",
-});
+const intl = createMiddleware(routing);
 
 export const locale: Guard = ( request ) => intl(request);

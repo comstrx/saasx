@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export type Guard = ( request: NextRequest ) => NextResponse | undefined;
 
-export function chain( guards: Guard[] ) {
+export function chain ( guards: Guard[] ) {
 
     return ( request: NextRequest ): NextResponse => {
 
