@@ -29,12 +29,10 @@ return [
                     'database' => env('REDIS_REVERB_DB', '4'),
                 ],
             ],
-
-            'pulse_ingest_interval' => (int) env('REVERB_PULSE_INGEST_INTERVAL', 15),
-            'telescope_ingest_interval' => (int) env('REVERB_TELESCOPE_INGEST_INTERVAL', 15),
         ],
 
     ],
+
     'apps' => [
 
         'provider' => 'config',
@@ -52,9 +50,13 @@ return [
                     'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
                 ],
 
-                'allowed_origins' => ['*'],
+                'allowed_origins' => array_values(array_filter(array_map(
+                    'trim', explode(',', (string) env('REVERB_ALLOWED_ORIGINS', '*'))
+                ))),
+
                 'ping_interval' => (int) env('REVERB_APP_PING_INTERVAL', 60),
-                'max_message_size' => (int) env('REVERB_APP_MAX_MESSAGE_SIZE', 10485760),
+
+                'max_message_size' => (int) env('REVERB_APP_MAX_MESSAGE_SIZE', 1048576),
             ],
         ],
 

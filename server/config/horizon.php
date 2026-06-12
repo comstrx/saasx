@@ -24,6 +24,7 @@ return [
         'redis:media' => 120,
         'redis:notifications' => 60,
     ],
+
     'trim' => [
         'recent' => 60,
         'pending' => 60,
@@ -32,15 +33,16 @@ return [
         'failed' => 10080,
         'monitored' => 10080,
     ],
-    'silenced' => [
-        //
-    ],
+
+    'silenced' => [],
+
     'metrics' => [
         'trim_snapshots' => [
             'job' => 24,
             'queue' => 24,
         ],
     ],
+
     'defaults' => [
         'critical' => [
             'connection' => 'redis',
@@ -95,6 +97,7 @@ return [
             'nice' => 0,
         ],
     ],
+
     'environments' => [
         'production' => [
             'critical' => [
@@ -123,6 +126,12 @@ return [
             'default' => ['maxProcesses' => 2],
             'media' => ['maxProcesses' => 1],
             'notifications' => ['maxProcesses' => 1],
+        ],
+        '*' => [
+            'critical' => ['maxProcesses' => 2],
+            'default' => ['maxProcesses' => 3],
+            'media' => ['maxProcesses' => 1],
+            'notifications' => ['maxProcesses' => 2],
         ],
     ],
 

@@ -18,16 +18,15 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
-    'cipher' => 'AES-256-CBC',
+    'cipher' => env('APP_CIPHER', 'AES-256-GCM'),
 
     'key' => env('APP_KEY'),
 
-    'previous_keys' => [
-        ...array_filter(explode(',', (string) env('APP_PREVIOUS_KEYS', ''))),
-    ],
+    'previous_keys' => array_filter(array_map('trim', explode(',', (string) env('APP_PREVIOUS_KEYS', '')))),
+
     'maintenance' => [
-        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'cache'),
+        'store' => env('APP_MAINTENANCE_STORE', 'redis'),
     ],
 
 ];

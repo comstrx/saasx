@@ -1,0 +1,25 @@
+{
+    "app": {
+        "title": "SaaSX",
+        "description": "Enterprise web platform."
+    },
+    "home": {
+        "title": "Dashboard"
+    },
+    "errors": {
+        "crashed": "Something went wrong.",
+        "crashedHint": "Try again — if it keeps happening, send us the code below.",
+        "retry": "Try again",
+        "notFound": "This page does not exist.",
+        "notFoundHint": "The link may be broken, or the page may have moved.",
+        "backHome": "Back to home"
+    },
+    "systemHealth": {
+        "status": {
+            "ok": "Service operational",
+            "checking": "Checking service…",
+            "unreachable": "Service unreachable"
+        },
+        "checkedAgo": "Checked {ago}"
+    }
+}

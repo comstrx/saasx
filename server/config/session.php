@@ -14,11 +14,11 @@ return [
 
     'files' => storage_path('framework/sessions'),
 
-    'connection' => env('SESSION_CONNECTION'),
+    'connection' => env('SESSION_CONNECTION', 'session'),
 
     'table' => env('SESSION_TABLE', 'sessions'),
 
-    'store' => env('SESSION_STORE', 'redis'),
+    'store' => env('SESSION_STORE'),
 
     'lottery' => [2, 100],
 
@@ -28,7 +28,7 @@ return [
 
     'domain' => env('SESSION_DOMAIN'),
 
-    'secure' => env('SESSION_SECURE_COOKIE', true),
+    'secure' => (bool) env('SESSION_SECURE_COOKIE', true),
 
     'http_only' => (bool) env('SESSION_HTTP_ONLY', true),
 

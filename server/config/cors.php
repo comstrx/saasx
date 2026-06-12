@@ -4,8 +4,7 @@ return [
 
     'paths' => ['*'],
 
-    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-
+    'allowed_methods' => ['*'],
     'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
@@ -28,6 +27,7 @@ return [
         'Idempotency-Key',
         'X-Nonce',
     ],
+
     'exposed_headers' => [
         'X-Request-Id',
         'X-Correlation-Id',
@@ -44,6 +44,6 @@ return [
 
     'max_age' => (int) env('CORS_MAX_AGE', 86400),
 
-    'supports_credentials' => (bool) env('CORS_SUPPORTS_CREDENTIALS', false),
+    'supports_credentials' => false,
 
 ];

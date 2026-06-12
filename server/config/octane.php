@@ -33,54 +33,65 @@ return [
             EnsureUploadedFilesAreValid::class,
             EnsureUploadedFilesCanBeMoved::class,
         ],
+
         RequestReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
             ...Octane::prepareApplicationForNextRequest(),
         ],
+
         RequestHandled::class => [
             //
         ],
+
         RequestTerminated::class => [
             FlushUploadedFiles::class,
         ],
+
         TaskReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
         ],
+
         TaskTerminated::class => [
             //
         ],
+
         TickReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
         ],
+
         TickTerminated::class => [
             //
         ],
+
         OperationTerminated::class => [
             FlushOnce::class,
             FlushTemporaryContainerInstances::class,
         ],
+
         WorkerErrorOccurred::class => [
             ReportException::class,
             StopWorkerIfNecessary::class,
         ],
+
         WorkerStopping::class => [
             CloseMonologHandlers::class,
         ],
 
     ],
+
     'warm' => [
         ...Octane::defaultServicesToWarm(),
     ],
-    'flush' => [
-        //
-    ],
-    'tables' => [
-        //
-    ],
+
+    'flush' => [],
+
+    'tables' => [],
+
     'cache' => [
         'rows' => (int) env('OCTANE_CACHE_ROWS', 1000),
         'bytes' => (int) env('OCTANE_CACHE_BYTES', 10000),
     ],
+
     'watch' => [
         'app',
         'bootstrap',

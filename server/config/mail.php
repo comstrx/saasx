@@ -17,40 +17,46 @@ return [
             'timeout' => 10,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
+
         'ses' => [
             'transport' => 'ses',
         ],
+
         'postmark' => [
             'transport' => 'postmark',
         ],
+
         'resend' => [
             'transport' => 'resend',
         ],
-        'sendmail' => [
-            'transport' => 'sendmail',
-            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
-        ],
+
         'mailgun' => [
             'transport' => 'mailgun',
         ],
+
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
+
         'array' => [
             'transport' => 'array',
         ],
+
         'failover' => [
             'transport' => 'failover',
             'mailers' => ['resend', 'mailgun', 'postmark', 'ses', 'smtp', 'log'],
             'retry_after' => (int) env('MAIL_FAILOVER_RETRY_AFTER', 60),
         ],
+
         'roundrobin' => [
             'transport' => 'roundrobin',
             'mailers' => ['ses', 'postmark', 'resend'],
             'retry_after' => (int) env('MAIL_ROUNDROBIN_RETRY_AFTER', 60),
         ],
+
     ],
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
