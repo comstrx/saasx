@@ -15,11 +15,8 @@
         "backHome": "Back to home"
     },
     "systemHealth": {
-        "status": {
-            "ok": "Service operational",
-            "checking": "Checking service…",
-            "unreachable": "Service unreachable"
-        },
-        "checkedAgo": "Checked {ago}"
+        "ok": "Operational",
+        "unreachable": "Unreachable",
+        "checkedAgo": "checked {ago}"
     }
 }

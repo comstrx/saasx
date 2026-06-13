@@ -8,7 +8,7 @@ operator confirms before the first data feature ships.
 
 ## Basics
 
-- Base URL: `NEXT_PUBLIC_API_URL` (dev: `http://localhost:8080`).
+- Base URL: `NEXT_PUBLIC_API_URL` (dev: `http://localhost:8000`).
 - Style: REST over JSON. Resources are plural kebab-case
   (`/products`, `/product-reviews`).
 - Health: `GET /health` → `{ "status": "ok" }`.

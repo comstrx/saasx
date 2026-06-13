@@ -15,7 +15,7 @@ export default async function Page ({ params }: { params: Promise<{ locale: stri
         <>
 
             <Header title={t("title")} />
-            <Health />
+            <Health locale={locale} />
 
         </>
 

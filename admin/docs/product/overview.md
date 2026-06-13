@@ -31,7 +31,7 @@ specced is out of scope until a spec exists.
 
 ```
 ┌──────────────────────────┐        ┌─────────────────────────┐
-│  Next.js admin (this)    │  REST  │  Rust API  :8080        │
+│  Next.js admin (this)    │  REST  │  Rust API  :8000        │
 │  Better Auth (identity)  │ ─────► │  business logic, data   │
 │  Postgres (auth tables)  │  JWT   │  Postgres · Redis       │
 └──────────────────────────┘        └─────────────────────────┘

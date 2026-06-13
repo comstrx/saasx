@@ -1,45 +1,34 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/elements/badge";
+import { Skeleton } from "@/components/ui/elements/skeleton";
+import { useHealth } from "@/features/health/use-health";
 import { useNow } from "@/hooks/use-now";
 import { formatRelative } from "@/lib/std/date";
-import { useHealth } from "./use-health";
 
-const VARIANTS = { ok: "default", checking: "secondary", unreachable: "destructive" } as const;
-
-export function Health () {
+export function Health ({ locale }: { locale: string }) {
 
     const t = useTranslations("systemHealth");
-    const locale = useLocale();
-    const { data, isPending, isError, dataUpdatedAt, errorUpdatedAt } = useHealth();
+    const { isPending, isUp, checkedAt } = useHealth();
 
-    useNow(10_000);
+    useNow(30_000);
 
-    const resolve = () => {
-
-        if ( isPending ) return "checking" as const;
-        if ( isError || data.data.status !== "ok" ) return "unreachable" as const;
-
-        return "ok" as const;
-
-    };
-
-    const status = resolve();
-    const lastUpdatedAt = Math.max(dataUpdatedAt, errorUpdatedAt);
+    if ( isPending ) return <Skeleton className="h-6 w-40" />;
 
     return (
 
-        <div className="flex flex-col items-start gap-1">
+        <div className="flex items-center gap-2">
 
-            <Badge variant={VARIANTS[status]}>{t(`status.${status}`)}</Badge>
+            <Badge variant={isUp ? "default" : "destructive"}>
+                {isUp ? t("ok") : t("unreachable")}
+            </Badge>
 
             {
-                lastUpdatedAt > 0 && (
-                    <span className="text-xs text-muted-foreground">
-                        {t("checkedAgo", { ago: formatRelative(new Date(lastUpdatedAt).toISOString(), locale) })}
-                    </span>
-                )
+                checkedAt &&
+                <span className="text-sm text-muted-foreground">
+                    {t("checkedAgo", { ago: formatRelative(checkedAt.toISOString(), locale) })}
+                </span>
             }
 
         </div>

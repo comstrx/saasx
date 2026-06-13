@@ -1,88 +1,44 @@
-import { type ZodType, z } from "zod";
+import { z } from "zod";
+import type { ApiEntry, ApiMethod } from "@/api/client";
 
-export type Method = "GET" | "POST" | "PATCH" | "DELETE";
+const prefix = "";
 
-export type ApiEntry<T = unknown> = {
-    resource: string;
-    action: string;
-    method: Method;
-    path: string;
-    need?: string;
-    schema?: ZodType<T>;
-    bare?: true;
-};
+const list    = "list";
+const show    = "show";
+const create  = "store";
+const update  = "update";
+const destroy = "destroy";
 
-type ExtraConfig = {
-    path: string;
-    method: Method;
-    need?: string;
-    schema?: ZodType;
-};
+const methods = {
+    read:    "GET",
+    create:  "POST",
+    update:  "PATCH",
+    destroy: "DELETE",
+} satisfies Record<string, ApiMethod>;
 
-type ResourceConfig<T, E extends Record<string, ExtraConfig>> = {
-    schema?: ZodType<T>;
+type ResourceExtras = Record<string, ApiEntry>;
+
+type ResourceConfig<T, E extends ResourceExtras> = {
+    schema?: z.ZodType<T>;
     extra?: E;
 };
+export function resource <T = unknown, E extends ResourceExtras = Record<string, never>> ( name: string, config: ResourceConfig<T, E> = {} ) {
 
-type Crud<T> = {
-    list: ApiEntry<T[]>;
-    show: ApiEntry<T>;
-    create: ApiEntry;
-    update: ApiEntry;
-    destroy: ApiEntry;
-};
+    const collection = `${prefix}/${name}`;
+    const member = `${prefix}/${name}/:id`;
 
-export function resource<T = unknown, E extends Record<string, ExtraConfig> = Record<string, never>>(
-    name: string,
-    cfg: ResourceConfig<T, E> = {},
-): Crud<T> & { [K in keyof E]: ApiEntry } {
+    const { schema, extra } = config;
 
-    const item = cfg.schema;
+    return {
 
-    const crud: Crud<T> = {
-        list: {
-            resource: name,
-            action: "list",
-            method: "GET",
-            path: `/${name}`,
-            need: `${name}.view`,
-            schema: item ? z.array(item) : undefined,
-        },
-        show: {
-            resource: name,
-            action: "show",
-            method: "GET",
-            path: `/${name}/:id`,
-            need: `${name}.view`,
-            schema: item,
-        },
-        create: {
-            resource: name,
-            action: "create",
-            method: "POST",
-            path: `/${name}`,
-            need: `${name}.create`,
-        },
-        update: {
-            resource: name,
-            action: "update",
-            method: "PATCH",
-            path: `/${name}/:id`,
-            need: `${name}.update`,
-        },
-        destroy: {
-            resource: name,
-            action: "destroy",
-            method: "DELETE",
-            path: `/${name}/:id`,
-            need: `${name}.delete`,
-        },
-    };
+        [list]: { resource: name, action: list, method: methods.read, path: collection, need: `${name}.${list}`, schema: schema && z.array(schema) },
+        [show]: { resource: name, action: show, method: methods.read, path: member, need: `${name}.${show}`, schema },
+        [create]: { resource: name, action: create, method: methods.create, path: collection, need: `${name}.${create}`, schema },
+        [update]: { resource: name, action: update, method: methods.update, path: member, need: `${name}.${update}`, schema },
+        [destroy]: { resource: name, action: destroy, method: methods.destroy, path: member, need: `${name}.${destroy}` },
 
-    const extras = Object.fromEntries(
-        Object.entries(cfg.extra ?? {}).map(([action, entry]) => [action, { resource: name, action, ...entry }]),
-    ) as { [K in keyof E]: ApiEntry };
+        ...(extra ?? ({} as E)),
 
-    return { ...crud, ...extras };
+    } as const;
 
 }
