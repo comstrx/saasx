@@ -15,11 +15,8 @@
         "backHome": "العودة للرئيسية"
     },
     "systemHealth": {
-        "status": {
-            "ok": "الخدمة تعمل",
-            "checking": "جارٍ فحص الخدمة…",
-            "unreachable": "تعذّر الوصول إلى الخدمة"
-        },
+        "ok": "الخدمة تعمل",
+        "unreachable": "تعذّر الوصول",
         "checkedAgo": "آخر فحص {ago}"
     }
 }

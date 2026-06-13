@@ -51,11 +51,12 @@
     },
     "overrides": [
         {
-            "includes": ["src/lib/log/**", "src/app/*.tsx"],
+            "includes": ["src/lib/log/**", "src/app/*.tsx", "src/stores/*.ts"],
             "linter": {
                 "rules": {
                     "suspicious": {
-                        "noConsole": "off"
+                        "noConsole": "off",
+                        "noDocumentCookie": "off"
                     }
                 }
             }

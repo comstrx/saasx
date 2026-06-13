@@ -1,0 +1,2891 @@
+[
+    {
+        "iso2": "AF",
+        "name": "Afghanistan",
+        "native": "افغانستان",
+        "dial": "+93",
+        "currency": "AFN",
+        "languages": [
+            "ps",
+            "fa",
+            "uz",
+            "tk"
+        ],
+        "flag": "🇦🇫"
+    },
+    {
+        "iso2": "AX",
+        "name": "Aland",
+        "native": "Åland",
+        "dial": "+358",
+        "currency": "EUR",
+        "languages": [
+            "sv"
+        ],
+        "flag": "🇦🇽"
+    },
+    {
+        "iso2": "AL",
+        "name": "Albania",
+        "native": "Shqipëria",
+        "dial": "+355",
+        "currency": "ALL",
+        "languages": [
+            "sq"
+        ],
+        "flag": "🇦🇱"
+    },
+    {
+        "iso2": "DZ",
+        "name": "Algeria",
+        "native": "الجزائر",
+        "dial": "+213",
+        "currency": "DZD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇩🇿"
+    },
+    {
+        "iso2": "AS",
+        "name": "American Samoa",
+        "native": "American Samoa",
+        "dial": "+1684",
+        "currency": "USD",
+        "languages": [
+            "en",
+            "sm"
+        ],
+        "flag": "🇦🇸"
+    },
+    {
+        "iso2": "AD",
+        "name": "Andorra",
+        "native": "Andorra",
+        "dial": "+376",
+        "currency": "EUR",
+        "languages": [
+            "ca"
+        ],
+        "flag": "🇦🇩"
+    },
+    {
+        "iso2": "AO",
+        "name": "Angola",
+        "native": "Angola",
+        "dial": "+244",
+        "currency": "AOA",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇦🇴"
+    },
+    {
+        "iso2": "AI",
+        "name": "Anguilla",
+        "native": "Anguilla",
+        "dial": "+1264",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇦🇮"
+    },
+    {
+        "iso2": "AQ",
+        "name": "Antarctica",
+        "native": "Antarctica",
+        "dial": "+672",
+        "languages": [],
+        "flag": "🇦🇶"
+    },
+    {
+        "iso2": "AG",
+        "name": "Antigua and Barbuda",
+        "native": "Antigua and Barbuda",
+        "dial": "+1268",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇦🇬"
+    },
+    {
+        "iso2": "AR",
+        "name": "Argentina",
+        "native": "Argentina",
+        "dial": "+54",
+        "currency": "ARS",
+        "languages": [
+            "es",
+            "gn"
+        ],
+        "flag": "🇦🇷"
+    },
+    {
+        "iso2": "AM",
+        "name": "Armenia",
+        "native": "Հայաստան",
+        "dial": "+374",
+        "currency": "AMD",
+        "languages": [
+            "hy",
+            "ru"
+        ],
+        "flag": "🇦🇲"
+    },
+    {
+        "iso2": "AW",
+        "name": "Aruba",
+        "native": "Aruba",
+        "dial": "+297",
+        "currency": "AWG",
+        "languages": [
+            "nl",
+            "pa"
+        ],
+        "flag": "🇦🇼"
+    },
+    {
+        "iso2": "AC",
+        "name": "Ascension Island",
+        "native": "Ascension Island",
+        "dial": "+247",
+        "currency": "SHP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇦🇨"
+    },
+    {
+        "iso2": "AU",
+        "name": "Australia",
+        "native": "Australia",
+        "dial": "+61",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇦🇺"
+    },
+    {
+        "iso2": "AT",
+        "name": "Austria",
+        "native": "Österreich",
+        "dial": "+43",
+        "currency": "EUR",
+        "languages": [
+            "de"
+        ],
+        "flag": "🇦🇹"
+    },
+    {
+        "iso2": "AZ",
+        "name": "Azerbaijan",
+        "native": "Azərbaycan",
+        "dial": "+994",
+        "currency": "AZN",
+        "languages": [
+            "az"
+        ],
+        "flag": "🇦🇿"
+    },
+    {
+        "iso2": "BS",
+        "name": "Bahamas",
+        "native": "Bahamas",
+        "dial": "+1242",
+        "currency": "BSD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇧🇸"
+    },
+    {
+        "iso2": "BH",
+        "name": "Bahrain",
+        "native": "‏البحرين",
+        "dial": "+973",
+        "currency": "BHD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇧🇭"
+    },
+    {
+        "iso2": "BD",
+        "name": "Bangladesh",
+        "native": "Bangladesh",
+        "dial": "+880",
+        "currency": "BDT",
+        "languages": [
+            "bn"
+        ],
+        "flag": "🇧🇩"
+    },
+    {
+        "iso2": "BB",
+        "name": "Barbados",
+        "native": "Barbados",
+        "dial": "+1246",
+        "currency": "BBD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇧🇧"
+    },
+    {
+        "iso2": "BY",
+        "name": "Belarus",
+        "native": "Беларусь",
+        "dial": "+375",
+        "currency": "BYN",
+        "languages": [
+            "be",
+            "ru"
+        ],
+        "flag": "🇧🇾"
+    },
+    {
+        "iso2": "BE",
+        "name": "Belgium",
+        "native": "België",
+        "dial": "+32",
+        "currency": "EUR",
+        "languages": [
+            "nl",
+            "fr",
+            "de"
+        ],
+        "flag": "🇧🇪"
+    },
+    {
+        "iso2": "BZ",
+        "name": "Belize",
+        "native": "Belize",
+        "dial": "+501",
+        "currency": "BZD",
+        "languages": [
+            "en",
+            "es"
+        ],
+        "flag": "🇧🇿"
+    },
+    {
+        "iso2": "BJ",
+        "name": "Benin",
+        "native": "Bénin",
+        "dial": "+229",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇧🇯"
+    },
+    {
+        "iso2": "BM",
+        "name": "Bermuda",
+        "native": "Bermuda",
+        "dial": "+1441",
+        "currency": "BMD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇧🇲"
+    },
+    {
+        "iso2": "BT",
+        "name": "Bhutan",
+        "native": "ʼbrug-yul",
+        "dial": "+975",
+        "currency": "BTN",
+        "languages": [
+            "dz"
+        ],
+        "flag": "🇧🇹"
+    },
+    {
+        "iso2": "BO",
+        "name": "Bolivia",
+        "native": "Bolivia",
+        "dial": "+591",
+        "currency": "BOB",
+        "languages": [
+            "es",
+            "ay",
+            "qu"
+        ],
+        "flag": "🇧🇴"
+    },
+    {
+        "iso2": "BQ",
+        "name": "Bonaire",
+        "native": "Bonaire",
+        "dial": "+5997",
+        "currency": "USD",
+        "languages": [
+            "nl"
+        ],
+        "flag": "🇧🇶"
+    },
+    {
+        "iso2": "BA",
+        "name": "Bosnia and Herzegovina",
+        "native": "Bosna i Hercegovina",
+        "dial": "+387",
+        "currency": "BAM",
+        "languages": [
+            "bs",
+            "hr",
+            "sr"
+        ],
+        "flag": "🇧🇦"
+    },
+    {
+        "iso2": "BW",
+        "name": "Botswana",
+        "native": "Botswana",
+        "dial": "+267",
+        "currency": "BWP",
+        "languages": [
+            "en",
+            "tn"
+        ],
+        "flag": "🇧🇼"
+    },
+    {
+        "iso2": "BV",
+        "name": "Bouvet Island",
+        "native": "Bouvetøya",
+        "dial": "+47",
+        "currency": "NOK",
+        "languages": [
+            "no",
+            "nb",
+            "nn"
+        ],
+        "flag": "🇧🇻"
+    },
+    {
+        "iso2": "BR",
+        "name": "Brazil",
+        "native": "Brasil",
+        "dial": "+55",
+        "currency": "BRL",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇧🇷"
+    },
+    {
+        "iso2": "IO",
+        "name": "British Indian Ocean Territory",
+        "native": "British Indian Ocean Territory",
+        "dial": "+246",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇮🇴"
+    },
+    {
+        "iso2": "VG",
+        "name": "British Virgin Islands",
+        "native": "British Virgin Islands",
+        "dial": "+1284",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇻🇬"
+    },
+    {
+        "iso2": "BN",
+        "name": "Brunei",
+        "native": "Negara Brunei Darussalam",
+        "dial": "+673",
+        "currency": "BND",
+        "languages": [
+            "ms"
+        ],
+        "flag": "🇧🇳"
+    },
+    {
+        "iso2": "BG",
+        "name": "Bulgaria",
+        "native": "България",
+        "dial": "+359",
+        "currency": "EUR",
+        "languages": [
+            "bg"
+        ],
+        "flag": "🇧🇬"
+    },
+    {
+        "iso2": "BF",
+        "name": "Burkina Faso",
+        "native": "Burkina Faso",
+        "dial": "+226",
+        "currency": "XOF",
+        "languages": [
+            "fr",
+            "ff"
+        ],
+        "flag": "🇧🇫"
+    },
+    {
+        "iso2": "BI",
+        "name": "Burundi",
+        "native": "Burundi",
+        "dial": "+257",
+        "currency": "BIF",
+        "languages": [
+            "fr",
+            "rn"
+        ],
+        "flag": "🇧🇮"
+    },
+    {
+        "iso2": "KH",
+        "name": "Cambodia",
+        "native": "កម្ពុជា",
+        "dial": "+855",
+        "currency": "KHR",
+        "languages": [
+            "km"
+        ],
+        "flag": "🇰🇭"
+    },
+    {
+        "iso2": "CM",
+        "name": "Cameroon",
+        "native": "Cameroon",
+        "dial": "+237",
+        "currency": "XAF",
+        "languages": [
+            "en",
+            "fr"
+        ],
+        "flag": "🇨🇲"
+    },
+    {
+        "iso2": "CA",
+        "name": "Canada",
+        "native": "Canada",
+        "dial": "+1",
+        "currency": "CAD",
+        "languages": [
+            "en",
+            "fr"
+        ],
+        "flag": "🇨🇦"
+    },
+    {
+        "iso2": "CV",
+        "name": "Cape Verde",
+        "native": "Cabo Verde",
+        "dial": "+238",
+        "currency": "CVE",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇨🇻"
+    },
+    {
+        "iso2": "KY",
+        "name": "Cayman Islands",
+        "native": "Cayman Islands",
+        "dial": "+1345",
+        "currency": "KYD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇰🇾"
+    },
+    {
+        "iso2": "CF",
+        "name": "Central African Republic",
+        "native": "Ködörösêse tî Bêafrîka",
+        "dial": "+236",
+        "currency": "XAF",
+        "languages": [
+            "fr",
+            "sg"
+        ],
+        "flag": "🇨🇫"
+    },
+    {
+        "iso2": "TD",
+        "name": "Chad",
+        "native": "Tchad",
+        "dial": "+235",
+        "currency": "XAF",
+        "languages": [
+            "fr",
+            "ar"
+        ],
+        "flag": "🇹🇩"
+    },
+    {
+        "iso2": "CL",
+        "name": "Chile",
+        "native": "Chile",
+        "dial": "+56",
+        "currency": "CLP",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇨🇱"
+    },
+    {
+        "iso2": "CN",
+        "name": "China",
+        "native": "中国",
+        "dial": "+86",
+        "currency": "CNY",
+        "languages": [
+            "zh"
+        ],
+        "flag": "🇨🇳"
+    },
+    {
+        "iso2": "CX",
+        "name": "Christmas Island",
+        "native": "Christmas Island",
+        "dial": "+61",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇨🇽"
+    },
+    {
+        "iso2": "CC",
+        "name": "Cocos (Keeling) Islands",
+        "native": "Cocos (Keeling) Islands",
+        "dial": "+61",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇨🇨"
+    },
+    {
+        "iso2": "CO",
+        "name": "Colombia",
+        "native": "Colombia",
+        "dial": "+57",
+        "currency": "COP",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇨🇴"
+    },
+    {
+        "iso2": "KM",
+        "name": "Comoros",
+        "native": "Komori",
+        "dial": "+269",
+        "currency": "KMF",
+        "languages": [
+            "ar",
+            "fr"
+        ],
+        "flag": "🇰🇲"
+    },
+    {
+        "iso2": "CK",
+        "name": "Cook Islands",
+        "native": "Cook Islands",
+        "dial": "+682",
+        "currency": "NZD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇨🇰"
+    },
+    {
+        "iso2": "CR",
+        "name": "Costa Rica",
+        "native": "Costa Rica",
+        "dial": "+506",
+        "currency": "CRC",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇨🇷"
+    },
+    {
+        "iso2": "HR",
+        "name": "Croatia",
+        "native": "Hrvatska",
+        "dial": "+385",
+        "currency": "EUR",
+        "languages": [
+            "hr"
+        ],
+        "flag": "🇭🇷"
+    },
+    {
+        "iso2": "CU",
+        "name": "Cuba",
+        "native": "Cuba",
+        "dial": "+53",
+        "currency": "CUP",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇨🇺"
+    },
+    {
+        "iso2": "CW",
+        "name": "Curacao",
+        "native": "Curaçao",
+        "dial": "+5999",
+        "currency": "ANG",
+        "languages": [
+            "nl",
+            "pa",
+            "en"
+        ],
+        "flag": "🇨🇼"
+    },
+    {
+        "iso2": "CY",
+        "name": "Cyprus",
+        "native": "Κύπρος",
+        "dial": "+357",
+        "currency": "EUR",
+        "languages": [
+            "el",
+            "tr",
+            "hy"
+        ],
+        "flag": "🇨🇾"
+    },
+    {
+        "iso2": "CZ",
+        "name": "Czech Republic",
+        "native": "Česká republika",
+        "dial": "+420",
+        "currency": "CZK",
+        "languages": [
+            "cs"
+        ],
+        "flag": "🇨🇿"
+    },
+    {
+        "iso2": "CD",
+        "name": "Democratic Republic of the Congo",
+        "native": "République démocratique du Congo",
+        "dial": "+243",
+        "currency": "CDF",
+        "languages": [
+            "fr",
+            "ln",
+            "kg",
+            "sw",
+            "lu"
+        ],
+        "flag": "🇨🇩"
+    },
+    {
+        "iso2": "DK",
+        "name": "Denmark",
+        "native": "Danmark",
+        "dial": "+45",
+        "currency": "DKK",
+        "languages": [
+            "da"
+        ],
+        "flag": "🇩🇰"
+    },
+    {
+        "iso2": "DJ",
+        "name": "Djibouti",
+        "native": "Djibouti",
+        "dial": "+253",
+        "currency": "DJF",
+        "languages": [
+            "fr",
+            "ar"
+        ],
+        "flag": "🇩🇯"
+    },
+    {
+        "iso2": "DM",
+        "name": "Dominica",
+        "native": "Dominica",
+        "dial": "+1767",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇩🇲"
+    },
+    {
+        "iso2": "DO",
+        "name": "Dominican Republic",
+        "native": "República Dominicana",
+        "dial": "+1809",
+        "currency": "DOP",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇩🇴"
+    },
+    {
+        "iso2": "TL",
+        "name": "East Timor",
+        "native": "Timor-Leste",
+        "dial": "+670",
+        "currency": "USD",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇹🇱"
+    },
+    {
+        "iso2": "EC",
+        "name": "Ecuador",
+        "native": "Ecuador",
+        "dial": "+593",
+        "currency": "USD",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇪🇨"
+    },
+    {
+        "iso2": "EG",
+        "name": "Egypt",
+        "native": "مصر‎",
+        "dial": "+20",
+        "currency": "EGP",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇪🇬"
+    },
+    {
+        "iso2": "SV",
+        "name": "El Salvador",
+        "native": "El Salvador",
+        "dial": "+503",
+        "currency": "USD",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇸🇻"
+    },
+    {
+        "iso2": "GQ",
+        "name": "Equatorial Guinea",
+        "native": "Guinea Ecuatorial",
+        "dial": "+240",
+        "currency": "XAF",
+        "languages": [
+            "es",
+            "fr"
+        ],
+        "flag": "🇬🇶"
+    },
+    {
+        "iso2": "ER",
+        "name": "Eritrea",
+        "native": "ኤርትራ",
+        "dial": "+291",
+        "currency": "ERN",
+        "languages": [
+            "ti",
+            "ar",
+            "en"
+        ],
+        "flag": "🇪🇷"
+    },
+    {
+        "iso2": "EE",
+        "name": "Estonia",
+        "native": "Eesti",
+        "dial": "+372",
+        "currency": "EUR",
+        "languages": [
+            "et"
+        ],
+        "flag": "🇪🇪"
+    },
+    {
+        "iso2": "SZ",
+        "name": "Eswatini",
+        "native": "Eswatini",
+        "dial": "+268",
+        "currency": "SZL",
+        "languages": [
+            "en",
+            "ss"
+        ],
+        "flag": "🇸🇿"
+    },
+    {
+        "iso2": "ET",
+        "name": "Ethiopia",
+        "native": "ኢትዮጵያ",
+        "dial": "+251",
+        "currency": "ETB",
+        "languages": [
+            "am"
+        ],
+        "flag": "🇪🇹"
+    },
+    {
+        "iso2": "FK",
+        "name": "Falkland Islands",
+        "native": "Falkland Islands",
+        "dial": "+500",
+        "currency": "FKP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇫🇰"
+    },
+    {
+        "iso2": "FO",
+        "name": "Faroe Islands",
+        "native": "Føroyar",
+        "dial": "+298",
+        "currency": "DKK",
+        "languages": [
+            "fo"
+        ],
+        "flag": "🇫🇴"
+    },
+    {
+        "iso2": "FJ",
+        "name": "Fiji",
+        "native": "Fiji",
+        "dial": "+679",
+        "currency": "FJD",
+        "languages": [
+            "en",
+            "fj",
+            "hi",
+            "ur"
+        ],
+        "flag": "🇫🇯"
+    },
+    {
+        "iso2": "FI",
+        "name": "Finland",
+        "native": "Suomi",
+        "dial": "+358",
+        "currency": "EUR",
+        "languages": [
+            "fi",
+            "sv"
+        ],
+        "flag": "🇫🇮"
+    },
+    {
+        "iso2": "FR",
+        "name": "France",
+        "native": "France",
+        "dial": "+33",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇫🇷"
+    },
+    {
+        "iso2": "GF",
+        "name": "French Guiana",
+        "native": "Guyane française",
+        "dial": "+594",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇬🇫"
+    },
+    {
+        "iso2": "PF",
+        "name": "French Polynesia",
+        "native": "Polynésie française",
+        "dial": "+689",
+        "currency": "XPF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇵🇫"
+    },
+    {
+        "iso2": "TF",
+        "name": "French Southern Territories",
+        "native": "Territoire des Terres australes et antarctiques fr",
+        "dial": "+262",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇹🇫"
+    },
+    {
+        "iso2": "GA",
+        "name": "Gabon",
+        "native": "Gabon",
+        "dial": "+241",
+        "currency": "XAF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇬🇦"
+    },
+    {
+        "iso2": "GM",
+        "name": "Gambia",
+        "native": "Gambia",
+        "dial": "+220",
+        "currency": "GMD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇲"
+    },
+    {
+        "iso2": "GE",
+        "name": "Georgia",
+        "native": "საქართველო",
+        "dial": "+995",
+        "currency": "GEL",
+        "languages": [
+            "ka"
+        ],
+        "flag": "🇬🇪"
+    },
+    {
+        "iso2": "DE",
+        "name": "Germany",
+        "native": "Deutschland",
+        "dial": "+49",
+        "currency": "EUR",
+        "languages": [
+            "de"
+        ],
+        "flag": "🇩🇪"
+    },
+    {
+        "iso2": "GH",
+        "name": "Ghana",
+        "native": "Ghana",
+        "dial": "+233",
+        "currency": "GHS",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇭"
+    },
+    {
+        "iso2": "GI",
+        "name": "Gibraltar",
+        "native": "Gibraltar",
+        "dial": "+350",
+        "currency": "GIP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇮"
+    },
+    {
+        "iso2": "GR",
+        "name": "Greece",
+        "native": "Ελλάδα",
+        "dial": "+30",
+        "currency": "EUR",
+        "languages": [
+            "el"
+        ],
+        "flag": "🇬🇷"
+    },
+    {
+        "iso2": "GL",
+        "name": "Greenland",
+        "native": "Kalaallit Nunaat",
+        "dial": "+299",
+        "currency": "DKK",
+        "languages": [
+            "kl"
+        ],
+        "flag": "🇬🇱"
+    },
+    {
+        "iso2": "GD",
+        "name": "Grenada",
+        "native": "Grenada",
+        "dial": "+1473",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇩"
+    },
+    {
+        "iso2": "GP",
+        "name": "Guadeloupe",
+        "native": "Guadeloupe",
+        "dial": "+590",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇬🇵"
+    },
+    {
+        "iso2": "GU",
+        "name": "Guam",
+        "native": "Guam",
+        "dial": "+1671",
+        "currency": "USD",
+        "languages": [
+            "en",
+            "ch",
+            "es"
+        ],
+        "flag": "🇬🇺"
+    },
+    {
+        "iso2": "GT",
+        "name": "Guatemala",
+        "native": "Guatemala",
+        "dial": "+502",
+        "currency": "GTQ",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇬🇹"
+    },
+    {
+        "iso2": "GG",
+        "name": "Guernsey",
+        "native": "Guernsey",
+        "dial": "+44",
+        "currency": "GBP",
+        "languages": [
+            "en",
+            "fr"
+        ],
+        "flag": "🇬🇬"
+    },
+    {
+        "iso2": "GN",
+        "name": "Guinea",
+        "native": "Guinée",
+        "dial": "+224",
+        "currency": "GNF",
+        "languages": [
+            "fr",
+            "ff"
+        ],
+        "flag": "🇬🇳"
+    },
+    {
+        "iso2": "GW",
+        "name": "Guinea-Bissau",
+        "native": "Guiné-Bissau",
+        "dial": "+245",
+        "currency": "XOF",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇬🇼"
+    },
+    {
+        "iso2": "GY",
+        "name": "Guyana",
+        "native": "Guyana",
+        "dial": "+592",
+        "currency": "GYD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇾"
+    },
+    {
+        "iso2": "HT",
+        "name": "Haiti",
+        "native": "Haïti",
+        "dial": "+509",
+        "currency": "HTG",
+        "languages": [
+            "fr",
+            "ht"
+        ],
+        "flag": "🇭🇹"
+    },
+    {
+        "iso2": "HM",
+        "name": "Heard Island and McDonald Islands",
+        "native": "Heard Island and McDonald Islands",
+        "dial": "+61",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇭🇲"
+    },
+    {
+        "iso2": "HN",
+        "name": "Honduras",
+        "native": "Honduras",
+        "dial": "+504",
+        "currency": "HNL",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇭🇳"
+    },
+    {
+        "iso2": "HK",
+        "name": "Hong Kong",
+        "native": "香港",
+        "dial": "+852",
+        "currency": "HKD",
+        "languages": [
+            "zh",
+            "en"
+        ],
+        "flag": "🇭🇰"
+    },
+    {
+        "iso2": "HU",
+        "name": "Hungary",
+        "native": "Magyarország",
+        "dial": "+36",
+        "currency": "HUF",
+        "languages": [
+            "hu"
+        ],
+        "flag": "🇭🇺"
+    },
+    {
+        "iso2": "IS",
+        "name": "Iceland",
+        "native": "Ísland",
+        "dial": "+354",
+        "currency": "ISK",
+        "languages": [
+            "is"
+        ],
+        "flag": "🇮🇸"
+    },
+    {
+        "iso2": "IN",
+        "name": "India",
+        "native": "भारत",
+        "dial": "+91",
+        "currency": "INR",
+        "languages": [
+            "hi",
+            "en"
+        ],
+        "flag": "🇮🇳"
+    },
+    {
+        "iso2": "ID",
+        "name": "Indonesia",
+        "native": "Indonesia",
+        "dial": "+62",
+        "currency": "IDR",
+        "languages": [
+            "id"
+        ],
+        "flag": "🇮🇩"
+    },
+    {
+        "iso2": "IR",
+        "name": "Iran",
+        "native": "ایران",
+        "dial": "+98",
+        "currency": "IRR",
+        "languages": [
+            "fa"
+        ],
+        "flag": "🇮🇷"
+    },
+    {
+        "iso2": "IQ",
+        "name": "Iraq",
+        "native": "العراق",
+        "dial": "+964",
+        "currency": "IQD",
+        "languages": [
+            "ar",
+            "ku"
+        ],
+        "flag": "🇮🇶"
+    },
+    {
+        "iso2": "IE",
+        "name": "Ireland",
+        "native": "Éire",
+        "dial": "+353",
+        "currency": "EUR",
+        "languages": [
+            "ga",
+            "en"
+        ],
+        "flag": "🇮🇪"
+    },
+    {
+        "iso2": "IM",
+        "name": "Isle of Man",
+        "native": "Isle of Man",
+        "dial": "+44",
+        "currency": "GBP",
+        "languages": [
+            "en",
+            "gv"
+        ],
+        "flag": "🇮🇲"
+    },
+    {
+        "iso2": "IL",
+        "name": "Israel",
+        "native": "יִשְׂרָאֵל",
+        "dial": "+972",
+        "currency": "ILS",
+        "languages": [
+            "he",
+            "ar"
+        ],
+        "flag": "🇮🇱"
+    },
+    {
+        "iso2": "IT",
+        "name": "Italy",
+        "native": "Italia",
+        "dial": "+39",
+        "currency": "EUR",
+        "languages": [
+            "it"
+        ],
+        "flag": "🇮🇹"
+    },
+    {
+        "iso2": "CI",
+        "name": "Ivory Coast",
+        "native": "Côte d'Ivoire",
+        "dial": "+225",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇨🇮"
+    },
+    {
+        "iso2": "JM",
+        "name": "Jamaica",
+        "native": "Jamaica",
+        "dial": "+1876",
+        "currency": "JMD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇯🇲"
+    },
+    {
+        "iso2": "JP",
+        "name": "Japan",
+        "native": "日本",
+        "dial": "+81",
+        "currency": "JPY",
+        "languages": [
+            "ja"
+        ],
+        "flag": "🇯🇵"
+    },
+    {
+        "iso2": "JE",
+        "name": "Jersey",
+        "native": "Jersey",
+        "dial": "+44",
+        "currency": "GBP",
+        "languages": [
+            "en",
+            "fr"
+        ],
+        "flag": "🇯🇪"
+    },
+    {
+        "iso2": "JO",
+        "name": "Jordan",
+        "native": "الأردن",
+        "dial": "+962",
+        "currency": "JOD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇯🇴"
+    },
+    {
+        "iso2": "KZ",
+        "name": "Kazakhstan",
+        "native": "Қазақстан",
+        "dial": "+7",
+        "currency": "KZT",
+        "languages": [
+            "kk",
+            "ru"
+        ],
+        "flag": "🇰🇿"
+    },
+    {
+        "iso2": "KE",
+        "name": "Kenya",
+        "native": "Kenya",
+        "dial": "+254",
+        "currency": "KES",
+        "languages": [
+            "en",
+            "sw"
+        ],
+        "flag": "🇰🇪"
+    },
+    {
+        "iso2": "KI",
+        "name": "Kiribati",
+        "native": "Kiribati",
+        "dial": "+686",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇰🇮"
+    },
+    {
+        "iso2": "XK",
+        "name": "Kosovo",
+        "native": "Republika e Kosovës",
+        "dial": "+377",
+        "currency": "EUR",
+        "languages": [
+            "sq",
+            "sr"
+        ],
+        "flag": "🇽🇰"
+    },
+    {
+        "iso2": "KW",
+        "name": "Kuwait",
+        "native": "الكويت",
+        "dial": "+965",
+        "currency": "KWD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇰🇼"
+    },
+    {
+        "iso2": "KG",
+        "name": "Kyrgyzstan",
+        "native": "Кыргызстан",
+        "dial": "+996",
+        "currency": "KGS",
+        "languages": [
+            "ky",
+            "ru"
+        ],
+        "flag": "🇰🇬"
+    },
+    {
+        "iso2": "LA",
+        "name": "Laos",
+        "native": "ສປປລາວ",
+        "dial": "+856",
+        "currency": "LAK",
+        "languages": [
+            "lo"
+        ],
+        "flag": "🇱🇦"
+    },
+    {
+        "iso2": "LV",
+        "name": "Latvia",
+        "native": "Latvija",
+        "dial": "+371",
+        "currency": "EUR",
+        "languages": [
+            "lv"
+        ],
+        "flag": "🇱🇻"
+    },
+    {
+        "iso2": "LB",
+        "name": "Lebanon",
+        "native": "لبنان",
+        "dial": "+961",
+        "currency": "LBP",
+        "languages": [
+            "ar",
+            "fr"
+        ],
+        "flag": "🇱🇧"
+    },
+    {
+        "iso2": "LS",
+        "name": "Lesotho",
+        "native": "Lesotho",
+        "dial": "+266",
+        "currency": "LSL",
+        "languages": [
+            "en",
+            "st"
+        ],
+        "flag": "🇱🇸"
+    },
+    {
+        "iso2": "LR",
+        "name": "Liberia",
+        "native": "Liberia",
+        "dial": "+231",
+        "currency": "LRD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇱🇷"
+    },
+    {
+        "iso2": "LY",
+        "name": "Libya",
+        "native": "‏ليبيا",
+        "dial": "+218",
+        "currency": "LYD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇱🇾"
+    },
+    {
+        "iso2": "LI",
+        "name": "Liechtenstein",
+        "native": "Liechtenstein",
+        "dial": "+423",
+        "currency": "CHF",
+        "languages": [
+            "de"
+        ],
+        "flag": "🇱🇮"
+    },
+    {
+        "iso2": "LT",
+        "name": "Lithuania",
+        "native": "Lietuva",
+        "dial": "+370",
+        "currency": "EUR",
+        "languages": [
+            "lt"
+        ],
+        "flag": "🇱🇹"
+    },
+    {
+        "iso2": "LU",
+        "name": "Luxembourg",
+        "native": "Luxembourg",
+        "dial": "+352",
+        "currency": "EUR",
+        "languages": [
+            "fr",
+            "de",
+            "lb"
+        ],
+        "flag": "🇱🇺"
+    },
+    {
+        "iso2": "MO",
+        "name": "Macao",
+        "native": "澳門",
+        "dial": "+853",
+        "currency": "MOP",
+        "languages": [
+            "zh",
+            "pt"
+        ],
+        "flag": "🇲🇴"
+    },
+    {
+        "iso2": "MG",
+        "name": "Madagascar",
+        "native": "Madagasikara",
+        "dial": "+261",
+        "currency": "MGA",
+        "languages": [
+            "fr",
+            "mg"
+        ],
+        "flag": "🇲🇬"
+    },
+    {
+        "iso2": "MW",
+        "name": "Malawi",
+        "native": "Malawi",
+        "dial": "+265",
+        "currency": "MWK",
+        "languages": [
+            "en",
+            "ny"
+        ],
+        "flag": "🇲🇼"
+    },
+    {
+        "iso2": "MY",
+        "name": "Malaysia",
+        "native": "Malaysia",
+        "dial": "+60",
+        "currency": "MYR",
+        "languages": [
+            "ms"
+        ],
+        "flag": "🇲🇾"
+    },
+    {
+        "iso2": "MV",
+        "name": "Maldives",
+        "native": "Maldives",
+        "dial": "+960",
+        "currency": "MVR",
+        "languages": [
+            "dv"
+        ],
+        "flag": "🇲🇻"
+    },
+    {
+        "iso2": "ML",
+        "name": "Mali",
+        "native": "Mali",
+        "dial": "+223",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇲🇱"
+    },
+    {
+        "iso2": "MT",
+        "name": "Malta",
+        "native": "Malta",
+        "dial": "+356",
+        "currency": "EUR",
+        "languages": [
+            "mt",
+            "en"
+        ],
+        "flag": "🇲🇹"
+    },
+    {
+        "iso2": "MH",
+        "name": "Marshall Islands",
+        "native": "M̧ajeļ",
+        "dial": "+692",
+        "currency": "USD",
+        "languages": [
+            "en",
+            "mh"
+        ],
+        "flag": "🇲🇭"
+    },
+    {
+        "iso2": "MQ",
+        "name": "Martinique",
+        "native": "Martinique",
+        "dial": "+596",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇲🇶"
+    },
+    {
+        "iso2": "MR",
+        "name": "Mauritania",
+        "native": "موريتانيا",
+        "dial": "+222",
+        "currency": "MRU",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇲🇷"
+    },
+    {
+        "iso2": "MU",
+        "name": "Mauritius",
+        "native": "Maurice",
+        "dial": "+230",
+        "currency": "MUR",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇲🇺"
+    },
+    {
+        "iso2": "YT",
+        "name": "Mayotte",
+        "native": "Mayotte",
+        "dial": "+262",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇾🇹"
+    },
+    {
+        "iso2": "MX",
+        "name": "Mexico",
+        "native": "México",
+        "dial": "+52",
+        "currency": "MXN",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇲🇽"
+    },
+    {
+        "iso2": "FM",
+        "name": "Micronesia",
+        "native": "Micronesia",
+        "dial": "+691",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇫🇲"
+    },
+    {
+        "iso2": "MD",
+        "name": "Moldova",
+        "native": "Moldova",
+        "dial": "+373",
+        "currency": "MDL",
+        "languages": [
+            "ro"
+        ],
+        "flag": "🇲🇩"
+    },
+    {
+        "iso2": "MC",
+        "name": "Monaco",
+        "native": "Monaco",
+        "dial": "+377",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇲🇨"
+    },
+    {
+        "iso2": "MN",
+        "name": "Mongolia",
+        "native": "Монгол улс",
+        "dial": "+976",
+        "currency": "MNT",
+        "languages": [
+            "mn"
+        ],
+        "flag": "🇲🇳"
+    },
+    {
+        "iso2": "ME",
+        "name": "Montenegro",
+        "native": "Црна Гора",
+        "dial": "+382",
+        "currency": "EUR",
+        "languages": [
+            "sr",
+            "bs",
+            "sq",
+            "hr"
+        ],
+        "flag": "🇲🇪"
+    },
+    {
+        "iso2": "MS",
+        "name": "Montserrat",
+        "native": "Montserrat",
+        "dial": "+1664",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇲🇸"
+    },
+    {
+        "iso2": "MA",
+        "name": "Morocco",
+        "native": "المغرب",
+        "dial": "+212",
+        "currency": "MAD",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇲🇦"
+    },
+    {
+        "iso2": "MZ",
+        "name": "Mozambique",
+        "native": "Moçambique",
+        "dial": "+258",
+        "currency": "MZN",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇲🇿"
+    },
+    {
+        "iso2": "MM",
+        "name": "Myanmar (Burma)",
+        "native": "မြန်မာ",
+        "dial": "+95",
+        "currency": "MMK",
+        "languages": [
+            "my"
+        ],
+        "flag": "🇲🇲"
+    },
+    {
+        "iso2": "NA",
+        "name": "Namibia",
+        "native": "Namibia",
+        "dial": "+264",
+        "currency": "NAD",
+        "languages": [
+            "en",
+            "af"
+        ],
+        "flag": "🇳🇦"
+    },
+    {
+        "iso2": "NR",
+        "name": "Nauru",
+        "native": "Nauru",
+        "dial": "+674",
+        "currency": "AUD",
+        "languages": [
+            "en",
+            "na"
+        ],
+        "flag": "🇳🇷"
+    },
+    {
+        "iso2": "NP",
+        "name": "Nepal",
+        "native": "नेपाल",
+        "dial": "+977",
+        "currency": "NPR",
+        "languages": [
+            "ne"
+        ],
+        "flag": "🇳🇵"
+    },
+    {
+        "iso2": "NL",
+        "name": "Netherlands",
+        "native": "Nederland",
+        "dial": "+31",
+        "currency": "EUR",
+        "languages": [
+            "nl"
+        ],
+        "flag": "🇳🇱"
+    },
+    {
+        "iso2": "NC",
+        "name": "New Caledonia",
+        "native": "Nouvelle-Calédonie",
+        "dial": "+687",
+        "currency": "XPF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇳🇨"
+    },
+    {
+        "iso2": "NZ",
+        "name": "New Zealand",
+        "native": "New Zealand",
+        "dial": "+64",
+        "currency": "NZD",
+        "languages": [
+            "en",
+            "mi"
+        ],
+        "flag": "🇳🇿"
+    },
+    {
+        "iso2": "NI",
+        "name": "Nicaragua",
+        "native": "Nicaragua",
+        "dial": "+505",
+        "currency": "NIO",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇳🇮"
+    },
+    {
+        "iso2": "NE",
+        "name": "Niger",
+        "native": "Niger",
+        "dial": "+227",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇳🇪"
+    },
+    {
+        "iso2": "NG",
+        "name": "Nigeria",
+        "native": "Nigeria",
+        "dial": "+234",
+        "currency": "NGN",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇳🇬"
+    },
+    {
+        "iso2": "NU",
+        "name": "Niue",
+        "native": "Niuē",
+        "dial": "+683",
+        "currency": "NZD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇳🇺"
+    },
+    {
+        "iso2": "NF",
+        "name": "Norfolk Island",
+        "native": "Norfolk Island",
+        "dial": "+672",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇳🇫"
+    },
+    {
+        "iso2": "KP",
+        "name": "North Korea",
+        "native": "북한",
+        "dial": "+850",
+        "currency": "KPW",
+        "languages": [
+            "ko"
+        ],
+        "flag": "🇰🇵"
+    },
+    {
+        "iso2": "MK",
+        "name": "North Macedonia",
+        "native": "Северна Македонија",
+        "dial": "+389",
+        "currency": "MKD",
+        "languages": [
+            "mk"
+        ],
+        "flag": "🇲🇰"
+    },
+    {
+        "iso2": "MP",
+        "name": "Northern Mariana Islands",
+        "native": "Northern Mariana Islands",
+        "dial": "+1670",
+        "currency": "USD",
+        "languages": [
+            "en",
+            "ch"
+        ],
+        "flag": "🇲🇵"
+    },
+    {
+        "iso2": "NO",
+        "name": "Norway",
+        "native": "Norge",
+        "dial": "+47",
+        "currency": "NOK",
+        "languages": [
+            "no",
+            "nb",
+            "nn"
+        ],
+        "flag": "🇳🇴"
+    },
+    {
+        "iso2": "OM",
+        "name": "Oman",
+        "native": "عمان",
+        "dial": "+968",
+        "currency": "OMR",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇴🇲"
+    },
+    {
+        "iso2": "PK",
+        "name": "Pakistan",
+        "native": "Pakistan",
+        "dial": "+92",
+        "currency": "PKR",
+        "languages": [
+            "en",
+            "ur"
+        ],
+        "flag": "🇵🇰"
+    },
+    {
+        "iso2": "PW",
+        "name": "Palau",
+        "native": "Palau",
+        "dial": "+680",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇵🇼"
+    },
+    {
+        "iso2": "PS",
+        "name": "Palestine",
+        "native": "فلسطين",
+        "dial": "+970",
+        "currency": "ILS",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇵🇸"
+    },
+    {
+        "iso2": "PA",
+        "name": "Panama",
+        "native": "Panamá",
+        "dial": "+507",
+        "currency": "PAB",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇵🇦"
+    },
+    {
+        "iso2": "PG",
+        "name": "Papua New Guinea",
+        "native": "Papua Niugini",
+        "dial": "+675",
+        "currency": "PGK",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇵🇬"
+    },
+    {
+        "iso2": "PY",
+        "name": "Paraguay",
+        "native": "Paraguay",
+        "dial": "+595",
+        "currency": "PYG",
+        "languages": [
+            "es",
+            "gn"
+        ],
+        "flag": "🇵🇾"
+    },
+    {
+        "iso2": "PE",
+        "name": "Peru",
+        "native": "Perú",
+        "dial": "+51",
+        "currency": "PEN",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇵🇪"
+    },
+    {
+        "iso2": "PH",
+        "name": "Philippines",
+        "native": "Pilipinas",
+        "dial": "+63",
+        "currency": "PHP",
+        "languages": [
+            "en",
+            "tl"
+        ],
+        "flag": "🇵🇭"
+    },
+    {
+        "iso2": "PN",
+        "name": "Pitcairn Islands",
+        "native": "Pitcairn Islands",
+        "dial": "+64",
+        "currency": "NZD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇵🇳"
+    },
+    {
+        "iso2": "PL",
+        "name": "Poland",
+        "native": "Polska",
+        "dial": "+48",
+        "currency": "PLN",
+        "languages": [
+            "pl"
+        ],
+        "flag": "🇵🇱"
+    },
+    {
+        "iso2": "PT",
+        "name": "Portugal",
+        "native": "Portugal",
+        "dial": "+351",
+        "currency": "EUR",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇵🇹"
+    },
+    {
+        "iso2": "PR",
+        "name": "Puerto Rico",
+        "native": "Puerto Rico",
+        "dial": "+1787",
+        "currency": "USD",
+        "languages": [
+            "es",
+            "en"
+        ],
+        "flag": "🇵🇷"
+    },
+    {
+        "iso2": "QA",
+        "name": "Qatar",
+        "native": "قطر",
+        "dial": "+974",
+        "currency": "QAR",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇶🇦"
+    },
+    {
+        "iso2": "CG",
+        "name": "Republic of the Congo",
+        "native": "République du Congo",
+        "dial": "+242",
+        "currency": "XAF",
+        "languages": [
+            "fr",
+            "ln"
+        ],
+        "flag": "🇨🇬"
+    },
+    {
+        "iso2": "RE",
+        "name": "Reunion",
+        "native": "La Réunion",
+        "dial": "+262",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇷🇪"
+    },
+    {
+        "iso2": "RO",
+        "name": "Romania",
+        "native": "România",
+        "dial": "+40",
+        "currency": "RON",
+        "languages": [
+            "ro"
+        ],
+        "flag": "🇷🇴"
+    },
+    {
+        "iso2": "RU",
+        "name": "Russia",
+        "native": "Россия",
+        "dial": "+7",
+        "currency": "RUB",
+        "languages": [
+            "ru"
+        ],
+        "flag": "🇷🇺"
+    },
+    {
+        "iso2": "RW",
+        "name": "Rwanda",
+        "native": "Rwanda",
+        "dial": "+250",
+        "currency": "RWF",
+        "languages": [
+            "rw",
+            "en",
+            "fr"
+        ],
+        "flag": "🇷🇼"
+    },
+    {
+        "iso2": "BL",
+        "name": "Saint Barthelemy",
+        "native": "Saint-Barthélemy",
+        "dial": "+590",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇧🇱"
+    },
+    {
+        "iso2": "SH",
+        "name": "Saint Helena",
+        "native": "Saint Helena",
+        "dial": "+290",
+        "currency": "SHP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇸🇭"
+    },
+    {
+        "iso2": "KN",
+        "name": "Saint Kitts and Nevis",
+        "native": "Saint Kitts and Nevis",
+        "dial": "+1869",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇰🇳"
+    },
+    {
+        "iso2": "LC",
+        "name": "Saint Lucia",
+        "native": "Saint Lucia",
+        "dial": "+1758",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇱🇨"
+    },
+    {
+        "iso2": "MF",
+        "name": "Saint Martin",
+        "native": "Saint-Martin",
+        "dial": "+590",
+        "currency": "EUR",
+        "languages": [
+            "en",
+            "fr",
+            "nl"
+        ],
+        "flag": "🇲🇫"
+    },
+    {
+        "iso2": "PM",
+        "name": "Saint Pierre and Miquelon",
+        "native": "Saint-Pierre-et-Miquelon",
+        "dial": "+508",
+        "currency": "EUR",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇵🇲"
+    },
+    {
+        "iso2": "VC",
+        "name": "Saint Vincent and the Grenadines",
+        "native": "Saint Vincent and the Grenadines",
+        "dial": "+1784",
+        "currency": "XCD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇻🇨"
+    },
+    {
+        "iso2": "WS",
+        "name": "Samoa",
+        "native": "Samoa",
+        "dial": "+685",
+        "currency": "WST",
+        "languages": [
+            "sm",
+            "en"
+        ],
+        "flag": "🇼🇸"
+    },
+    {
+        "iso2": "SM",
+        "name": "San Marino",
+        "native": "San Marino",
+        "dial": "+378",
+        "currency": "EUR",
+        "languages": [
+            "it"
+        ],
+        "flag": "🇸🇲"
+    },
+    {
+        "iso2": "ST",
+        "name": "Sao Tome and Principe",
+        "native": "São Tomé e Príncipe",
+        "dial": "+239",
+        "currency": "STN",
+        "languages": [
+            "pt"
+        ],
+        "flag": "🇸🇹"
+    },
+    {
+        "iso2": "SA",
+        "name": "Saudi Arabia",
+        "native": "المملكة العربية السعودية",
+        "dial": "+966",
+        "currency": "SAR",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇸🇦"
+    },
+    {
+        "iso2": "SN",
+        "name": "Senegal",
+        "native": "Sénégal",
+        "dial": "+221",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇸🇳"
+    },
+    {
+        "iso2": "RS",
+        "name": "Serbia",
+        "native": "Србија",
+        "dial": "+381",
+        "currency": "RSD",
+        "languages": [
+            "sr"
+        ],
+        "flag": "🇷🇸"
+    },
+    {
+        "iso2": "SC",
+        "name": "Seychelles",
+        "native": "Seychelles",
+        "dial": "+248",
+        "currency": "SCR",
+        "languages": [
+            "fr",
+            "en"
+        ],
+        "flag": "🇸🇨"
+    },
+    {
+        "iso2": "SL",
+        "name": "Sierra Leone",
+        "native": "Sierra Leone",
+        "dial": "+232",
+        "currency": "SLL",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇸🇱"
+    },
+    {
+        "iso2": "SG",
+        "name": "Singapore",
+        "native": "Singapore",
+        "dial": "+65",
+        "currency": "SGD",
+        "languages": [
+            "en",
+            "ms",
+            "ta",
+            "zh"
+        ],
+        "flag": "🇸🇬"
+    },
+    {
+        "iso2": "SX",
+        "name": "Sint Maarten",
+        "native": "Sint Maarten",
+        "dial": "+1721",
+        "currency": "ANG",
+        "languages": [
+            "nl",
+            "en"
+        ],
+        "flag": "🇸🇽"
+    },
+    {
+        "iso2": "SK",
+        "name": "Slovakia",
+        "native": "Slovensko",
+        "dial": "+421",
+        "currency": "EUR",
+        "languages": [
+            "sk"
+        ],
+        "flag": "🇸🇰"
+    },
+    {
+        "iso2": "SI",
+        "name": "Slovenia",
+        "native": "Slovenija",
+        "dial": "+386",
+        "currency": "EUR",
+        "languages": [
+            "sl"
+        ],
+        "flag": "🇸🇮"
+    },
+    {
+        "iso2": "SB",
+        "name": "Solomon Islands",
+        "native": "Solomon Islands",
+        "dial": "+677",
+        "currency": "SBD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇸🇧"
+    },
+    {
+        "iso2": "SO",
+        "name": "Somalia",
+        "native": "Soomaaliya",
+        "dial": "+252",
+        "currency": "SOS",
+        "languages": [
+            "so",
+            "ar"
+        ],
+        "flag": "🇸🇴"
+    },
+    {
+        "iso2": "ZA",
+        "name": "South Africa",
+        "native": "South Africa",
+        "dial": "+27",
+        "currency": "ZAR",
+        "languages": [
+            "af",
+            "en",
+            "nr",
+            "st",
+            "ss",
+            "tn",
+            "ts",
+            "ve",
+            "xh",
+            "zu"
+        ],
+        "flag": "🇿🇦"
+    },
+    {
+        "iso2": "GS",
+        "name": "South Georgia and the South Sandwich Islands",
+        "native": "South Georgia",
+        "dial": "+500",
+        "currency": "GBP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇸"
+    },
+    {
+        "iso2": "KR",
+        "name": "South Korea",
+        "native": "대한민국",
+        "dial": "+82",
+        "currency": "KRW",
+        "languages": [
+            "ko"
+        ],
+        "flag": "🇰🇷"
+    },
+    {
+        "iso2": "SS",
+        "name": "South Sudan",
+        "native": "South Sudan",
+        "dial": "+211",
+        "currency": "SSP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇸🇸"
+    },
+    {
+        "iso2": "ES",
+        "name": "Spain",
+        "native": "España",
+        "dial": "+34",
+        "currency": "EUR",
+        "languages": [
+            "es",
+            "eu",
+            "ca",
+            "gl",
+            "oc"
+        ],
+        "flag": "🇪🇸"
+    },
+    {
+        "iso2": "LK",
+        "name": "Sri Lanka",
+        "native": "śrī laṃkāva",
+        "dial": "+94",
+        "currency": "LKR",
+        "languages": [
+            "si",
+            "ta"
+        ],
+        "flag": "🇱🇰"
+    },
+    {
+        "iso2": "SD",
+        "name": "Sudan",
+        "native": "السودان",
+        "dial": "+249",
+        "currency": "SDG",
+        "languages": [
+            "ar",
+            "en"
+        ],
+        "flag": "🇸🇩"
+    },
+    {
+        "iso2": "SR",
+        "name": "Suriname",
+        "native": "Suriname",
+        "dial": "+597",
+        "currency": "SRD",
+        "languages": [
+            "nl"
+        ],
+        "flag": "🇸🇷"
+    },
+    {
+        "iso2": "SJ",
+        "name": "Svalbard and Jan Mayen",
+        "native": "Svalbard og Jan Mayen",
+        "dial": "+4779",
+        "currency": "NOK",
+        "languages": [
+            "no"
+        ],
+        "flag": "🇸🇯"
+    },
+    {
+        "iso2": "SE",
+        "name": "Sweden",
+        "native": "Sverige",
+        "dial": "+46",
+        "currency": "SEK",
+        "languages": [
+            "sv"
+        ],
+        "flag": "🇸🇪"
+    },
+    {
+        "iso2": "CH",
+        "name": "Switzerland",
+        "native": "Schweiz",
+        "dial": "+41",
+        "currency": "CHF",
+        "languages": [
+            "de",
+            "fr",
+            "it"
+        ],
+        "flag": "🇨🇭"
+    },
+    {
+        "iso2": "SY",
+        "name": "Syria",
+        "native": "سوريا",
+        "dial": "+963",
+        "currency": "SYP",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇸🇾"
+    },
+    {
+        "iso2": "TW",
+        "name": "Taiwan",
+        "native": "臺灣",
+        "dial": "+886",
+        "currency": "TWD",
+        "languages": [
+            "zh"
+        ],
+        "flag": "🇹🇼"
+    },
+    {
+        "iso2": "TJ",
+        "name": "Tajikistan",
+        "native": "Тоҷикистон",
+        "dial": "+992",
+        "currency": "TJS",
+        "languages": [
+            "tg",
+            "ru"
+        ],
+        "flag": "🇹🇯"
+    },
+    {
+        "iso2": "TZ",
+        "name": "Tanzania",
+        "native": "Tanzania",
+        "dial": "+255",
+        "currency": "TZS",
+        "languages": [
+            "sw",
+            "en"
+        ],
+        "flag": "🇹🇿"
+    },
+    {
+        "iso2": "TH",
+        "name": "Thailand",
+        "native": "ประเทศไทย",
+        "dial": "+66",
+        "currency": "THB",
+        "languages": [
+            "th"
+        ],
+        "flag": "🇹🇭"
+    },
+    {
+        "iso2": "TG",
+        "name": "Togo",
+        "native": "Togo",
+        "dial": "+228",
+        "currency": "XOF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇹🇬"
+    },
+    {
+        "iso2": "TK",
+        "name": "Tokelau",
+        "native": "Tokelau",
+        "dial": "+690",
+        "currency": "NZD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇹🇰"
+    },
+    {
+        "iso2": "TO",
+        "name": "Tonga",
+        "native": "Tonga",
+        "dial": "+676",
+        "currency": "TOP",
+        "languages": [
+            "en",
+            "to"
+        ],
+        "flag": "🇹🇴"
+    },
+    {
+        "iso2": "TT",
+        "name": "Trinidad and Tobago",
+        "native": "Trinidad and Tobago",
+        "dial": "+1868",
+        "currency": "TTD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇹🇹"
+    },
+    {
+        "iso2": "TA",
+        "name": "Tristan da Cunha",
+        "native": "Tristan da Cunha",
+        "dial": "+290",
+        "currency": "SHP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇹🇦"
+    },
+    {
+        "iso2": "TN",
+        "name": "Tunisia",
+        "native": "تونس",
+        "dial": "+216",
+        "currency": "TND",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇹🇳"
+    },
+    {
+        "iso2": "TR",
+        "name": "Türkiye",
+        "native": "Türkiye",
+        "dial": "+90",
+        "currency": "TRY",
+        "languages": [
+            "tr"
+        ],
+        "flag": "🇹🇷"
+    },
+    {
+        "iso2": "TM",
+        "name": "Turkmenistan",
+        "native": "Türkmenistan",
+        "dial": "+993",
+        "currency": "TMT",
+        "languages": [
+            "tk",
+            "ru"
+        ],
+        "flag": "🇹🇲"
+    },
+    {
+        "iso2": "TC",
+        "name": "Turks and Caicos Islands",
+        "native": "Turks and Caicos Islands",
+        "dial": "+1649",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇹🇨"
+    },
+    {
+        "iso2": "TV",
+        "name": "Tuvalu",
+        "native": "Tuvalu",
+        "dial": "+688",
+        "currency": "AUD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇹🇻"
+    },
+    {
+        "iso2": "UM",
+        "name": "U.S. Minor Outlying Islands",
+        "native": "United States Minor Outlying Islands",
+        "dial": "+1",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇺🇲"
+    },
+    {
+        "iso2": "VI",
+        "name": "U.S. Virgin Islands",
+        "native": "United States Virgin Islands",
+        "dial": "+1340",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇻🇮"
+    },
+    {
+        "iso2": "UG",
+        "name": "Uganda",
+        "native": "Uganda",
+        "dial": "+256",
+        "currency": "UGX",
+        "languages": [
+            "en",
+            "sw"
+        ],
+        "flag": "🇺🇬"
+    },
+    {
+        "iso2": "UA",
+        "name": "Ukraine",
+        "native": "Україна",
+        "dial": "+380",
+        "currency": "UAH",
+        "languages": [
+            "uk"
+        ],
+        "flag": "🇺🇦"
+    },
+    {
+        "iso2": "AE",
+        "name": "United Arab Emirates",
+        "native": "دولة الإمارات العربية المتحدة",
+        "dial": "+971",
+        "currency": "AED",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇦🇪"
+    },
+    {
+        "iso2": "GB",
+        "name": "United Kingdom",
+        "native": "United Kingdom",
+        "dial": "+44",
+        "currency": "GBP",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇬🇧"
+    },
+    {
+        "iso2": "US",
+        "name": "United States",
+        "native": "United States",
+        "dial": "+1",
+        "currency": "USD",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇺🇸"
+    },
+    {
+        "iso2": "UY",
+        "name": "Uruguay",
+        "native": "Uruguay",
+        "dial": "+598",
+        "currency": "UYU",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇺🇾"
+    },
+    {
+        "iso2": "UZ",
+        "name": "Uzbekistan",
+        "native": "O'zbekiston",
+        "dial": "+998",
+        "currency": "UZS",
+        "languages": [
+            "uz",
+            "ru"
+        ],
+        "flag": "🇺🇿"
+    },
+    {
+        "iso2": "VU",
+        "name": "Vanuatu",
+        "native": "Vanuatu",
+        "dial": "+678",
+        "currency": "VUV",
+        "languages": [
+            "bi",
+            "en",
+            "fr"
+        ],
+        "flag": "🇻🇺"
+    },
+    {
+        "iso2": "VA",
+        "name": "Vatican City",
+        "native": "Vaticano",
+        "dial": "+379",
+        "currency": "EUR",
+        "languages": [
+            "it",
+            "la"
+        ],
+        "flag": "🇻🇦"
+    },
+    {
+        "iso2": "VE",
+        "name": "Venezuela",
+        "native": "Venezuela",
+        "dial": "+58",
+        "currency": "VES",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇻🇪"
+    },
+    {
+        "iso2": "VN",
+        "name": "Vietnam",
+        "native": "Việt Nam",
+        "dial": "+84",
+        "currency": "VND",
+        "languages": [
+            "vi"
+        ],
+        "flag": "🇻🇳"
+    },
+    {
+        "iso2": "WF",
+        "name": "Wallis and Futuna",
+        "native": "Wallis et Futuna",
+        "dial": "+681",
+        "currency": "XPF",
+        "languages": [
+            "fr"
+        ],
+        "flag": "🇼🇫"
+    },
+    {
+        "iso2": "EH",
+        "name": "Western Sahara",
+        "native": "الصحراء الغربية",
+        "dial": "+212",
+        "currency": "MAD",
+        "languages": [
+            "es"
+        ],
+        "flag": "🇪🇭"
+    },
+    {
+        "iso2": "YE",
+        "name": "Yemen",
+        "native": "اليَمَن",
+        "dial": "+967",
+        "currency": "YER",
+        "languages": [
+            "ar"
+        ],
+        "flag": "🇾🇪"
+    },
+    {
+        "iso2": "ZM",
+        "name": "Zambia",
+        "native": "Zambia",
+        "dial": "+260",
+        "currency": "ZMW",
+        "languages": [
+            "en"
+        ],
+        "flag": "🇿🇲"
+    },
+    {
+        "iso2": "ZW",
+        "name": "Zimbabwe",
+        "native": "Zimbabwe",
+        "dial": "+263",
+        "currency": "USD",
+        "languages": [
+            "en",
+            "sn",
+            "nd"
+        ],
+        "flag": "🇿🇼"
+    }
+]
