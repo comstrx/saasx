@@ -105,7 +105,9 @@ This repository is **one surface** in that picture. The conceptual *what*
 lives in these `docs/product/` files; the enforceable *how* — this repo's
 locked stack, the layer law, and every rule — is the constitution at
 `../../AGENTS.md` and the `docs/guides/` it routes to. When the two ever
-disagree, the constitution wins.
+disagree, the constitution wins. The locked architectural calls themselves are
+recorded with their reasoning in `docs/decisions/` — consult it before
+reopening one.
 
 ## Domains
 

@@ -58,11 +58,13 @@ React, zero project concepts.
 | `components/ui/icons` | L3a | icons (manual or library) | logic | — |
 | `components/custom` | L3b | shared visual composites (search, user-menu, upload…) | logic that belongs in a hook; single-feature parts | — |
 | `components/layout` | L3c | fixed chrome: header, footer, sidebar, settingbar, loader, error, chaticon | business logic | — |
-| `features/<name>` | L4 | ONE domain, assembled from below; exports one component | html/css/tailwind (save rare); importing another feature | `../product/features/<name>.md` |
-| `app/[locale]` | L5 | composes features + components; may prefetch via `api` | html, `className`, tailwind, inline JS, events | `../product/pages/<page>.md` |
+| `features/<name>` | L4 | ONE domain, assembled from below; exports one component | html/css/tailwind (save rare); importing another feature | `../product/tasks.md` (its block) |
+| `app/[locale]` | L5 | composes features + components; may prefetch via `api` | html, `className`, tailwind, inline JS, events | `../product/tasks.md` (its block) |
 
-Other `lib/` modules (`auth`, `permissions`, `motion`) are framework-free
-domain helpers documented in their guides. Within the component layer the
+Framework-free `lib/` helpers like `permissions` (the `Can` core), `motion`
+(tokens), or a `log` logger are **created at their layer on first use**
+(create-down) — not all are present yet, and `lib/permissions` is the first
+the Auth task needs. Within the component layer the
 order is `ui → custom → layout`: layout may use custom and ui; custom may
 use ui; ui depends on nothing above the floor.
 

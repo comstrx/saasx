@@ -64,5 +64,5 @@ Transitions); in-screen motion is Motion's job; the two never overlap.
 ## Boundaries with neighbors
 
 - The no-manual-memo rule and class style → `style.md`.
-- A virtualized table as a shipped capability →
-  `../product/features/<table>.md`.
+- A virtualized table as a shipped capability → its block in
+  `../product/tasks.md`.

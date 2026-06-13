@@ -81,6 +81,36 @@ The character we are building toward:
   across the whole site. Light and dark are both first-class; both are
   checked before anything ships.
 
+## Visual identity (locked)
+
+The storefront's identity is **gold on a warm-neutral foundation**, in both
+light and dark. This is a project-level decision (recorded in `../decisions/`),
+not a per-page choice — build every surface in this language.
+
+- **Gold is the primary, used with restraint.** Gold (`--primary` / `--gold`)
+  is for accents, primary CTAs, highlights, focus rings, and key emphasis —
+  never a flood fill across whole surfaces. A screen reads as warm-neutral with
+  gold *moments*, not a gold page.
+- **Gold is contrast-hard — pair it deliberately.** Gold behind text fails AA;
+  never light-gold-on-white. Use gold as a **fill with dark text**
+  (`bg-primary text-primary-foreground`), as a **soft-tint badge**
+  (`bg-gold-soft text-gold-soft-foreground`), or as **accent / decoration** on a
+  surface that already passes. Body and heading text stay `foreground`; gold is
+  the accent around them. The focus-ring gold is tuned to stay visible against
+  each theme's background.
+- **Dark is designed around the gold.** The dark theme is a **deep, warm
+  neutral** (not pure black) so gold reads warm and premium — never a cold gray
+  shell with a gold sticker on top.
+- **Both themes are first-class.** Light and dark are both designed and both
+  checked before anything ships; backgrounds stay harmonious (the `bg-surface`
+  sheen, the ambient `bg-glow`), and color, depth, radius, motion, and type
+  speak one language.
+- **It all lives in tokens.** The gold palette, the warm-neutral scale, the
+  elevation/shadow/radius scale, the surface sheen, and the ambient glow are
+  design tokens in `src/styles/globals.css` (light + dark). Use the tokens;
+  never hardcode a gold hex, a one-off shadow, or an arbitrary value. Missing a
+  shade? Add the token.
+
 ## The iteration law — never ship the first draft
 
 A UI task is **not** done when it renders correctly. Correct is the

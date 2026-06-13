@@ -1,0 +1,32 @@
+{
+    "app": {
+        "title": "SaaSX",
+        "description": "Web-Plattform für Unternehmen."
+    },
+    "home": {
+        "title": "Dashboard",
+        "hello": "Hallo Welt",
+        "eyebrow": "Willkommen",
+        "tagline": "Eine Plattform zum Verkaufen, Buchen, Liefern und Verwalten.",
+        "switchLanguage": "Sprache wechseln",
+        "locales": {
+            "en": "English",
+            "ar": "العربية",
+            "fr": "Français",
+            "de": "Deutsch"
+        }
+    },
+    "errors": {
+        "crashed": "Etwas ist schiefgelaufen.",
+        "crashedHint": "Versuchen Sie es erneut — wenn es weiterhin auftritt, senden Sie uns den untenstehenden Code.",
+        "retry": "Erneut versuchen",
+        "notFound": "Diese Seite existiert nicht.",
+        "notFoundHint": "Der Link ist möglicherweise defekt, oder die Seite wurde verschoben.",
+        "backHome": "Zurück zur Startseite"
+    },
+    "systemHealth": {
+        "ok": "Betriebsbereit",
+        "unreachable": "Nicht erreichbar",
+        "checkedAgo": "geprüft {ago}"
+    }
+}

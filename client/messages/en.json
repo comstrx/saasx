@@ -4,7 +4,17 @@
         "description": "Enterprise web platform."
     },
     "home": {
-        "title": "Dashboard"
+        "title": "Dashboard",
+        "hello": "Hello World",
+        "eyebrow": "Welcome",
+        "tagline": "One platform to sell, book, deliver, and manage.",
+        "switchLanguage": "Switch language",
+        "locales": {
+            "en": "English",
+            "ar": "العربية",
+            "fr": "Français",
+            "de": "Deutsch"
+        }
     },
     "errors": {
         "crashed": "Something went wrong.",

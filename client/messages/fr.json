@@ -1,0 +1,32 @@
+{
+    "app": {
+        "title": "SaaSX",
+        "description": "Plateforme web d'entreprise."
+    },
+    "home": {
+        "title": "Tableau de bord",
+        "hello": "Bonjour le monde",
+        "eyebrow": "Bienvenue",
+        "tagline": "Une seule plateforme pour vendre, réserver, livrer et gérer.",
+        "switchLanguage": "Changer de langue",
+        "locales": {
+            "en": "English",
+            "ar": "العربية",
+            "fr": "Français",
+            "de": "Deutsch"
+        }
+    },
+    "errors": {
+        "crashed": "Une erreur est survenue.",
+        "crashedHint": "Réessayez — si le problème persiste, envoyez-nous le code ci-dessous.",
+        "retry": "Réessayer",
+        "notFound": "Cette page n'existe pas.",
+        "notFoundHint": "Le lien est peut-être rompu, ou la page a été déplacée.",
+        "backHome": "Retour à l'accueil"
+    },
+    "systemHealth": {
+        "ok": "Opérationnel",
+        "unreachable": "Inaccessible",
+        "checkedAgo": "vérifié {ago}"
+    }
+}

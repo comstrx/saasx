@@ -4,7 +4,17 @@
         "description": "منصة ويب عالية الأداء."
     },
     "home": {
-        "title": "لوحة التحكم"
+        "title": "لوحة التحكم",
+        "hello": "مرحبا بالعالم",
+        "eyebrow": "أهلًا",
+        "tagline": "منصة واحدة للبيع والحجز والتوصيل والإدارة.",
+        "switchLanguage": "تغيير اللغة",
+        "locales": {
+            "en": "English",
+            "ar": "العربية",
+            "fr": "Français",
+            "de": "Deutsch"
+        }
     },
     "errors": {
         "crashed": "حدث خطأ ما.",

@@ -33,6 +33,15 @@ restates a spec; a spec never restates a guide; neither restates the other.
 Link, never duplicate. Reading the matching guide(s) AND the relevant
 product file(s) is part of the task, not optional context.
 
+A third tree, **`docs/decisions/`**, is the project's **WHY** log and is
+**required reading** — consult it before proposing or changing anything, and
+never reopen a settled call without reading the decision that set it (that is a
+process violation). It is one file per working session, each collecting that
+session's decisions; after any major feature or significant/irreversible
+decision, record it there (format and index in `docs/decisions/README.md`).
+The constitution is the WHAT/HOW; a decision file is the WHY. Files are
+immutable — supersede, never edit.
+
 ## Guides — the HOW (read before writing code)
 
 | If the task involves… | Read first |
@@ -68,9 +77,13 @@ one) · shadcn/ui on Base UI primitives, preset base-nova (add components via
 `pnpm dlx shadcn@latest add <name>` only) · TanStack Query v5 = ALL server
 state · Zustand v5 = ephemeral UI state only · Zod v4 = every external
 boundary · next-intl = i18n/RTL · Motion v12 + native View Transitions ·
-- TanStack Table + Virtual · Better Auth = identity (the admin owns it; the backend verifies) · Biome = …
-+ TanStack Table + Virtual · Identity = backend-owned via the API's /v1/auth/* endpoints, consumed through the resource() DSL; sessions are httpOnly cookies the backend sets (the client runs no auth server) · Biome = lint + import order only (the formatter is
-retired by design) · pnpm only — never npm/yarn/bun.
+TanStack Table + Virtual · Identity = backend-owned via the API's `/auth/*`
+endpoints (the `/v1` lives in the base URL), consumed through the `resource()`
+DSL; the session is a Sanctum Bearer access token the backend issues — held in memory
+and renewed from an httpOnly refresh cookie, never in
+`localStorage`/`sessionStorage`;
+the client runs no auth server · Biome = lint + import order only (the
+formatter is retired by design) · pnpm only — never npm/yarn/bun.
 
 react-hook-form + zod resolvers = all forms (shadcn Form) · dnd-kit = drag &
 drop · react-dropzone = upload primitive (house Dropzone in
@@ -140,7 +153,8 @@ in the current session.
 - No new state/form/CSS/auth libraries. No MUI, no Radix imports, no
   eslint/prettier configs. Any dependency duplicating an existing capability
   needs the conflict named and operator approval.
-- No `localStorage`/`sessionStorage` for auth or session data.
+- No `localStorage`/`sessionStorage` (or JS-readable cookie) for tokens — the
+  access token is in-memory only, renewed from an httpOnly refresh cookie.
 - `src/components/ui/**` is registry-owned: CLI-managed, lint-fix only,
   never re-spaced, never hand-written.
 - Manual `useMemo`/`useCallback`/`memo` are forbidden — the React Compiler

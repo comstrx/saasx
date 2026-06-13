@@ -107,16 +107,19 @@ export function Example ({ items }: { items: string[] }) {
 
 ## Tailwind & classes
 
-How classes are written in tsx. The token *values*, palettes, dark-mode
-swap, and per-distribution brand live in `../product/system/theming.md` —
-this section is the HOW, never the values.
+How classes are written in tsx. The token *values* live in
+`src/styles/globals.css` — palette, the radius scale (`rounded-sm` …
+`rounded-3xl`), the elevation scale (`shadow-xs` … `shadow-2xl` plus
+`shadow-focus`), the gold palette (`bg-primary`, `text-gold`, `bg-gold-soft`), the `bg-surface`
+sheen, the ambient `bg-glow`, and the dark-mode swap, all defined
+for light and dark. This section is the HOW, never the values.
 
 - **Tokens only.** Colors, spacing, and radii come from design tokens
   (`bg-card`, `text-muted-foreground`, `rounded-md`, `p-4`). An arbitrary
   value (`bg-[#fff]`, `p-[14px]`, `text-[#141414]`) is forbidden — if no
-  token fits, the token set is missing one (`theming.md`), not a license
+  token fits, the token set is missing one (add it in `globals.css`), not a license
   to inline it.
-- **Direction is logical, never physical.** This admin is English-first;
+- **Direction is logical, never physical.** This storefront is English-first;
   one line must work in both directions. Use `ps`/`pe`, `ms`/`me`,
   `start`/`end`, `text-start`/`text-end`, `rounded-s`/`rounded-e`,
   `border-s`/`border-e`. Physical utilities (`pl`, `pr`, `ml`, `mr`,
@@ -196,7 +199,7 @@ export function Badge ({ tone, className }: { tone: string; className?: string }
 ### You are doing it wrong if…
 
 - A hex, `rgb()`, or arbitrary `px`/`rem` sits in a className → use a
-  token; add one in `theming.md` if none fits.
+  token; add one in `globals.css` if none fits.
 - You typed `pl-`, `pr-`, `ml-`, `mr-`, `left-`, `right-`, `text-left`,
   `text-right` → physical direction; switch to logical or the RTL layout
   breaks.

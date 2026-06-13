@@ -1,8 +1,9 @@
 # Guides — How This Codebase Is Written
 
-The law for **how** code is written. (What is built lives in
-`../product/`.) Reading the relevant guide before you write code is part
-of the task, not optional context.
+The law for **how** code is written. (What is built lives in `../product/`;
+the **why** behind locked calls lives in `../decisions/` — required reading
+before reopening any settled decision.) Reading the relevant guide before you
+write code is part of the task, not optional context.
 
 ## The one idea
 
@@ -29,7 +30,7 @@ them in this order.
 3. **`style.md`** — how every line is written: formatter, naming, classes.
 4. **`api.md`** — the only door to the backend.
 5. **`state.md`** — client state, and what is *not* client state.
-6. **`i18n.md`** — two languages, two directions.
+6. **`i18n.md`** — four languages, two directions.
 7. **`errors.md`** — nothing fails silently.
 8. **`auth.md`** — identity, permissions, the request gate.
 9. **`motion.md`** — motion and the performance budget.

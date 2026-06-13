@@ -26,12 +26,16 @@ guide exists to prevent. The transport hands you one clean shape
 
 Every `catch` either (a) converts the failure into a rendered state or
 toast, or (b) rethrows. A catch that only logs is a violation. `console.*`
-outside `src/lib/log` is a violation — use the logger.
+outside `src/lib/log` is a violation — use the logger (`src/lib/log` is
+created at its layer on first use per create-down; there is no `console.*` in
+the tree yet).
 
 ## ApiError — the one shape from transport
 
 `src/api/client.ts` normalizes every failure into
-`ApiError { status, code, message }` (see `api.md`). Map by status:
+`ApiError { status, code, message, fields? }` (see `api.md`); the guard
+`isApiError(e)` narrows it and getters (`isValidation`, `isAuth`, `isNetwork`,
+`isServer`) classify it. Map by status:
 
 - `401` → refresh the session or redirect to login (see `auth.md`).
 - `403` → a permission-denied state (pairs with `<Can>`).

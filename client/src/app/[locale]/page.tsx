@@ -1,5 +1,5 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import Hello from "@/features/hello";
+import { setRequestLocale } from "next-intl/server";
+import { Hello } from "@/components/custom/hello";
 
 export default async function HomePage ({ params }: { params: Promise<{ locale: string }> }) {
 
@@ -7,16 +7,6 @@ export default async function HomePage ({ params }: { params: Promise<{ locale: 
 
     setRequestLocale(locale);
 
-    const _t = await getTranslations("home");
-
-    return (
-
-        <>
-
-            <Hello />
-
-        </>
-
-    );
+    return <Hello />;
 
 }
