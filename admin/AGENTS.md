@@ -1,141 +1,168 @@
 # SaaSX — Project Constitution
 
-This is a production enterprise foundation: admin panel or client site
-today, the base for client storefronts tomorrow. Every line you write is
-read by humans and AI agents alike: optimize for instant comprehension,
-security, and performance at once. Boring clarity beats clever brevity.
-When in doubt, the simpler structure wins.
+This repository is a production surface of the SaaSX platform — the
+customer-facing **client website** (`docs/product/overview.md`). Every line
+is read by humans and AI agents alike: optimize for instant comprehension,
+security, and performance at once. Boring clarity beats clever brevity; when
+in doubt, the simpler structure wins.
 
-Operate at senior-engineer level: terse, correct, zero ceremony.
-Creativity belongs INSIDE the code you write — never in structure,
-placement, naming schemes, or new patterns. Structure is law.
+Operate at senior-engineer level: terse, correct, zero ceremony. Creativity
+belongs INSIDE the code you write — never in structure, placement, naming,
+or new patterns. **Structure is law.**
 
-Two knowledge layers, one rule: `docs/guides/` defines HOW code is
-written (the law); `docs/product/` defines WHAT is being built and why
-(the specs). Every fact has exactly one home — never duplicate a rule
-or a spec, link to it.
+## Two knowledge bases — read before you act
 
-## Guides — read BEFORE acting (mandatory)
+Two trees document this system, and a building task reads from **both**:
 
-| If the task involves… | You MUST first read |
+- **`docs/guides/`** — **HOW** code is written: the layer law, the std lib,
+  code style, data access, state, i18n, errors, auth, motion. The craft.
+  Start at `docs/guides/README.md`.
+- **`docs/product/`** — **WHAT** is being built and why. Only three files,
+  each with a distinct job:
+  - **`overview.md`** — what SaaSX *is*: the platform, its tenants, its
+    panels, its model. Read it once to understand the world this repo lives
+    in.
+  - **`client.md`** — what *this* surface is (the client website) and the
+    exacting visual/design doctrine it must meet. Read it before any UI.
+  - **`tasks.md`** — the build sheet: the fixed build protocol plus one
+    block per requested feature. **This is what you execute.** Read the
+    matching task block before building it.
+
+One rule binds them: **every fact has exactly one home.** A guide never
+restates a spec; a spec never restates a guide; neither restates the other.
+Link, never duplicate. Reading the matching guide(s) AND the relevant
+product file(s) is part of the task, not optional context.
+
+## Guides — the HOW (read before writing code)
+
+| If the task involves… | Read first |
 |---|---|
 | any new file, moving code, "where does X live" | `docs/guides/architecture.md` |
 | helpers/utilities, anything under `src/lib/` | `docs/guides/stdlib.md` |
+| writing/editing any `.ts`/`.tsx` — naming, flatness, whitespace, classes | `docs/guides/style.md` |
 | endpoints, fetching, mutations, backend calls | `docs/guides/api.md` |
-| writing or editing any `.ts` / `.tsx` | `docs/guides/style.md` |
-| user-facing text, locales, layout direction | `docs/guides/i18n.md` |
-| animation, transitions, large lists or tables | `docs/guides/motion.md` |
-| login, sessions, permissions, proxy/redirects | `docs/guides/auth.md` |
-| error handling, toasts, failure states | `docs/guides/errors.md` |
 | client state, stores, zustand | `docs/guides/state.md` |
+| user-facing text, locales, layout direction | `docs/guides/i18n.md` |
+| error handling, toasts, failure states | `docs/guides/errors.md` |
+| login, sessions, permissions, proxy/redirects | `docs/guides/auth.md` |
+| animation, transitions, large lists or tables | `docs/guides/motion.md` |
 
-## Product specs — the WHAT (mandatory before building)
+## Product — the WHAT (read before building)
 
-| If the task involves… | You MUST first read |
+| If the task involves… | Read first |
 |---|---|
-| anything — first session in this repo | `docs/product/overview.md` |
-| building or changing a feature | `docs/product/features/<feature>.md` |
-| building or changing a page | `docs/product/pages/<page>.md` |
-| backend behavior, limits, response shapes | `docs/product/system/backend.md` |
-| permission names, roles, who can do what | `docs/product/system/permissions.md` |
-| supported locales, translated content | `docs/product/system/languages.md` |
-| prices, money, exchange, display currency | `docs/product/system/currency.md` |
-| colors, dark mode, brand theming | `docs/product/system/theming.md` |
+| first session in this repo — understanding the platform | `docs/product/overview.md` |
+| any user-visible work — purpose and the design bar | `docs/product/client.md` |
+| building a specific feature | `docs/product/tasks.md` (its block) |
 
-If the spec for a feature or page does not exist: STOP and request it
-from the operator. Never build from imagination. New specs are written
-from `_template.md` in the same directory.
+`tasks.md` is the single source of work. If a task block is missing, or a
+required line in it is blank/`-`, **STOP and ask the operator** — never
+guess the missing part and never invent a feature that has no block.
 
-Reading the matching guides and specs is part of the task, not optional
-context. If a task touches several rows, read every match before the
-first edit.
-
-## Stack (locked — verify versions in package.json; never substitute)
+## Stack (locked — verify versions in `package.json`; never substitute)
 
 Next.js 16 App Router + Turbopack · React 19 + React Compiler
 (`reactCompiler: true` — never remove) · TypeScript strict · Tailwind v4
-(CSS-first in `globals.css`; there is NO `tailwind.config.*` — never
-create one) · shadcn/ui on Base UI primitives, preset base-nova (add
-components via `pnpm dlx shadcn@latest add <name>` only) · TanStack
-Query v5 = ALL server state · Zustand v5 = ephemeral UI state only ·
-Zod v4 = every external boundary · next-intl = i18n/RTL · Motion v12 +
-native View Transitions · TanStack Table + Virtual · Better Auth ·
-Biome = lint + import order only (the formatter is retired by design) ·
-pnpm only — never npm/yarn/bun.
-react-hook-form + zod resolvers = all forms (shadcn Form components) ·
-dnd-kit = drag & drop · react-dropzone = upload primitive (house
-Dropzone in components/shared) · Recharts via shadcn Charts = charts
-default · Motion v12 = in-page animation · Embla (shadcn Carousel) =
-sliders · cmdk (shadcn Command) = command palette. Named escalations,
-operator approval required: Pragmatic DnD (1000+ draggables), Uppy+tus
-(resumable uploads), ECharts (>10k points or realtime).
-The capability set above is pre-installed by operator decision;
-everything else still installs with its first real consumer. The "no
-dependency duplicating an existing capability" hard rule stands
-unchanged.
+(CSS-first in `globals.css`; there is NO `tailwind.config.*` — never create
+one) · shadcn/ui on Base UI primitives, preset base-nova (add components via
+`pnpm dlx shadcn@latest add <name>` only) · TanStack Query v5 = ALL server
+state · Zustand v5 = ephemeral UI state only · Zod v4 = every external
+boundary · next-intl = i18n/RTL · Motion v12 + native View Transitions ·
+- TanStack Table + Virtual · Better Auth = identity (the admin owns it; the backend verifies) · Biome = …
++ TanStack Table + Virtual · Identity = backend-owned via the API's /v1/auth/* endpoints, consumed through the resource() DSL; sessions are httpOnly cookies the backend sets (the client runs no auth server) · Biome = lint + import order only (the formatter is
+retired by design) · pnpm only — never npm/yarn/bun.
 
-## The five layers (full law in docs/guides/architecture.md)
+react-hook-form + zod resolvers = all forms (shadcn Form) · dnd-kit = drag &
+drop · react-dropzone = upload primitive (house Dropzone in
+`components/custom`) · Recharts via shadcn Charts = charts · Embla (shadcn
+Carousel) = sliders · cmdk (shadcn Command) = command palette · emoji-mart
+(lazy-loaded) = emoji picker. Named escalations, operator approval required:
+Pragmatic DnD (1000+ draggables), Uppy + tus (resumable uploads), ECharts
+(>10k points or realtime).
 
-`lib → hooks → components(shared|ui) → features → app`
+The capability set above is pre-installed by operator decision; everything
+else installs with its first real consumer. The "no dependency duplicating
+an existing capability" rule stands unchanged.
 
-- `app/` composes features. Raw HTML and `className` live below it.
-- A feature assembles components + hooks + api + permissions for ONE
-  domain and never imports another feature.
-- Missing capability? CREATE it at the right layer first (lib modules
-  are born with a sibling test), then consume it. Inlining lower-layer
-  logic higher up is a violation.
+## The layers (full law in `docs/guides/architecture.md`)
 
-## Quality gates — all must pass before every commit
+Vertical stack — imports point down only:
 
-`pnpm lint` (0 errors) · `pnpm typecheck` (0 errors) · `pnpm build`
-(when changes touch routing/config/deps). Never bypass a gate: no
-rule-disabling, no `@ts-ignore`, no `any` (use `unknown` + narrowing).
-Fix root causes.
+    lib → hooks → components → features → app
+
+Cross-cutting modules — consumed by the stack, never part of it:
+
+    api · stores · i18n · proxy · styles
+
+- `app/` composes features; raw HTML and `className` live below it.
+- Within the component layer the order is `ui → custom → layout`.
+- A feature assembles components + hooks + api + permissions for ONE domain,
+  exports exactly one component, and never imports another feature.
+- Missing capability? CREATE it at the right layer first (a `lib` module is
+  born with a sibling test), then consume it. Inlining lower-layer logic
+  higher up is a violation.
+
+## Quality gates — all pass before every commit
+
+`pnpm lint` (0 errors) · `pnpm typecheck` (0 errors) · `pnpm build` (when
+changes touch routing, config, or deps). Never bypass a gate: no
+rule-disabling, no `@ts-ignore`, no `// biome-ignore`, no `any` (use
+`unknown` + narrowing). Fix root causes.
 
 ## Git discipline (parent dir is a polyglot monorepo — CRITICAL)
 
-Operate only inside `admin/`. Never touch `../server`, `../client`,
-`../engine`. Stage with `git add .` from inside `admin/` or explicit
-paths — never `git add -A`, never parent paths. Conventional commits
-with `(admin)` scope, imperative, lowercase, no trailing period.
-Atomic: one concern per commit. Never push, force-push, or rewrite
-history unless explicitly ordered in the current session.
+Operate only inside this repo's directory. Never touch sibling repos
+(`../server`, `../engine`, …). Stage with `git add .` from inside this repo
+or with explicit paths — never `git add -A`, never parent paths. Conventional
+commits, imperative, lowercase, no trailing period. Atomic: one concern per
+commit. Never push, force-push, or rewrite history unless explicitly ordered
+in the current session.
 
 ## Hard rules (a violation means stop and report, not improvise)
 
+- Imports point down. A feature never imports another feature; a component
+  never imports a feature.
+- `app/**` pages are sterile: zero raw HTML, `className`, Tailwind, inline
+  JS, or event handlers — composition only.
 - Zero comments anywhere. Names, types, and sibling tests carry meaning.
 - Zero hardcoded user-facing strings — every visible string through
-  next-intl.
-- `fetch(` exists only in `src/api/client.ts`.
-- `process.env` is read only in `src/lib/env`. No secrets in code,
-  logs, or commits; never read `.env*` files.
+  next-intl, keyed and present in both locale files in the same commit.
+- Every visual value is a token — no hex, `rgb()`, or arbitrary `px`/`rem`.
+- Logical direction utilities only (`ps`/`pe`, `ms`/`me`, `start`/`end`,
+  `text-start`/`text-end`…) — the physical pairs and `rtl:`/`ltr:` variants
+  are forbidden (one flipping-icon exception, see `docs/guides/i18n.md`).
+- `fetch(` exists only in `src/api/client.ts`. No hardcoded URL or path in a
+  feature/component; every call goes through a `resource()` registry entry.
+  Permission strings come from those entries; guards (`<Can>`) and requests
+  share one source.
+- `process.env` is read only in `src/lib/env`. `console.*` only in
+  `src/lib/log`. No secrets in code, logs, or commits; never read `.env*`.
 - No new state/form/CSS/auth libraries. No MUI, no Radix imports, no
-  eslint/prettier configs. Adding any dependency that duplicates an
-  existing capability requires naming the conflict and getting approval.
+  eslint/prettier configs. Any dependency duplicating an existing capability
+  needs the conflict named and operator approval.
 - No `localStorage`/`sessionStorage` for auth or session data.
 - `src/components/ui/**` is registry-owned: CLI-managed, lint-fix only,
   never re-spaced, never hand-written.
+- Manual `useMemo`/`useCallback`/`memo` are forbidden — the React Compiler
+  owns memoization.
 - Never hand-edit `pnpm-lock.yaml`. Never delete `.gitkeep` files.
-- Manual `useMemo`/`useCallback`/`memo` are forbidden — the React
-  Compiler owns memoization.
 
 ## When uncertain
 
-State the ambiguity in one line, take the convention-consistent path,
-flag it in the final report. A missing or contradictory product spec is
-not an ambiguity to route around — stop and request the spec. Never
+State the ambiguity in one line, take the convention-consistent path, flag
+it in the final report. A missing task block, or a blank required line in
+one, is not an ambiguity to route around — stop and request it. Never
 silently invent architecture or requirements.
 
-[OPERATOR INPUT] semantics: a marker carrying a stated draft value
-means build with the draft and list it under Unverified; a marker
-with no value, or on a decision expensive to reverse, means STOP and
-ask before building.
+`[OPERATOR INPUT]` semantics: a marker carrying a stated draft value means
+build with the draft and list it under Unverified; a marker with no value,
+or on a decision expensive to reverse, means STOP and ask before building.
 
 ## Reporting format (every task)
 
 1. Gate results: command, exit code, error count.
 2. `git show --stat HEAD` for each commit made.
-3. Guides and product specs read for this task.
+3. Guides and product files read for this task.
 4. Deviations from instructions and why — or "none".
-5. Anything left unverified (e.g. requires a running service) — say so
-   explicitly.
+5. For UI work, the number of design-critique passes made (`client.md`).
+6. Anything left unverified (e.g. requires a running service) — say so explicitly.

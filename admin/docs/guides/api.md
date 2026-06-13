@@ -1,72 +1,151 @@
-# API — single source of truth for every backend connection
+# api — The Only Door to the Backend
 
-All endpoint metadata lives in `src/api/`. Features never define
-transport, never call `fetch`, never build URLs, never invent
-permission strings.
+Every byte that crosses the network crosses `src/api/`. A feature never
+writes `fetch`, never builds a URL, never types an endpoint string, never
+invents a permission name. It asks the registry for a resource and hands
+it to a hook.
+
+## Mental model
+
+**The registry is a typed map of the backend; features read the map, they
+never redraw it.** One object describes an endpoint — its path, method,
+response schema, and the permission it needs. That same object is what the
+request uses *and* what the `<Can>` guard checks, so the button a user
+sees and the call it fires can never disagree. If you are assembling a URL
+or repeating a permission string by hand, you are redrawing the map inline
+— stop, and add the entry to the registry instead.
 
 ## Layout
 
 ```
 src/api/
-├── client.ts       request() — the ONLY fetch( in the codebase
-├── resource.ts     resource() builder — conventional CRUD, ~30 plain lines
-├── registry.ts     assembles every resource into one typed `api` tree
-└── <resource>.ts   users.ts, orders.ts, … one resource per file, flat
+├── client.ts     request() — the ONLY fetch( in the codebase
+├── resource.ts   resource() — conventional CRUD builder, plain and small
+├── registry.ts   assembles every resource into one typed `api` tree
+├── error.ts      ApiError — the single failure shape (see errors.md)
+├── index.ts      barrel
+└── <name>.ts     users.ts, orders.ts … one resource per file, flat
 ```
 
-## Conventional keys (the contract between api and features)
+## resource() — convention first
 
-`resource("users")` generates, fully typed:
+`resource("users")` yields a fully typed set of CRUD entries:
 
 ```
-api.users.list      GET     /users         need "users.view"
-api.users.show      GET     /users/:id     need "users.view"
-api.users.create    POST    /users         need "users.create"
-api.users.update    PATCH   /users/:id     need "users.update"
-api.users.destroy   DELETE  /users/:id     need "users.delete"
+api.users.list       GET     /users        need users.view
+api.users.show       GET     /users/:id    need users.view
+api.users.create     POST    /users        need users.create
+api.users.update     PATCH   /users/:id    need users.update
+api.users.destroy    DELETE  /users/:id    need users.delete
 ```
 
-Non-CRUD endpoints are explicit and flat — never auto-generated:
+Anything non-CRUD is declared explicitly as an extra — never inferred:
 
 ```ts
 export const users = resource("users", {
+
     extra: {
-        image:       { path: "/users/:id/image", method: "POST", need: "users.update" },
+
+        avatar: { path: "/users/:id/avatar", method: "POST", need: "users.update" },
         permissions: { path: "/users/:id/permissions", method: "GET", need: "users.view" },
+
     },
+
 });
 ```
 
-Composite access everywhere: `request(api.users.create, { body })`.
-The permission string a `<Need>` guard checks and the entry the request
-uses are the same object — UI and transport cannot drift.
+Nested-relation magic (`api.users.orders.items…`) is forbidden — that is
+the line between convention and magic. A relation endpoint is an explicit
+extra. `resource()` stays a function any developer reads in one pass.
 
-`resource()` stays a plain function any developer reads in one pass.
-Auto-generated nested relations (`api.users.orders.items…`) are
-forbidden — that is the line between convention and magic. Declare
-relation endpoints as explicit extras.
+## client.ts — the single transport
 
-## client.ts duties
+- Base URL from `lib/env` (`NEXT_PUBLIC_API_URL`) — no other URL source.
+- Zod-parses every response against the entry's schema. A parse failure is
+  an error, never a silent cast.
+- Forwards the `AbortSignal` TanStack Query provides.
+- Sends the session cookie (`credentials: "include"`) — see `auth.md`.
+- Normalizes every failure into `ApiError { status, code, message }`, the
+  only error shape any layer above ever sees — see `errors.md`.
+- Honors the backend rate limit: on `429` it respects `Retry-After`,
+  retries once with backoff, then surfaces a retryable state. It never
+  hammers and never hides the limit — see `../product/system/backend.md`.
+- Isomorphic: identical from a Server Component or the client.
 
-- Base URL from `lib/env` (`NEXT_PUBLIC_API_URL`). No other URL source.
-- Zod-parses every response against the entry's schema; a parse failure
-  is an error, never a cast.
-- Accepts and forwards `AbortSignal` (TanStack Query provides it).
-- `credentials: "include"` — sessions are httpOnly cookies (auth.md).
-- Normalizes every failure into `ApiError { status, code, message }` —
-  the only error shape the UI layer ever sees (errors.md).
-- Honors the backend rate limit (docs/product/system/backend.md): on
-  `429`, respects `Retry-After`, retries once with backoff, then
-  surfaces a retryable state — never hammers, never hides it.
-- Isomorphic: callable from Server Components and the client alike.
+## Consumption — hooks over the registry
 
-## Consumption pattern (inside features)
+Server data is TanStack Query, always. A feature's hook wraps a registry
+entry; it never hand-types a key or a URL.
 
-Hooks wrap TanStack Query over registry entries:
+```ts
+export function useUsers ( params: UserListParams ) {
 
-- `queryKey: ["users", "list", params]` — always
-  `[resource, action, params]`, taken from the entry, never hand-typed
-  strings.
-- Mutations invalidate by resource prefix: `["users"]`.
-- Query/mutation options (staleTime, retry) come from the provider
-  defaults; per-hook overrides need a reason in the report.
+    return useQuery({
+
+        queryKey: api.users.list.key(params),
+        queryFn: ({ signal }) => request(api.users.list, { params, signal }),
+
+    });
+
+}
+```
+
+- Query keys are derived from the entry: `[resource, action, params]`,
+  never a hand-written string.
+- Mutations invalidate by resource prefix (`["users"]`).
+- `staleTime` / `retry` come from the provider defaults; a per-hook
+  override needs a reason in the report.
+
+## Server prefetch — sterile pages stay sterile
+
+A page may warm the cache on the server, then hand a dehydrated state to
+the client: the user sees data with no spinner, and it stays live after.
+The page itself still contains no markup (see `architecture.md`).
+
+```tsx
+export default async function UsersPage () {
+
+    const qc = getQueryClient();
+
+    await qc.prefetchQuery({
+
+        queryKey: api.users.list.key({}),
+        queryFn: ({ signal }) => request(api.users.list, { params: {}, signal }),
+
+    });
+
+    return (
+
+        <HydrationBoundary state={dehydrate(qc)}>
+
+            <UsersTable />
+
+        </HydrationBoundary>
+
+    );
+
+}
+```
+
+## You are doing it wrong if…
+
+- You wrote `fetch(` anywhere but `client.ts` → route it through a
+  registry entry.
+- You built a path with string interpolation in a feature → the path
+  belongs in the resource entry.
+- A permission string in a guard is not the same one the request uses →
+  both read the entry; make it one source.
+- A query key is a hand-written array of strings → derive it from the
+  entry.
+- A response is used without a Zod schema, or cast with `as` → schema it;
+  a cast is a lie the compiler can't catch.
+- A component calls an `api` hook *and* renders markup → split: the hook
+  fetches, the component receives via props (see `architecture.md`).
+
+## Boundaries with neighbors
+
+- Failure shapes, toasts, retry states → `errors.md`.
+- Who may call an endpoint, permission names → `auth.md` and
+  `../product/system/permissions.md`.
+- URL/query *building* primitives (pure, no fetching) → `lib/std/net`
+  (`stdlib.md`).
