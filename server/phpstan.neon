@@ -1,0 +1,12 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - app
+    excludePaths:
+        - vsample
+    ignoreErrors:
+        - identifier: missingType.iterableValue
+    reportUnmatchedIgnoredErrors: false

@@ -18,6 +18,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.10",
         "laravel/pail": "^1.2.5",
         "laravel/pint": "^1.29",
         "mockery/mockery": "^1.6",
@@ -29,7 +30,11 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "classmap": [
+            "app/Support",
+            "app/Traits"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -69,12 +74,6 @@
         "fresh": [
             "@php artisan optimize:clear --ansi",
             "@php artisan migrate:fresh --seed --ansi"
-        ],
-        "format": [
-            "@php vendor/bin/pint"
-        ],
-        "format:test": [
-            "@php vendor/bin/pint --test"
         ],
         "test": [
             "@php artisan config:clear --ansi",

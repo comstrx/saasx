@@ -153,6 +153,49 @@ outside (internal pieces live in sibling files). Even a one-file helper becomes 
   cache, social) mounted on models. `app/Traits/Bases/` holds the **`HasBaseXxx` engine traits** — the
   actual reusable logic for every layer (see "The Base engine" right below).
 
+**Support layer — canonical domain map (the blueprint).** 24 native/infra domains, ZERO business
+logic. Each folder = a domain; `index.php` = the public facade (`App\Support\<Name>`); internal
+PascalCase files (`namespace App\Support\<Name>`) hold the pieces. `†` = adapter (a `Driver` interface
++ a concrete `RedisDriver`/`LocalDriver`/… + a manager in `index.php`; swap the backend by adding ONE
+Driver file). Files are created on demand (systems-first) — this map is the contract for naming/shape.
+
+```
+app/Support/
+├── arr/         Arr         Dot Shape Filter Map Group Sort Tree
+├── cache/   †   Cache       Driver RedisDriver Key Tag Entry Scope
+├── cast/        Cast        Scalar Collection Enum                          mixed -> typed scalar/enum/array
+├── context/     Context     Tenant Panel User Scope Meta                    Octane-safe wrapper over Laravel Context (the role/tenant/super tag)
+├── database/    Database    Uuid Transaction Rls Query Schema Column Sort Keyset
+├── date/        Date        Clock Range Format Parse
+├── event/   †   Event       Driver RedisDriver Payload Pending Key Outbox   App\Support\Event::publish(event,payload,key); Redis/Horizon default, outbox-ready
+├── file/        File        Path Name Mime Size Hash Stream
+├── http/        Http        Client Request Response Header Status Retry      outbound; SSRF guard via net/Ip
+├── json/        Json        Encode Decode Path Shape Merge
+├── lock/    †   Lock        Driver RedisDriver Mutex                         distributed lock (serves idempotency)
+├── log/         Log         Context Channel Entry Redact                     Redact = never log secrets
+├── mail/        Mail        Mailer Message Address                           always queued, Mailgun API transport
+├── net/         Net         Ip Url Domain Host Port                          Domain = tenant subdomain resolution
+├── num/         Num         Money Percent Range Format Random                Money = integer minor-units math only; the ledger is business
+├── parse/       Parse       Csv Query Boolean Number Locale
+├── queue/   †   Queue       Driver Dispatch Payload Tenant Retry             Tenant = stamp/restore tenant ctx across jobs
+├── request/     Request     Input Header Fingerprint Idempotency Locale Tenant
+├── response/    Response    Envelope Failure Pagination Meta                 uniform success/fail JSON envelope
+├── security/    Security    Token Hash Signature Secret Sanitize Encrypt     wrappers only — no DIY crypto
+├── storage/ †   Storage     Driver LocalDriver S3Driver ObjectKey Upload Visibility TemporaryUrl
+├── str/         Str         Casing Slug Clean Matches Random Template Inflect
+├── throttle/ †  Throttle    Driver RedisDriver Limit                         per-plan rate limiting
+└── validate/    Validate    Rule Shape Field Type Message                    predicates + Laravel Rule objects (Uuid7, Slug, …)
+```
+
+Rules for this layer:
+- No class name may be a reserved keyword — hence `Boolean` (not `Bool`), `Casing` (not `Case`),
+  `Matches` (not `Match`), and `cache/Tag` (not `Index`, which collides with `index.php`).
+- Facades intentionally shadow Illuminate equivalents (`Str`, `Arr`, `Cache`, `Date`, `Log`, `Mail`,
+  `Queue`, `Storage`, `Http`, `Request`, `Response`, `Context`). Never alias-import both in one file.
+- `cache`, `lock`, `throttle`, `queue`, `event`, `storage` are the swappable adapters (`†`).
+- `context` is the single source of truth for the active role/tenant/super tag; `database/Rls` and
+  `queue/Tenant` read from it.
+
 **The Base engine — how `BaseXxx` in every layer works (CORE PATTERN — this IS the magic).**
 The real logic of each layer lives in a `HasBaseXxx` **trait** under `app/Traits/Bases/`. Each layer
 has a thin **`BaseXxx` shell class** (in that layer's own folder) that does nothing but `use` its
