@@ -30,7 +30,6 @@ class Casing {
 
     }
 
-    /** @return list<string> */
     public static function words ( string $value ): array {
 
         $value = preg_replace('/([a-z0-9])([A-Z])/u', '$1 $2', trim($value)) ?? '';

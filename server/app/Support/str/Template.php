@@ -6,7 +6,6 @@ namespace App\Support\Str;
 
 class Template {
 
-    /** @param array<string, string|int|float|bool|null> $data */
     public static function render ( string $template, array $data, string $open = '{', string $close = '}' ): string {
 
         $pairs = [];
@@ -21,7 +20,6 @@ class Template {
 
     }
 
-    /** @param array<string, string|int|float|bool|null> $pairs */
     public static function swap ( array $pairs, string $subject ): string {
 
         $replace = [];

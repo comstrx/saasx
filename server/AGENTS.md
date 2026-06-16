@@ -284,7 +284,10 @@ new support/trait file** (classmap is static). Ugly FQCNs are hidden behind cura
   `public function index ( Request $req ): JsonResponse {`, `if ( $cond )`, `match ( $x )`,
   `foreach ( $a as $b )`, `catch ( \Throwable $e )`. (Native function *calls* use no inner spaces:
   `array_merge($a, $b)` — match the surrounding code.)
-- **Breathing bodies:** a blank line right after a method's opening `{` and right before its `}`.
+- **Breathing bodies:** a blank line right after a method's opening `{` and right before its `}` — but
+  **NO blank line BETWEEN consecutive methods/members.** A method's closing `}` is immediately followed
+  by the next method's signature on the very next line. The breathing is *inside* bodies, never *between*
+  members. Same for the class: blank line after the opening `{` and before the closing `}` only.
 - **NEVER a one-line function/method body** — always the multi-line breathing form, even for a single
   statement or an empty body. No `function x () { return $y; }`, no `) {}`.
 - `namespace` then `use` lines immediately (no blank line between); blank line before the class.
@@ -292,10 +295,14 @@ new support/trait file** (classmap is static). Ugly FQCNs are hidden behind cura
 - Heavy use of `match`, arrow fns `fn() =>`, ternaries, `??`, destructuring `[$a, $b] = …`,
   `compact()`, inline guard clauses (`if ( !$id ) return …;`).
 - `declare(strict_types=1);` at the top of every file (added automatically by stubs). Full param &
-  return types. Array-generic PHPDoc (`@return list<int>`) is **optional** — only where it adds real
-  value; never forced.
-- **NO comments or docblocks** except absolute necessity (a one-line type-only `@param`/`@return`
-  where genuinely needed is allowed — that is typing, not prose).
+  return types on every signature.
+- **PHPDoc rule (production):** PHPDoc is **typing, not prose.** **DELETE any docblock the native type
+  already expresses** (`/** @return string */`, `/** @param string $x */` — pure noise). **KEEP ONLY**
+  what PHP cannot express natively: `list<…>`, `array<K, V>`, `non-empty-string`, `class-string<T>`,
+  `@template T` + generic `@param`/`@return T`, and the like. A kept tag MUST be load-bearing — the
+  gate is **phpstan green after deletion**: remove it and re-run; if it stays green it was noise (leave
+  it out), if it errors (`return.type` / `argument.type`) it was a real contract (keep it).
+- **NO other comments or docblocks** — zero prose comments, except absolute necessity.
 - **Naming:** clear, concise nouns; never verbose self-describing file names. Model traits `HasXxx`,
   base traits `HasBaseXxx`, concrete `XxxService` / `XxxRepository` / `XxxController`.
 

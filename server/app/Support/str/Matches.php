@@ -6,7 +6,6 @@ namespace App\Support\Str;
 
 class Matches {
 
-    /** @param array<string>|string $needles */
     public static function contains ( string $haystack, string|array $needles ): bool {
 
         foreach ( (array) $needles as $needle ) {
@@ -19,7 +18,6 @@ class Matches {
 
     }
 
-    /** @param array<string> $needles */
     public static function containsAll ( string $haystack, array $needles ): bool {
 
         foreach ( $needles as $needle ) {
@@ -32,7 +30,6 @@ class Matches {
 
     }
 
-    /** @param array<string>|string $needles */
     public static function startsWith ( string $haystack, string|array $needles ): bool {
 
         foreach ( (array) $needles as $needle ) {
@@ -45,7 +42,6 @@ class Matches {
 
     }
 
-    /** @param array<string>|string $needles */
     public static function endsWith ( string $haystack, string|array $needles ): bool {
 
         foreach ( (array) $needles as $needle ) {
@@ -58,7 +54,6 @@ class Matches {
 
     }
 
-    /** @param array<string>|string $pattern */
     public static function is ( string|array $pattern, string $value ): bool {
 
         foreach ( (array) $pattern as $item ) {
@@ -83,7 +78,6 @@ class Matches {
 
     }
 
-    /** @return list<string> */
     public static function matchAll ( string $pattern, string $value ): array {
 
         if ( @preg_match_all($pattern, $value, $matches) === false ) throw new \InvalidArgumentException("Invalid pattern: {$pattern}");

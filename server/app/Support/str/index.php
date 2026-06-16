@@ -55,7 +55,6 @@ class Str {
 
     }
 
-    /** @return list<string> */
     public static function words ( string $value ): array {
 
         return Casing::words($value);
@@ -134,10 +133,6 @@ class Str {
 
     }
 
-    /**
-     * @param array<string>|string $search
-     * @param array<string>|string $replace
-     */
     public static function replace ( string|array $search, string|array $replace, string $subject ): string {
 
         return Clean::replace($search, $replace, $subject);
@@ -156,35 +151,30 @@ class Str {
 
     }
 
-    /** @param array<string>|string $search */
     public static function remove ( string|array $search, string $subject ): string {
 
         return Clean::remove($search, $subject);
 
     }
 
-    /** @param array<string>|string $needles */
     public static function contains ( string $haystack, string|array $needles ): bool {
 
         return Matches::contains($haystack, $needles);
 
     }
 
-    /** @param array<string>|string $needles */
     public static function startsWith ( string $haystack, string|array $needles ): bool {
 
         return Matches::startsWith($haystack, $needles);
 
     }
 
-    /** @param array<string>|string $needles */
     public static function endsWith ( string $haystack, string|array $needles ): bool {
 
         return Matches::endsWith($haystack, $needles);
 
     }
 
-    /** @param array<string>|string $pattern */
     public static function is ( string|array $pattern, string $value ): bool {
 
         return Matches::is($pattern, $value);
@@ -197,7 +187,6 @@ class Str {
 
     }
 
-    /** @return list<string> */
     public static function matchAll ( string $pattern, string $value ): array {
 
         return Matches::matchAll($pattern, $value);
@@ -264,14 +253,12 @@ class Str {
 
     }
 
-    /** @param array<string, string|int|float|bool|null> $data */
     public static function render ( string $template, array $data, string $open = '{', string $close = '}' ): string {
 
         return Template::render($template, $data, $open, $close);
 
     }
 
-    /** @param array<string, string|int|float|bool|null> $pairs */
     public static function swap ( array $pairs, string $subject ): string {
 
         return Template::swap($pairs, $subject);

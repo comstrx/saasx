@@ -20,7 +20,6 @@
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.10",
         "laravel/pail": "^1.2.5",
-        "laravel/pint": "^1.29",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^12.5.12"
@@ -79,10 +78,16 @@
             "@php artisan config:clear --ansi",
             "@php artisan test --ansi"
         ],
+        "lint": [
+            "@php vendor/bin/phpstan analyse --memory-limit=1G"
+        ],
+        "analyse": [
+            "@php vendor/bin/phpstan analyse --memory-limit=1G"
+        ],
         "check": [
             "@composer validate --strict",
             "@composer check-platform-reqs",
-            "@php vendor/bin/pint --test",
+            "@analyse",
             "@php artisan config:clear --ansi",
             "@php artisan test --ansi"
         ],

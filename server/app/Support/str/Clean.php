@@ -99,10 +99,6 @@ class Clean {
 
     }
 
-    /**
-     * @param array<string>|string $search
-     * @param array<string>|string $replace
-     */
     public static function replace ( string|array $search, string|array $replace, string $subject ): string {
 
         return str_replace($search, $replace, $subject);
@@ -129,7 +125,6 @@ class Clean {
 
     }
 
-    /** @param array<string>|string $search */
     public static function remove ( string|array $search, string $subject ): string {
 
         return str_replace($search, '', $subject);
