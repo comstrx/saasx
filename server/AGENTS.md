@@ -37,15 +37,34 @@ clone, not just a booking engine. One tenant gets a full branded business ecosys
 defense-in-depth** (app-level global scope is the primary isolation). Chosen because the layered
 "business-on-top-of-business" model implies *many small tenants*.
 
-**Surfaces / panels (6 + guest).** `super`, `admin`, `vendor`, `affiliate`, `delivery`, `client`,
-and public `guest`. Each panel = its own API route file **and** its own Postman collection, kept as
-a strict 1:1 mirror: `routes/apis/<panel>.php` ↔ `routes/collections/<panel>.json`.
-- Spelling is **`affiliate`** everywhere (route prefix, role, permissions `*_affiliate`) — never "affiliator".
-- **`super` = top-level owner panel**, the platform owner. Cross-tenant. Its API = the full `admin`
-  resource set **plus** a `tenants` resource (manage every tenant and all of its vendors / clients /
-  affiliates / deliveries / everything). The tenant middleware, on detecting a `super` user,
-  **disables tenant scope**; reads span/filter by tenant; writes target a tenant via a validated
-  `tenant_id` in the request body. `super` is a first-class **role** (`tenant_id = NULL`).
+**Surfaces / panels (6 + guest).** Each panel = its own API route file **and** its own Postman
+collection, kept as a strict 1:1 mirror: `routes/apis/<panel>.php` ↔ `routes/collections/<panel>.json`.
+Spelling is **`affiliate`** everywhere (route prefix, role, permissions `*_affiliate`) — never "affiliator".
+
+| Panel | What it is |
+|-------|-----------|
+| **`super`** | Platform/SaaS-owner panel (the owner = me). **Cross-tenant.** Manages every tenant and ALL of its data — including the main tenant. API = the full `admin` resource set **plus** a `tenants` resource. First-class **role**, `tenant_id = NULL`. |
+| **`admin`** | The **tenant's** admin panel — manages that tenant's own data: vendors, affiliates, deliveries, clients, products, orders, plans, etc. |
+| **`vendor`** | A vendor managing **his own products** (and their orders/bookings) under a tenant. |
+| **`affiliate`** | Affiliate managing his marketing/affiliate URLs for products and the clients he refers. |
+| **`delivery`** | Delivery/Mosul ops panel: tracks orders needing delivery, receives & competes on vendor offers (admin picks/approves an offer), chats with clients, monitors order status. |
+| **`client`** | **NOT an admin panel** — the public client storefront (website and/or mobile). The buyer surface. |
+| `guest` | Public/unauthenticated surface (browse, register, login). |
+
+**`super` middleware behaviour.** On detecting a `super` user the tenant middleware **disables tenant
+scope**; reads span/filter by tenant; writes target a tenant via a validated `tenant_id` in the request body.
+
+**Vendor onboarding & tenant commission (booking.com-style).** A would-be vendor lands on the client
+storefront as a normal guest → clicks "become a partner" → is redirected to that tenant's **vendor-panel
+domain** → registers, verifies account, optionally subscribes to a plan (free or premium). He then adds
+products, which surface on the tenant's client storefront. The tenant **admin earns a commission** on
+every order/booking of that vendor's products (marketplace economics, per-tenant).
+
+**v1 API scope (chosen 2026-06-16).** Seed **ALL roles** (super, admin, vendor, affiliate, delivery,
+client) + their permissions in the DB now. But expose **APIs / route files / Postman collections for
+`super`, `admin`, `vendor`, `client` ONLY** in v1. **`affiliate` and `delivery` get NO API yet** —
+deferred to a later release (DB rows exist, surface does not). Build the four live panels; leave the
+two deferred ones to roles/permissions only.
 
 **Per-tenant chain.** Every tenant owns its OWN full chain — its vendors, clients, affiliates,
 deliveries, products, orders, wallets, etc. All of these are tenant-scoped (`tenant_id`), and their
@@ -58,7 +77,7 @@ follow once the spine is solid.
 **Subsystems (target designs — all "swap a driver / add one file"):**
 - **Search:** Elasticsearch as a *swappable provider* (ES driver first, OpenSearch-compatible;
   lighter driver acceptable in dev). Replaces vsample's DB-only search.
-- **Events / message broker:** all publishing goes through the **`app/support/event/` abstraction** —
+- **Events / message broker:** all publishing goes through the **`app/Support/event/` abstraction** —
   `App\Support\Event::publish(event, payload, key)` backed by a swappable `Driver` interface. **No
   broker runs in v1**; default driver = Redis/Horizon. Adding ANY broker later (Redpanda/Kafka/SQS/
   NATS…) = **ONE new `Driver` file + config**; callers never change and business code never references
@@ -110,6 +129,11 @@ API prefix `/v1`.
 `config/services.php → mailgun`). **NEVER SMTP.** A `failover` mailer chain exists (mailgun included);
 send through the `mailgun` (or `failover`) mailer.
 
+**Storage.** One `Storage` abstraction (Support `storage/`), the **`s3` driver everywhere** — AWS S3
+in **production**, **MinIO in local dev** (S3-compatible: identical driver, only endpoint/creds differ).
+`LocalDriver` exists solely as a dev fallback. Object keys are tenant-namespaced; private by default,
+signed `TemporaryUrl` for downloads.
+
 **Design pattern: repository pattern, layered.** Two views of the same stack:
 
 - **Build / dependency order (inner → outer):**
@@ -149,9 +173,18 @@ outside (internal pieces live in sibling files). Even a one-file helper becomes 
 - `app/Support/` = native / infrastructure helper classes ONLY (php, io, db, cache, net, str, num,
   lists, parse, validate) — **ZERO business logic**. `cache/` and `database/` are adapters behind a
   **neutral interface** (keep the interface even though Redis/Postgres-only now).
-- `app/Traits/` = reusable model DNA (tenancy, relations/deep-relations, files, permissions, search,
-  cache, social) mounted on models. `app/Traits/Bases/` holds the **`HasBaseXxx` engine traits** — the
-  actual reusable logic for every layer (see "The Base engine" right below).
+- `app/Traits/` has **exactly two sub-folders — nothing loose at its root**:
+  - **`app/Traits/Bases/`** (`namespace App\Traits\Bases`) — the **`HasBaseXxx` engine traits**: the
+    actual reusable logic for every layer (this IS the magic — see "The Base engine" below). One per
+    layer: `HasBaseModel`, `HasBaseRepository`, `HasBaseService`, `HasBaseController`, `HasBaseRequest`,
+    `HasBaseResource`, `HasBaseCommand`.
+  - **`app/Traits/Dna/`** (`namespace App\Traits\Dna`) — the opt-in model **DNA**: a giant capability a
+    model gains simply by `use`-ing the trait, e.g. `HasRoles`, `HasPermissions`, `HasFiles`,
+    `HasSearch`, `HasCache`, `HasRelations`, `HasState`, … (names illustrative, NOT exhaustive — add
+    what a system needs, in the owner's naming style).
+  **Every trait in BOTH folders is built ON TOP OF the Support DSL** — it calls `App\Support\…` and
+  never re-implements native/infra work. Traits carry model/layer *behaviour*; Support carries the
+  std-lib *power* they lean on.
 
 **Support layer — canonical domain map (the blueprint).** 24 native/infra domains, ZERO business
 logic. Each folder = a domain; `index.php` = the public facade (`App\Support\<Name>`); internal
@@ -188,6 +221,10 @@ app/Support/
 ```
 
 Rules for this layer:
+- **Before writing ANY `support/` or `trait/` file, tour vsample's `app/Helpers/*` + `app/Traits/*`
+  DSL first**, then reimplement it here stronger, with stronger names — **SaasX-scoped**: a DSL that
+  suffices THIS project, never a general-purpose lib for the whole world. Build only what a system
+  needs, on demand (no speculative breadth).
 - No class name may be a reserved keyword — hence `Boolean` (not `Bool`), `Casing` (not `Case`),
   `Matches` (not `Match`), and `cache/Tag` (not `Index`, which collides with `index.php`).
 - Facades intentionally shadow Illuminate equivalents (`Str`, `Arr`, `Cache`, `Date`, `Log`, `Mail`,
@@ -246,7 +283,8 @@ class CategoryService extends BaseService {
 ```
 
 All API output flows through `BaseResource` / a Support response helper into a **uniform `success` /
-`fail` JSON envelope** (match vsample's `Helpers/Response.php` shape when first building it).
+`fail` JSON envelope** — the **new contract**, NOT vsample's flat `Helpers/Response.php` shape:
+`success → {status:true, data, …extra}`, `fail → {status:false, message, errors}`.
 
 **Role / tenant "tag" (Octane-safe).** The active panel role + `tenant_id` + super flag live in
 Laravel **`Context`** (request-scoped), set by the panel middleware, read by the base
@@ -273,10 +311,14 @@ new support/trait file** (classmap is static). Ugly FQCNs are hidden behind cura
 **Tooling & gates.**
 - **NO formatter (Pint is removed / never run).** Why: the required hand-style below is intentionally
   not PSR-12 / Pint-compatible, and consistency with the owner's hand matters more than PSR-12.
-- **Gates = Larastan + tests + `declare(strict_types=1)`.** `phpstan.neon`: **level 8** with
+- **Gate (now) = Larastan + `declare(strict_types=1)`.** `phpstan.neon`: **level 8** with
   `missingType.iterableValue` suppressed (`ignoreErrors: [{ identifier: missingType.iterableValue }]`),
-  `vsample` excluded. A change is "done" only when `phpstan` is green and tests pass. Never suppress
-  errors with `@phpstan-ignore`, baselines, casts, or `any`-style widening — fix the root cause.
+  `vsample` excluded. A change is "done" only when `phpstan` is green. Never suppress errors with
+  `@phpstan-ignore`, baselines, casts, or `any`-style widening — fix the root cause.
+- **Tests are DEFERRED until the v1 first release is complete.** Rationale: we are laying foundations
+  and moving fast; the skeleton still churns, so test maintenance now is wasted effort, not safety.
+  **Do NOT write tests yet** (no new test files, no TDD) unless explicitly asked. Once v1 ships, tests
+  become a gate **alongside** Larastan and this contract flips. Until then the gate is Larastan only.
 
 **CODE STYLE CONTRACT — match it exactly; code must be indistinguishable from the owner's hand.**
 - 4-space indent. K&R braces (opening brace on the same line).
@@ -285,9 +327,12 @@ new support/trait file** (classmap is static). Ugly FQCNs are hidden behind cura
   `foreach ( $a as $b )`, `catch ( \Throwable $e )`. (Native function *calls* use no inner spaces:
   `array_merge($a, $b)` — match the surrounding code.)
 - **Breathing bodies:** a blank line right after a method's opening `{` and right before its `}` — but
-  **NO blank line BETWEEN consecutive methods/members.** A method's closing `}` is immediately followed
-  by the next method's signature on the very next line. The breathing is *inside* bodies, never *between*
-  members. Same for the class: blank line after the opening `{` and before the closing `}` only.
+  **NO blank line BETWEEN consecutive methods.** A method's closing `}` (with its one-line docblock, if
+  any) is immediately followed by the next method's signature on the very next line. The breathing is
+  *inside* bodies, never *between* methods.
+- **Declarations vs methods:** property/const declarations are grouped at the **top** of the class and
+  separated from the method block by **ONE blank line** (a blank line may also separate distinct
+  declaration groups). Same for the class: blank line after the opening `{` and before the closing `}`.
 - **NEVER a one-line function/method body** — always the multi-line breathing form, even for a single
   statement or an empty body. No `function x () { return $y; }`, no `) {}`.
 - `namespace` then `use` lines immediately (no blank line between); blank line before the class.
@@ -302,6 +347,11 @@ new support/trait file** (classmap is static). Ugly FQCNs are hidden behind cura
   `@template T` + generic `@param`/`@return T`, and the like. A kept tag MUST be load-bearing — the
   gate is **phpstan green after deletion**: remove it and re-run; if it stays green it was noise (leave
   it out), if it errors (`return.type` / `argument.type`) it was a real contract (keep it).
+- **Array/iterable RETURNS are always documented (mandatory — exempt from the load-bearing test):**
+  every method whose return type is `array` carries a one-line shape tag —
+  `/** @return list<string> */`, `/** @return array<string, mixed> */`, `array{…}` — so the returned
+  shape is never implicit. `missingType.iterableValue` stays suppressed for *params*, but array
+  *returns* are always typed.
 - **NO other comments or docblocks** — zero prose comments, except absolute necessity.
 - **Naming:** clear, concise nouns; never verbose self-describing file names. Model traits `HasXxx`,
   base traits `HasBaseXxx`, concrete `XxxService` / `XxxRepository` / `XxxController`.

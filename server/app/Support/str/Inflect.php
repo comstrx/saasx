@@ -44,7 +44,6 @@ class Inflect {
         };
 
     }
-
     public static function singular ( string $value ): string {
 
         if ( self::uncountable($value) ) return $value;
@@ -68,13 +67,11 @@ class Inflect {
         };
 
     }
-
     private static function uncountable ( string $value ): bool {
 
         return in_array(Casing::lower($value), self::UNCOUNTABLE, true);
 
     }
-
     private static function preserve ( string $original, string $replacement ): string {
 
         if ( $original === Casing::upper($original) ) return Casing::upper($replacement);

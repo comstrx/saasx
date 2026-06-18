@@ -11,13 +11,11 @@ class Slug {
         return self::build(Casing::lower($value), $separator, '\p{L}\p{N}');
 
     }
-
     public static function ascii ( string $value, string $separator = '-' ): string {
 
         return self::build(Casing::lower(Clean::ascii($value)), $separator, 'a-z0-9');
 
     }
-
     private static function build ( string $value, string $separator, string $allowed ): string {
 
         $flip = $separator === '-' ? '_' : '-';

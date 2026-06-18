@@ -19,7 +19,6 @@ class Template {
         return strtr($template, $pairs);
 
     }
-
     public static function swap ( array $pairs, string $subject ): string {
 
         $replace = [];
@@ -33,7 +32,6 @@ class Template {
         return strtr($subject, $replace);
 
     }
-
     private static function stringify ( string|int|float|bool|null $value ): string {
 
         return match ( true ) {

@@ -25,25 +25,21 @@ class Random {
         return $output;
 
     }
-
     public static function random ( int $length = 16 ): string {
 
         return self::ofAlphabet($length, self::ALPHA . self::NUMERIC);
 
     }
-
     public static function alpha ( int $length = 16 ): string {
 
         return self::ofAlphabet($length, self::ALPHA);
 
     }
-
     public static function numeric ( int $length = 6 ): string {
 
         return self::ofAlphabet($length, self::NUMERIC);
 
     }
-
     public static function secure ( int $bytes = 16 ): string {
 
         if ( $bytes < 1 ) return '';
