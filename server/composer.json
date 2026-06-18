@@ -84,6 +84,13 @@
         "analyse": [
             "@php vendor/bin/phpstan analyse --memory-limit=1G"
         ],
+        "verify": [
+            "@php artisan config:clear --ansi",
+            "@composer validate --strict",
+            "@lint",
+            "@php artisan route:cache --ansi",
+            "@php artisan route:clear --ansi"
+        ],
         "check": [
             "@composer validate --strict",
             "@composer check-platform-reqs",

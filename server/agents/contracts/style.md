@@ -1,36 +1,39 @@
 # contracts/style.md — Code style (LAW)
 
-> The code must be **indistinguishable from the owner's hand.** Anyone reading it must not be able to tell
-> whether the owner or an agent wrote it. There is **NO formatter** (Pint is removed and never run)
-> because this hand-style is intentionally not PSR-12 / Pint-compatible. Match it exactly, every line.
-> The existing files `app/Support/str/*` and `app/Support/response/*` are the reference hand — mirror them.
+> The code must be **indistinguishable from the owner's hand.** A reader must not be able to tell whether the
+> owner or an agent wrote it. There is **NO formatter** (Pint is removed and never run) because this hand-style
+> is intentionally not PSR-12 / Pint-compatible. Match it exactly, every line. The existing files
+> `app/Support/str/*` are the **reference hand** — read and mirror them.
 
 ## Hard rules
 
-- `declare(strict_types=1);` at the top of **every** PHP file. Full param & return types on every
-  signature; type every property.
+- `declare(strict_types=1);` at the top of **every** PHP file. Full param & return types on every signature;
+  type every property.
 - **4-space indent. K&R braces** (opening brace on the same line).
 - **Declarations and control structures: a space before `(` AND spaces inside it.**
   `public function index ( Request $req ): JsonResponse {`, `if ( $cond )`, `match ( $x )`,
   `foreach ( $a as $b )`, `catch ( \Throwable $e )`.
 - **Native function *calls* use no inner spaces:** `array_merge($a, $b)`, `is_array($value)`,
-  `str_starts_with($method, $func)`. (Declarations breathe; calls do not — match surrounding code.)
+  `str_starts_with($method, $func)`. Declarations breathe; calls do not — match surrounding code.
 - **Breathing bodies:** one blank line right after a method's opening `{` and one right before its `}`.
-- **NO blank line BETWEEN consecutive methods** — a method's closing `}` is immediately followed by the
-  next method's signature on the very next line. The breathing is *inside* bodies, never *between* methods.
-- **Declarations vs methods:** property/const declarations are grouped at the **top** of the class,
-  separated from the method block by **ONE blank line** (a blank line may also separate distinct
-  declaration groups). The class also breathes: blank line after the opening `{` and before the closing `}`.
+- **NO blank line BETWEEN consecutive methods** — a method's closing `}` is immediately followed by the next
+  method's signature on the very next line. The breathing is *inside* bodies, never *between* methods.
+- **Declarations vs methods:** property/const declarations are grouped at the **top** of the class, separated
+  from the method block by **ONE blank line** (a blank line may also separate distinct declaration groups). The
+  class also breathes: blank line after the opening `{` and before the closing `}`.
 - **NEVER a one-line function/method body** — always the multi-line breathing form, even for a single
-  statement or an empty body. No `function x () { return $y; }`, no `) {}`. An empty body is still
-  `{` newline blank newline `}`.
+  statement or an empty body. No `function x () { return $y; }`, no `) {}`. An empty body is still `{` newline
+  blank newline `}`.
 - `namespace` then `use` lines immediately (no blank line between); blank line before the class.
 - Multiple properties on one line may share a modifier (`protected array $scopes = [], $permissions = [];`).
   Align `=>` in multi-line array literals.
-- Heavy use of `match`, arrow fns `fn() =>`, ternaries, `??`, destructuring `[$a, $b] = …`, `compact()`,
-  and inline guard clauses (`if ( !$id ) return …;`).
+- Heavy use of `match`, arrow fns `fn() =>`, ternaries, `??`, destructuring `[$a, $b] = …`, `compact()`, and
+  inline guard clauses (`if ( !$id ) return …;`).
+- **Ids are UUIDv7 `string`, never `int`** — do not copy `int $id` signatures from `vsample` (`arch.md` §9).
 
-## The canonical example (this is the exact hand)
+## Canonical examples (this is the exact hand)
+
+A Support class (mirrors `app/Support/str/Casing.php`):
 
 ```php
 <?php
@@ -54,7 +57,8 @@ class Cast {
 }
 ```
 
-Shape of a class with declarations + multiple methods:
+A class with declarations + multiple methods (note: declarations on top → one blank line → methods with
+breathing bodies and **no** blank line between them):
 
 ```php
 class HasBaseController {
@@ -63,30 +67,63 @@ class HasBaseController {
 
     public function index ( Request $req ): JsonResponse {
 
-        return $this->baseService->index($req->all(), $this->scopes, $this->permissions);
+        return $this->service->index($req->all(), $this->scopes, $this->permissions);
 
     }
     public function show ( Request $req, string $id ): JsonResponse {
 
-        return $this->baseService->show($id, $this->scopes, $this->permissions);
+        return $this->service->show($id, $this->scopes, $this->permissions);
 
     }
 
 }
 ```
 
-Note: declarations at top → one blank line → methods with breathing bodies and **no** blank line between
-them. (UUIDv7 ids are `string`, not `int` — see `arch.md` §9; `vsample` uses `int`, do not copy that.)
+A facade method delegating to an internal piece (mirrors `app/Support/str/index.php`):
+
+```php
+    /** @return list<string> */
+    public static function words ( string $value ): array {
+
+        return Casing::words($value);
+
+    }
+```
+
+A FormRequest (validation is mandatory on every write — `tolerance.md`):
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests;
+
+class CategoryRequest extends BaseRequest {
+
+    /** @return array<string, mixed> */
+    public function rules (): array {
+
+        return [
+            'name'        => ['required', 'string', 'max:120'],
+            'category_id' => ['nullable', 'uuid'],
+            'description' => ['nullable', 'string'],
+        ];
+
+    }
+
+}
+```
 
 ## Comments & PHPDoc
 
-- **Zero prose comments.** No explanatory comments, no section banners, no `// TODO`, except absolute
-  necessity (a genuinely non-obvious invariant). If the code needs a comment to be understood, rename and
-  restructure until it doesn't.
+- **Zero prose comments.** No explanatory comments, no section banners, no `// TODO`, except absolute necessity
+  (a genuinely non-obvious invariant). If the code needs a comment to be understood, rename and restructure
+  until it doesn't.
 - **PHPDoc is typing, not prose.** DELETE any docblock the native type already expresses
-  (`/** @return string */`, `/** @param string $x */` are pure noise). **KEEP ONLY** what PHP cannot
-  express natively: `list<…>`, `array<K, V>`, `non-empty-string`, `class-string<T>`, `@template T` +
-  generic `@param`/`@return T`.
+  (`/** @return string */`, `/** @param string $x */` are pure noise). **KEEP ONLY** what PHP cannot express
+  natively: `list<…>`, `array<K, V>`, `non-empty-string`, `class-string<T>`, `@template T` + generic
+  `@param`/`@return T`.
 - **Load-bearing test for a kept tag:** remove it, run the gate. Still green → it was noise, leave it out.
   Errors (`return.type` / `argument.type`) → it was a real contract, keep it.
 - **Array/iterable RETURNS are always documented** (mandatory — exempt from the load-bearing test): every
@@ -97,8 +134,7 @@ them. (UUIDv7 ids are `string`, not `int` — see `arch.md` §9; `vsample` uses 
 
 ## Discipline
 
-- Match the surrounding file's exact spacing and idiom before adding to it — read neighbours first.
+- Match the surrounding file's exact spacing and idiom before adding to it — **read neighbours first.**
 - No drive-by reformatting of code you are not changing. The smallest correct diff wins (`tolerance.md`).
-- `declare(strict_types=1);` is added by stubs automatically where stubs exist; if you hand-create a file,
-  add it yourself.
-</content>
+- `declare(strict_types=1);` is added by stubs automatically where stubs exist; if you hand-create a file, add
+  it yourself.
