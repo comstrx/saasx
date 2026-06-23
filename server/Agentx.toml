@@ -1,0 +1,10 @@
+[project]
+project_type = "laravel-octane-tenancy-api"
+max_rounds = 5
+max_fixes = 5
+gate_cmd = "composer verify"
+gate_timeout = 900
+manager_model = "claude"
+architect_models = ["claude"]
+executor_models = ["claude"]
+tester_models = ["claude"]

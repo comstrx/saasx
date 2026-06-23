@@ -4,7 +4,7 @@
 > This file is **how the system must be built**; `contracts/*.md` are **LAW** (non-negotiable, single-concern).
 > A future session may be a weaker model: everything needed to work with **zero questions** is in this file
 > and the contracts. The repo `README.md` "Technical Stack" is OUTDATED (it says Rust) — **the code, this
-> file, and the contracts are ground truth.** `vision.txt` is the owner's raw founding intent (the "why").
+> file, and the contracts are ground truth.**
 
 ## Read order — every turn, before touching anything
 
