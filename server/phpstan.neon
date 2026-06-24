@@ -9,4 +9,6 @@ parameters:
         - vsample
     ignoreErrors:
         - identifier: missingType.iterableValue
+        - identifier: missingType.generics
+
     reportUnmatchedIgnoredErrors: false

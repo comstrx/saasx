@@ -81,6 +81,31 @@ class Cache {
         Tag::reset(self::driver(), $tag);
 
     }
+    /** @param list<string> $tags */
+    public static function rememberShared ( string $key, ?int $ttl, callable $fn, array $tags = [] ): mixed {
+
+        $resolved = Key::shared($key);
+
+        if ( self::driver()->has($resolved) ) return self::driver()->get($resolved);
+
+        $entry = new Entry($fn(), $ttl, $tags);
+
+        self::driver()->put($resolved, $entry->value, $entry->ttl);
+
+        foreach ( $entry->tags as $tag ) self::driver()->addMembers(Key::sharedTag($tag), [$resolved]);
+
+        return $entry->value;
+
+    }
+    public static function resetShared ( string $tag ): void {
+
+        $resolved = Key::sharedTag($tag);
+
+        foreach ( self::driver()->members($resolved) as $member ) self::driver()->forget($member);
+
+        self::driver()->forgetMembers($resolved);
+
+    }
     public static function flush (): bool {
 
         return self::driver()->flush();

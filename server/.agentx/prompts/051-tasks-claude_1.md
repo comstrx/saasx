@@ -1,0 +1,13 @@
+Your current task is .agentx/tasks/0017-rbac-dna.md. The full ordered plan lives under .agentx/tasks/ for context, but THIS turn you
+drive .agentx/tasks/0017-rbac-dna.md and only it to done - do not jump ahead to later tasks. First read every prior executor report
+for this task in .agentx/reports/tasks/*.md and continue exactly from where the team left off; build on what is correct,
+replace only what is genuinely wrong, and say which and why.
+
+The MANAGER reviewed the last round and sent it back. Read .agentx/reports/manager/tasks-review.md and resolve EVERY point - each with a concrete fix, or a concrete, defensible reason it should stand. Do not argue without evidence and do not silently ignore a note. Then update your report to reflect exactly what changed and why.
+
+Final action - OVERWRITE your report at .agentx/reports/tasks/claude_1.md.
+If you changed nothing, the entire report is the single line `ship it`.
+Otherwise: the task, what you implemented / kept / changed / removed and the concrete WHY of each, why any
+rejected work was actually wrong (logic, contract, security, or business), which acceptance criteria are now
+met, the gate result, and remaining risks.
+End with the single line `ship it` ONLY if THIS task is complete, correct, and the gate passes.

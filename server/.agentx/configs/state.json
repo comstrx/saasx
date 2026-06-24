@@ -1,0 +1,40 @@
+{
+  "journey_id": "2026-06-23-191344",
+  "primed": true,
+  "intake_done": true,
+  "phase": "tests",
+  "status": "running",
+  "current_task": "",
+  "current_agent": "claude_1",
+  "current_round": 1,
+  "manager_review": "done",
+  "task_status": {
+    "0001-support-foundation.md": "shipped",
+    "0002-support-lock-throttle.md": "shipped",
+    "0003-support-queue-event.md": "shipped",
+    "0004-support-storage.md": "shipped",
+    "0005-support-mail.md": "shipped",
+    "0006-base-model.md": "shipped",
+    "0007-base-repository.md": "shipped",
+    "0008-base-service.md": "shipped",
+    "0009-base-resource.md": "shipped",
+    "0010-base-request.md": "shipped",
+    "0011-base-controller.md": "shipped",
+    "0012-hastenant-dna.md": "shipped",
+    "0013-tenant-probe.md": "shipped",
+    "0014-relations-dna.md": "shipped",
+    "0015-rbac-schema.md": "shipped",
+    "0016-rbac-resolver.md": "shipped",
+    "0017-rbac-dna.md": "shipped",
+    "0018-rbac-middleware.md": "shipped",
+    "0019-engagements-dna.md": "shipped"
+  },
+  "agents_done": [],
+  "agents_pending": [
+    "claude_1"
+  ],
+  "blocked": [],
+  "last_action": "round:agents",
+  "started_at": "2026-06-23T16:13:44.79569692Z",
+  "updated_at": "2026-06-24T02:34:22.002883687Z"
+}
