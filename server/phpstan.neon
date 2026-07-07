@@ -5,8 +5,6 @@ parameters:
     level: 8
     paths:
         - app
-    excludePaths:
-        - vsample
     ignoreErrors:
         - identifier: missingType.iterableValue
         - identifier: missingType.generics

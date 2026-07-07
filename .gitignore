@@ -1,4 +1,5 @@
 .cache
+.agentx
 .coverage
 .DS_Store
 .eslintcache

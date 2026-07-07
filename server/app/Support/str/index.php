@@ -2,237 +2,77 @@
 
 declare(strict_types=1);
 
-namespace App\Support;
-use App\Support\Str\Casing;
-use App\Support\Str\Clean;
-use App\Support\Str\Inflect;
-use App\Support\Str\Matches;
-use App\Support\Str\Random;
-use App\Support\Str\Slug;
-use App\Support\Str\Template;
+namespace App\Support\str;
 
-class Str {
+final class Str
+{
 
-    public static function lower ( string $value ): string {
+    public static function upper ( string $text ): string
+    {
 
-        return Casing::lower($value);
+        return mb_strtoupper($text);
 
     }
-    public static function upper ( string $value ): string {
+    public static function lower ( string $text ): string
+    {
 
-        return Casing::upper($value);
-
-    }
-    public static function title ( string $value ): string {
-
-        return Casing::title($value);
+        return mb_strtolower($text);
 
     }
-    public static function camel ( string $value ): string {
+    public static function camel ( string $text ): string
+    {
 
-        return Casing::camel($value);
+        $words = self::words($text);
 
-    }
-    public static function studly ( string $value ): string {
+        if ( $words === [] ) {
 
-        return Casing::studly($value);
+            return '';
 
-    }
-    public static function snake ( string $value, string $separator = '_' ): string {
+        }
 
-        return Casing::snake($value, $separator);
+        $head = array_shift($words);
 
-    }
-    public static function kebab ( string $value ): string {
-
-        return Casing::kebab($value);
+        return $head.implode('', array_map(self::ucfirst(...), $words));
 
     }
-    /** @return list<string> */
-    public static function words ( string $value ): array {
+    public static function snake ( string $text ): string
+    {
 
-        return Casing::words($value);
-
-    }
-    public static function squish ( string $value ): string {
-
-        return Clean::squish($value);
+        return implode('_', self::words($text));
 
     }
-    public static function ascii ( string $value ): string {
+    public static function kebab ( string $text ): string
+    {
 
-        return Clean::ascii($value);
-
-    }
-    public static function stripTags ( string $value, ?string $allowed = null ): string {
-
-        return Clean::stripTags($value, $allowed);
+        return implode('-', self::words($text));
 
     }
-    public static function digits ( string $value ): string {
+    private static function words ( string $text ): array
+    {
 
-        return Clean::digits($value);
+        $bounded = preg_replace('/([\p{Ll}\p{N}])(\p{Lu})/u', '$1 $2', $text);
 
-    }
-    public static function alpha ( string $value ): string {
+        if ( $bounded === null ) {
 
-        return Clean::alpha($value);
+            return [];
 
-    }
-    public static function alphanumeric ( string $value ): string {
+        }
 
-        return Clean::alphanumeric($value);
+        $parts = preg_split('/[\s_-]+/u', $bounded, -1, PREG_SPLIT_NO_EMPTY);
 
-    }
-    public static function limit ( string $value, int $limit = 100, string $end = '…' ): string {
+        if ( $parts === false ) {
 
-        return Clean::limit($value, $limit, $end);
+            return [];
 
-    }
-    public static function mask ( string $value, string $character = '*', int $index = 0, ?int $length = null ): string {
+        }
 
-        return Clean::mask($value, $character, $index, $length);
+        return array_map(mb_strtolower(...), $parts);
 
     }
-    public static function start ( string $value, string $prefix ): string {
+    private static function ucfirst ( string $word ): string
+    {
 
-        return Clean::start($value, $prefix);
-
-    }
-    public static function finish ( string $value, string $suffix ): string {
-
-        return Clean::finish($value, $suffix);
-
-    }
-    public static function slug ( string $value, string $separator = '-' ): string {
-
-        return Slug::make($value, $separator);
-
-    }
-    public static function asciiSlug ( string $value, string $separator = '-' ): string {
-
-        return Slug::ascii($value, $separator);
-
-    }
-    public static function replace ( string|array $search, string|array $replace, string $subject ): string {
-
-        return Clean::replace($search, $replace, $subject);
-
-    }
-    public static function replaceFirst ( string $search, string $replace, string $subject ): string {
-
-        return Clean::replaceFirst($search, $replace, $subject);
-
-    }
-    public static function replaceLast ( string $search, string $replace, string $subject ): string {
-
-        return Clean::replaceLast($search, $replace, $subject);
-
-    }
-    public static function remove ( string|array $search, string $subject ): string {
-
-        return Clean::remove($search, $subject);
-
-    }
-    public static function contains ( string $haystack, string|array $needles ): bool {
-
-        return Matches::contains($haystack, $needles);
-
-    }
-    public static function startsWith ( string $haystack, string|array $needles ): bool {
-
-        return Matches::startsWith($haystack, $needles);
-
-    }
-    public static function endsWith ( string $haystack, string|array $needles ): bool {
-
-        return Matches::endsWith($haystack, $needles);
-
-    }
-    public static function is ( string|array $pattern, string $value ): bool {
-
-        return Matches::is($pattern, $value);
-
-    }
-    public static function match ( string $pattern, string $value ): string {
-
-        return Matches::match($pattern, $value);
-
-    }
-    /** @return list<string> */
-    public static function matchAll ( string $pattern, string $value ): array {
-
-        return Matches::matchAll($pattern, $value);
-
-    }
-    public static function before ( string $subject, string $search ): string {
-
-        return Matches::before($subject, $search);
-
-    }
-    public static function beforeLast ( string $subject, string $search ): string {
-
-        return Matches::beforeLast($subject, $search);
-
-    }
-    public static function after ( string $subject, string $search ): string {
-
-        return Matches::after($subject, $search);
-
-    }
-    public static function afterLast ( string $subject, string $search ): string {
-
-        return Matches::afterLast($subject, $search);
-
-    }
-    public static function between ( string $subject, string $from, string $to ): string {
-
-        return Matches::between($subject, $from, $to);
-
-    }
-    public static function length ( string $value ): int {
-
-        return Matches::length($value);
-
-    }
-    public static function isBlank ( string $value ): bool {
-
-        return Matches::isBlank($value);
-
-    }
-    public static function random ( int $length = 16 ): string {
-
-        return Random::random($length);
-
-    }
-    public static function randomNumeric ( int $length = 6 ): string {
-
-        return Random::numeric($length);
-
-    }
-    public static function secure ( int $bytes = 16 ): string {
-
-        return Random::secure($bytes);
-
-    }
-    public static function render ( string $template, array $data, string $open = '{', string $close = '}' ): string {
-
-        return Template::render($template, $data, $open, $close);
-
-    }
-    public static function swap ( array $pairs, string $subject ): string {
-
-        return Template::swap($pairs, $subject);
-
-    }
-    public static function plural ( string $value, int $count = 2 ): string {
-
-        return Inflect::plural($value, $count);
-
-    }
-    public static function singular ( string $value ): string {
-
-        return Inflect::singular($value);
+        return mb_strtoupper(mb_substr($word, 0, 1)).mb_substr($word, 1);
 
     }
 

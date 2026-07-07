@@ -1,24 +1,36 @@
 [project]
-inspire    = "laravel-octane-tenancy-api"
-tests      = true
-max_rounds = 5
-max_fixes  = 5
+inspire       = "laravel-saas-tenancy-api"
+stage         = "dev"
+description   = ""
+
+[option]
+lint          = true
+format        = false
+audits        = true
+tests         = true
+fuzzes        = false
+benches       = false
+examples      = false
+comments      = false
+doc_blocks    = false
+doc_contracts = true
+train         = true
+clear         = true
 
 [gate]
-timeout = 900
-command = "composer verify"
+timeout = 1000
+command = "composer check"
 
 [agent]
+max_audits = 3
+max_rounds = 3
+max_fixes  = 3
 timeout    = 10000
-manager    = "claude"
-architects = ["claude"]
-executors  = ["claude"]
-testers    = ["claude"]
-
-[claude]
-model = "opus"
-effort = "max"
-
-[codex]
-model = "gpt-5-codex"
-effort = "high"
+manager    = { agent = "claude", model = "claude-opus-4-8", effort = "low" }
+requires   = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+tasks      = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+audits     = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+tests      = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+fuzzes     = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+benches    = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
+examples   = [ { agent = "claude", model = "claude-opus-4-8", effort = "low" } ]
