@@ -59,7 +59,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.1
+      - uses: comstrx/infrax@v0.2.2
       - uses: opentofu/setup-opentofu@v2
 
       - name: Verify
@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.1
+      - uses: comstrx/infrax@v0.2.2
       - uses: opentofu/setup-opentofu@v2
 
       - name: Plan
@@ -97,7 +97,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.1
+      - uses: comstrx/infrax@v0.2.2
 
       - name: Gate on CI
         env:
@@ -129,10 +129,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.1
+      - uses: comstrx/infrax@v0.2.2
       - uses: opentofu/setup-opentofu@v2
 
       - name: Destroy
         env:
           TOFU_ALLOW_DESTROY: 'true'
-        run: infrax -y tofu destroy
+          INFRAX_CONFIRM: ${{ inputs.stack }}
+        run: |
+          [[ "${STACK}" != "full" ]] || infrax k8s kubeconfig
+          infrax -y tofu destroy
