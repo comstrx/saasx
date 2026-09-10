@@ -59,7 +59,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.5
+      - uses: comstrx/infrax@v0.2.6
       - uses: opentofu/setup-opentofu@v2
 
       - name: Verify
@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.5
+      - uses: comstrx/infrax@v0.2.6
       - uses: opentofu/setup-opentofu@v2
 
       - name: Plan
@@ -97,7 +97,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.5
+      - uses: comstrx/infrax@v0.2.6
 
       - name: Gate on CI
         env:
@@ -129,7 +129,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: comstrx/infrax@v0.2.5
+      - uses: comstrx/infrax@v0.2.6
       - uses: opentofu/setup-opentofu@v2
 
       - name: Destroy
