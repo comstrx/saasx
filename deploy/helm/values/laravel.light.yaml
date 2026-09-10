@@ -3,7 +3,7 @@ runtime: laravel
 
 image:
   repository: 031871827635.dkr.ecr.eu-north-1.amazonaws.com/saasx/laravel
-  tag: "1fa27a77c196"
+  tag: "5d61529219fe"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: [pull-secret]

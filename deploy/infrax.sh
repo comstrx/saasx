@@ -4,7 +4,7 @@ set -Eeuo pipefail
 shopt -s inherit_errexit
 
 INFRAX_NAME="infrax"
-INFRAX_VERSION="0.2.4"
+INFRAX_VERSION="0.2.5"
 INFRAX_TEMPLATE_SHA="5fcbadeaaafb0314237a8e03076cc8c808c603f9aebeacea8f5bf0312b96ee51"
 INFRAX_DEV_TEMPLATE="${INFRAX_DEV_TEMPLATE-}"
 INFRAX_BIN="${INFRAX_BIN:-$(realpath -- "${BASH_SOURCE[0]}")}"
@@ -66,7 +66,7 @@ GCE_TYPE=e2-standard-2
 GCE_DISK_GB=40
 GCE_IMAGE=ubuntu-os-cloud/ubuntu-2404-lts-amd64
 
-K3S_VERSION=
+K3S_VERSION=v1.36.4+k3s1
 K8S_VERSION=1.36
 EKS_NODE_TYPE=c6i.xlarge
 GKE_NODE_TYPE=e2-standard-4
@@ -195,12 +195,13 @@ ACTIONLINT_VERSION=1.7.12
 GITLEAKS_VERSION=8.30.1
 TRIVY_VERSION=0.74.0
 CVE_ALLOW=false
+CVE_IGNORE=
 
 LOCAL_KEYS=AWS_PROFILE SSH_KEY
 SERVER_SKIP_KEYS=SSH_PASSWORD SSH_PRIVATE_KEY AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY GCP_CREDENTIALS
 
 INFRAX_NAME=infrax
-INFRAX_VERSION=0.2.4
+INFRAX_VERSION=0.2.5
 INFRAX_REPO=comstrx/infrax
 INFRAX_INSTALL_DIR=~/.local/bin
 TARGET_DIR=target
@@ -3385,18 +3386,20 @@ ci_accept () {
     warn "${finding} accepted via CVE_ALLOW."
 
 }
-## count the fixable CRITICAL findings of one image with trivy
+## count the fixable CRITICAL findings of one image with trivy — every one is printed, the ones CVE_IGNORE names are accepted
 ci_trivy () {
 
-    local image="${1:?Usage: ci trivy <image>}" report=""
+    local image="${1:?Usage: ci trivy <image>}" report="" ignore=""
 
     ensure trivy jq
 
     report="$(trivy image --scanners vuln --severity CRITICAL --ignore-unfixed --format json --quiet "${image}")"
+    ignore="$(jq -cn --arg list "${CVE_IGNORE:-}" '$list | gsub(","; " ") | split(" ") | map(select(length > 0))')"
 
-    jq -r '.Results[]? | .Target as $target | .Vulnerabilities[]? | "  \(.VulnerabilityID)  \(.PkgName) \(.InstalledVersion) → \(.FixedVersion)  (\($target))"' <<< "${report}" >&2
+    jq -r --argjson ignore "${ignore}" '.Results[]? | .Target as $target | .Vulnerabilities[]?
+        | "  \(.VulnerabilityID)  \(.PkgName) \(.InstalledVersion) → \(.FixedVersion)  (\($target))\(if (.VulnerabilityID | IN($ignore[])) then "  — accepted by CVE_IGNORE" else "" end)"' <<< "${report}" >&2
 
-    jq '[.Results[]?.Vulnerabilities // [] | length] | add // 0' <<< "${report}"
+    jq --argjson ignore "${ignore}" '[.Results[]? | (.Vulnerabilities // [])[] | select(.VulnerabilityID | IN($ignore[]) | not)] | length' <<< "${report}"
 
 }
 ## the CVE gate — every image scanned by trivy against one rule, wherever it lives: a fixable CRITICAL blocks unless accepted
