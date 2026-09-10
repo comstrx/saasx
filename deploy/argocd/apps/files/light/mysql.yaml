@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql-metrics
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: saasx
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus-mysql-exporter
+    targetRevision: 2.15.0
+    helm:
+      valuesObject:
+        podLabels:
+          infrax.io/peer: mysql
+        mysql:
+          host: mysql
+          port: 3306
+          user: infrax
+          existingPasswordSecret:
+            name: mysql-secrets
+            key: ROOT_PASSWORD
+        serviceMonitor:
+          enabled: true
+          namespace: monitoring
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: saasx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,37 @@
+name: redis
+mode: cluster
+image: redis:8.10.1-alpine
+port: 6379
+user: 999
+address: ""
+
+command: [sh, -c, 'exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"']
+
+env: {}
+
+secretEnv:
+  REDIS_PASSWORD: ROOT_PASSWORD
+
+dataPath: /data
+
+probe:
+  tcpSocket:
+    port: 6379
+
+resources:
+  requests: { cpu: 50m, memory: 256Mi }
+  limits: { memory: 1Gi }
+
+storage:
+  class: local-path
+  size: 5Gi
+
+clients: ["laravel", "rust"]
+metricsNamespace: monitoring
+
+scripts: {}
+
+init: {}
+
+backup:
+  enabled: false

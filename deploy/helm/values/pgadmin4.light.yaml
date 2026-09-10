@@ -1,0 +1,38 @@
+name: pgadmin4
+image: dpage/pgadmin4:9.17
+port: 5050
+user: 5050
+caps: []
+health: /misc/ping
+target: postgresql
+
+env:
+  PGADMIN_LISTEN_PORT: "5050"
+  PGADMIN_DEFAULT_EMAIL: "admin@zainlak.com"
+  PGADMIN_SERVER_JSON_FILE: /config/servers.json
+  PGADMIN_DISABLE_POSTFIX: "true"
+
+secretEnv:
+  PGADMIN_DEFAULT_PASSWORD: PASSWORD
+
+files:
+  servers.json: |
+    {"Servers": {"1": {"Name": "postgresql", "Group": "saasx", "Host": "postgresql", "Port": 5432, "MaintenanceDB": "postgres", "Username": "infrax", "SSLMode": "prefer"}}}
+filesPath: /config
+
+writable: [/var/lib/pgadmin, /tmp]
+
+resources:
+  requests: { cpu: 50m, memory: 256Mi }
+  limits: { memory: 768Mi }
+
+route:
+  enabled: true
+  gateway: gateway
+  gatewayNamespace: gateway
+  sectionName: https
+  hostnames: ["saasx-pgadmin.zainlak.com"]
+  auth: tools-auth
+  cidrs: []
+
+proxyNamespace: envoy-gateway-system

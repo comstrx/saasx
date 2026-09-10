@@ -1,0 +1,36 @@
+name: phpmyadmin
+image: phpmyadmin:5.2.3
+port: 8080
+user: 
+caps: ["CHOWN", "SETUID", "SETGID", "DAC_OVERRIDE", "FOWNER"]
+health: /
+target: mysql
+
+env:
+  PMA_HOST: "mysql"
+  PMA_PORT: "3306"
+  APACHE_PORT: "8080"
+  PMA_ABSOLUTE_URI: "https://saasx-phpmyadmin.zainlak.com/"
+  UPLOAD_LIMIT: 64M
+
+secretEnv: {}
+
+files: {}
+filesPath: /config
+
+writable: []
+
+resources:
+  requests: { cpu: 50m, memory: 128Mi }
+  limits: { memory: 512Mi }
+
+route:
+  enabled: true
+  gateway: gateway
+  gatewayNamespace: gateway
+  sectionName: https
+  hostnames: ["saasx-phpmyadmin.zainlak.com"]
+  auth: tools-auth
+  cidrs: []
+
+proxyNamespace: envoy-gateway-system

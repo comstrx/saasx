@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-metrics
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: saasx
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus-redis-exporter
+    targetRevision: 6.31.1
+    helm:
+      valuesObject:
+        podLabels:
+          infrax.io/peer: redis
+        redisAddress: redis://redis:6379
+        auth:
+          enabled: true
+          secret:
+            name: redis-secrets
+            key: ROOT_PASSWORD
+        serviceMonitor:
+          enabled: true
+          namespace: monitoring
+        extraArgs:
+          check-keys: ""
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: saasx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,66 @@
+name: go
+runtime: go
+
+image:
+  repository: 031871827635.dkr.ecr.eu-north-1.amazonaws.com/saasx/go
+  tag: "1fa27a77c196"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: [pull-secret]
+
+user: 65532
+port: 8080
+probe: http
+health: "/health"
+
+env:
+  SERVICE_RUST_URL: "http://rust:8080"
+
+processes:
+  web:
+    command: []
+    port: 8080
+    route: ""
+    replicas: 1
+    grace: 30
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { memory: 256Mi }
+
+autoscaling:
+  min: 1
+  max: 2
+  cpu: 75
+
+rollout:
+  surge: 0
+  unavailable: 1
+
+storage:
+  enabled: false
+  class: local-path
+  size: 10Gi
+  mount: "/data"
+
+route:
+  enabled: false
+  gateway: gateway
+  gatewayNamespace: gateway
+  sectionName: https
+  hostnames: []
+
+netpol:
+  proxyNamespace: envoy-gateway-system
+  metricsNamespace: "monitoring"
+  callers: ["laravel"]
+
+migrate:
+  command: []
+
+provision: [{"module": "postgresql", "key": "POSTGRESQL", "image": "postgres:18.6-alpine", "user": 70, "host": "postgresql", "port": 5432, "extensions": ""}]
+
+metrics:
+  path: ""
+
+serviceAccount:
+  annotations: {}

@@ -1,0 +1,83 @@
+name: laravel
+runtime: laravel
+
+image:
+  repository: 031871827635.dkr.ecr.eu-north-1.amazonaws.com/saasx/laravel
+  tag: "1fa27a77c196"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: [pull-secret]
+
+user: 33
+port: 8000
+probe: http
+health: "/up"
+
+env:
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "https://saasx-api.zainlak.com"
+  LOG_CHANNEL: "stderr"
+  OCTANE_SERVER: "frankenphp"
+  SERVICE_GO_URL: "http://go:8080"
+  SERVICE_RUST_URL: "http://rust:8080"
+  SERVICE_NODE_URL: "http://node:8080"
+  SERVICE_PYTHON_URL: "http://python:8080"
+
+processes:
+  web:
+    command: []
+    port: 8000
+    route: ""
+    replicas: 1
+    grace: 30
+    resources:
+      requests: { cpu: 100m, memory: 512Mi }
+      limits: { memory: 1Gi }
+  horizon:
+    command: ["php", "artisan", "horizon"]
+    port: 0
+    route: ""
+    replicas: 1
+    grace: 90
+    resources:
+      requests: { cpu: 50m, memory: 384Mi }
+      limits: { memory: 1536Mi }
+
+autoscaling:
+  min: 1
+  max: 2
+  cpu: 75
+
+rollout:
+  surge: 0
+  unavailable: 1
+
+storage:
+  enabled: false
+  class: local-path
+  size: 10Gi
+  mount: "/app/storage/app"
+
+route:
+  enabled: true
+  gateway: gateway
+  gatewayNamespace: gateway
+  sectionName: https
+  hostnames: ["saasx-api.zainlak.com", "saasx-horizon.zainlak.com"]
+
+netpol:
+  proxyNamespace: envoy-gateway-system
+  metricsNamespace: "monitoring"
+  callers: []
+
+migrate:
+  command: ["php", "artisan", "migrate", "--force"]
+
+provision: [{"module": "postgresql", "key": "POSTGRESQL", "image": "postgres:18.6-alpine", "user": 70, "host": "postgresql", "port": 5432, "extensions": ""}]
+
+metrics:
+  path: ""
+
+serviceAccount:
+  annotations: {}

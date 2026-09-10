@@ -1,0 +1,66 @@
+name: node
+runtime: node
+
+image:
+  repository: 031871827635.dkr.ecr.eu-north-1.amazonaws.com/saasx/node
+  tag: "1fa27a77c196"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: [pull-secret]
+
+user: 65532
+port: 8080
+probe: http
+health: "/health"
+
+env:
+  NODE_ENV: "production"
+
+processes:
+  web:
+    command: []
+    port: 8080
+    route: ""
+    replicas: 1
+    grace: 30
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { memory: 512Mi }
+
+autoscaling:
+  min: 1
+  max: 2
+  cpu: 75
+
+rollout:
+  surge: 0
+  unavailable: 1
+
+storage:
+  enabled: false
+  class: local-path
+  size: 10Gi
+  mount: "/data"
+
+route:
+  enabled: false
+  gateway: gateway
+  gatewayNamespace: gateway
+  sectionName: https
+  hostnames: []
+
+netpol:
+  proxyNamespace: envoy-gateway-system
+  metricsNamespace: "monitoring"
+  callers: ["laravel", "python"]
+
+migrate:
+  command: []
+
+provision: [{"module": "mysql", "key": "MYSQL", "image": "mysql:8.4.11", "user": 999, "host": "mysql", "port": 3306, "extensions": ""}]
+
+metrics:
+  path: ""
+
+serviceAccount:
+  annotations: {}
