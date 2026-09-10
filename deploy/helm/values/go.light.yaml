@@ -3,7 +3,7 @@ runtime: go
 
 image:
   repository: 031871827635.dkr.ecr.eu-north-1.amazonaws.com/saasx/go
-  tag: "5d61529219fe"
+  tag: "84ce322d1115"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: [pull-secret]
