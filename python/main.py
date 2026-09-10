@@ -1,6 +1,8 @@
 """The python service of the saasx lab: stock reports kept in postgresql and object storage."""
 
+import asyncio
 import json
+import logging
 import os
 import uuid
 from contextlib import asynccontextmanager
@@ -9,9 +11,10 @@ from pathlib import Path
 
 import boto3
 import httpx
+import psycopg
 from botocore.exceptions import ClientError
-from fastapi import FastAPI, HTTPException
-from psycopg_pool import AsyncConnectionPool
+from fastapi import Depends, FastAPI, HTTPException
+from psycopg_pool import AsyncConnectionPool, PoolTimeout
 from starlette.concurrency import run_in_threadpool
 
 SCHEMA = """
@@ -26,6 +29,8 @@ NODE_URL = os.environ.get("SERVICE_NODE_URL", "")
 BUCKET = os.environ.get("STORAGE_BUCKET", "")
 ROOT = Path(os.environ.get("STORAGE_PATH") or "/data")
 
+log = logging.getLogger("uvicorn.error")
+ready = asyncio.Event()
 pool = AsyncConnectionPool(os.environ.get("DATABASE_URL", ""), open=False, min_size=1, max_size=5)
 client = httpx.AsyncClient(timeout=5)
 s3 = (
@@ -35,20 +40,46 @@ s3 = (
 )
 
 
+async def migrate() -> None:
+    """Lay the schema once the database answers — the port is open long before, the report routes wait for it."""
+    await pool.open(wait=False)
+
+    attempt = 0
+
+    while True:
+        attempt += 1
+
+        try:
+            async with pool.connection(timeout=5) as conn:
+                await conn.execute(SCHEMA)
+        except (psycopg.Error, PoolTimeout, OSError) as error:
+            if attempt % 15 == 1:
+                log.warning("database not ready (%d): %s", attempt, error)
+            await asyncio.sleep(2)
+            continue
+
+        ready.set()
+        log.info("database ready after %d attempt(s)", attempt)
+        return
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    await pool.open(wait=True, timeout=60)
-
-    async with pool.connection() as conn:
-        await conn.execute(SCHEMA)
+    task = asyncio.create_task(migrate())
 
     yield
 
+    task.cancel()
     await client.aclose()
     await pool.close()
 
 
 app = FastAPI(title="saasx-python", lifespan=lifespan)
+
+
+def stored() -> None:
+    if not ready.is_set():
+        raise HTTPException(503, "database not ready")
 
 
 async def call(url: str) -> dict:
@@ -90,7 +121,7 @@ async def mesh() -> dict:
     return {"service": "python", "runtime": "python", "calls": {"node": await call(f"{NODE_URL}/mesh")}}
 
 
-@app.post("/reports", status_code=201)
+@app.post("/reports", status_code=201, dependencies=[Depends(stored)])
 async def create_report() -> dict:
     stock = await call(f"{NODE_URL}/stock")
     report = uuid.uuid4()
@@ -104,7 +135,7 @@ async def create_report() -> dict:
     return {"id": str(report), "items": items, "stored": "bucket" if s3 else "volume"}
 
 
-@app.get("/reports")
+@app.get("/reports", dependencies=[Depends(stored)])
 async def list_reports() -> dict:
     async with pool.connection() as conn:
         rows = await (await conn.execute("SELECT id, items, created_at FROM reports ORDER BY created_at DESC LIMIT 100")).fetchall()
@@ -112,7 +143,7 @@ async def list_reports() -> dict:
     return {"reports": [{"id": str(id_), "items": items, "created_at": at.isoformat()} for id_, items, at in rows], "count": len(rows)}
 
 
-@app.get("/reports/{report}")
+@app.get("/reports/{report}", dependencies=[Depends(stored)])
 async def show_report(report: uuid.UUID) -> dict:
     try:
         return json.loads(await run_in_threadpool(get, f"reports/{report}.json"))

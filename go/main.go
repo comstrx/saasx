@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -35,6 +36,7 @@ type item struct {
 
 type app struct {
 	db     *pgxpool.Pool
+	ready  atomic.Bool
 	client *http.Client
 	rust   string
 }
@@ -43,21 +45,23 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	db, err := connect(ctx, os.Getenv("DATABASE_URL"))
+	db, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
-		slog.Error("database unreachable", "err", err)
+		slog.Error("DATABASE_URL is not a postgres url", "err", err)
 		os.Exit(1)
 	}
 	defer db.Close()
 
 	a := &app{db: db, client: &http.Client{Timeout: 5 * time.Second}, rust: os.Getenv("SERVICE_RUST_URL")}
 
+	go a.migrate(ctx)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", a.health)
 	mux.HandleFunc("GET /mesh", a.mesh)
-	mux.HandleFunc("GET /items", a.list)
-	mux.HandleFunc("POST /items", a.create)
-	mux.HandleFunc("GET /items/{id}", a.show)
+	mux.HandleFunc("GET /items", a.stored(a.list))
+	mux.HandleFunc("POST /items", a.stored(a.create))
+	mux.HandleFunc("GET /items/{id}", a.stored(a.show))
 
 	srv := &http.Server{Addr: ":" + env("PORT", "8080"), Handler: mux, ReadHeaderTimeout: 5 * time.Second}
 
@@ -78,33 +82,38 @@ func main() {
 	}
 }
 
-func connect(ctx context.Context, url string) (*pgxpool.Pool, error) {
-	db, err := pgxpool.New(ctx, url)
-	if err != nil {
-		return nil, err
-	}
-
+// migrate lays the schema once the database answers — the port is open long before, the data routes wait for it.
+func (a *app) migrate(ctx context.Context) {
 	for attempt := 1; ; attempt++ {
-		if _, err = db.Exec(ctx, schema); err == nil || attempt == 30 {
-			break
+		_, err := a.db.Exec(ctx, schema)
+		if err == nil {
+			a.ready.Store(true)
+			slog.Info("database ready", "attempt", attempt)
+
+			return
 		}
 
-		slog.Warn("database not ready", "attempt", attempt, "err", err)
+		if attempt%15 == 1 {
+			slog.Warn("database not ready", "attempt", attempt, "err", err)
+		}
 
 		select {
 		case <-ctx.Done():
-			db.Close()
-			return nil, ctx.Err()
+			return
 		case <-time.After(2 * time.Second):
 		}
 	}
+}
 
-	if err != nil {
-		db.Close()
-		return nil, err
+func (a *app) stored(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !a.ready.Load() {
+			reply(w, http.StatusServiceUnavailable, map[string]string{"error": "database not ready"})
+			return
+		}
+
+		next(w, r)
 	}
-
-	return db, nil
 }
 
 func (a *app) health(w http.ResponseWriter, _ *http.Request) {

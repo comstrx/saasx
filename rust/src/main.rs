@@ -1,6 +1,11 @@
 //! The rust service of the saasx lab: a hit counter and price quotes, kept in redis.
 
-use std::{env, net::SocketAddr, time::Duration};
+use std::{
+    env,
+    net::SocketAddr,
+    sync::{Arc, OnceLock},
+    time::Duration,
+};
 
 use axum::{
     Json, Router,
@@ -12,10 +17,21 @@ use redis::{AsyncCommands, aio::ConnectionManager};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
+type Failure = (StatusCode, Json<Value>);
+
 #[derive(Clone)]
 struct App {
-    redis: ConnectionManager,
+    redis: Arc<OnceLock<ConnectionManager>>,
     prefix: String,
+}
+
+impl App {
+    fn redis(&self) -> Result<ConnectionManager, Failure> {
+        self.redis
+            .get()
+            .cloned()
+            .ok_or_else(|| failure(StatusCode::SERVICE_UNAVAILABLE, "redis not ready"))
+    }
 }
 
 #[derive(Deserialize)]
@@ -40,13 +56,18 @@ fn usd() -> String {
 
 #[tokio::main]
 async fn main() {
-    let url = env::var("REDIS_URL").expect("REDIS_URL is bound by infrax");
-    let client = redis::Client::open(url).expect("REDIS_URL is not a redis url");
-
     let app = App {
-        redis: connect(client).await,
+        redis: Arc::new(OnceLock::new()),
         prefix: env::var("REDIS_KEY_PREFIX").unwrap_or_default(),
     };
+
+    match env::var("REDIS_URL").map(redis::Client::open) {
+        Ok(Ok(client)) => {
+            tokio::spawn(connect(client, Arc::clone(&app.redis)));
+        }
+        Ok(Err(error)) => eprintln!("REDIS_URL is not a redis url: {error}"),
+        Err(_) => eprintln!("REDIS_URL is not bound — the counter and the quotes stay dark"),
+    }
 
     let router = Router::new()
         .route("/health", get(|| async { Json(json!({ "status": "ok" })) }))
@@ -75,17 +96,21 @@ async fn main() {
         .expect("the server failed");
 }
 
-async fn connect(client: redis::Client) -> ConnectionManager {
-    for attempt in 1..=30 {
+/// Connect once redis answers — the port is open long before, the redis routes wait for it.
+async fn connect(client: redis::Client, cell: Arc<OnceLock<ConnectionManager>>) {
+    for attempt in 1u32.. {
         match ConnectionManager::new(client.clone()).await {
-            Ok(manager) => return manager,
-            Err(error) => eprintln!("redis not ready ({attempt}): {error}"),
+            Ok(manager) => {
+                let _ = cell.set(manager);
+                println!("redis ready after {attempt} attempt(s)");
+                return;
+            }
+            Err(error) if attempt % 15 == 1 => eprintln!("redis not ready ({attempt}): {error}"),
+            Err(_) => {}
         }
 
         tokio::time::sleep(Duration::from_secs(2)).await;
     }
-
-    panic!("redis never answered");
 }
 
 async fn shutdown() {
@@ -98,9 +123,9 @@ async fn shutdown() {
     }
 }
 
-async fn counter(State(mut app): State<App>) -> Result<Json<Value>, StatusCode> {
-    let hits: i64 = app
-        .redis
+async fn counter(State(app): State<App>) -> Result<Json<Value>, Failure> {
+    let mut redis = app.redis()?;
+    let hits: i64 = redis
         .incr(format!("{}hits", app.prefix), 1)
         .await
         .map_err(internal)?;
@@ -109,13 +134,17 @@ async fn counter(State(mut app): State<App>) -> Result<Json<Value>, StatusCode> 
 }
 
 async fn quote(
-    State(mut app): State<App>,
+    State(app): State<App>,
     Json(request): Json<QuoteRequest>,
-) -> Result<(StatusCode, Json<Quote>), StatusCode> {
+) -> Result<(StatusCode, Json<Quote>), Failure> {
     if !(0..=1_000_000_000_000).contains(&request.cents) || request.currency.len() != 3 {
-        return Err(StatusCode::UNPROCESSABLE_ENTITY);
+        return Err(failure(
+            StatusCode::UNPROCESSABLE_ENTITY,
+            "cents (0 to 10^12) and a three-letter currency are required",
+        ));
     }
 
+    let mut redis = app.redis()?;
     let fee = request.cents * 29 / 1000 + 30;
     let tax = request.cents * 14 / 100;
 
@@ -128,8 +157,7 @@ async fn quote(
     };
 
     let body = serde_json::to_string(&quote).map_err(internal)?;
-    let _: () = app
-        .redis
+    let _: () = redis
         .set(format!("{}quotes:last", app.prefix), body)
         .await
         .map_err(internal)?;
@@ -137,19 +165,23 @@ async fn quote(
     Ok((StatusCode::CREATED, Json(quote)))
 }
 
-async fn last(State(mut app): State<App>) -> Result<Json<Value>, StatusCode> {
-    let raw: Option<String> = app
-        .redis
+async fn last(State(app): State<App>) -> Result<Json<Value>, Failure> {
+    let mut redis = app.redis()?;
+    let raw: Option<String> = redis
         .get(format!("{}quotes:last", app.prefix))
         .await
         .map_err(internal)?;
-    let raw = raw.ok_or(StatusCode::NOT_FOUND)?;
+    let raw = raw.ok_or_else(|| failure(StatusCode::NOT_FOUND, "no quote yet"))?;
 
     serde_json::from_str(&raw).map(Json).map_err(internal)
 }
 
-fn internal<E: std::fmt::Display>(error: E) -> StatusCode {
+fn failure(status: StatusCode, error: &str) -> Failure {
+    (status, Json(json!({ "error": error })))
+}
+
+fn internal<E: std::fmt::Display>(error: E) -> Failure {
     eprintln!("request failed: {error}");
 
-    StatusCode::INTERNAL_SERVER_ERROR
+    failure(StatusCode::INTERNAL_SERVER_ERROR, "internal error")
 }
