@@ -1,0 +1,8 @@
+.env
+.secret*
+!.secret*.example
+.infrax/
+**/node_modules/
+**/.venv/
+**/__pycache__/
+rust/target/
