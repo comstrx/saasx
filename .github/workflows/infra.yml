@@ -30,9 +30,23 @@ defaults:
   run:
     shell: bash
 
+# each secret by name — a public repo holds toJSON(secrets) for approval, and infrax reads the process env first anyway
 env:
   STACK: ${{ inputs.stack || 'light' }}
-  GIT_BRANCH: ${{ github.ref_name }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+  ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+  GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+  POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+  PGADMIN4_PASSWORD: ${{ secrets.PGADMIN4_PASSWORD }}
+  TOOLS_PASSWORD: ${{ secrets.TOOLS_PASSWORD }}
+  SERVICE_LARAVEL_ENV_FILE: ${{ secrets.SERVICE_LARAVEL_ENV_FILE }}
 
 jobs:
   verify:
@@ -49,8 +63,6 @@ jobs:
       - uses: opentofu/setup-opentofu@v2
 
       - name: Verify
-        env:
-          JSON_ENV: ${{ toJSON(secrets) }}
         run: infrax ci verify
 
   plan:
@@ -67,8 +79,6 @@ jobs:
       - uses: opentofu/setup-opentofu@v2
 
       - name: Plan
-        env:
-          JSON_ENV: ${{ toJSON(secrets) }}
         run: infrax tofu init && infrax tofu plan
 
   release:
@@ -92,21 +102,17 @@ jobs:
       - name: Gate on CI
         env:
           GH_TOKEN: ${{ github.token }}
-          JSON_ENV: ${{ toJSON(secrets) }}
         run: infrax ci gate
 
       - uses: opentofu/setup-opentofu@v2
 
       - name: Release
         env:
-          JSON_ENV: ${{ toJSON(secrets) }}
           CVE_ALLOW: ${{ inputs.accept_cves || false }}
         run: infrax -y ci release
 
       - name: Outcome
         if: always()
-        env:
-          JSON_ENV: ${{ toJSON(secrets) }}
         run: infrax ci outcome "${{ job.status }}"
 
   destroy:
@@ -128,6 +134,5 @@ jobs:
 
       - name: Destroy
         env:
-          JSON_ENV: ${{ toJSON(secrets) }}
           TOFU_ALLOW_DESTROY: 'true'
         run: infrax -y tofu destroy
