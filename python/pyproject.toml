@@ -1,0 +1,12 @@
+[project]
+name = "saasx-python"
+version = "0.1.0"
+description = "The python service of the saasx lab: stock reports kept in postgresql and object storage"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3",
+    "fastapi",
+    "httpx",
+    "psycopg[binary,pool]",
+    "uvicorn",
+]
