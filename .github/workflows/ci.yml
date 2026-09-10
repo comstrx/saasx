@@ -117,7 +117,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.0.1
 
       - name: Sync and import
         run: uv sync --frozen --python 3.14 && uv run --frozen python -c "import main"
