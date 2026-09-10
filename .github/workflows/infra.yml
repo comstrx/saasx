@@ -1,0 +1,133 @@
+name: Infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        description: What to run
+        options: [verify, plan, release, destroy]
+        default: verify
+
+      stack:
+        type: choice
+        description: The stack it acts on
+        options: [light, full]
+        default: light
+
+      accept_cves:
+        type: boolean
+        description: Accept the CRITICAL findings this release carries
+        default: false
+
+  push:
+    branches: [main]
+    paths-ignore: ['deploy/**']
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  STACK: ${{ inputs.stack || 'light' }}
+  GIT_BRANCH: ${{ github.ref_name }}
+
+jobs:
+  verify:
+    if: github.event_name == 'push' || inputs.action == 'verify'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: comstrx/infrax@v0.2.1
+      - uses: opentofu/setup-opentofu@v2
+
+      - name: Verify
+        env:
+          JSON_ENV: ${{ toJSON(secrets) }}
+        run: infrax ci verify
+
+  plan:
+    if: inputs.action == 'plan'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: comstrx/infrax@v0.2.1
+      - uses: opentofu/setup-opentofu@v2
+
+      - name: Plan
+        env:
+          JSON_ENV: ${{ toJSON(secrets) }}
+        run: infrax tofu init && infrax tofu plan
+
+  release:
+    if: ${{ !cancelled() && ((github.event_name == 'push' && needs.verify.result == 'success') || inputs.action == 'release') }}
+    needs: [verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    permissions:
+      contents: write
+      actions: read
+
+    concurrency:
+      group: release-${{ inputs.stack || 'light' }}
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: comstrx/infrax@v0.2.1
+
+      - name: Gate on CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JSON_ENV: ${{ toJSON(secrets) }}
+        run: infrax ci gate
+
+      - uses: opentofu/setup-opentofu@v2
+
+      - name: Release
+        env:
+          JSON_ENV: ${{ toJSON(secrets) }}
+          CVE_ALLOW: ${{ inputs.accept_cves || false }}
+        run: infrax -y ci release
+
+      - name: Outcome
+        if: always()
+        env:
+          JSON_ENV: ${{ toJSON(secrets) }}
+        run: infrax ci outcome "${{ job.status }}"
+
+  destroy:
+    if: inputs.action == 'destroy'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+
+    concurrency:
+      group: release-${{ inputs.stack }}
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: comstrx/infrax@v0.2.1
+      - uses: opentofu/setup-opentofu@v2
+
+      - name: Destroy
+        env:
+          JSON_ENV: ${{ toJSON(secrets) }}
+          TOFU_ALLOW_DESTROY: 'true'
+        run: infrax -y tofu destroy
