@@ -2,7 +2,8 @@
 
 <div align="center">
   <br/>
-  <img height="150" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
+  <img height="130" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
+  <br/>
   <br/>
   <br/>
 </div>
@@ -10,7 +11,7 @@
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)](https://github.com/comstrx/saasx/releases/latest)
 
-`saasx` is a production-grade Saas Project.
+`saasx` is a production-grade multi-tenant, multi-role, multi-product enterprise SaaS and the proving ground from which ToolX is extracted.
 
 ## Overview
 
