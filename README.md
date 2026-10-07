@@ -1,9 +1,7 @@
 # ✨ SaasX
 
 <div align="center">
-  <br/>
-  <img height="230" src="https://github.com/user-attachments/assets/d1c18d6c-9f61-4782-80c1-6d7eda2dc0ad" />
-  <br/>
+  <img height="300" src="https://github.com/user-attachments/assets/677de749-2b88-4c9f-a577-215d8dd857c3" />
   <br/>
 </div>
 
