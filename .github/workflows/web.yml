@@ -1,0 +1,54 @@
+# name: Web
+
+# on:
+#   push:
+#     branches: [main]
+#     paths-ignore:
+#       - "api/**"
+#       - "infra/**"
+#       - "mobile/**"
+#       - "skill/**"
+
+#   pull_request:
+#     paths-ignore:
+#       - "api/**"
+#       - "infra/**"
+#       - "mobile/**"
+#       - "skill/**"
+
+#   workflow_dispatch:
+
+# concurrency:
+#   group: ci-${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
+
+# permissions:
+#   contents: read
+
+# defaults:
+#   run:
+#     shell: bash
+#     working-directory: web
+
+# jobs:
+#   verify:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 15
+
+#     steps:
+#       - uses: actions/checkout@v7
+#       - uses: pnpm/action-setup@v6
+#         with:
+#           package_json_file: web/package.json
+
+#       - uses: actions/setup-node@v7
+#         with:
+#           node-version-file: web/.node-version
+#           cache: pnpm
+#           cache-dependency-path: web/pnpm-lock.yaml
+
+#       - name: Install
+#         run: pnpm install --frozen-lockfile
+
+#       - name: Verify
+#         run: pnpm verify
