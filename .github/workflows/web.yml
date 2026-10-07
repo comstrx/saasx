@@ -1,54 +1,59 @@
-# name: Web
+name: Web
 
-# on:
-#   push:
-#     branches: [main]
-#     paths-ignore:
-#       - "api/**"
-#       - "infra/**"
-#       - "mobile/**"
-#       - "skill/**"
+on:
+  push:
+    branches: [ main ]
 
-#   pull_request:
-#     paths-ignore:
-#       - "api/**"
-#       - "infra/**"
-#       - "mobile/**"
-#       - "skill/**"
+    paths-ignore:
+      - "api/**"
+      - "infra/**"
+      - "mobile/**"
+      - "skill/**"
 
-#   workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - "api/**"
+      - "infra/**"
+      - "mobile/**"
+      - "skill/**"
 
-# concurrency:
-#   group: ci-${{ github.workflow }}-${{ github.ref }}
-#   cancel-in-progress: true
+  workflow_dispatch:
 
-# permissions:
-#   contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-# defaults:
-#   run:
-#     shell: bash
-#     working-directory: web
+permissions:
+  contents: read
 
-# jobs:
-#   verify:
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 15
+defaults:
+  run:
+    shell: bash
+    working-directory: web
 
-#     steps:
-#       - uses: actions/checkout@v7
-#       - uses: pnpm/action-setup@v6
-#         with:
-#           package_json_file: web/package.json
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
-#       - uses: actions/setup-node@v7
-#         with:
-#           node-version-file: web/.node-version
-#           cache: pnpm
-#           cache-dependency-path: web/pnpm-lock.yaml
+    steps:
+      - uses: actions/checkout@v7
 
-#       - name: Install
-#         run: pnpm install --frozen-lockfile
+      # - uses: pnpm/action-setup@v6
+      #   with:
+      #     package_json_file: web/package.json
 
-#       - name: Verify
-#         run: pnpm verify
+      # - uses: actions/setup-node@v7
+      #   with:
+      #     node-version-file: web/.node-version
+      #     cache: pnpm
+      #     cache-dependency-path: web/pnpm-lock.yaml
+
+      # - name: Install
+      #   run: pnpm install --frozen-lockfile
+
+      # - name: Verify
+      #   run: pnpm verify
+
+      - name: Test
+        run: echo Done
