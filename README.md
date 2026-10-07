@@ -2,13 +2,12 @@
 
 <div align="center">
   <br/>
-  <img height="160" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
+  <img height="150" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
   <br/>
   <br/>
 </div>
 
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
-[![CI](https://github.com/comstrx/saasx/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)](https://github.com/comstrx/saasx/releases/latest)
 
 `saasx` is a production-grade Saas Project.
