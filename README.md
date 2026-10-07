@@ -5,7 +5,6 @@
   <img height="130" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
   <br/>
   <br/>
-  <br/>
 </div>
 
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
