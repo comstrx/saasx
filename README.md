@@ -7,7 +7,7 @@
   <br/>
 </div>
 
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](#license)
 [![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)](https://github.com/comstrx/saasx/releases/latest)
 
 `saasx` is a production-grade multi-tenant, multi-role, multi-product enterprise SaaS and the proving ground from which ToolX is extracted.
@@ -26,10 +26,6 @@
 
 ## License
 
-<code>saasx</code> is dual-licensed under either
-[MIT](https://github.com/comstrx/saasx/blob/main/LICENSE-MIT) or
-[Apache-2.0](https://github.com/comstrx/saasx/blob/main/LICENSE-APACHE), at your option.
+Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in this work by you, as defined in the Apache-2.0 license, shall be
-dual-licensed as above, without any additional terms or conditions.
+Licensed under the [GNU Affero General Public License v3.0](./LICENSE).
