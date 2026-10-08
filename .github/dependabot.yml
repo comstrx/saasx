@@ -1,0 +1,45 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "global(deps)"
+
+  # Uncomment each entry when its part has a manifest; Dependabot errors on an empty directory.
+
+  # - package-ecosystem: cargo
+  #   directory: /api
+  #   schedule: { interval: weekly, day: monday }
+  #   groups: { rust: { patterns: ["*"] } }
+  #   commit-message: { prefix: "api(deps)" }
+
+  # - package-ecosystem: cargo
+  #   directory: /infra
+  #   schedule: { interval: weekly, day: monday }
+  #   groups: { rust: { patterns: ["*"] } }
+  #   commit-message: { prefix: "infra(deps)" }
+
+  # - package-ecosystem: cargo
+  #   directory: /skill
+  #   schedule: { interval: weekly, day: monday }
+  #   groups: { rust: { patterns: ["*"] } }
+  #   commit-message: { prefix: "skill(deps)" }
+
+  # - package-ecosystem: npm
+  #   directory: /web
+  #   schedule: { interval: weekly, day: monday }
+  #   groups: { js: { patterns: ["*"] } }
+  #   commit-message: { prefix: "web(deps)" }
+
+  # - package-ecosystem: npm
+  #   directory: /mobile
+  #   schedule: { interval: weekly, day: monday }
+  #   groups: { js: { patterns: ["*"] } }
+  #   commit-message: { prefix: "mobile(deps)" }

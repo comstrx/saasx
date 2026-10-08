@@ -28,7 +28,7 @@ If the above is not available, email the maintainer privately: <comstrx@gmail.co
 
 ## Include this (makes triage fast)
 
-- affected crate(s) + the commit or tag you are on
+- affected part (`api`, `infra`, `skill`, `web`, `mobile`) and crate/package + the commit or tag you are on
 - impact (what can an attacker do?) + assumptions / threat model
 - minimal reproduction or PoC (safe and small)
 - environment details

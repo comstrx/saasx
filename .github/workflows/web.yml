@@ -3,19 +3,14 @@ name: Web
 on:
   push:
     branches: [ main ]
-
-    paths-ignore:
-      - "api/**"
-      - "infra/**"
-      - "mobile/**"
-      - "skill/**"
+    paths:
+      - "web/**"
+      - ".github/workflows/web.yml"
 
   pull_request:
-    paths-ignore:
-      - "api/**"
-      - "infra/**"
-      - "mobile/**"
-      - "skill/**"
+    paths:
+      - "web/**"
+      - ".github/workflows/web.yml"
 
   workflow_dispatch:
 
@@ -34,26 +29,12 @@ defaults:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v7
 
-      # - uses: pnpm/action-setup@v6
-      #   with:
-      #     package_json_file: web/package.json
+      # Toolchain setup and the part's `verify` gate are wired when the part lands.
 
-      # - uses: actions/setup-node@v7
-      #   with:
-      #     node-version-file: web/.node-version
-      #     cache: pnpm
-      #     cache-dependency-path: web/pnpm-lock.yaml
-
-      # - name: Install
-      #   run: pnpm install --frozen-lockfile
-
-      # - name: Verify
-      #   run: pnpm verify
-
-      - name: Test
-        run: echo Done
+      - name: Verify
+        run: echo "web — no gate yet"

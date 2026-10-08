@@ -1,3 +1,13 @@
+.git/
+.github/
+.gitattributes
+.editorconfig
+.gitignore
+.dockerignore
+Dockerfile*
+LICENSE
+*.md
+
 **/.env*
 **/.var*
 **/.secret*

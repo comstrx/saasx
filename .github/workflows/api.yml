@@ -1,0 +1,40 @@
+name: Api
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "api/**"
+      - ".github/workflows/api.yml"
+
+  pull_request:
+    paths:
+      - "api/**"
+      - ".github/workflows/api.yml"
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: api
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Toolchain setup and the part's `verify` gate are wired when the part lands.
+
+      - name: Verify
+        run: echo "api — no gate yet"

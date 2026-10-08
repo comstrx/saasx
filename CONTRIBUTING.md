@@ -31,9 +31,9 @@ If you are unsure about scope, start with a short [discussion](https://github.co
 
 1. Fork the repo and clone it locally.
 2. Create a new branch for your change.
-3. Follow the development instructions in the [README](https://github.com/comstrx/saasx/blob/main/README.md) and the [gate list](https://github.com/comstrx/saasx/blob/main/docs/index.md#gates).
+3. Follow the [README](https://github.com/comstrx/saasx/blob/main/README.md), then the README of the part you are changing (`api/`, `web/`, `mobile/`, `infra/`, `skill/`) — each part owns its own setup and `verify` gate.
 4. Make your change, add/adjust tests/docs as needed.
-5. Open a PR and follow the [PR template/checklist](https://github.com/comstrx/saasx/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
+5. Open a PR scoped to one part when possible and follow the [PR template](https://github.com/comstrx/saasx/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
 
 ---
 
@@ -43,7 +43,8 @@ Before opening a PR, make sure:
 
 - ✅ The change is easy to understand and review
 - ✅ Tests pass and new behavior is covered (when applicable)
-- ✅ Formatting/lints follow the repository standards
+- ✅ The part's `verify` gate passes locally (formatting, lints, tests)
+- ✅ Commit messages use the part prefix: `api(...)`, `web(...)`, `mobile(...)`, `infra(...)`, `skill(...)`, or `global(...)`
 - ✅ Docs/examples match the new behavior (if changed)
 
 ---

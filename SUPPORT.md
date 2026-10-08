@@ -9,7 +9,7 @@ Welcome! This page is the fastest way to get help with `saasx` with the least ba
 | Ask a question / discuss design   | 💬 [Discussions](https://github.com/comstrx/saasx/discussions)          |
 | Report a reproducible bug         | 🐞 [Issues](https://github.com/comstrx/saasx/issues)                    |
 | Report a security issue (private) | 🔒 [Security](https://github.com/comstrx/saasx/security/advisories/new) |
-| Read docs / guides                | 📚 [Docs](https://github.com/comstrx/saasx/tree/main/docs)              |
+| Read docs / guides                | 📚 [README](https://github.com/comstrx/saasx/blob/main/README.md) + each part's README |
 | Review recent changes             | 🧾 [Commits](https://github.com/comstrx/saasx/commits/main)             |
 
 ---
@@ -32,11 +32,12 @@ When opening an Issue, please include:
 - Minimal repro: exact steps + code (or a small public repo)
 - Versions:
   - `saasx` commit or tag
+  - the part involved (`api`, `infra`, `skill`, `web`, `mobile`)
 - Environment: OS + architecture (Linux x86_64, macOS arm64, Windows x86_64, etc.)
 - Output: exact error/logs (copy as text, not screenshots)
 - If relevant: feature flags and a backtrace
 
-Helpful links (if available):
+Helpful links:
 
 - [Bug report template](https://github.com/comstrx/saasx/issues/new?template=bug_report.md)
 - [Feature request template](https://github.com/comstrx/saasx/issues/new?template=feature_request.md)
