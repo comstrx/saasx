@@ -1,0 +1,59 @@
+@font-face { font-family: "Site-en"; src: url("/assets/fonts/latin.ttf"); font-weight: 200 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Site-ar"; src: url("/assets/fonts/arabic-regular.ttf"); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Site-ar"; src: url("/assets/fonts/arabic-semibold.ttf"); font-weight: 600; font-style: normal; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; }
+:root {
+    --body: #f5f5f5;
+    --panel: #ffffff;
+    --popup: #ffffff;
+    --control: #ffffff;
+    --menu: #ffffff;
+    --track: #efefef;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --placeholder: #737373;
+    --disabled: #a3a3a3;
+    --edge: #ebebeb;
+    --float: #e0e0e0;
+    --line: #ebebeb;
+    --strong: #e0e0e0;
+    --field: #949494;
+    --focus: #1c1c1c;
+    --primary: #0aa38a;
+    --accent: #087f6c;
+    --action: #087f6c;
+    --ember: #e86a2c;
+    --offer: #b4470f;
+    --success: #0b7a49;
+    --warning: #8a5300;
+    --danger: #b0292f;
+    --info: #1f5fb3;
+}
+[data-theme="dark"] {
+    --body: #0a0a0a;
+    --panel: #141414;
+    --popup: #1c1c1c;
+    --control: #242424;
+    --menu: #2c2c2c;
+    --track: #0f0f0f;
+    --ink: #ededed;
+    --muted: #a3a3a3;
+    --placeholder: #8f8f8f;
+    --disabled: #5c5c5c;
+    --edge: #1f1f1f;
+    --float: #ffffff1c;
+    --line: #ffffff14;
+    --strong: #ffffff1c;
+    --field: #686868;
+    --focus: #ededed;
+    --primary: #1fbb9c;
+    --accent: #1fbb9c;
+    --action: #087f6c;
+    --ember: #f08a4c;
+    --offer: #f39a5d;
+    --success: #4cc38a;
+    --warning: #f0b44c;
+    --danger: #ff8a8f;
+    --info: #7fb0ff;
+}
+:root[lang="en"] { --font-sans: "Site-en", "Site-ar", sans-serif; }
+:root[lang="ar"] { --font-sans: "Site-ar", "Site-en", sans-serif; }

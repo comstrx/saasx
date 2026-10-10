@@ -1,0 +1,213 @@
+
+# cargo-vet config file
+
+[cargo-vet]
+version = "0.10"
+
+[[exemptions.aho-corasick]]
+version = "1.1.5"
+criteria = "safe-to-run"
+
+[[exemptions.alloca]]
+version = "0.4.0"
+criteria = "safe-to-run"
+
+[[exemptions.anes]]
+version = "0.1.6"
+criteria = "safe-to-run"
+
+[[exemptions.anstyle]]
+version = "1.0.14"
+criteria = "safe-to-run"
+
+[[exemptions.autocfg]]
+version = "1.5.1"
+criteria = "safe-to-run"
+
+[[exemptions.cast]]
+version = "0.3.0"
+criteria = "safe-to-run"
+
+[[exemptions.cc]]
+version = "1.6.0"
+criteria = "safe-to-run"
+
+[[exemptions.cfg-if]]
+version = "1.0.5"
+criteria = "safe-to-run"
+
+[[exemptions.ciborium]]
+version = "0.2.2"
+criteria = "safe-to-run"
+
+[[exemptions.ciborium-io]]
+version = "0.2.2"
+criteria = "safe-to-run"
+
+[[exemptions.ciborium-ll]]
+version = "0.2.2"
+criteria = "safe-to-run"
+
+[[exemptions.clap]]
+version = "4.6.7"
+criteria = "safe-to-run"
+
+[[exemptions.clap_builder]]
+version = "4.6.7"
+criteria = "safe-to-run"
+
+[[exemptions.clap_lex]]
+version = "1.1.1"
+criteria = "safe-to-run"
+
+[[exemptions.criterion]]
+version = "0.8.1"
+criteria = "safe-to-run"
+
+[[exemptions.criterion-plot]]
+version = "0.8.2"
+criteria = "safe-to-run"
+
+[[exemptions.crunchy]]
+version = "0.2.4"
+criteria = "safe-to-run"
+
+[[exemptions.either]]
+version = "1.19.0"
+criteria = "safe-to-run"
+
+[[exemptions.find-msvc-tools]]
+version = "0.1.14"
+criteria = "safe-to-run"
+
+[[exemptions.half]]
+version = "2.7.1"
+criteria = "safe-to-run"
+
+[[exemptions.itertools]]
+version = "0.13.0"
+criteria = "safe-to-run"
+
+[[exemptions.itoa]]
+version = "1.0.18"
+criteria = "safe-to-run"
+
+[[exemptions.libc]]
+version = "0.2.190"
+criteria = "safe-to-run"
+
+[[exemptions.memchr]]
+version = "2.8.3"
+criteria = "safe-to-run"
+
+[[exemptions.num-traits]]
+version = "0.2.19"
+criteria = "safe-to-run"
+
+[[exemptions.oorandom]]
+version = "11.1.5"
+criteria = "safe-to-run"
+
+[[exemptions.page_size]]
+version = "0.6.0"
+criteria = "safe-to-run"
+
+[[exemptions.proc-macro2]]
+version = "1.0.107"
+criteria = "safe-to-run"
+
+[[exemptions.quote]]
+version = "1.0.47"
+criteria = "safe-to-run"
+
+[[exemptions.regex]]
+version = "1.13.1"
+criteria = "safe-to-run"
+
+[[exemptions.regex-automata]]
+version = "0.4.18"
+criteria = "safe-to-run"
+
+[[exemptions.regex-syntax]]
+version = "0.8.11"
+criteria = "safe-to-run"
+
+[[exemptions.same-file]]
+version = "1.0.6"
+criteria = "safe-to-run"
+
+[[exemptions.serde]]
+version = "1.0.229"
+criteria = "safe-to-run"
+
+[[exemptions.serde_core]]
+version = "1.0.229"
+criteria = "safe-to-run"
+
+[[exemptions.serde_derive]]
+version = "1.0.229"
+criteria = "safe-to-run"
+
+[[exemptions.serde_json]]
+version = "1.0.151"
+criteria = "safe-to-run"
+
+[[exemptions.shlex]]
+version = "2.0.1"
+criteria = "safe-to-run"
+
+[[exemptions.syn]]
+version = "2.0.119"
+criteria = "safe-to-run"
+
+[[exemptions.syn]]
+version = "3.0.6"
+criteria = "safe-to-run"
+
+[[exemptions.tinytemplate]]
+version = "1.2.1"
+criteria = "safe-to-run"
+
+[[exemptions.unicode-ident]]
+version = "1.0.26"
+criteria = "safe-to-run"
+
+[[exemptions.walkdir]]
+version = "2.5.0"
+criteria = "safe-to-run"
+
+[[exemptions.winapi]]
+version = "0.3.9"
+criteria = "safe-to-run"
+
+[[exemptions.winapi-i686-pc-windows-gnu]]
+version = "0.4.0"
+criteria = "safe-to-run"
+
+[[exemptions.winapi-util]]
+version = "0.1.11"
+criteria = "safe-to-run"
+
+[[exemptions.winapi-x86_64-pc-windows-gnu]]
+version = "0.4.0"
+criteria = "safe-to-run"
+
+[[exemptions.windows-link]]
+version = "0.2.1"
+criteria = "safe-to-run"
+
+[[exemptions.windows-sys]]
+version = "0.61.2"
+criteria = "safe-to-run"
+
+[[exemptions.zerocopy]]
+version = "0.8.62"
+criteria = "safe-to-run"
+
+[[exemptions.zerocopy-derive]]
+version = "0.8.62"
+criteria = "safe-to-run"
+
+[[exemptions.zmij]]
+version = "1.0.23"
+criteria = "safe-to-run"

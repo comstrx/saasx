@@ -1,0 +1,145 @@
+name: Engine
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'engine/**'
+      - '.github/workflows/engine.yml'
+
+  pull_request:
+    paths:
+      - 'engine/**'
+      - '.github/workflows/engine.yml'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_NIGHTLY: nightly-2026-10-08
+
+defaults:
+  run:
+    shell: bash
+    working-directory: engine/rust
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          components: rustfmt
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72 # v1.25.2
+
+      - name: Install gate tools
+        run: cargo binstall --no-confirm cargo-nextest cargo-deny
+
+      - name: Verify
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- verify
+
+  supply:
+    name: supply chain
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72 # v1.25.2
+
+      - name: Install supply-chain tools
+        run: cargo binstall --no-confirm cargo-vet cargo-udeps cargo-hack cargo-semver-checks
+
+      - name: Vet
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- vet
+
+      - name: Udeps
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- udeps
+
+      - name: Hack
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- hack
+
+      - name: Semver
+        if: github.event_name == 'pull_request'
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- semver --baseline "origin/${{ github.base_ref }}"
+  node:
+    name: node
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: engine/node
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          package_json_file: engine/node/package.json
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: engine/node/.node-version
+          cache: pnpm
+          cache-dependency-path: engine/node/pnpm-lock.yaml
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify
+        run: pnpm verify
+
+  gate:
+    name: gate
+    if: always()
+    needs: [verify, supply, node]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Require every job
+        working-directory: .
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          failed=0
+
+          while IFS='=' read -r job result; do
+              printf '%-10s %s\n' "${result}" "${job}"
+              [[ "${result}" == "success" ]] || failed=1
+          done < <(jq -r 'to_entries[] | "\(.key)=\(.value.result)"' <<< "${RESULTS}")
+
+          (( failed == 0 )) || { echo "gate: required jobs did not succeed." >&2; exit 1; }

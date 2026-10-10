@@ -1,0 +1,19 @@
+[package]
+name = "hello"
+publish.workspace = true
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "The one service that exists while the engine is built: it exercises each DSL as it lands."
+
+[dependencies]
+base.workspace = true
+
+[[bin]]
+name = "hello"
+path = "src/main.rs"
+
+[lints]
+workspace = true

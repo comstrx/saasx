@@ -1,0 +1,19 @@
+[package]
+name = "tests"
+publish.workspace = true
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Public-API contract tests for the foundation crates, linked the way a consumer links."
+
+[dependencies]
+base.workspace = true
+
+[[test]]
+name = "base"
+path = "base.rs"
+
+[lints]
+workspace = true

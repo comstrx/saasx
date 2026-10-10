@@ -1,0 +1,25 @@
+{
+  "name": "engine",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "engines": {
+    "node": ">=26.11.1",
+    "pnpm": ">=12.10.0"
+  },
+  "scripts": {
+    "verify": "pnpm check && pnpm lint && pnpm test",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome ci .",
+    "fmt": "biome check --write .",
+    "test": "vitest run",
+    "bench": "vitest bench --run"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "26.6.5",
+    "base": "workspace:*",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  }
+}

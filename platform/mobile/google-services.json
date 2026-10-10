@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95513821558",
+    "project_id": "zainlak-app",
+    "storage_bucket": "zainlak-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95513821558:android:3b970e2508177f03913a57",
+        "android_client_info": {
+          "package_name": "com.zainlak.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCb_TsEbeT_mCSoNyOYLNusA2Twc9cDyTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

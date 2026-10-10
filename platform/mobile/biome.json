@@ -1,0 +1,68 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": ["**", "!ios", "!android", "!.expo", "!assets"]
+    },
+    "formatter": {
+        "enabled": false
+    },
+    "linter": {
+        "enabled": true,
+        "domains": {
+            "react": "recommended",
+            "test": "recommended",
+            "project": "recommended"
+        },
+        "rules": {
+            "preset": "recommended",
+            "correctness": {
+                "noUnusedImports": "error",
+                "noUnusedVariables": "error",
+                "useExhaustiveDependencies": "error"
+            },
+            "suspicious": {
+                "noExplicitAny": "error",
+                "noConsole": "error",
+                "noImportCycles": "error"
+            },
+            "style": {
+                "noNonNullAssertion": "error",
+                "useConst": "error",
+                "useImportType": "error",
+                "useFilenamingConvention": {
+                    "level": "error",
+                    "options": {
+                        "filenameCases": ["kebab-case"],
+                        "requireAscii": true
+                    }
+                }
+            }
+        }
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["scripts/**"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

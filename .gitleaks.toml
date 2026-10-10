@@ -1,0 +1,44 @@
+title = "Gitleaks Configurations"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore generated/build artifacts"
+paths = [
+    '''(^|/)\.git/''',
+    '''(^|/)\.vscode/''',
+    '''(^|/)\.vs/''',
+    '''(^|/)\.idea/''',
+    '''(^|/)\.next/''',
+    '''(^|/)\.nuxt/''',
+    '''(^|/)\.turbo/''',
+    '''(^|/)\.cache/''',
+    '''(^|/)node_modules/''',
+    '''(^|/)dist/''',
+    '''(^|/)build/''',
+    '''(^|/)target/''',
+    '''(^|/)vendor/''',
+    '''(^|/)venv/''',
+    '''(^|/)\.venv/''',
+    '''(^|/)__pycache__/''',
+    '''(^|/)\.pytest_cache/''',
+    '''(^|/)\.mypy_cache/''',
+    '''(^|/)\.ruff_cache/''',
+    '''(^|/)\.nyc_output/''',
+    '''(?i)\.(?:zip|tar|tgz|gz|7z|rar|jar|war)$''',
+    '''(?i)\.(?:png|jpe?g|gif|webp|bmp|ico|pdf|exe|dll|so|dylib|bin|woff2?|ttf|eot)$''',
+]
+
+[[allowlists]]
+description = "Ignore the local, git-ignored secret file (git history is scanned separately in CI)"
+paths = ['''(^|/)\.secret$''']
+
+[[allowlists]]
+description = "Ignore obvious placeholders"
+regexTarget = "secret"
+regexes = [
+    '''(?i)\b(?:fake|dummy|example|sample|placeholder|redacted)\b''',
+    '''(?i)\b(?:xxxx+|yyyy+|zzzz+|0000+|1111+)\b''',
+    '''(?i)\b(?:your[-_ ]?(?:api[-_ ]?)?key|your[-_ ]?token|insert[-_ ]?here)\b''',
+]

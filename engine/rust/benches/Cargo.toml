@@ -1,0 +1,23 @@
+[package]
+name = "benches"
+publish.workspace = true
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Criterion benchmarks of the foundation crates."
+
+[dependencies]
+base.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "base"
+path = "base.rs"
+harness = false
+
+[lints]
+workspace = true

@@ -1,0 +1,421 @@
+{
+    "home": {
+        "title": "A world to discover. A place for you.",
+        "description": "Unforgettable stays, everyday favourites, and experiences worth going out for. Find your next with Zainlak.",
+        "deals": "Deals",
+        "map": "Browse destinations",
+        "types": "Everything Zainlak offers",
+        "latest": "Just added",
+        "destinations": "Destinations",
+        "categories": "Browse by category",
+        "offers": "Offers worth taking",
+        "journal": "Travel journal",
+        "typesBody": "Ten ways to plan, book and enjoy — all with one account.",
+        "latestBody": "Fresh stays, tickets and experiences added this week.",
+        "assuranceTitle": "Book with confidence",
+        "assuranceBody": "Every booking comes with the same promises.",
+        "destinationsBody": "Where travellers are booking this season.",
+        "categoriesBody": "Shows, matches, tours and services people love most.",
+        "hosts": "Hosts you can count on",
+        "hostsBody": "Verified partners with the best guest ratings.",
+        "journalBody": "Visa guides, local tips and stories from the road."
+    },
+    "screens": {
+        "stays": {
+            "title": "Stays",
+            "description": "Hand-picked hotels, apartments and suites, and the price you see includes taxes and fees.",
+            "headline": "Book your stay in 40+ cities",
+            "perks": {
+                "cancel": "Free cancellation on most stays",
+                "arrival": "Pay at the property",
+                "support": "24/7 support"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "map": "Browse destinations"
+            },
+            "results": "{count, plural, =0 {No stays} one {# stay} other {# stays}}"
+        },
+        "homes": {
+            "title": "Homes",
+            "description": "Apartments, studios and villas to settle into for a while.",
+            "results": "{count, plural, =0 {No homes} one {# home} other {# homes}}",
+            "headline": "Homes with room to breathe",
+            "perks": {
+                "one": "Whole places to yourself",
+                "two": "Prices include fees",
+                "three": "Free cancellation on many homes"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse categories"
+            }
+        },
+        "experiences": {
+            "title": "Experiences",
+            "description": "Tours and day trips led by people who know the place.",
+            "results": "{count, plural, =0 {No experiences} one {# experience} other {# experiences}}",
+            "headline": "Days out worth remembering",
+            "perks": {
+                "one": "Led by people who know the place",
+                "two": "Prices include fees",
+                "three": "Free cancellation on many tours"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse destinations"
+            }
+        },
+        "events": {
+            "title": "Events",
+            "description": "Exhibitions, festivals and nights out, with dates to plan around.",
+            "results": "{count, plural, =0 {No events} one {# event} other {# events}}",
+            "headline": "What’s on, from concerts to festivals",
+            "perks": {
+                "one": "Seats confirmed at booking",
+                "two": "E-tickets in your account",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse destinations"
+            }
+        },
+        "tickets": {
+            "title": "Tickets",
+            "description": "Entry to landmarks, museums, matches and shows.",
+            "results": "{count, plural, =0 {No tickets} one {# ticket} other {# tickets}}",
+            "headline": "Skip the line at the places you came for",
+            "perks": {
+                "one": "Entry codes in your account",
+                "two": "Pick your date",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse destinations"
+            }
+        },
+        "transport": {
+            "title": "Transport",
+            "description": "Trains, buses and transfers between cities.",
+            "results": "{count, plural, =0 {No rides} one {# ride} other {# rides}}",
+            "headline": "Get there by road, rail or air",
+            "perks": {
+                "one": "Transfers, buses and car rentals",
+                "two": "Prices include fees",
+                "three": "Free cancellation on many rides"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse destinations"
+            }
+        },
+        "services": {
+            "title": "Services",
+            "description": "Help on the ground, from bookings to appointments.",
+            "results": "{count, plural, =0 {No services} one {# service} other {# services}}",
+            "headline": "Trusted help, at home or online",
+            "perks": {
+                "one": "Verified providers",
+                "two": "Book a time that suits you",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse categories"
+            }
+        },
+        "visas": {
+            "title": "Visas",
+            "description": "Visa applications and extensions, handled for you.",
+            "results": "{count, plural, =0 {No visas} one {# visa} other {# visas}}",
+            "headline": "Visas handled from your phone",
+            "perks": {
+                "one": "Clear document checklists",
+                "two": "Track every step in your account",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Ask our team"
+            }
+        },
+        "insurance": {
+            "title": "Insurance",
+            "description": "Travel cover that fits your trip and its length.",
+            "results": "{count, plural, =0 {No plans} one {# plan} other {# plans}}",
+            "headline": "Cover for every kind of trip",
+            "perks": {
+                "one": "Policies issued to your account",
+                "two": "Choose your coverage dates",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Ask our team"
+            }
+        },
+        "shop": {
+            "title": "Shop",
+            "description": "Travel gear and essentials, delivered to you.",
+            "results": "{count, plural, =0 {No products} one {# product} other {# products}}",
+            "headline": "Travel gear and everyday finds",
+            "perks": {
+                "one": "Delivery tracked in your account",
+                "two": "Easy returns on eligible items",
+                "three": "Prices include fees"
+            },
+            "actions": {
+                "offers": "This week’s deals",
+                "more": "Browse categories"
+            }
+        },
+        "search": {
+            "title": "Search",
+            "description": "Everything Zainlak offers, in one place.",
+            "label": "Search"
+        },
+        "login": {
+            "title": "Sign in",
+            "description": "Book faster and keep your trips and favourites in one place."
+        },
+        "register": {
+            "title": "Create your account",
+            "description": "One account for stays, trips and everything in between."
+        },
+        "recover": {
+            "title": "Reset your password",
+            "description": "Enter your account phone or email to receive a recovery code or link."
+        },
+        "reset": {
+            "title": "Choose a new password",
+            "description": "Pick a password you haven’t used here before."
+        },
+        "checkout": {
+            "title": "Confirm and pay",
+            "description": "Review your booking, choose how to pay and confirm."
+        },
+        "orders": {
+            "title": "Your bookings",
+            "description": "Every stay, trip and order in one place.",
+            "label": "Bookings"
+        },
+        "order": {
+            "title": "Booking details",
+            "description": "Everything about this booking, and what you can do next."
+        },
+        "favorites": {
+            "title": "Favorites",
+            "description": "Everything you’ve saved, in one place.",
+            "label": "Favorites"
+        },
+        "notifications": {
+            "title": "Notifications",
+            "description": "Updates about your bookings, payments and messages."
+        },
+        "wallet": {
+            "title": "Wallet",
+            "description": "Your balance, top-ups, transfers and every movement."
+        },
+        "categories": {
+            "title": "Categories",
+            "description": "Everything Zainlak offers, sorted the way you plan a trip."
+        },
+        "category": {
+            "title": "Category",
+            "description": "Every option in this category, with prices that include fees."
+        },
+        "destinations": {
+            "title": "Destinations",
+            "description": "Cities and countries with stays, tours and trips ready to book."
+        },
+        "destination": {
+            "title": "Destination",
+            "description": "Stays, tours, tickets and more, ready to book here."
+        },
+        "offers": {
+            "title": "Deals",
+            "description": "Limited-time savings on stays, trips and tickets, applied at checkout."
+        },
+        "blog": {
+            "title": "Travel journal",
+            "description": "Guides, visa know-how and stories from the places we cover."
+        },
+        "vendor": {
+            "title": "Host",
+            "description": "Everything this host offers on Zainlak, with reviews from guests."
+        },
+        "about": {
+            "title": "About Zainlak",
+            "description": "Who we are and how we work with hosts and travellers.",
+            "label": "About"
+        },
+        "terms": {
+            "title": "Terms of service",
+            "description": "The terms that apply when you book with Zainlak.",
+            "label": "Terms"
+        },
+        "privacy": {
+            "title": "Privacy policy",
+            "description": "What we collect, why, and how you control it.",
+            "label": "Privacy"
+        },
+        "confirmEmail": {
+            "title": "Confirm your email",
+            "description": "Confirm that this email address belongs to you."
+        },
+        "socialCallback": {
+            "title": "Completing sign-in",
+            "description": "Completing sign-in"
+        },
+        "cart": {
+            "title": "Your cart",
+            "description": "Keep your plans together and review your saved choices.",
+            "label": "Cart"
+        },
+        "settings": {
+            "title": "Account settings",
+            "description": "Your details and preferences, kept together.",
+            "label": "Personal details"
+        },
+        "preferences": {
+            "title": "Account preferences",
+            "description": "A browsing experience that feels right for you.",
+            "label": "Preferences"
+        },
+        "security": {
+            "title": "Login & security",
+            "description": "Your password and signed-in devices, under your control.",
+            "label": "Login and security"
+        },
+        "notificationSettings": {
+            "title": "Notification preferences",
+            "description": "The updates you want, through the channels you choose.",
+            "label": "Notification settings"
+        },
+        "contact": {
+            "title": "Contact us",
+            "description": "Reach our team by phone, email or WhatsApp — we’re here every day.",
+            "label": "Contact"
+        },
+        "home": {
+            "label": "Home"
+        },
+        "offer": {
+            "title": "Offer",
+            "description": "Savings you can book now, applied automatically at checkout."
+        },
+        "support": {
+            "title": "Help and support",
+            "description": "Your requests to our team, with every answer in one place.",
+            "label": "Help"
+        },
+        "rewards": {
+            "title": "Rewards and level",
+            "label": "Rewards",
+            "description": "Your level, points and the rewards you can still earn."
+        },
+        "referrals": {
+            "title": "Invite friends",
+            "label": "Referrals",
+            "description": "Share your link and earn rewards when friends book."
+        },
+        "coupons": {
+            "title": "Coupons",
+            "label": "Coupons",
+            "description": "Codes you can save and use at checkout."
+        },
+        "reviews": {
+            "title": "Your reviews",
+            "label": "Reviews",
+            "description": "Reviews you shared about your stays and trips."
+        },
+        "missing": {
+            "title": "Page not found",
+            "description": "The page you asked for doesn’t exist or has moved."
+        },
+        "place": {
+            "title": "Place",
+            "description": "A landmark or point of interest, with what you can book nearby."
+        },
+        "campaign": {
+            "title": "Campaign",
+            "description": "A limited-time campaign with its offers and the deals that carry them."
+        },
+        "activity": {
+            "title": "Your activity",
+            "label": "Activity",
+            "description": "Account events, your comments and the reports you sent."
+        },
+        "messages": {
+            "title": "Messages",
+            "label": "Messages",
+            "description": "Conversations with hosts and our support team."
+        },
+        "account": {
+            "title": "Your account",
+            "label": "Overview",
+            "description": "Everything about your account in one place."
+        },
+        "promo": {
+            "title": "A friend sent you a link",
+            "description": "We saved your invitation and are taking you there."
+        },
+        "documents": {
+            "title": "Documents & verification",
+            "label": "Documents",
+            "description": "Verify your identity and keep the files your bookings ask for in one place."
+        }
+    },
+    "detail": {
+        "similar": "More like this",
+        "reviewNote": "Only guests who booked through Zainlak can leave a review."
+    },
+    "destinations": {
+        "popular": "Popular destinations",
+        "countries": "Countries to explore",
+        "places": "Places to explore"
+    },
+    "categories": {
+        "others": "More categories"
+    },
+    "offers": {
+        "live": "Running now",
+        "explore": "Explore Zainlak",
+        "everything": "Applies across Zainlak"
+    },
+    "blog": {
+        "latest": "Latest articles",
+        "more": "More from the journal"
+    },
+    "vendor": {
+        "reviews": "Guest reviews"
+    },
+    "welcome": {
+        "title": "Welcome to Zainlak",
+        "body": "Book stays, experiences and visas in one place, with clear prices and support in Arabic.",
+        "start": "Start exploring",
+        "later": "Later",
+        "close": "Close welcome",
+        "benefits": {
+            "prices": "All-in prices, no surprises at checkout",
+            "cancel": "Free cancellation on most bookings",
+            "support": "Arabic support around the clock"
+        }
+    },
+    "articles": {
+        "explore": "Explore Zainlak"
+    },
+    "wallet": {
+        "transferHint": "Money moves instantly between Zainlak wallets.",
+        "cardBrand": "Zainlak Wallet"
+    },
+    "finder": {
+        "open": "Search Zainlak",
+        "explore": "Explore Zainlak"
+    },
+    "promotions": {
+        "body": "Share a link to Zainlak or to any listing. Friends who sign up through it are credited to you."
+    }
+}

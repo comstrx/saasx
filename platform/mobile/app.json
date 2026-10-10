@@ -1,0 +1,101 @@
+{
+  "expo": {
+    "name": "Zainlak",
+    "slug": "zainlak",
+    "scheme": "zainlak",
+    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "enabled": false
+    },
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/image/brand/logo/icon.png",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.zainlak.app",
+      "infoPlist": {
+        "ExpoLocalization_supportsRTL": true
+      }
+    },
+    "android": {
+      "package": "com.zainlak.app",
+      "googleServicesFile": "./google-services.json",
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#042a2e",
+        "foregroundImage": "./assets/image/brand/logo/adaptive-foreground.png",
+        "backgroundImage": "./assets/image/brand/logo/adaptive-background.png",
+        "monochromeImage": "./assets/image/brand/logo/adaptive-monochrome.png"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-image",
+      "expo-updates",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/image/brand/logo/notification.png",
+          "color": "#0aa38a",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "react-native-edge-to-edge",
+        {
+          "android": {
+            "enforceNavigationBarContrast": false
+          }
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "allowDynamicLocaleChangesAndroid": true
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#fcfcfb",
+          "dark": {
+            "backgroundColor": "#121216"
+          },
+          "image": "./assets/image/brand/logo/splash.png",
+          "imageWidth": 136
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": true,
+          "enableBackgroundRecording": false
+        }
+      ],
+      "expo-image-picker",
+      "expo-video",
+      "expo-location",
+      "react-native-maps"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aec4ba01-bed1-4811-8ab3-50f5f5b202ac"
+      }
+    },
+    "owner": "comstrx"
+  }
+}

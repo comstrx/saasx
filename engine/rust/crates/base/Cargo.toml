@@ -1,0 +1,15 @@
+[package]
+name = "base"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+readme.workspace = true
+publish.workspace = true
+description = "The shared substrate every other crate in the foundation is built on."
+categories = ["no-std", "rust-patterns"]
+keywords = ["core", "types", "foundation"]
+
+[lints]
+workspace = true

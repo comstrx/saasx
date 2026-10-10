@@ -25,35 +25,51 @@ SaasX builds the evidence.
 ToolX captures the engineering and knowledge.
 ```
 
-Stack: Rust for the backend and infrastructure, Next.js for every web surface, React Native for mobile.
+Stack: Rust for the backend, infrastructure and knowledge runtime; Next.js for every web surface; React Native for mobile.
 
-## Parts
+## Layout
 
-One repository, five parts. Each part is a real product component and the incubator of exactly one ToolX tool.
+One repository, two layers. `engine/` holds the two generic foundations; `platform/` holds the five parts built on them. Every part is a real product component and the incubator of exactly one ToolX tool.
 
-| Part | What it is | Becomes |
-| --- | --- | --- |
-| [`api/`](./api) | The backend. A generic `core` (errors, memory, parsing, validation, database, cache, process, HTTP) with the SaasX domain built on top of it. `core` never depends on anything outside itself. | **RustX** |
-| [`infra/`](./infra) | A self-contained Rust infrastructure engine: providers, resources, state, plan, apply, deploy, rollback, health. SaasX intent lives only in manifests. | **InfraX** |
-| [`skill/`](./skill) | A Rust knowledge-graph runtime served over MCP to AI agents: engineering, framework, infrastructure, business and ToolX knowledge. SaasX knowledge is a separate pack. | **SkillX** |
-| [`web/`](./web) | A spec-driven Next.js + React engine. Every surface — SEO sites and non-SEO panels — is declared in `specs/` and compiled by the engine. | **WebX** |
-| [`mobile/`](./mobile) | A spec-driven React Native engine. One multi-role app or one build per role, from the same core and the same `specs/`. | **MobileX** |
+```text
+engine/
+  rust/      the Rust foundation
+  node/      the TypeScript foundation
+platform/
+  api/       backend services
+  infra/     infrastructure engine
+  skill/     knowledge runtime
+  web/       web engine
+  mobile/    mobile engine
+```
 
-Each part owns its own setup, tooling and a single `verify` gate; CI runs only the gate of the part that changed.
+| Part                                    | What it is                                                                                                                                                           | Becomes     |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [`engine/rust/`](./engine/rust)         | The Rust foundation: an extended standard library every Rust part builds on, and the only door to the ecosystem. Generic by construction.                            | **RustX**   |
+| [`engine/node/`](./engine/node)         | The TypeScript foundation: the chosen libraries behind one unified surface, shared by the web and mobile parts.                                                      | **NodeX**   |
+| [`platform/api/`](./platform/api)       | The backend services: thin, opinionated crates over the Rust engine — tenancy, identity, authorization, idempotency, outbox, audit — plus the contracts they expose. | **ApiX**    |
+| [`platform/infra/`](./platform/infra)   | A self-contained infrastructure engine on the Rust engine: providers, resources, state, plan, apply, deploy, rollback, health. Intent lives only in manifests.       | **InfraX**  |
+| [`platform/skill/`](./platform/skill)   | A knowledge-graph runtime served over MCP to AI agents: engineering, framework, infrastructure and business knowledge. Product knowledge is a separate pack.         | **SkillX**  |
+| [`platform/web/`](./platform/web)       | A spec-driven Next.js + React engine on the Node engine. Every surface — SEO sites and non-SEO panels — is declared in `specs/` and compiled by the engine.          | **WebX**    |
+| [`platform/mobile/`](./platform/mobile) | A spec-driven React Native engine on the Node engine. One multi-role app or one build per role, from the same core and the same `specs/`.                            | **MobileX** |
+
+Dependencies flow one way, down: a part depends on an engine by local path, never on the ecosystem directly and never on another part. When a part needs a capability, the engine learns it. Each engine and each part owns its own setup, tooling and gate; CI runs only the gates of what changed.
 
 ## From SaasX to ToolX
 
-Product-specific logic — business rules, branding, roles, products, messages — stays in specs, manifests and knowledge packs. The engines stay generic, and that boundary is enforced by tests and lints, not by convention.
+Product-specific logic — business rules, branding, roles, products, messages — stays in environment files, specs, manifests and knowledge packs. The engines and parts stay generic, and that boundary is enforced by tests and lints, not by convention.
 
 ```text
-saasx/api/core   → RustX
-saasx/infra      → InfraX
-saasx/skill      → SkillX
-saasx/web        → WebX     (minus specs/)
-saasx/mobile     → MobileX  (minus specs/)
+saasx/engine/rust      → RustX
+saasx/engine/node      → NodeX
+saasx/platform/api     → ApiX
+saasx/platform/infra   → InfraX
+saasx/platform/skill   → SkillX
+saasx/platform/web     → WebX     (minus specs/)
+saasx/platform/mobile  → MobileX  (minus specs/)
 ```
 
-Extraction is a packaging step, not a rewrite. It is complete only when SaasX itself consumes the extracted tool.
+Extraction is a packaging step, not a rewrite. SaasX stays the permanent source of every tool; the ToolX repositories are where releases land.
 
 ## Community
 

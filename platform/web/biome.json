@@ -1,0 +1,42 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+    "files": {
+        "includes": [
+            "**",
+            "!.next",
+            "!node_modules",
+            "!next-env.d.ts",
+            "!public",
+            "!tools/contract/samples.json",
+            "!specs/**/brand/images",
+            "!specs/**/brand/fonts"
+        ]
+    },
+    "formatter": {
+        "enabled": false
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "suspicious": {
+                "noExplicitAny": "error"
+            },
+            "style": {
+                "useImportType": "error"
+            },
+            "preset": "recommended"
+        }
+    },
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    },
+    "css": {
+        "parser": {
+            "tailwindDirectives": true
+        }
+    }
+}

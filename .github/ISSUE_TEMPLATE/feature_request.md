@@ -7,7 +7,7 @@ labels: enhancement
 
 ## Part
 
-<!-- api | infra | skill | web | mobile -->
+<!-- engine | api | infra | skill | web | mobile -->
 
 ## Problem
 
@@ -17,4 +17,4 @@ labels: enhancement
 
 ## Alternatives considered
 
-## Does this belong in a generic core (future ToolX) or in SaaSX specs/domain?
+## Does this belong in a generic core or in specs/domain?

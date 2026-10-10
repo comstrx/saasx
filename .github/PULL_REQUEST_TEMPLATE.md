@@ -1,6 +1,6 @@
 ## Part
 
-<!-- api | infra | skill | web | mobile | global -->
+<!-- engine | api | infra | skill | web | mobile | global -->
 
 ## What
 
@@ -11,9 +11,9 @@
 - [ ] Scoped to one part (or genuinely cross-cutting and explained above)
 - [ ] The part's `verify` gate passes locally
 - [ ] Tests / benchmarks updated where behavior changed
-- [ ] No product-specific code leaked into a generic core (`api/core`, `infra` engine, `skill` engine, `web`/`mobile` engines)
+- [ ] No product-specific code leaked into an engine or a generic part (`engine/`, `platform/api`, `platform/infra`, `platform/skill`, the `platform/web` and `platform/mobile` engines)
 - [ ] No secrets, credentials or private data
-- [ ] Commit messages use the part prefix (`api(...)`, `infra(...)`, `skill(...)`, `web(...)`, `mobile(...)`, `global(...)`)
+- [ ] Commit messages use the part prefix (`engine(...)`, `api(...)`, `infra(...)`, `skill(...)`, `web(...)`, `mobile(...)`, `global(...)`)
 
 ## Rollback
 

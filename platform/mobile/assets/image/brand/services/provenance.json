@@ -1,0 +1,17 @@
+{
+  "created": "2026-09-24",
+  "tool": "Built-in image_gen",
+  "assets": [
+    {
+      "name": "wallet-v1",
+      "prompt": "Use case: stylized-concept. Asset: premium mobile app small 3D service emblem, transparent background. Create ONE refined modern cartoon 3D wallet, deep emerald teal satin leather, rounded sculptural folds, a small vivid orange coral clasp, one warm ivory payment card peeking out and two small champagne coins. Three-quarter front view, coherent simple silhouette readable at 48px, object occupies 78% of square canvas, complete uncut object. Soft studio illumination, gentle highlights, restrained physically plausible contact shading within object only. Sophisticated business travel brand Zainlak, playful craftsmanship but not a toy. Transparent alpha background; no text, no letters, no logos, no floor, no halo, no particles, no surrounding scene. High quality soft clay / Pixar-like product icon, no sharp reflections. Square.",
+      "source": "exec-1d7cf12e-a1eb-4f94-bdae-bfb458948d77.png"
+    },
+    {
+      "name": "support-v1",
+      "prompt": "Use case: stylized-concept. Asset: single transparent 3D customer support emblem for Zainlak premium business/travel mobile app. One very soft rounded warm-ivory speech bubble wearing chunky deep teal over-ear support headphones, tiny orange microphone tip and three small teal ellipsis dots inset into the speech bubble. Friendly, clever, premium cartoon 3D, smooth satin clay, no face or eyes. Delicate soft highlights, simple silhouette that reads instantly at 48 pixels. Three-quarter view, centered in square canvas with generous 15% transparent margins, full uncropped object. Exactly one cohesive icon. Transparent alpha background, no floor or background, no floating decorations, no text, no watermark, no dramatic shadows or halos. Teal #0aa38a, ivory, coral orange #e86a2c. Soft polished product illustration.",
+      "source": "exec-a51b8a48-a224-4d4f-9ae1-43467a62605b.png"
+    }
+  ],
+  "derivatives": "512px WebP with original transparent alpha; source PNGs retained."
+}

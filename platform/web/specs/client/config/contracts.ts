@@ -1,0 +1,88 @@
+import type { SiteConfig } from "../../../src/lib/spec/contract.ts";
+
+export default {
+    urls: {
+        production: "https://api.zainlak.com",
+        local: "http://localhost:8000",
+        browser: null,
+    },
+    options: {
+        prefix: "v1",
+        spec: "client",
+        encoding: "json",
+        execution: "hybrid",
+        credentials: "omit",
+        browser: true,
+        proxies: 1,
+        authCookie: null,
+        maxResponseBytes: 1048576,
+        timeoutMs: 5000,
+        retries: 1,
+        cache: 0,
+    },
+    request: {
+        fields: {},
+        headers: {
+            accept: "Accept",
+            language: "Locale",
+            currency: "X-Currency",
+            client: "X-Front-Visitor",
+            tenant: "X-Tenant-Domain",
+            contentType: "Content-Type",
+            idempotency: "Idempotency-Key",
+            requestId: "X-Request-Id",
+            host: null,
+            spec: null,
+            front: { name: "X-Front-Key", prefix: "Basic " },
+            auth: { name: "Authorization", prefix: "Bearer " },
+        },
+    },
+    response: {
+        code: "code",
+        data: "data",
+        message: "message",
+        errors: "errors",
+        reason: "reason",
+        supports: "meta.supports",
+        requestId: "meta.request_id",
+        fields: {},
+        success: {
+            path: "status",
+            equals: true
+        },
+        confirmation: {
+            channel: "meta.channel",
+            destination: "meta.destination",
+            length: "meta.length",
+            expiresIn: "meta.expires_in",
+            retryAfter: "meta.retry_after",
+            sent: "meta.sent",
+        },
+        pagination: {
+            page: "meta.page",
+            limit: "meta.limit",
+            total: "meta.total",
+            pages: "meta.pages",
+            paged: "meta.paged",
+        },
+        aggregates: {
+            facets: "meta.facets",
+            stats: "meta.stats",
+            metrics: "meta.metrics",
+            groups: "meta.groups",
+            series: "meta.series",
+        },
+    },
+    realtime: {
+        transport: "pusher",
+        channels: {
+            notifications: { channel: "private-notification.{userId}", event: "notification.event" },
+            wallet: { channel: "private-wallet.{userId}", event: "wallet.event" },
+            transactions: { channel: "private-transaction.{userId}", event: "transaction.event" },
+            order: { channel: "private-order.{entityId}", event: "order.event" },
+            chat: { channel: "presence-chat.{userId}", event: "chat.event" },
+            room: { channel: "private-chat.room.{entityId}", event: "chat.event" },
+            subscription: { channel: "private-subscription.{entityId}", event: "subscription.event" },
+        },
+    },
+} satisfies SiteConfig["contracts"];

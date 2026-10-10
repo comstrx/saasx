@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PRETTIER: prettier@3.8.1
+
+jobs:
+  secrets:
+    name: secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+  vulnerabilities:
+    name: vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+
+      - name: Trivy
+        run: trivy fs . --config .trivy.yml --exit-code 1
+
+  sbom:
+    name: sbom
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0
+
+      - name: Syft
+        run: syft scan dir:. --config .syft.yml --source-name saasx --output cyclonedx-json=sbom.json
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: sbom
+          path: sbom.json
+          if-no-files-found: error
+
+  spelling:
+    name: spelling
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: crate-ci/typos@7f9d0819ca1c008ade73f4b41fa9d258d48f605b # v1.51.1
+        with:
+          config: .typos.toml
+
+  formatting:
+    name: formatting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 26
+
+      - uses: cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72 # v1.25.2
+
+      - name: Install taplo
+        run: cargo binstall --no-confirm taplo-cli
+
+      - name: Taplo
+        run: taplo fmt --check && taplo lint
+
+      - name: Prettier
+        run: npx -y "${PRETTIER}" --config .prettierrc.yml --ignore-path .gitignore --ignore-path .prettierignore --no-error-on-unmatched-pattern --check "**/*.{md,mdx,yml,yaml,json,jsonc}"
+
+  gate:
+    name: gate
+    if: always()
+    needs: [secrets, vulnerabilities, sbom, spelling, formatting]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Require every job
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          failed=0
+
+          while IFS='=' read -r job result; do
+              printf '%-10s %s\n' "${result}" "${job}"
+              [[ "${result}" == "success" ]] || failed=1
+          done < <(jq -r 'to_entries[] | "\(.key)=\(.value.result)"' <<< "${RESULTS}")
+
+          (( failed == 0 )) || { echo "gate: required jobs did not succeed." >&2; exit 1; }

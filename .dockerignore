@@ -47,7 +47,7 @@ LICENSE
 **/*.pid
 **/*.pid.lock
 **/.cache/
-**/.infrax/
+**/.infra*/
 **/CACHEDIR.TAG
 
 **/target/

@@ -1,0 +1,3272 @@
+{
+    "en /": {
+        "metadata": {
+            "title": "home title | Live Site",
+            "description": "home description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/",
+                "languages": {
+                    "en": "https://www.example.test/",
+                    "ar": "https://www.example.test/ar",
+                    "x-default": "https://www.example.test/"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "home title",
+                "description": "home description",
+                "url": "https://www.example.test/",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "home title",
+                "description": "home description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/#page",
+                    "url": "https://www.example.test/",
+                    "name": "home title",
+                    "description": "home description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                }
+            ]
+        },
+        "path": "/",
+        "url": "https://www.example.test/",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/",
+            "ar": "https://www.example.test/ar",
+            "x-default": "https://www.example.test/"
+        },
+        "indexable": true
+    },
+    "en /about": {
+        "metadata": {
+            "title": "About us | Live Site",
+            "description": "Who we are",
+            "keywords": [
+                "about"
+            ],
+            "authors": [
+                {
+                    "name": "A",
+                    "url": "https://a.example.test"
+                }
+            ],
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/about",
+                "languages": {
+                    "en": "https://www.example.test/about",
+                    "ar": "https://www.example.test/ar/about",
+                    "x-default": "https://www.example.test/about",
+                    "fr": "https://fr.example.test/about"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true,
+                "noarchive": true,
+                "max-image-preview": "large"
+            },
+            "openGraph": {
+                "type": "article",
+                "title": "About us",
+                "description": "Who we are",
+                "url": "https://www.example.test/about",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/about.png",
+                        "alt": "Live Site",
+                        "width": 800,
+                        "height": 400
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ],
+                "publishedTime": "2026-03-01T00:00:00+00:00",
+                "modifiedTime": "2026-03-02T00:00:00+00:00",
+                "authors": [
+                    "A"
+                ],
+                "tags": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "About us",
+                "description": "Who we are",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/about.png",
+                        "alt": "Live Site",
+                        "width": 800,
+                        "height": 400
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "BlogPosting",
+                    "@id": "https://www.example.test/about#page",
+                    "url": "https://www.example.test/about",
+                    "name": "About us",
+                    "description": "Who we are",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/about.png"
+                    ],
+                    "headline": "About us",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    },
+                    "datePublished": "2026-03-01T00:00:00+00:00",
+                    "dateModified": "2026-03-02T00:00:00+00:00",
+                    "author": [
+                        {
+                            "@type": "Person",
+                            "name": "A",
+                            "url": "https://a.example.test"
+                        }
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "About",
+                            "item": "https://www.example.test/about"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/about",
+        "url": "https://www.example.test/about",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/about",
+            "ar": "https://www.example.test/ar/about",
+            "x-default": "https://www.example.test/about",
+            "fr": "https://fr.example.test/about"
+        },
+        "indexable": true,
+        "modifiedAt": "2026-03-02T00:00:00+00:00"
+    },
+    "ar /about": {
+        "metadata": {
+            "title": "about title | Live Site",
+            "description": "about description",
+            "authors": [
+                {
+                    "name": "A",
+                    "url": "https://a.example.test"
+                }
+            ],
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/ar/about",
+                "languages": {
+                    "en": "https://www.example.test/about",
+                    "ar": "https://www.example.test/ar/about",
+                    "x-default": "https://www.example.test/about",
+                    "fr": "https://fr.example.test/about"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true,
+                "noarchive": true,
+                "max-image-preview": "large"
+            },
+            "openGraph": {
+                "type": "article",
+                "title": "about title",
+                "description": "about description",
+                "url": "https://www.example.test/ar/about",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/about.png",
+                        "alt": "Live Site",
+                        "width": 800,
+                        "height": 400
+                    }
+                ],
+                "locale": "ar_AR",
+                "alternateLocale": [
+                    "en_US"
+                ],
+                "publishedTime": "2026-03-01T00:00:00+00:00",
+                "modifiedTime": "2026-03-02T00:00:00+00:00",
+                "authors": [
+                    "A"
+                ],
+                "tags": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "about title",
+                "description": "about description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/about.png",
+                        "alt": "Live Site",
+                        "width": 800,
+                        "height": 400
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "ar",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "BlogPosting",
+                    "@id": "https://www.example.test/ar/about#page",
+                    "url": "https://www.example.test/ar/about",
+                    "name": "about title",
+                    "description": "about description",
+                    "inLanguage": "ar",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/about.png"
+                    ],
+                    "headline": "about title",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    },
+                    "datePublished": "2026-03-01T00:00:00+00:00",
+                    "dateModified": "2026-03-02T00:00:00+00:00",
+                    "author": [
+                        {
+                            "@type": "Person",
+                            "name": "A",
+                            "url": "https://a.example.test"
+                        }
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": "https://www.example.test/ar"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "About",
+                            "item": "https://www.example.test/ar/about"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/about",
+        "url": "https://www.example.test/ar/about",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/about",
+            "ar": "https://www.example.test/ar/about",
+            "x-default": "https://www.example.test/about",
+            "fr": "https://fr.example.test/about"
+        },
+        "indexable": true,
+        "modifiedAt": "2026-03-02T00:00:00+00:00"
+    },
+    "en /about/team": {
+        "metadata": {
+            "title": "team title | Live Site",
+            "description": "team description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/about/team",
+                "languages": {
+                    "en": "https://www.example.test/about/team",
+                    "ar": "https://www.example.test/ar/about/team",
+                    "x-default": "https://www.example.test/about/team"
+                }
+            },
+            "robots": {
+                "index": false,
+                "follow": false
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "team title",
+                "description": "team description",
+                "url": "https://www.example.test/about/team",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "team title",
+                "description": "team description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "path": "/about/team",
+        "url": "https://www.example.test/about/team",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/about/team",
+            "ar": "https://www.example.test/ar/about/team",
+            "x-default": "https://www.example.test/about/team"
+        },
+        "indexable": false
+    },
+    "en /terms": {
+        "metadata": {
+            "title": "terms title | Live Site",
+            "description": "terms description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/terms",
+                "languages": {
+                    "en": "https://www.example.test/terms",
+                    "ar": "https://www.example.test/ar/terms",
+                    "x-default": "https://www.example.test/terms"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "terms title",
+                "description": "terms description",
+                "url": "https://www.example.test/terms",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "terms title",
+                "description": "terms description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/terms#page",
+                    "url": "https://www.example.test/terms",
+                    "name": "terms title",
+                    "description": "terms description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "terms title",
+                            "item": "https://www.example.test/terms"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/terms",
+        "url": "https://www.example.test/terms",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/terms",
+            "ar": "https://www.example.test/ar/terms",
+            "x-default": "https://www.example.test/terms"
+        },
+        "indexable": true
+    },
+    "en /quiet": {
+        "metadata": {
+            "title": "Live Site",
+            "description": "Quiet description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/quiet",
+                "languages": {
+                    "en": "https://www.example.test/quiet",
+                    "ar": "https://www.example.test/ar/quiet",
+                    "x-default": "https://www.example.test/quiet"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Quiet title",
+                "description": "Quiet description",
+                "url": "https://www.example.test/quiet",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Quiet title",
+                "description": "Quiet description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/quiet#page",
+                    "url": "https://www.example.test/quiet",
+                    "name": "Quiet title",
+                    "description": "Quiet description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Quiet title",
+                            "item": "https://www.example.test/quiet"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/quiet",
+        "url": "https://www.example.test/quiet",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/quiet",
+            "ar": "https://www.example.test/ar/quiet",
+            "x-default": "https://www.example.test/quiet"
+        },
+        "indexable": true
+    },
+    "en /stays/7-grand-hotel": {
+        "metadata": {
+            "title": "Grand Hotel | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/stays/7-grand-hotel"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/stays/7-grand-hotel",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/stays/7-grand-hotel#page",
+                    "url": "https://www.example.test/stays/7-grand-hotel",
+                    "name": "Grand Hotel",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/h.jpg"
+                    ],
+                    "mainEntity": {
+                        "@type": "LodgingBusiness",
+                        "@id": "https://www.example.test/stays/7-grand-hotel#entity",
+                        "name": "Grand Hotel",
+                        "url": "https://www.example.test/stays/7-grand-hotel",
+                        "description": "Sea & sand",
+                        "image": [
+                            "https://cdn.example.test/h.jpg"
+                        ],
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "1 Nile St",
+                            "postalCode": "11511",
+                            "addressLocality": "Cairo",
+                            "addressCountry": "EG"
+                        },
+                        "geo": {
+                            "@type": "GeoCoordinates",
+                            "latitude": 30.04,
+                            "longitude": 31.23
+                        },
+                        "starRating": {
+                            "@type": "Rating",
+                            "ratingValue": 5
+                        },
+                        "amenityFeature": [
+                            {
+                                "@type": "LocationFeatureSpecification",
+                                "name": "Pool",
+                                "value": true
+                            }
+                        ],
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": 4.5,
+                            "reviewCount": 12,
+                            "bestRating": 5,
+                            "worstRating": 1
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Grand Hotel",
+                            "item": "https://www.example.test/stays/7-grand-hotel"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/stays/7-grand-hotel",
+        "url": "https://www.example.test/stays/7-grand-hotel",
+        "locales": [
+            "en"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00"
+    },
+    "ar /stays/7-grand-hotel": {
+        "metadata": {
+            "title": "Grand Hotel | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/stays/7-grand-hotel"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/stays/7-grand-hotel",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ],
+                "locale": "ar_AR",
+                "alternateLocale": [
+                    "en_US"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "ar",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/stays/7-grand-hotel#page",
+                    "url": "https://www.example.test/stays/7-grand-hotel",
+                    "name": "Grand Hotel",
+                    "description": "Sea & sand",
+                    "inLanguage": "ar",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/h.jpg"
+                    ],
+                    "mainEntity": {
+                        "@type": "LodgingBusiness",
+                        "@id": "https://www.example.test/stays/7-grand-hotel#entity",
+                        "name": "Grand Hotel",
+                        "url": "https://www.example.test/stays/7-grand-hotel",
+                        "description": "Sea & sand",
+                        "image": [
+                            "https://cdn.example.test/h.jpg"
+                        ],
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "1 Nile St",
+                            "postalCode": "11511",
+                            "addressLocality": "Cairo",
+                            "addressCountry": "EG"
+                        },
+                        "geo": {
+                            "@type": "GeoCoordinates",
+                            "latitude": 30.04,
+                            "longitude": 31.23
+                        },
+                        "starRating": {
+                            "@type": "Rating",
+                            "ratingValue": 5
+                        },
+                        "amenityFeature": [
+                            {
+                                "@type": "LocationFeatureSpecification",
+                                "name": "Pool",
+                                "value": true
+                            }
+                        ],
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": 4.5,
+                            "reviewCount": 12,
+                            "bestRating": 5,
+                            "worstRating": 1
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/ar"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Grand Hotel",
+                            "item": "https://www.example.test/ar/stays/7-grand-hotel"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/stays/7-grand-hotel",
+        "url": "https://www.example.test/stays/7-grand-hotel",
+        "locales": [
+            "en"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00"
+    },
+    "en /stays/7-old-slug": {
+        "metadata": {
+            "title": "Grand Hotel | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/stays/7-grand-hotel"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/stays/7-grand-hotel",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/stays/7-grand-hotel#page",
+                    "url": "https://www.example.test/stays/7-grand-hotel",
+                    "name": "Grand Hotel",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/h.jpg"
+                    ],
+                    "mainEntity": {
+                        "@type": "LodgingBusiness",
+                        "@id": "https://www.example.test/stays/7-grand-hotel#entity",
+                        "name": "Grand Hotel",
+                        "url": "https://www.example.test/stays/7-grand-hotel",
+                        "description": "Sea & sand",
+                        "image": [
+                            "https://cdn.example.test/h.jpg"
+                        ],
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "1 Nile St",
+                            "postalCode": "11511",
+                            "addressLocality": "Cairo",
+                            "addressCountry": "EG"
+                        },
+                        "geo": {
+                            "@type": "GeoCoordinates",
+                            "latitude": 30.04,
+                            "longitude": 31.23
+                        },
+                        "starRating": {
+                            "@type": "Rating",
+                            "ratingValue": 5
+                        },
+                        "amenityFeature": [
+                            {
+                                "@type": "LocationFeatureSpecification",
+                                "name": "Pool",
+                                "value": true
+                            }
+                        ],
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": 4.5,
+                            "reviewCount": 12,
+                            "bestRating": 5,
+                            "worstRating": 1
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Grand Hotel",
+                            "item": "https://www.example.test/stays/7-grand-hotel"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/stays/7-grand-hotel",
+        "url": "https://www.example.test/stays/7-grand-hotel",
+        "locales": [
+            "en"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00",
+        "redirect": "/stays/7-grand-hotel"
+    },
+    "en /products/7-grand-hotel": {
+        "metadata": {
+            "title": "Grand Hotel | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/stays/7-grand-hotel"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/stays/7-grand-hotel",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Grand Hotel",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/h.jpg",
+                        "alt": "Grand Hotel",
+                        "width": 1200,
+                        "height": 630
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/stays/7-grand-hotel#page",
+                    "url": "https://www.example.test/stays/7-grand-hotel",
+                    "name": "Grand Hotel",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/h.jpg"
+                    ],
+                    "mainEntity": {
+                        "@type": "LodgingBusiness",
+                        "@id": "https://www.example.test/stays/7-grand-hotel#entity",
+                        "name": "Grand Hotel",
+                        "url": "https://www.example.test/stays/7-grand-hotel",
+                        "description": "Sea & sand",
+                        "image": [
+                            "https://cdn.example.test/h.jpg"
+                        ],
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "1 Nile St",
+                            "postalCode": "11511",
+                            "addressLocality": "Cairo",
+                            "addressCountry": "EG"
+                        },
+                        "geo": {
+                            "@type": "GeoCoordinates",
+                            "latitude": 30.04,
+                            "longitude": 31.23
+                        },
+                        "starRating": {
+                            "@type": "Rating",
+                            "ratingValue": 5
+                        },
+                        "amenityFeature": [
+                            {
+                                "@type": "LocationFeatureSpecification",
+                                "name": "Pool",
+                                "value": true
+                            }
+                        ],
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": 4.5,
+                            "reviewCount": 12,
+                            "bestRating": 5,
+                            "worstRating": 1
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Grand Hotel",
+                            "item": "https://www.example.test/stays/7-grand-hotel"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/stays/7-grand-hotel",
+        "url": "https://www.example.test/stays/7-grand-hotel",
+        "locales": [
+            "en"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00",
+        "redirect": "/stays/7-grand-hotel"
+    },
+    "en /products/8-nile-tour": {
+        "metadata": {
+            "title": "Stay | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/products/8-nile-tour",
+                "languages": {
+                    "en": "https://www.example.test/products/8-nile-tour",
+                    "ar": "https://www.example.test/ar/products/8-nile-tour",
+                    "x-default": "https://www.example.test/products/8-nile-tour"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/products/8-nile-tour",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/products/8-nile-tour#page",
+                    "url": "https://www.example.test/products/8-nile-tour",
+                    "name": "Stay",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ],
+                    "mainEntity": {
+                        "@type": "TouristTrip",
+                        "@id": "https://www.example.test/products/8-nile-tour#entity",
+                        "name": "Stay",
+                        "url": "https://www.example.test/products/8-nile-tour",
+                        "description": "Sea & sand"
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Stay",
+                            "item": "https://www.example.test/products/8-nile-tour"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/products/8-nile-tour",
+        "url": "https://www.example.test/products/8-nile-tour",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/products/8-nile-tour",
+            "ar": "https://www.example.test/ar/products/8-nile-tour",
+            "x-default": "https://www.example.test/products/8-nile-tour"
+        },
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00"
+    },
+    "en /products/9": {
+        "metadata": {
+            "title": "Stay | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/products/9-derby",
+                "languages": {
+                    "en": "https://www.example.test/products/9-derby",
+                    "ar": "https://www.example.test/ar/products/9-derby",
+                    "x-default": "https://www.example.test/products/9-derby"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/products/9-derby",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/products/9-derby#page",
+                    "url": "https://www.example.test/products/9-derby",
+                    "name": "Stay",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ],
+                    "mainEntity": {
+                        "@type": "Event",
+                        "@id": "https://www.example.test/products/9-derby#entity",
+                        "name": "Stay",
+                        "url": "https://www.example.test/products/9-derby",
+                        "description": "Sea & sand",
+                        "startDate": "2026-10-01T18:00:00+00:00",
+                        "eventStatus": "https://schema.org/EventScheduled",
+                        "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+                        "location": {
+                            "@type": "VirtualLocation",
+                            "url": "https://www.example.test/products/9-derby"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "url": "https://www.example.test/products/9-derby",
+                            "priceCurrency": "SAR",
+                            "availability": "https://schema.org/OutOfStock",
+                            "price": "373.13"
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Stay",
+                            "item": "https://www.example.test/products/9-derby"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/products/9-derby",
+        "url": "https://www.example.test/products/9-derby",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/products/9-derby",
+            "ar": "https://www.example.test/ar/products/9-derby",
+            "x-default": "https://www.example.test/products/9-derby"
+        },
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00",
+        "redirect": "/products/9-derby"
+    },
+    "en /products/10-camera": {
+        "metadata": {
+            "title": "Stay | Live Site",
+            "description": "Sea & sand",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/products/10-camera",
+                "languages": {
+                    "en": "https://www.example.test/products/10-camera",
+                    "ar": "https://www.example.test/ar/products/10-camera",
+                    "x-default": "https://www.example.test/products/10-camera"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "url": "https://www.example.test/products/10-camera",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Stay",
+                "description": "Sea & sand",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/products/10-camera#page",
+                    "url": "https://www.example.test/products/10-camera",
+                    "name": "Stay",
+                    "description": "Sea & sand",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ],
+                    "mainEntity": {
+                        "@type": "Product",
+                        "@id": "https://www.example.test/products/10-camera#entity",
+                        "name": "Stay",
+                        "url": "https://www.example.test/products/10-camera",
+                        "description": "Sea & sand",
+                        "sku": "CAM-1",
+                        "brand": {
+                            "@type": "Brand",
+                            "name": "Acme"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "url": "https://www.example.test/products/10-camera",
+                            "priceCurrency": "SAR",
+                            "availability": "https://schema.org/InStock",
+                            "price": "373.13"
+                        }
+                    }
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Stay",
+                            "item": "https://www.example.test/products/10-camera"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/products/10-camera",
+        "url": "https://www.example.test/products/10-camera",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/products/10-camera",
+            "ar": "https://www.example.test/ar/products/10-camera",
+            "x-default": "https://www.example.test/products/10-camera"
+        },
+        "indexable": true,
+        "modifiedAt": "2026-02-01T00:00:00+00:00"
+    },
+    "en /products/404-gone": {
+        "failed": "not found"
+    },
+    "en /products/abc": {
+        "failed": "not found"
+    },
+    "en /blog/3-visa-guide": {
+        "metadata": {
+            "title": "Visa guide | Live Site",
+            "description": "Before you fly\nPapers first.",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/ar/blog/3-visa-guide"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "article",
+                "title": "Visa guide",
+                "description": "Before you fly\nPapers first.",
+                "url": "https://www.example.test/ar/blog/3-visa-guide",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/cover.jpg",
+                        "alt": "Visa guide"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ],
+                "publishedTime": "2026-04-01T00:00:00+00:00",
+                "modifiedTime": "2026-04-02T00:00:00+00:00",
+                "tags": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Visa guide",
+                "description": "Before you fly\nPapers first.",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/cover.jpg",
+                        "alt": "Visa guide"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "BlogPosting",
+                    "@id": "https://www.example.test/ar/blog/3-visa-guide#page",
+                    "url": "https://www.example.test/ar/blog/3-visa-guide",
+                    "name": "Visa guide",
+                    "description": "Before you fly\nPapers first.",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/cover.jpg"
+                    ],
+                    "headline": "Visa guide",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    },
+                    "datePublished": "2026-04-01T00:00:00+00:00",
+                    "dateModified": "2026-04-02T00:00:00+00:00"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Visa guide",
+                            "item": "https://www.example.test/blog/3-visa-guide"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/blog/3-visa-guide",
+        "url": "https://www.example.test/ar/blog/3-visa-guide",
+        "locales": [
+            "ar"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-04-02T00:00:00+00:00"
+    },
+    "ar /blog/3-visa-guide": {
+        "metadata": {
+            "title": "Visa guide | Live Site",
+            "description": "Before you fly\nPapers first.",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/ar/blog/3-visa-guide"
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "article",
+                "title": "Visa guide",
+                "description": "Before you fly\nPapers first.",
+                "url": "https://www.example.test/ar/blog/3-visa-guide",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/cover.jpg",
+                        "alt": "Visa guide"
+                    }
+                ],
+                "locale": "ar_AR",
+                "alternateLocale": [],
+                "publishedTime": "2026-04-01T00:00:00+00:00",
+                "modifiedTime": "2026-04-02T00:00:00+00:00",
+                "tags": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Visa guide",
+                "description": "Before you fly\nPapers first.",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/cover.jpg",
+                        "alt": "Visa guide"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "ar",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "BlogPosting",
+                    "@id": "https://www.example.test/ar/blog/3-visa-guide#page",
+                    "url": "https://www.example.test/ar/blog/3-visa-guide",
+                    "name": "Visa guide",
+                    "description": "Before you fly\nPapers first.",
+                    "inLanguage": "ar",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/cover.jpg"
+                    ],
+                    "headline": "Visa guide",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    },
+                    "datePublished": "2026-04-01T00:00:00+00:00",
+                    "dateModified": "2026-04-02T00:00:00+00:00"
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/ar"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Visa guide",
+                            "item": "https://www.example.test/ar/blog/3-visa-guide"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/blog/3-visa-guide",
+        "url": "https://www.example.test/ar/blog/3-visa-guide",
+        "locales": [
+            "ar"
+        ],
+        "alternates": {},
+        "indexable": true,
+        "modifiedAt": "2026-04-02T00:00:00+00:00"
+    },
+    "en /categories/5-shows": {
+        "metadata": {
+            "title": "Shows | Live Site",
+            "description": "Matches and shows",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/categories/5-shows",
+                "languages": {
+                    "en": "https://www.example.test/categories/5-shows",
+                    "ar": "https://www.example.test/ar/categories/5-shows",
+                    "x-default": "https://www.example.test/categories/5-shows"
+                }
+            },
+            "robots": {
+                "index": false,
+                "follow": false
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Shows",
+                "description": "Matches and shows",
+                "url": "https://www.example.test/categories/5-shows",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Shows",
+                "description": "Matches and shows",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/categories/5-shows#page",
+                    "url": "https://www.example.test/categories/5-shows",
+                    "name": "Shows",
+                    "description": "Matches and shows",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Shows",
+                            "item": "https://www.example.test/categories/5-shows"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/categories/5-shows",
+        "url": "https://www.example.test/categories/5-shows",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/categories/5-shows",
+            "ar": "https://www.example.test/ar/categories/5-shows",
+            "x-default": "https://www.example.test/categories/5-shows"
+        },
+        "indexable": false
+    },
+    "en /places/11-lotus-square": {
+        "metadata": {
+            "title": "Lotus Square | Live Site",
+            "description": "A quiet square",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/places/11-lotus-square",
+                "languages": {
+                    "en": "https://www.example.test/places/11-lotus-square",
+                    "ar": "https://www.example.test/ar/places/11-lotus-square",
+                    "x-default": "https://www.example.test/places/11-lotus-square"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Lotus Square",
+                "description": "A quiet square",
+                "url": "https://www.example.test/places/11-lotus-square",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Lotus Square",
+                "description": "A quiet square",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/places/11-lotus-square#page",
+                    "url": "https://www.example.test/places/11-lotus-square",
+                    "name": "Lotus Square",
+                    "description": "A quiet square",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Lotus Square",
+                            "item": "https://www.example.test/places/11-lotus-square"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/places/11-lotus-square",
+        "url": "https://www.example.test/places/11-lotus-square",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/places/11-lotus-square",
+            "ar": "https://www.example.test/ar/places/11-lotus-square",
+            "x-default": "https://www.example.test/places/11-lotus-square"
+        },
+        "indexable": true
+    },
+    "en /hosts/4": {
+        "metadata": {
+            "title": "Host | Live Site",
+            "description": "host description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/hosts/4",
+                "languages": {
+                    "en": "https://www.example.test/hosts/4",
+                    "ar": "https://www.example.test/ar/hosts/4",
+                    "x-default": "https://www.example.test/hosts/4"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "Host",
+                "description": "host description",
+                "url": "https://www.example.test/hosts/4",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "Host",
+                "description": "host description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/hosts/4#page",
+                    "url": "https://www.example.test/hosts/4",
+                    "name": "Host",
+                    "description": "host description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Host",
+                            "item": "https://www.example.test/hosts/4"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/hosts/4",
+        "url": "https://www.example.test/hosts/4",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/hosts/4",
+            "ar": "https://www.example.test/ar/hosts/4",
+            "x-default": "https://www.example.test/hosts/4"
+        },
+        "indexable": true
+    },
+    "en /news/first": {
+        "metadata": {
+            "title": "post title | Live Site",
+            "description": "post description",
+            "authors": [
+                {
+                    "name": "Writer"
+                }
+            ],
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/news/first",
+                "languages": {
+                    "en": "https://www.example.test/news/first",
+                    "ar": "https://www.example.test/ar/news/first",
+                    "x-default": "https://www.example.test/news/first"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "article",
+                "title": "post title",
+                "description": "post description",
+                "url": "https://www.example.test/news/first",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ],
+                "publishedTime": "2026-01-02T03:04:05+00:00",
+                "authors": [
+                    "Writer"
+                ],
+                "tags": []
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "post title",
+                "description": "post description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "BlogPosting",
+                    "@id": "https://www.example.test/news/first#page",
+                    "url": "https://www.example.test/news/first",
+                    "name": "post title",
+                    "description": "post description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ],
+                    "headline": "post title",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    },
+                    "datePublished": "2026-01-02T03:04:05+00:00",
+                    "author": [
+                        {
+                            "@type": "Person",
+                            "name": "Writer"
+                        }
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "post title",
+                            "item": "https://www.example.test/news/first"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/news/first",
+        "url": "https://www.example.test/news/first",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/news/first",
+            "ar": "https://www.example.test/ar/news/first",
+            "x-default": "https://www.example.test/news/first"
+        },
+        "indexable": true
+    },
+    "en /hidden": {
+        "metadata": {
+            "title": "hidden title | Live Site",
+            "description": "hidden description",
+            "verification": {
+                "google": "g-1",
+                "other": {
+                    "msvalidate.01": "b-1"
+                }
+            },
+            "alternates": {
+                "canonical": "https://www.example.test/hidden",
+                "languages": {
+                    "en": "https://www.example.test/hidden",
+                    "ar": "https://www.example.test/ar/hidden",
+                    "x-default": "https://www.example.test/hidden"
+                }
+            },
+            "robots": {
+                "index": false,
+                "follow": false
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "hidden title",
+                "description": "hidden description",
+                "url": "https://www.example.test/hidden",
+                "siteName": "Live Site",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ],
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "site": "@site",
+                "title": "hidden title",
+                "description": "hidden description",
+                "images": [
+                    {
+                        "url": "https://cdn.example.test/share.png",
+                        "alt": "Live Site"
+                    }
+                ]
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://www.example.test/#organization",
+                    "url": "https://www.example.test",
+                    "name": "Live Site",
+                    "logo": "https://cdn.example.test/logo.png",
+                    "sameAs": [
+                        "https://x.com/site"
+                    ],
+                    "email": "care@example.test",
+                    "telephone": "+201000000000",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "1 Nile St",
+                        "addressLocality": "Cairo",
+                        "addressCountry": "EG"
+                    }
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://www.example.test/#website",
+                    "url": "https://www.example.test",
+                    "inLanguage": "en",
+                    "name": "Live Site",
+                    "publisher": {
+                        "@id": "https://www.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://www.example.test/hidden#page",
+                    "url": "https://www.example.test/hidden",
+                    "name": "hidden title",
+                    "description": "hidden description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://www.example.test/#website"
+                    },
+                    "image": [
+                        "https://cdn.example.test/share.png"
+                    ]
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "home title",
+                            "item": "https://www.example.test/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "hidden title",
+                            "item": "https://www.example.test/hidden"
+                        }
+                    ]
+                }
+            ]
+        },
+        "path": "/hidden",
+        "url": "https://www.example.test/hidden",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://www.example.test/hidden",
+            "ar": "https://www.example.test/ar/hidden",
+            "x-default": "https://www.example.test/hidden"
+        },
+        "indexable": false
+    },
+    "robots": {
+        "rules": {
+            "userAgent": "*",
+            "allow": "/"
+        },
+        "sitemap": [
+            "https://www.example.test/sitemap/pages.xml",
+            "https://www.example.test/sitemap/product-1.xml",
+            "https://www.example.test/sitemap/product-2.xml",
+            "https://www.example.test/sitemap/article-1.xml",
+            "https://www.example.test/sitemap/category-1.xml",
+            "https://www.example.test/sitemap/vendor-1.xml"
+        ],
+        "host": "https://www.example.test"
+    },
+    "sitemaps": {
+        "pages": [
+            {
+                "url": "https://www.example.test/",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/",
+                        "ar": "https://www.example.test/ar",
+                        "x-default": "https://www.example.test/"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/",
+                        "ar": "https://www.example.test/ar",
+                        "x-default": "https://www.example.test/"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/about",
+                "lastModified": "2026-03-02T00:00:00+00:00",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/about",
+                        "ar": "https://www.example.test/ar/about",
+                        "x-default": "https://www.example.test/about",
+                        "fr": "https://fr.example.test/about"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/about",
+                "lastModified": "2026-03-02T00:00:00+00:00",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/about",
+                        "ar": "https://www.example.test/ar/about",
+                        "x-default": "https://www.example.test/about",
+                        "fr": "https://fr.example.test/about"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/terms",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/terms",
+                        "ar": "https://www.example.test/ar/terms",
+                        "x-default": "https://www.example.test/terms"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/terms",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/terms",
+                        "ar": "https://www.example.test/ar/terms",
+                        "x-default": "https://www.example.test/terms"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/quiet",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/quiet",
+                        "ar": "https://www.example.test/ar/quiet",
+                        "x-default": "https://www.example.test/quiet"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/quiet",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/quiet",
+                        "ar": "https://www.example.test/ar/quiet",
+                        "x-default": "https://www.example.test/quiet"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/news/first",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/news/first",
+                        "ar": "https://www.example.test/ar/news/first",
+                        "x-default": "https://www.example.test/news/first"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/news/first",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/news/first",
+                        "ar": "https://www.example.test/ar/news/first",
+                        "x-default": "https://www.example.test/news/first"
+                    }
+                }
+            }
+        ],
+        "product-1": [
+            {
+                "url": "https://www.example.test/stays/7-grand-hotel",
+                "lastModified": "2026-02-01T00:00:00+00:00",
+                "images": [
+                    "https://cdn.example.test/h.jpg"
+                ]
+            },
+            {
+                "url": "https://www.example.test/products/8-nile-tour",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/products/8-nile-tour",
+                        "ar": "https://www.example.test/ar/products/8-nile-tour",
+                        "x-default": "https://www.example.test/products/8-nile-tour"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/products/8-nile-tour",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/products/8-nile-tour",
+                        "ar": "https://www.example.test/ar/products/8-nile-tour",
+                        "x-default": "https://www.example.test/products/8-nile-tour"
+                    }
+                }
+            }
+        ],
+        "product-2": [
+            {
+                "url": "https://www.example.test/products/9-derby",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/products/9-derby",
+                        "ar": "https://www.example.test/ar/products/9-derby",
+                        "x-default": "https://www.example.test/products/9-derby"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/products/9-derby",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/products/9-derby",
+                        "ar": "https://www.example.test/ar/products/9-derby",
+                        "x-default": "https://www.example.test/products/9-derby"
+                    }
+                }
+            }
+        ],
+        "article-1": [
+            {
+                "url": "https://www.example.test/ar/blog/3-visa-guide"
+            }
+        ],
+        "category-1": [],
+        "vendor-1": [
+            {
+                "url": "https://www.example.test/hosts/4",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/hosts/4",
+                        "ar": "https://www.example.test/ar/hosts/4",
+                        "x-default": "https://www.example.test/hosts/4"
+                    }
+                }
+            },
+            {
+                "url": "https://www.example.test/ar/hosts/4",
+                "alternates": {
+                    "languages": {
+                        "en": "https://www.example.test/hosts/4",
+                        "ar": "https://www.example.test/ar/hosts/4",
+                        "x-default": "https://www.example.test/hosts/4"
+                    }
+                }
+            }
+        ],
+        "missing": []
+    },
+    "site": {
+        "settings": {
+            "locale": {
+                "default": "en",
+                "enabled": [
+                    "en",
+                    "ar"
+                ],
+                "timeZone": "Asia/Riyadh"
+            },
+            "currency": {
+                "default": "SAR",
+                "enabled": [
+                    "USD",
+                    "SAR"
+                ]
+            },
+            "theme": {
+                "default": "light",
+                "enabled": [
+                    "light",
+                    "dark",
+                    "system"
+                ]
+            },
+            "motion": "system",
+            "density": "comfortable",
+            "maintenance": false,
+            "maintenanceMessage": ""
+        },
+        "currency": "SAR",
+        "stay": 7,
+        "sent": [
+            {
+                "method": "GET",
+                "url": "/v1/catalogs/7",
+                "headers": {
+                    "accept": "application/json",
+                    "locale": "en",
+                    "x-currency": "SAR",
+                    "x-tenant-domain": "shop.example.test"
+                },
+                "cache": "force-cache",
+                "next": {
+                    "revalidate": 30
+                }
+            },
+            {
+                "method": "GET",
+                "url": "/v1/content/site-info",
+                "headers": {
+                    "accept": "application/json",
+                    "locale": "en",
+                    "x-currency": "USD",
+                    "x-tenant-domain": "shop.example.test"
+                },
+                "cache": "force-cache",
+                "next": {
+                    "revalidate": 60
+                }
+            },
+            {
+                "method": "GET",
+                "url": "/v1/currencies?limit=100",
+                "headers": {
+                    "accept": "application/json",
+                    "locale": "en",
+                    "x-currency": "USD",
+                    "x-tenant-domain": "shop.example.test"
+                },
+                "cache": "force-cache",
+                "next": {
+                    "revalidate": 300
+                }
+            },
+            {
+                "method": "GET",
+                "url": "/v1/locales?limit=100",
+                "headers": {
+                    "accept": "application/json",
+                    "locale": "en",
+                    "x-currency": "USD",
+                    "x-tenant-domain": "shop.example.test"
+                },
+                "cache": "force-cache",
+                "next": {
+                    "revalidate": 300
+                }
+            }
+        ]
+    },
+    "down /": {
+        "metadata": {
+            "title": "home title | Spec Site",
+            "description": "home description",
+            "verification": {},
+            "alternates": {
+                "canonical": "https://shop.example.test/",
+                "languages": {
+                    "en": "https://shop.example.test/",
+                    "ar": "https://shop.example.test/ar",
+                    "x-default": "https://shop.example.test/"
+                }
+            },
+            "robots": {
+                "index": true,
+                "follow": true
+            },
+            "openGraph": {
+                "type": "website",
+                "title": "home title",
+                "description": "home description",
+                "url": "https://shop.example.test/",
+                "siteName": "Spec Site",
+                "locale": "en_US",
+                "alternateLocale": [
+                    "ar_AR"
+                ]
+            },
+            "twitter": {
+                "card": "summary_large_image",
+                "title": "home title",
+                "description": "home description"
+            }
+        },
+        "structuredData": {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "@id": "https://shop.example.test/#organization",
+                    "url": "https://shop.example.test",
+                    "name": "Spec Site"
+                },
+                {
+                    "@type": "WebSite",
+                    "@id": "https://shop.example.test/#website",
+                    "url": "https://shop.example.test",
+                    "inLanguage": "en",
+                    "name": "Spec Site",
+                    "publisher": {
+                        "@id": "https://shop.example.test/#organization"
+                    }
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "https://shop.example.test/#page",
+                    "url": "https://shop.example.test/",
+                    "name": "home title",
+                    "description": "home description",
+                    "inLanguage": "en",
+                    "isPartOf": {
+                        "@id": "https://shop.example.test/#website"
+                    }
+                }
+            ]
+        },
+        "path": "/",
+        "url": "https://shop.example.test/",
+        "locales": [
+            "en",
+            "ar"
+        ],
+        "alternates": {
+            "en": "https://shop.example.test/",
+            "ar": "https://shop.example.test/ar",
+            "x-default": "https://shop.example.test/"
+        },
+        "indexable": true
+    },
+    "down robots": {
+        "rules": {
+            "userAgent": "*",
+            "allow": "/"
+        },
+        "sitemap": [
+            "https://shop.example.test/sitemap/pages.xml"
+        ],
+        "host": "https://shop.example.test"
+    },
+    "down sitemaps": {
+        "pages": [
+            {
+                "url": "https://shop.example.test/",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/",
+                        "ar": "https://shop.example.test/ar",
+                        "x-default": "https://shop.example.test/"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/ar",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/",
+                        "ar": "https://shop.example.test/ar",
+                        "x-default": "https://shop.example.test/"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/about",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/about",
+                        "ar": "https://shop.example.test/ar/about",
+                        "x-default": "https://shop.example.test/about"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/ar/about",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/about",
+                        "ar": "https://shop.example.test/ar/about",
+                        "x-default": "https://shop.example.test/about"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/terms",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/terms",
+                        "ar": "https://shop.example.test/ar/terms",
+                        "x-default": "https://shop.example.test/terms"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/ar/terms",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/terms",
+                        "ar": "https://shop.example.test/ar/terms",
+                        "x-default": "https://shop.example.test/terms"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/quiet",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/quiet",
+                        "ar": "https://shop.example.test/ar/quiet",
+                        "x-default": "https://shop.example.test/quiet"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/ar/quiet",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/quiet",
+                        "ar": "https://shop.example.test/ar/quiet",
+                        "x-default": "https://shop.example.test/quiet"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/news/first",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/news/first",
+                        "ar": "https://shop.example.test/ar/news/first",
+                        "x-default": "https://shop.example.test/news/first"
+                    }
+                }
+            },
+            {
+                "url": "https://shop.example.test/ar/news/first",
+                "alternates": {
+                    "languages": {
+                        "en": "https://shop.example.test/news/first",
+                        "ar": "https://shop.example.test/ar/news/first",
+                        "x-default": "https://shop.example.test/news/first"
+                    }
+                }
+            }
+        ],
+        "missing": []
+    }
+}

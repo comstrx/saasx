@@ -1,0 +1,26 @@
+import type { ToneName } from "@/theme/roles";
+
+export const concepts = {
+    orders: "info",
+    favorites: "danger",
+    cart: "accent",
+    wallet: "success",
+    coupons: "warning",
+    level: "accent",
+    referrals: "brand",
+    personal: "brand",
+    sessions: "info",
+    notify: "warning",
+    settings: "neutral",
+    desk: "success",
+    tickets: "info",
+    contact: "brand",
+    about: "neutral",
+    privacy: "info",
+    terms: "neutral",
+    language: "success",
+    currency: "warning",
+    appearance: "info",
+    deactivate: "neutral",
+    erase: "danger",
+} as const satisfies Record<string, ToneName>;

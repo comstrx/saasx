@@ -31,7 +31,7 @@ If you are unsure about scope, start with a short [discussion](https://github.co
 
 1. Fork the repo and clone it locally.
 2. Create a new branch for your change.
-3. Follow the [README](https://github.com/comstrx/saasx/blob/main/README.md), then the README of the part you are changing (`api/`, `web/`, `mobile/`, `infra/`, `skill/`) — each part owns its own setup and `verify` gate.
+3. Follow the [README](https://github.com/comstrx/saasx/blob/main/README.md), then the README of the engine or part you are changing (`engine/rust`, `engine/node`, `platform/api`, `platform/infra`, `platform/skill`, `platform/web`, `platform/mobile`) — each part owns its own setup and `verify` gate.
 4. Make your change, add/adjust tests/docs as needed.
 5. Open a PR scoped to one part when possible and follow the [PR template](https://github.com/comstrx/saasx/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
 
@@ -44,14 +44,15 @@ Before opening a PR, make sure:
 - ✅ The change is easy to understand and review
 - ✅ Tests pass and new behavior is covered (when applicable)
 - ✅ The part's `verify` gate passes locally (formatting, lints, tests)
-- ✅ Commit messages use the part prefix: `api(...)`, `web(...)`, `mobile(...)`, `infra(...)`, `skill(...)`, or `global(...)`
-- ✅ Docs/examples match the new behavior (if changed)
+- ✅ Commit messages use the part prefix: `engine(...)`, `api(...)`, `infra(...)`, `skill(...)`, `web(...)`, `mobile(...)`, or `global(...)`
 
 ---
 
 ## Code of Conduct
 
 By participating, you agree to follow the [Code of Conduct](https://github.com/comstrx/saasx/blob/main/CODE_OF_CONDUCT.md).
+
+---
 
 ## Security
 

@@ -29,9 +29,8 @@
 
 If you experience or witness a violation, report it:
 
-Email the maintainer privately: <comstrx@gmail.com>
-
-Do not report a violation in Issues or Discussions — both are public.
+- Email the maintainer privately: <comstrx@gmail.com>
+- Do not report a violation in Issues or Discussions — both are public.
 
 For security vulnerabilities, use [private vulnerability reporting](https://github.com/comstrx/saasx/security/advisories/new).
 
@@ -46,6 +45,5 @@ Maintainers may take appropriate action, including:
 
 - A request to change tone or content
 - Content moderation (edit/remove/lock)
-- A formal warning
 - Temporary restrictions (mute/limited participation)
 - Permanent bans for severe or repeated violations

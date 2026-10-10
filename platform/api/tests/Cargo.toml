@@ -1,0 +1,19 @@
+[package]
+name = "tests"
+publish.workspace = true
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Scenario tests of the services, consuming the foundation the way production does."
+
+[dependencies]
+base.workspace = true
+
+[[test]]
+name = "hello"
+path = "hello.rs"
+
+[lints]
+workspace = true

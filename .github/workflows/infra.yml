@@ -2,15 +2,17 @@ name: Infra
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - "infra/**"
-      - ".github/workflows/infra.yml"
+      - 'platform/infra/**'
+      - 'engine/rust/**'
+      - '.github/workflows/infra.yml'
 
   pull_request:
     paths:
-      - "infra/**"
-      - ".github/workflows/infra.yml"
+      - 'platform/infra/**'
+      - 'engine/rust/**'
+      - '.github/workflows/infra.yml'
 
   workflow_dispatch:
 
@@ -21,20 +23,98 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  CARGO_TERM_COLOR: always
+  RUST_NIGHTLY: nightly-2026-10-08
+
 defaults:
   run:
     shell: bash
-    working-directory: infra
+    working-directory: platform/infra
 
 jobs:
   verify:
+    name: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # Toolchain setup and the part's `verify` gate are wired when the part lands.
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          cache-workspaces: |
+            engine/rust
+            platform/infra
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          components: rustfmt
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72 # v1.25.2
+
+      - name: Install gate tools
+        run: cargo binstall --no-confirm cargo-nextest cargo-deny
 
       - name: Verify
-        run: echo "infra — no gate yet"
+        run: cargo run -q --manifest-path ../../engine/rust/xtask/Cargo.toml -- verify
+
+  supply:
+    name: supply chain
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          cache-workspaces: |
+            engine/rust
+            platform/infra
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72 # v1.25.2
+
+      - name: Install supply-chain tools
+        run: cargo binstall --no-confirm cargo-udeps cargo-hack cargo-semver-checks
+
+      - name: Udeps
+        run: cargo run -q --manifest-path ../../engine/rust/xtask/Cargo.toml -- udeps
+
+      - name: Hack
+        run: cargo run -q --manifest-path ../../engine/rust/xtask/Cargo.toml -- hack
+
+      - name: Semver
+        if: github.event_name == 'pull_request'
+        run: cargo run -q --manifest-path ../../engine/rust/xtask/Cargo.toml -- semver --baseline "origin/${{ github.base_ref }}"
+
+  gate:
+    name: gate
+    if: always()
+    needs: [verify, supply]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Require every job
+        working-directory: .
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          failed=0
+
+          while IFS='=' read -r job result; do
+              printf '%-10s %s\n' "${result}" "${job}"
+              [[ "${result}" == "success" ]] || failed=1
+          done < <(jq -r 'to_entries[] | "\(.key)=\(.value.result)"' <<< "${RESULTS}")
+
+          (( failed == 0 )) || { echo "gate: required jobs did not succeed." >&2; exit 1; }

@@ -1,0 +1,11 @@
+{
+  "name": "base",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The shared substrate every other package in the engine is built on.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false
+}

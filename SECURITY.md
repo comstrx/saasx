@@ -28,7 +28,7 @@ If the above is not available, email the maintainer privately: <comstrx@gmail.co
 
 ## Include this (makes triage fast)
 
-- affected part (`api`, `infra`, `skill`, `web`, `mobile`) and crate/package + the commit or tag you are on
+- affected part (`engine`, `api`, `infra`, `skill`, `web`, `mobile`) and crate/package + the commit or tag you are on
 - impact (what can an attacker do?) + assumptions / threat model
 - minimal reproduction or PoC (safe and small)
 - environment details
@@ -40,4 +40,5 @@ If the above is not available, email the maintainer privately: <comstrx@gmail.co
 
 - Please avoid public disclosure until a fix is available.
 - We will coordinate on a timeline, patch, and advisory when confirmed.
-- When appropriate, we disclose via releases and ecosystem advisories
+- When appropriate, we disclose via releases and ecosystem advisories.
+- Reporters are credited in the advisory unless they ask to stay anonymous.

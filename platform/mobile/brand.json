@@ -1,0 +1,21 @@
+{
+    "name": "zainlak",
+    "title": "Zainlak",
+    "scheme": "zainlak",
+    "site": "zainlak.com",
+    "package": "com.zainlak.app",
+    "since": 2026,
+    "words": {
+        "en": {
+            "name": "zainlak",
+            "title": "Zainlak",
+            "home": "Saudi Arabia"
+        },
+        "ar": {
+            "name": "زينلك",
+            "title": "زينلك",
+            "home": "السعودية"
+        }
+    },
+    "iso": "SA"
+}

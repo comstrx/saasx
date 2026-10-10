@@ -1,0 +1,2156 @@
+{
+    "common": {
+        "accept": "application/json",
+        "authorization": "Bearer token-1",
+        "locale": "ar",
+        "x-currency": "SAR",
+        "x-tenant-domain": "shop.example.test"
+    },
+    "calls": [
+        {
+            "label": "auth.login",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/login",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "email": "a@b.co",
+                "password": "p"
+            }
+        },
+        {
+            "label": "auth.register",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/register",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "name": "Ab",
+                "email": "a@b.co",
+                "phone": "0123456789",
+                "password": "p",
+                "password_confirmation": "p"
+            }
+        },
+        {
+            "label": "auth.verify",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/verify-otp",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "challenge_token": "t",
+                "otp": "1234"
+            }
+        },
+        {
+            "label": "auth.resend",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/resend",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "challenge_token": "t"
+            }
+        },
+        {
+            "label": "auth.recovery",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/recovery",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "phone": "0123456789"
+            }
+        },
+        {
+            "label": "auth.reset",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/reset",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "token": "t",
+                "password": "p",
+                "password_confirmation": "p"
+            }
+        },
+        {
+            "label": "auth.confirmEmail",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/confirm-email",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "token": "t"
+            }
+        },
+        {
+            "label": "auth.providers",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/auth/social/providers",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "auth.socialRedirect",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/auth/social/google/redirect?callback=https%3A%2F%2Fx.co%2Fcb",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "auth.socialExchange",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/auth/social/exchange",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "code": "c"
+            }
+        },
+        {
+            "label": "account.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.image",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/image",
+            "headers": {},
+            "idempotent": true,
+            "body": [
+                [
+                    "image",
+                    "file:a.png"
+                ]
+            ]
+        },
+        {
+            "label": "account.removeImage",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/account/image",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "account.identity",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/identity",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.identityOptions",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/identity/options",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.submitIdentity",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/identity",
+            "headers": {},
+            "idempotent": true,
+            "body": [
+                [
+                    "type",
+                    "passport"
+                ],
+                [
+                    "geo_id",
+                    "1"
+                ],
+                [
+                    "number",
+                    "N1"
+                ],
+                [
+                    "front_image",
+                    "file:a.png"
+                ]
+            ]
+        },
+        {
+            "label": "account.preferences",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/settings",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.settings",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/settings",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "notify_prefs": {
+                    "orders": {
+                        "enabled": true,
+                        "channels": {
+                            "email": false
+                        }
+                    }
+                },
+                "language": "ar",
+                "currency": "SAR",
+                "theme": "dark"
+            }
+        },
+        {
+            "label": "account.name",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/name",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "name": "Ali"
+            }
+        },
+        {
+            "label": "account.email",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/email",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "email": "a@b.co"
+            }
+        },
+        {
+            "label": "account.phone",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/phone",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "phone": "0123456789"
+            }
+        },
+        {
+            "label": "account.password",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/password",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "password": "p",
+                "password_confirmation": "p",
+                "logout": true
+            }
+        },
+        {
+            "label": "account.location",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/account/location",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "address": "x"
+            }
+        },
+        {
+            "label": "account.confirm",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/confirm-contact",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "field": "email",
+                "code": "1"
+            }
+        },
+        {
+            "label": "account.sendCode",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/send-code",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "field": "phone"
+            }
+        },
+        {
+            "label": "account.logout",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/logout",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "account.logoutAll",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/logout-all",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "account.deactivate",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/deactivate",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "password": "p"
+            }
+        },
+        {
+            "label": "account.delete",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/request-deletion",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "confirm_code": "1"
+            }
+        },
+        {
+            "label": "account.loyalty",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/level",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.rewards",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/rewards",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.socials",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/socials",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.linkSocial",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/account/attach-social/google/redirect?callback=https%3A%2F%2Fx.co%2Fcb",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "account.unlinkSocial",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/account/unattach-social/google",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "sessions.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/tokens?page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "sessions.revoke",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/tokens/3",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "sessions.revokeOthers",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/tokens/others",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "documents.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/content/about?limit=5",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "articles.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/blogs?page=1&limit=5&query=q&sort=newest",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "articles.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/blogs/4",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "articles.comments",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/blogs/4/comments?page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "articles.comment",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/blogs/4/comment",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "content": "hi"
+            }
+        },
+        {
+            "label": "articles.favorite",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/blogs/4/favorite",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "articles.unfavorite",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/blogs/4/unfavorite",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "offers.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/offers?limit=3",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "offers.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/offers/2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "campaigns.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/campaigns",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "campaigns.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/campaigns/2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "content.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/content/site-info",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "settings.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/content/site-info",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "seo.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/content/seo/home",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "sitemap.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/content/sitemap?kind=catalogs&page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "policy.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/contract",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/catalogs?page=2&limit=10&query=x&sort=lowest_price&view=full&filters%5Bcategory%5D=1&filters%5Btype%5D=hotel&filters%5Bgeo%5D=7&filters%5Bcity%5D=2&filters%5Bcountry%5D=sa&filters%5Bmin_price%5D=10&filters%5Bmax_price%5D=99.5&filters%5Bmin_rating%5D=4&filters%5Bcheckin%5D=2026-10-01&filters%5Bcheckout%5D=2026-10-03&filters%5Bstarts_from%5D=2026-10-01&filters%5Bstarts_to%5D=2026-10-09&filters%5Badults%5D=2&filters%5Bchildren%5D=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/catalogs/9?adults=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.availability",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/catalogs/9/availability?from=2026-10-01&to=2026-10-31",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.reviews",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/catalogs/9/reviews?page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.recommendations",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/catalogs/9/similar?limit=4",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "products.favorite",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/catalogs/9/favorite",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "products.unfavorite",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/catalogs/slug-a/unfavorite",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "categories.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/categories?page=1&ids%5B%5D=5&ids%5B%5D=6&fields%5B%5D=name&fields%5B%5D=image&facets%5B%5D=parent&stats%5B%5D=min_views&view=tiny",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "categories.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/categories/5",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "categories.products",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/categories/5/catalogs?limit=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "orders.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/orders?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "orders.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/orders/7",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "orders.preview",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/preview",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 2,
+                "starts_at": "2026-10-01",
+                "adults": 2,
+                "applicants": [
+                    {
+                        "name": "Ab",
+                        "birth_date": "2000-01-01"
+                    }
+                ],
+                "addons": [
+                    {
+                        "quantity": 1,
+                        "catalog_id": 3
+                    }
+                ],
+                "catalog_id": 9,
+                "coupon_code": "C1"
+            }
+        },
+        {
+            "label": "orders.quote",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/quote",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "orders.pay",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/pay",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "gateway_id": 1,
+                "idempotency_key": "k1",
+                "quote_token": "q"
+            }
+        },
+        {
+            "label": "orders.refund",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/refund",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "amount": "5"
+            }
+        },
+        {
+            "label": "orders.review",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/review",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "title": "t",
+                "content": "c",
+                "rating": 5
+            }
+        },
+        {
+            "label": "orders.update",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/orders/7",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "name": "n",
+                "notes": "x"
+            }
+        },
+        {
+            "label": "orders.cancel",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/cancel",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "cancel_notes": "r"
+            }
+        },
+        {
+            "label": "orders.checkout",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/catalogs/9/checkout",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 1,
+                "email": "a@b.co",
+                "quote_token": "q",
+                "pay_type": "wallet"
+            }
+        },
+        {
+            "label": "cart.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/cart",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "cart.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/cart/2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "cart.checkout",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/cart/2/checkout",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 1,
+                "coupon_code": "C",
+                "quote_token": "q",
+                "pay_type": "later"
+            }
+        },
+        {
+            "label": "cart.add",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/catalogs/9/cart",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 2
+            }
+        },
+        {
+            "label": "cart.update",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/cart/2",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 3
+            }
+        },
+        {
+            "label": "cart.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/cart/2",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "cart.increment",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/cart/2/increment",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 1
+            }
+        },
+        {
+            "label": "cart.decrement",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/cart/2/decrement",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "quantity": 1
+            }
+        },
+        {
+            "label": "gateways.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/gateways",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "gateways.deposit",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/gateways/1/deposit",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "amount": "10",
+                "currency": "SAR",
+                "recipient": {
+                    "iban": "x"
+                }
+            }
+        },
+        {
+            "label": "gateways.withdraw",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/gateways/1/withdraw",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "amount": "10",
+                "currency": "SAR"
+            }
+        },
+        {
+            "label": "wallet.read",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/wallet",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "wallet.statement",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/wallet/statement?page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "wallet.recipient",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/wallet/transfer/resolve?recipient=abc",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "wallet.transfer",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/wallet/transfer",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "recipient": "abc",
+                "amount": "1"
+            }
+        },
+        {
+            "label": "transactions.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/transactions",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "transactions.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/transactions/3",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "transactions.cancel",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/transactions/3/cancel",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "transactions.refund",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/transactions/3/refund",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "confirm_code": "1"
+            }
+        },
+        {
+            "label": "tickets.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/tickets/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "tickets.create",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tickets",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "title": "Hello",
+                "content": "Hello there"
+            }
+        },
+        {
+            "label": "tickets.update",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/tickets/1",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "title": "Hello",
+                "content": "Hello there"
+            }
+        },
+        {
+            "label": "tickets.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/tickets/1",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "tickets.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/tickets?page=1&filters%5Bstatus%5D=closed",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "tickets.reply",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tickets/1/reply",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "content": "x"
+            }
+        },
+        {
+            "label": "tickets.close",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tickets/1/close",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "tickets.resolve",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tickets/1/resolve",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "tickets.reopen",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tickets/1/reopen",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "tickets.forOrder",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/ticket",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "title": "Hello",
+                "content": "Hello there"
+            }
+        },
+        {
+            "label": "broadcast.authorize",
+            "method": "POST",
+            "connection": "broadcast",
+            "path": "/broadcasting/auth",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "socket_id": "1.2",
+                "channel_name": "private-wallet.1"
+            }
+        },
+        {
+            "label": "notifications.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/notifications?page=1&filters%5Bkind%5D=order&filters%5Bread%5D=false&filters%5Bpinned%5D=true",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "notifications.stats",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/notifications/stats",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "notifications.read",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/notifications/1/read",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "notifications.unread",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/notifications/1/unread",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "notifications.pin",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/notifications/1/pin",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "notifications.unpin",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/notifications/1/unpin",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "notifications.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/notifications/1",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "notifications.readMany",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/notifications/read",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "ids": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "label": "favorites.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/favorites",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "favorites.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/favorites/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "favorites.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/favorites/1",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "coupons.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/coupons",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "coupons.mine",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/coupons/mine",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "coupons.history",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/coupons/history",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "coupons.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/coupons/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "coupons.redeem",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/coupons/1/redeem",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "coupons.validate",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/coupons/C1/validate",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "catalog_id": 9,
+                "quantity": 2
+            }
+        },
+        {
+            "label": "levels.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/levels",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "levels.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/levels/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "referrals.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/referrals",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "rewards.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/rewards",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "rewards.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/rewards/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "rewards.history",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/rewards/history",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.rooms",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/rooms?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.room",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/rooms/1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.support",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/support",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.contacts",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/contacts",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "announcements.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/announcements",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.search",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/search?search=x",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "chat.open",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/new/5",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.forProduct",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/catalogs/9/chat",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.forOrder",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/orders/7/chat",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages?page=2",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "messages.send",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/send",
+            "headers": {},
+            "idempotent": true,
+            "body": [
+                [
+                    "content",
+                    "hi"
+                ],
+                [
+                    "type",
+                    "text"
+                ],
+                [
+                    "files[0]",
+                    "file:a.png"
+                ]
+            ]
+        },
+        {
+            "label": "messages.edit",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/edit",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "content": "e",
+                "type": "text"
+            }
+        },
+        {
+            "label": "messages.forward",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/forward",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "room": 3
+            }
+        },
+        {
+            "label": "messages.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.read",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/read",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.delivered",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/delivered",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.react",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/reaction",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "reaction": "👍"
+            }
+        },
+        {
+            "label": "messages.unreact",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/unreaction",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.star",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/star",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "messages.unstar",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/messages/2/unstar",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.typing",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/typing",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.pin",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/pin",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.unpin",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/unpin",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.mute",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/mute",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.unmute",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/unmute",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.archive",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/archive",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.unarchive",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/unarchive",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.block",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/block",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.unblock",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/unblock",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/chat/rooms/1",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.report",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/rooms/1/report",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "reason": "rr",
+                "content": "cc"
+            }
+        },
+        {
+            "label": "chat.presence",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/presence/ping",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "chat.visibility",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/presence/visibility",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "hidden": true
+            }
+        },
+        {
+            "label": "supportMessages.send",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/support/messages/send",
+            "headers": {},
+            "idempotent": true,
+            "body": [
+                [
+                    "content",
+                    "help"
+                ],
+                [
+                    "type",
+                    "text"
+                ]
+            ]
+        },
+        {
+            "label": "supportMessages.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/support/messages?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "announcementMessages.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/announcements/1/messages",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "announcementMessages.react",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/chat/announcements/1/messages/2/reaction",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "reaction": "👍"
+            }
+        },
+        {
+            "label": "observe.rooms",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/chat/observe/rooms",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "observe.deleteMessage",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/chat/observe/rooms/1/messages/2",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "reviews.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/reviews?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "reviews.restore",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/reviews/5/restore",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "comments.reply",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/comments/3/reply",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "content": "r"
+            }
+        },
+        {
+            "label": "comments.removeMany",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/comments",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "ids": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "label": "replies.update",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/replies/4",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "content": "u"
+            }
+        },
+        {
+            "label": "reports.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/reports",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "reports.remove",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/reports/2",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "logs.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/logs",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "logs.view",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/logs/3",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "plans.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/plans",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "plans.coupon",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/plans/1/coupon/C1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "vendors.suggest",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/vendors/suggest?query=z",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "vendors.reviews",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/vendors/2/reviews?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "geos.atlas",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/geos/browse",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "geos.complete",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/geos/complete?query=ri",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "geos.children",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/geos/3/childrens?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "countries.suggest",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/countries/suggest?search=sa",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "countries.regions",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/countries/1/regions?limit=5",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "countries.visit",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/countries/1/view",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "regions.cities",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/regions/2/cities",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "cities.districts",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/cities/3/districts",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "districts.stats",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/districts/4/stats",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "pois.products",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/pois/5/catalogs?page=1",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "home.offers",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/home/recently-offers",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "home.products",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/home/recently-catalogs",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "search.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/search?query=riyadh&sort=newest&filters%5Btype%5D=hotel",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "search.suggest",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/search/suggest?query=ri",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "subscriptions.preview",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/subscriptions/preview",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "plan_id": 2
+            }
+        },
+        {
+            "label": "subscriptions.autoRenew",
+            "method": "PUT",
+            "connection": "primary",
+            "path": "/subscriptions/1/auto-renew",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "auto_renew": true
+            }
+        },
+        {
+            "label": "tenants.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/tenants",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "tenants.renew",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/tenants/1/renew",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "promotions.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/promotions",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "promotions.delete",
+            "method": "DELETE",
+            "connection": "primary",
+            "path": "/promotions/1",
+            "headers": {},
+            "idempotent": true,
+            "body": null
+        },
+        {
+            "label": "credentials.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/credentials",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "credentials.reveal",
+            "method": "POST",
+            "connection": "primary",
+            "path": "/credentials/abc/reveal",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "idempotent": true,
+            "body": {
+                "password": "p"
+            }
+        },
+        {
+            "label": "locales.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/locales",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        },
+        {
+            "label": "currencies.list",
+            "method": "GET",
+            "connection": "primary",
+            "path": "/currencies",
+            "headers": {},
+            "idempotent": false,
+            "body": null
+        }
+    ]
+}

@@ -8,38 +8,75 @@ updates:
       day: monday
     groups:
       actions:
-        patterns: ["*"]
+        patterns: ['*']
     commit-message:
-      prefix: "global(deps)"
+      prefix: 'global(deps)'
 
-  # Uncomment each entry when its part has a manifest; Dependabot errors on an empty directory.
+  - package-ecosystem: cargo
+    directory: /engine/rust
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      rust:
+        patterns: ['*']
+    commit-message:
+      prefix: 'engine(deps)'
 
-  # - package-ecosystem: cargo
-  #   directory: /api
-  #   schedule: { interval: weekly, day: monday }
-  #   groups: { rust: { patterns: ["*"] } }
-  #   commit-message: { prefix: "api(deps)" }
+  - package-ecosystem: npm
+    directory: /engine/node
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      node:
+        patterns: ['*']
+    commit-message:
+      prefix: 'engine(deps)'
 
-  # - package-ecosystem: cargo
-  #   directory: /infra
-  #   schedule: { interval: weekly, day: monday }
-  #   groups: { rust: { patterns: ["*"] } }
-  #   commit-message: { prefix: "infra(deps)" }
+  - package-ecosystem: cargo
+    directory: /platform/api
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      rust:
+        patterns: ['*']
+    commit-message:
+      prefix: 'api(deps)'
 
-  # - package-ecosystem: cargo
-  #   directory: /skill
-  #   schedule: { interval: weekly, day: monday }
-  #   groups: { rust: { patterns: ["*"] } }
-  #   commit-message: { prefix: "skill(deps)" }
+  - package-ecosystem: cargo
+    directory: /platform/infra
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      rust:
+        patterns: ['*']
+    commit-message:
+      prefix: 'infra(deps)'
+
+  - package-ecosystem: cargo
+    directory: /platform/skill
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      rust:
+        patterns: ['*']
+    commit-message:
+      prefix: 'skill(deps)'
+
+  # Uncomment when the part has a manifest; Dependabot errors on an empty directory.
 
   # - package-ecosystem: npm
-  #   directory: /web
+  #   directory: /platform/web
   #   schedule: { interval: weekly, day: monday }
   #   groups: { js: { patterns: ["*"] } }
   #   commit-message: { prefix: "web(deps)" }
 
   # - package-ecosystem: npm
-  #   directory: /mobile
+  #   directory: /platform/mobile
   #   schedule: { interval: weekly, day: monday }
   #   groups: { js: { patterns: ["*"] } }
   #   commit-message: { prefix: "mobile(deps)" }
