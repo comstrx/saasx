@@ -78,7 +78,10 @@ export const endpoints = {
     account: feature({ execution: "client", cache: 0, permissions: ["user"], touches: ["account"] }, {
         me: get("/account/me", {}, user, { response: { data: "data.user" } }),
         logout: post("/account/logout", {}, ack),
-        update: put("/account", { name: z.string().min(2).max(80) }, ack),
+        update: put("/account", {
+            name: z.string().min(2).max(80),
+            address: z.object({ city: z.string().max(80).optional(), country: z.string().min(2).max(2).optional() }).optional(),
+        }, ack),
         locate: put("/account/location", { latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), address: z.string().max(255).optional() }, ack),
         avatar: post("/account/image", { image: z.file() }, z.object({ image: z.string().nullish() }), { encoding: "multipart" }),
         device: post("/account/devices", { token: z.string().min(8), platform: z.enum(["android", "ios", "web"]), locale: z.string().max(10).optional() }, ack),

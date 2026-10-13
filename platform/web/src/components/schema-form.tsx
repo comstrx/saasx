@@ -1,5 +1,6 @@
 "use client";
 
+import { pathGet } from "@engine/base";
 import type { FormState, FormValue } from "@engine/context";
 import { languageName } from "@engine/translate";
 import type { FieldFact } from "@engine/validate";
@@ -29,7 +30,7 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
 
     const id = useId();
     const busy = form.status === "pending";
-    const label = ( field: FieldFact ): string => labels[field.name] ?? field.name;
+    const label = ( field: FieldFact ): string => labels[field.name] ?? (typeof pathGet(labels, field.name) === "string" ? (pathGet(labels, field.name) as string) : field.name);
     const control = ( field: FieldFact ): ReactNode => {
 
         const key = `${id}-${field.name}`;
