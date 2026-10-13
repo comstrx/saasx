@@ -41,3 +41,7 @@ declare module "@spec/messages" {
 
     export default dictionaries;
 }
+declare module "@spec/flags" {
+    const flags: Readonly<Record<string, number>>;
+    export default flags;
+}

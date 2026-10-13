@@ -11,6 +11,7 @@ export const rules = defineRules({
     owners: {
         "lib/spec/config.ts": ["@spec/routing"],
         "lib/spec/runtime.ts": ["@spec/config", "@spec/schema", "@spec/messages", "@spec/client"],
+        "lib/spec/world.ts": ["@spec/flags"],
         "render/blocks.tsx": ["@spec/registry"],
     },
     layers: [

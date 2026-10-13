@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import { browserConfig } from "@engine/api";
-import { assetHash, brandImages, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, task } from "@engine/tooling";
+import { assetHash, brandImages, flagsModule, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, task } from "@engine/tooling";
+import { countries } from "../../src/lib/spec/theme.ts";
 import { assetFiles, composeAssets, specPaths } from "../assets/index.ts";
 import { loadSpec, root, type Spec, specFromEnvironment, writeFile, writeJson } from "../core/index.ts";
 
@@ -34,6 +35,7 @@ export async function compileSpec ( mode: Mode ) {
     for ( const [name, bytes] of assets ) writeFile(`${folder}/assets/${name}`, bytes);
 
     writeFile(`${folder}/registry.js`, registryModule(root, folder, spec.schema.features));
+    writeFile(`${folder}/flags.js`, flagsModule(root, folder, "public/images/flag", countries, "webp"));
     writeJson(`${folder}/release.json`, { identity: spec.identity, files: [...files].map(( [path, bytes] ) => ({ path, sha256: sha256(bytes) })) });
 
     const meta = {
@@ -42,7 +44,7 @@ export async function compileSpec ( mode: Mode ) {
         assetRoot: `${folder}/assets`,
         assetHash: assetHash(assets),
         paths: specPaths,
-        aliases: specAliases(root, folder, Object.keys(data)),
+        aliases: specAliases(root, folder, Object.keys(data), { "@spec/flags": "flags.js" }),
         app: {
             name: content.name,
             slug: spec.config.settings.app.slug,
