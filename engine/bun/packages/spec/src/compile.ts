@@ -1,7 +1,7 @@
 import { isRecord } from "@engine/base";
 import { slugify } from "@engine/string";
 import type { FieldFact } from "@engine/validate";
-import { compilePorts, consumesSignal, empty } from "./binding.ts";
+import { compilePorts, consumesSignal, emptyManifest } from "./binding.ts";
 import { type Features, mergeOptions, optionIssues, stateNames } from "./options.ts";
 
 export type { Features } from "./options.ts";
@@ -116,7 +116,7 @@ export function compileFeature<B extends object> (
     where: string,
 ): CompiledFeature<B> {
 
-    const manifest = walk.features[entry.name] ?? empty;
+    const manifest = walk.features[entry.name] ?? emptyManifest;
 
     if ( !walk.features[entry.name] ) walk.issues.push(`${where}: no feature named ${entry.name} under src/features.`);
 

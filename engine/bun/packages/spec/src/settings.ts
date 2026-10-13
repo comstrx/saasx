@@ -67,7 +67,7 @@ export type ScreenPlan<B extends object> = {
     features: Features;
     catalogue: Catalogue;
 };
-export type Compiledscreen<B extends object> = { walk: Walk<B>; blocks: CompiledBlock<B>[] };
+export type CompiledScreen<B extends object> = { walk: Walk<B>; blocks: CompiledBlock<B>[] };
 
 type Patch = Record<string, unknown>;
 
@@ -193,7 +193,7 @@ export function iconIssues (
 
 }
 
-export function compileScreen<B extends object> ( plan: ScreenPlan<B> ): Compiledscreen<B> {
+export function compileScreen<B extends object> ( plan: ScreenPlan<B> ): CompiledScreen<B> {
 
     const { name, path, issues } = plan;
     const walk = createWalk({
@@ -240,7 +240,7 @@ export function claimShell<B> (
     }
 
 }
-export function at ( origin: string | null, path: string ): string | null {
+export function address ( origin: string | null, path: string ): string | null {
 
     return origin === null ? null : path ? `${origin}/${path}` : origin;
 

@@ -8,10 +8,10 @@ import { stateIssues } from "./options.ts";
 import { type Entities, type EntityRef, entityRoute } from "./schema.ts";
 import {
     type ApiPlan,
+    address,
     assertClean,
-    at,
     type Backend,
-    type Compiledscreen,
+    type CompiledScreen,
     choiceIssues,
     claimShell,
     compileApi,
@@ -101,7 +101,7 @@ export type Surface<
         screen: S,
         options: Record<string, unknown>,
         config: C,
-        compiled: Compiledscreen<B>,
+        compiled: CompiledScreen<B>,
         issues: string[],
     ) => O;
     screenIssues?: (( screens: readonly S[] ) => string[]) | undefined;
@@ -134,11 +134,11 @@ export function backendOf ( identity: string, contracts: ContractsInput, currenc
         insecure = false,
         ...extras
     } = contracts.options;
-    const browser = contracts.urls.browser === undefined ? undefined : at(contracts.urls.browser, prefix);
-    const development = { baseUrl: at(contracts.urls.local, prefix), browserBaseUrl: browser ?? null };
+    const browser = contracts.urls.browser === undefined ? undefined : address(contracts.urls.browser, prefix);
+    const development = { baseUrl: address(contracts.urls.local, prefix), browserBaseUrl: browser ?? null };
     const primary = {
         ...compact(extras),
-        baseUrl: at(contracts.urls.production, prefix),
+        baseUrl: address(contracts.urls.production, prefix),
         ...(browser === undefined ? {} : { browserBaseUrl: browser }),
         development,
     } as ApiInput["connections"][string];
@@ -184,7 +184,7 @@ export type CompiledShape<S extends ScreenInputBase<object>, O, B extends object
 export function compiledScreen<S extends ScreenInputBase<B>, O, B extends object> (
     screen: S,
     options: O,
-    compiled: Compiledscreen<B>,
+    compiled: CompiledScreen<B>,
 ): CompiledShape<S, O, B> {
 
     return {

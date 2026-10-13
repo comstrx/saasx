@@ -84,7 +84,7 @@ export {
     type Method,
     merge,
     methods,
-    name,
+    nameShape,
     personalHeaders,
     requiredHeaders,
     url,

@@ -26,7 +26,7 @@ const tenantShape = z
     .default(null);
 
 import { type CompiledSchemaBase, type Entities, entityRoute, screenShapes } from "./schema.ts";
-import type { Backend, Compiledscreen } from "./settings.ts";
+import type { Backend, CompiledScreen } from "./settings.ts";
 import { optionsShape } from "./shapes.ts";
 import {
     backendOf,
@@ -162,7 +162,7 @@ export function createSpecSurface<
                   screen: Screen,
                   options: ScreenOptions,
                   config: Config,
-                  compiled: Compiledscreen<Block>,
+                  compiled: CompiledScreen<Block>,
                   issues: string[],
               ) => R)
             | undefined;
@@ -212,7 +212,7 @@ export function createSpecSurface<
                     screen: Screen,
                     options: Record<string, unknown>,
                     config: Config & SurfaceConfig,
-                    compiled: Compiledscreen<Block>,
+                    compiled: CompiledScreen<Block>,
                     issues: string[],
                 ) => ({
                     ...compiledScreen(screen, options as ScreenOptions, compiled),

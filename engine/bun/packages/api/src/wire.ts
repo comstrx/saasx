@@ -33,7 +33,7 @@ export const headerKeys = [
 export const requiredHeaders: readonly HeaderKey[] = ["accept", "language", "currency", "requestId"];
 export const personalHeaders: readonly HeaderKey[] = ["client", "auth", "requestId", "idempotency"];
 
-export const name = z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]*$/);
+export const nameShape = z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]*$/);
 export const url = z
     .string()
     .refine(( value ) => isEndpoint(value))
@@ -72,7 +72,7 @@ const envelopeShape = z.strictObject({
     code: field.nullable(),
     reason: field.nullable(),
     requestId: field.nullable(),
-    fields: z.record(name, source),
+    fields: z.record(nameShape, source),
     pagination: z.partialRecord(z.enum(pageKeys), source).nullable(),
     empty: z.boolean(),
 });
@@ -86,7 +86,7 @@ export const layerShape = z.strictObject({
     request: z
         .strictObject({
             headers: z.partialRecord(z.enum(headerKeys), z.union([headerName, header]).nullable()).optional(),
-            fields: z.record(name, target.nullable()).optional(),
+            fields: z.record(nameShape, target.nullable()).optional(),
         })
         .optional(),
     response: envelopeShape.partial().optional(),
@@ -95,13 +95,13 @@ export const wireShape = layerShape.required().extend({
     enabled: z.literal(true),
     request: z.strictObject({
         headers: z.partialRecord(z.enum(headerKeys), header),
-        fields: z.record(name, target.nullable()),
+        fields: z.record(nameShape, target.nullable()),
     }),
     response: envelopeShape,
 });
 export const contractShape = z.strictObject({
-    values: z.record(name, z.record(z.string(), z.unknown())),
-    features: z.record(name, z.record(name, z.union([wireShape, disabledShape]))),
+    values: z.record(nameShape, z.record(z.string(), z.unknown())),
+    features: z.record(nameShape, z.record(nameShape, z.union([wireShape, disabledShape]))),
 });
 export const headerDefaults: NonNullable<Layer["request"]>["headers"] = {
     accept: "Accept",

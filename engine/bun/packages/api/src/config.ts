@@ -1,5 +1,5 @@
 import { currency, z } from "@engine/validate";
-import { name, url } from "./wire.ts";
+import { nameShape, url } from "./wire.ts";
 
 export const connectionDefaults = {
     browser: true,
@@ -23,7 +23,7 @@ const connectionShape = z.strictObject({
 });
 export const apiShape = z.strictObject({
     context: z.strictObject({
-        spec: name,
+        spec: nameShape,
         currency,
         sessionCookie: z
             .string()
@@ -36,10 +36,10 @@ export const apiShape = z.strictObject({
             .nullable()
             .default(null),
     }),
-    connections: z.record(name, connectionShape),
+    connections: z.record(nameShape, connectionShape),
 });
 export const apiInputShape = apiShape.extend({
-    connections: z.record(name, connectionShape.partial().extend({ baseUrl: url })),
+    connections: z.record(nameShape, connectionShape.partial().extend({ baseUrl: url })),
 });
 
 export type ApiInput = z.input<typeof apiInputShape>;

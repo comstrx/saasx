@@ -11,19 +11,19 @@ import {
     type Layer,
     layerShape,
     merge,
-    name,
+    nameShape,
     type Wire,
     wireShape,
 } from "./wire.ts";
 
 const switchShape = z.union([
     z.boolean(),
-    layerShape.extend({ operations: z.record(name, z.union([z.boolean(), layerShape])).optional() }),
+    layerShape.extend({ operations: z.record(nameShape, z.union([z.boolean(), layerShape])).optional() }),
 ]);
 
 export const overridesShape = layerShape
     .pick({ execution: true, encoding: true, cache: true, request: true, response: true })
-    .extend({ features: z.record(name, switchShape).default({}) });
+    .extend({ features: z.record(nameShape, switchShape).default({}) });
 
 export type ContractOverrides = z.input<typeof overridesShape>;
 export type Seeds = { [R in keyof typeof resourceShapes]?: unknown };

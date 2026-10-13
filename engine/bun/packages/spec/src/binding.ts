@@ -4,7 +4,7 @@ import type { FieldFact } from "@engine/validate";
 import type { OperationFacts, Walk } from "./compile.ts";
 import type { Binding, CompiledPort, Live, Manifest, Port, SiteFeature, Value } from "./shapes.ts";
 
-export const empty: Manifest = { owner: "server", options: {}, ports: {}, access: [], signals: [] };
+export const emptyManifest: Manifest = { owner: "server", options: {}, ports: {}, access: [], signals: [] };
 function operationOf<B> ( walk: Walk<B>, name: string, where: string ) {
 
     const [feature = "", operation = ""] = name.split(".");
