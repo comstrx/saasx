@@ -53,6 +53,7 @@ export class Failure extends Error {
     readonly code: string | undefined;
     readonly retryAfter: number | undefined;
     readonly requestId: string | undefined;
+    readonly spoken: boolean;
 
     constructor ( kind: Kind, { status = 0, errors = {}, issues = {}, message, ...detail }: Detail = {} ) {
 
@@ -69,6 +70,7 @@ export class Failure extends Error {
         this.code = detail.code;
         this.retryAfter = detail.retryAfter;
         this.requestId = detail.requestId;
+        this.spoken = message !== undefined;
 
     }
 

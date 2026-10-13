@@ -155,5 +155,11 @@ describe("failure messages", () => {
         expect(failureMessages(new Error("boom"), dictionary, "Failed")).toEqual({ _form: "Failed" });
 
     });
+    test("a failure the engine raised itself never shows its own text; the fallback speaks", () => {
+
+        expect(failureMessages(new Failure("network", { status: 502 }), dictionary, "Failed")).toEqual({ _form: "Failed" });
+        expect(failureMessages(new Failure("timeout"), dictionary, "Failed")).toEqual({ _form: "Failed" });
+
+    });
 
 });

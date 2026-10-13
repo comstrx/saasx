@@ -27,6 +27,6 @@ export function failureMessages ( error: unknown, dictionary: Messages, fallback
     const reason = error.reason ? messageAt(dictionary, `reasons.${error.reason}`) : undefined;
     const code = error.code ? messageAt(dictionary, `codes.${error.code}`) : undefined;
 
-    return { _form: reason ?? code ?? error.errors._form?.[0] ?? (error.message || fallback) };
+    return { _form: reason ?? code ?? error.errors._form?.[0] ?? (error.spoken ? error.message : undefined) ?? fallback };
 
 }
