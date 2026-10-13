@@ -20,3 +20,15 @@ Every mutating operation plans before it applies, keeps state with locking, keep
 ## Engine
 
 The engine is one crate on the Rust engine, reached by path and never through the registry directly. It is a pure library at heart: it builds and runs on a bare machine before anything it manages exists.
+
+## Tool
+
+`infra` is the first consumer of the engine's `process` crate, the way `iam` is of `http`:
+
+```text
+infra doctor                                                  the machine: platform, distro, host, memory, uptime, package and service managers
+infra service show|install|uninstall|start|stop|restart|status <name> [--command <path>] [--arg=<x>]... [--env K=V]... [--provider systemd|launchd|windows]
+infra package install|uninstall|check <name>                  through apt, dnf, pacman, apk, zypper, nix, brew, winget, scoop or choco
+```
+
+A unit is rendered for the machine's provider (or the named one) from one description; nothing escalates privileges on its own. `INFRA_LOG`, `INFRA_LOG_FILE` and `INFRA_AUDIT` work as in `iam`; every change to a service or a package is audited with the user as actor.

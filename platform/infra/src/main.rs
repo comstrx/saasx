@@ -1,10 +1,17 @@
-//! The infra binary: the smallest consumer of the engine, grown from here.
+//! The infrastructure tool: what this machine is, its services and its packages, driven by the engine.
 
-use base::Typing;
+mod arch;
+mod base;
+mod doctor;
+mod package;
+mod service;
 
-#[expect(clippy::disallowed_macros, clippy::print_stdout, reason = "a binary reports to its operator on stdout")]
-fn main () {
+use engine::error::Exit;
 
-    println!("{}", Typing::hello_world());
+use crate::arch::Infra;
+
+fn main () -> Exit {
+
+    Exit::loud(Infra::run())
 
 }
