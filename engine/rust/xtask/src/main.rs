@@ -269,7 +269,7 @@ impl Gate {
     fn audit ( &self ) -> Result<(), Failure> {
 
         self.require("cargo-deny")?;
-        self.cargo(&["deny", "--all-features", "check", "--config", ".deny.toml"])
+        self.cargo(&["deny", "--all-features", "--config", ".deny.toml", "check"])
 
     }
 
