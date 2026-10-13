@@ -13,8 +13,8 @@ use core::iter::once;
 use std::process::{Command, ExitCode, Output};
 use std::env::{args, current_dir};
 use std::path::{Path, PathBuf};
-use std::io::Error as IoError;
-use std::fs::read_dir;
+use std::io::{Error as IoError, ErrorKind::NotFound};
+use std::fs::{create_dir_all, read_dir, remove_dir_all};
 
 type Step   = fn(&Gate) -> Result<(), Failure>;
 type Entry  = ( &'static str, &'static str, Step );
@@ -337,7 +337,17 @@ impl Gate {
 
         }
 
-        self.cargo(&["semver-checks", "check-release", "--workspace", "--baseline-rev", &self.baseline])
+        let store = self.root.join("target").join("semver").join(self.baseline.replace('/', "-"));
+        let tar   = store.join("baseline.tar");
+
+        remove_dir_all(&store).or_else(|error| if error.kind() == NotFound { Ok(()) } else { Err(error) }).map_err(Failure::Root)?;
+        create_dir_all(&store).map_err(Failure::Root)?;
+
+        let ( store, tar ) = ( store.to_string_lossy().into_owned(), tar.to_string_lossy().into_owned() );
+
+        self.shell("git", &["archive", "--format=tar", "-o", &tar, &self.baseline, "--", "."], &[])?;
+        self.shell("tar", &["-xf", &tar, "-C", &store], &[])?;
+        self.cargo(&["semver-checks", "check-release", "--workspace", "--baseline-root", &store])
 
     }
 
