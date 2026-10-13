@@ -9,11 +9,11 @@ authors.workspace      = true
 description            = "Scenario tests of the services, consuming the foundation the way production does."
 
 [dependencies]
-base.workspace = true
+engine.workspace = true
 
 [[test]]
-name = "hello"
-path = "hello.rs"
+name = "iam"
+path = "iam.rs"
 
 [lints]
 workspace = true

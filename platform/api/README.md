@@ -15,7 +15,7 @@ A service crate depends on engine crates and on sibling library crates in this w
 
 ```text
 Cargo.toml · Cargo.lock                         the workspace root
-.clippy.toml · .deny.toml                       governance, applies to every crate
+.clippy.toml                                    governance, applies to every crate
 crates/<name>/     services and the libraries they share
 contracts/         API and event schemas each service owns; the web and mobile clients generate from here
 tests/             scenario tests across services, flat files
@@ -23,7 +23,7 @@ benches/           scenario benchmarks across services, flat files
 bloats/            binary-size probes
 ```
 
-The first and, for now, only service is `hello`: it consumes the engine exactly as every later service will, so each capability that lands in the engine is exercised from a consumer's seat before the real services start.
+The first and, for now, only service is `iam`: it consumes the engine exactly as every later service will, so each capability that lands in the engine is exercised from a consumer's seat before the real services start. Today it is a session service over HTTP: `GET /health`, `POST /sessions` (a form with `email` and `password`, validated field by field, the login audited whether denied or done), `GET /session` and `DELETE /session` under `Authorization: Bearer <token>` (a token never travels in a URL or a log; the audit carries a fingerprint), and a `GET /echo` WebSocket. It is configured by `IAM_ADDR`, `IAM_WORKERS`, `IAM_PASSWORD`, `IAM_LOG=<level>` (text on standard error), `IAM_LOG_FILE` (JSON lines) and `IAM_AUDIT` (the audit journal); it serves one worker per core, logs one line per request, stops gracefully on Ctrl-C or SIGTERM, and ends with the failure's exit status when misconfigured (config 78, usage 64) with the report on standard error.
 
 ## Service anatomy
 

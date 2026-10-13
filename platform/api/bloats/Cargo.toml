@@ -9,11 +9,11 @@ authors.workspace      = true
 description            = "Binary-size probes for cargo bloat: the floor every service binary pays."
 
 [dependencies]
-base.workspace = true
+engine.workspace = true
 
 [[bin]]
-name = "bloat-hello"
-path = "hello.rs"
+name = "bloat-iam"
+path = "iam.rs"
 
 [lints]
 workspace = true

@@ -1,18 +1,18 @@
 [package]
-name                   = "hello"
+name                   = "iam"
 publish.workspace      = true
 version.workspace      = true
 edition.workspace      = true
 rust-version.workspace = true
 license.workspace      = true
 authors.workspace      = true
-description            = "The one service that exists while the engine is built: it exercises each DSL as it lands."
+description            = "The identity service: sessions over HTTP, audited, served thread per core by the engine, stopped by a signal."
 
 [dependencies]
-base.workspace = true
+engine.workspace = true
 
 [[bin]]
-name = "hello"
+name = "iam"
 path = "src/main.rs"
 
 [lints]

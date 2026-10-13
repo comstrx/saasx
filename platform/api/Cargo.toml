@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members  = ["crates/hello", "tests", "benches", "bloats"]
+members  = ["benches", "tests", "bloats", "crates/iam"]
 
 [workspace.package]
 version      = "0.1.0"
@@ -12,7 +12,7 @@ readme       = "README.md"
 publish      = false
 
 [workspace.dependencies]
-base      = { path = "../../engine/rust/crates/base", version = "0.1.0" }
+engine    = { path = "../../engine/rust/crates/engine", version = "0.1.0" }
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
 
 [workspace.lints.rust]
@@ -170,6 +170,7 @@ self_named_module_files              = "deny"
 min_ident_chars                      = "deny"
 cognitive_complexity                 = "deny"
 multiple_crate_versions              = "allow"
+redundant_pub_crate                  = "allow"
 doc_paragraphs_missing_punctuation   = "deny"
 
 [profile.release]

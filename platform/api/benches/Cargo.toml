@@ -9,14 +9,14 @@ authors.workspace      = true
 description            = "Scenario benchmarks of the services, consuming the foundation the way production does."
 
 [dependencies]
-base.workspace = true
+engine.workspace = true
 
 [dev-dependencies]
 criterion.workspace = true
 
 [[bench]]
-name    = "hello"
-path    = "hello.rs"
+name    = "iam"
+path    = "iam.rs"
 harness = false
 
 [lints]
