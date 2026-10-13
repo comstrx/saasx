@@ -1,8 +1,8 @@
+import { type Catalog, catalog, digits } from "@engine/string";
 import { countries as everyCountry } from "./countries.ts";
 import { currencies as everyCurrency } from "./currencies.ts";
 import type { Country, Currency, Language } from "./kinds.ts";
 import { languages as everyLanguage } from "./languages.ts";
-import { type Catalog, catalog, digits } from "./search.ts";
 
 export type Flags = { folder?: string | undefined; format?: "svg" | "webp" | "png" | undefined };
 export type WorldOptions = {

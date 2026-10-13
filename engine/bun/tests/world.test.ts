@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { countries, currencies, defineWorld, flagEmoji, fold, languages } from "@engine/world";
+import { fold } from "@engine/string";
+import { countries, currencies, defineWorld, flagEmoji, languages } from "@engine/world";
 
 const world = defineWorld();
 

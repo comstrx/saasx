@@ -13,6 +13,8 @@ export {
 export { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
 export {
     type AssetSet,
+    assetBudget,
+    assetBytes,
     assetHash,
     brandImages,
     type Connection,
@@ -20,8 +22,10 @@ export {
     flagsModule,
     type Mode,
     modeOf,
+    type Required,
     type Routing,
     registryModule,
+    requireModule,
     routingOf,
     selectConnection,
     selectConnections,
@@ -45,7 +49,9 @@ export {
     walk,
     within,
 } from "./core.ts";
+export { type Annotation, type Annotations, buildCatalog, catalogModule, keyOf as emojiKey, parseAnnotations, parseEmojiTest, type Row, tonedGlyphs } from "./emoji.ts";
 export { type Features, featureFacts, featureNames } from "./features.ts";
+export { defaultSources, type EmojiSources, fluentIndex, generateEmoji } from "./fluent.ts";
 export {
     composeMessages,
     type Dictionaries,

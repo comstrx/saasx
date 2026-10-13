@@ -14,7 +14,8 @@
     "lint": "biome ci .",
     "fmt": "biome check --write .",
     "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done",
-    "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
+    "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit",
+    "emoji": "bun packages/tooling/src/fluent.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
@@ -25,6 +26,7 @@
     "@engine/context": "workspace:*",
     "@engine/cookie": "workspace:*",
     "@engine/device": "workspace:*",
+    "@engine/emoji": "workspace:*",
     "@engine/error": "workspace:*",
     "@engine/file": "workspace:*",
     "@engine/log": "workspace:*",

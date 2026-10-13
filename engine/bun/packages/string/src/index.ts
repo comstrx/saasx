@@ -108,3 +108,4 @@ export function isBlank ( text: string | null | undefined ): boolean {
     return !text?.trim();
 
 }
+export { type Catalog, catalog, digits, fold, rank } from "./search.ts";

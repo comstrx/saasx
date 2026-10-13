@@ -27,6 +27,8 @@ extend-exclude = [
     "engine/bun/packages/world/src/countries.ts",
     "engine/bun/packages/world/src/currencies.ts",
     "engine/bun/packages/world/src/languages.ts",
+    "engine/bun/assets/**",
+    "engine/bun/packages/emoji/src/catalog.ts",
 ]
 
 ignore-files = true

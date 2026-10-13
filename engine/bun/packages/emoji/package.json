@@ -1,0 +1,14 @@
+{
+  "name": "@engine/emoji",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Unicode emoji catalog with Arabic and English names and keywords, groups and skin tones, searchable; the asset convention a surface draws 3D and animated emoji by, and the policy that says when.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/string": "workspace:*"
+  }
+}

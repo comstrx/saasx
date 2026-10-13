@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import process from "node:process";
 import { mapValues } from "@engine/base";
@@ -110,10 +110,12 @@ export function syncEngineAssets ( root: string, sets: readonly AssetSet[] ): nu
         for ( const name of set.files ) {
 
             const source = resolve(engineAssets, set.from, name);
+            const destination = resolve(target, name);
 
             if ( !existsSync(source) ) throw new Error(`Missing engine asset: ${set.from}/${name}`);
+            if ( existsSync(destination) && statSync(destination).size === statSync(source).size ) continue;
 
-            copyFileSync(source, resolve(target, name));
+            copyFileSync(source, destination);
             copied += 1;
 
         }
@@ -123,20 +125,41 @@ export function syncEngineAssets ( root: string, sets: readonly AssetSet[] ): nu
     return copied;
 
 }
-export function flagsModule ( root: string, folder: string, codes: readonly string[], format: string ): string {
+export type Required = { name: string; from: string; file: string };
 
-    const lines = codes.map(( code ) => {
+export function requireModule ( root: string, folder: string, entries: readonly Required[] ): string {
 
-        const file = resolve(engineAssets, "flag", `${code.toLowerCase()}.${format}`);
+    const lines = entries.map(( entry ) => {
 
-        if ( !existsSync(file) ) throw new Error(`Missing engine flag: ${code}`);
+        const file = resolve(engineAssets, entry.from, entry.file);
 
-        const entry = relative(resolve(root, folder), file).replaceAll("\\", "/");
+        if ( !existsSync(file) ) throw new Error(`Missing engine asset: ${entry.from}/${entry.file}`);
 
-        return `    ${JSON.stringify(code.toLowerCase())}: require(${JSON.stringify(entry)}),`;
+        const path = relative(resolve(root, folder), file).replaceAll("\\", "/");
+
+        return `    ${JSON.stringify(entry.name)}: require(${JSON.stringify(path)}),`;
 
     });
 
     return `export default {\n${lines.join("\n")}\n};\n`;
+
+}
+export function flagsModule ( root: string, folder: string, codes: readonly string[], format: string ): string {
+
+    return requireModule(root, folder, codes.map(( code ) => ({ name: code.toLowerCase(), from: "flag", file: `${code.toLowerCase()}.${format}` })));
+
+}
+export function assetBytes ( entries: readonly Required[] ): number {
+
+    return entries.reduce(( total, entry ) => total + statSync(resolve(engineAssets, entry.from, entry.file)).size, 0);
+
+}
+export function assetBudget ( entries: readonly Required[], limit: number, what: string ): number {
+
+    const bytes = assetBytes(entries);
+
+    if ( bytes > limit ) throw new Error(`${what}: ${entries.length} files weigh ${(bytes / 1048576).toFixed(2)} MB, over the ${(limit / 1048576).toFixed(2)} MB budget.`);
+
+    return bytes;
 
 }

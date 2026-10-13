@@ -12,6 +12,7 @@ export const rules = defineRules({
         "lib/spec/config.ts": ["@spec/routing"],
         "lib/spec/runtime.ts": ["@spec/config", "@spec/schema", "@spec/messages", "@spec/client"],
         "lib/spec/world.ts": ["@spec/flags"],
+        "lib/spec/emoji.ts": ["@spec/emoji"],
         "render/blocks.tsx": ["@spec/registry"],
     },
     layers: [

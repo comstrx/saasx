@@ -13,6 +13,7 @@
         "@engine/context": "workspace:*",
         "@engine/cookie": "workspace:*",
         "@engine/device": "workspace:*",
+        "@engine/emoji": "workspace:*",
         "@engine/error": "workspace:*",
         "@engine/file": "workspace:*",
         "@engine/log": "workspace:*",
@@ -95,6 +96,13 @@
         "@engine/file": "workspace:*",
       },
     },
+    "packages/emoji": {
+      "name": "@engine/emoji",
+      "version": "0.1.0",
+      "dependencies": {
+        "@engine/string": "workspace:*",
+      },
+    },
     "packages/error": {
       "name": "@engine/error",
       "version": "0.1.0",
@@ -172,6 +180,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@engine/base": "workspace:*",
+        "@engine/emoji": "workspace:*",
         "@engine/spec": "workspace:*",
         "@engine/translate": "workspace:*",
         "@engine/validate": "workspace:*",
@@ -205,6 +214,9 @@
     "packages/world": {
       "name": "@engine/world",
       "version": "0.1.0",
+      "dependencies": {
+        "@engine/string": "workspace:*",
+      },
     },
   },
   "packages": {
@@ -239,6 +251,8 @@
     "@engine/cookie": ["@engine/cookie@workspace:packages/cookie"],
 
     "@engine/device": ["@engine/device@workspace:packages/device"],
+
+    "@engine/emoji": ["@engine/emoji@workspace:packages/emoji"],
 
     "@engine/error": ["@engine/error@workspace:packages/error"],
 

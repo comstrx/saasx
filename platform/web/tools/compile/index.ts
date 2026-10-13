@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import { browserConfig } from "@engine/api";
+import { defineEmoji } from "@engine/emoji";
 import { settingsResource } from "@engine/spec";
 import { assetHash, brandImages, type Files, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, syncEngineAssets, task } from "@engine/tooling";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
@@ -43,7 +44,13 @@ export async function compileSpec ( mode: Mode ) {
 
     const spec = await loadSpec(specFromEnvironment());
     const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
-    syncEngineAssets(root, [{ from: "flag", to: "images/flag", files: countries.map(( code ) => `${code.toLowerCase()}.svg`) }]);
+    const emoji = defineEmoji().files({ tones: true });
+
+    syncEngineAssets(root, [
+        { from: "flag", to: "images/flag", files: countries.map(( code ) => `${code.toLowerCase()}.svg`) },
+        { from: "emoji/static", to: "images/emoji/static", files: emoji.static },
+        { from: "emoji/animated", to: "images/emoji/animated", files: emoji.animated },
+    ]);
     const folder = `node_modules/.cache/spec/${mode}`;
     const { assetRoot, css, data } = assemble(spec, assets, mode);
     const shared = [...assetFiles(resolve(root, "public"), true)].filter(( [name] ) => !owned(name));

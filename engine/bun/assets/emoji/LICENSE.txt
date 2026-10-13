@@ -1,0 +1,2 @@
+Emoji artwork: Microsoft Fluent Emoji (https://github.com/microsoft/fluentui-emoji, https://github.com/microsoft/fluentui-emoji-animated), MIT License, Copyright (c) Microsoft Corporation. The 3D renders were resized and encoded as WebP; the animated set as animated WebP.
+Emoji names and keywords in packages/emoji/src/catalog.ts: Unicode Emoji data files and CLDR annotations, Unicode License v3 (https://www.unicode.org/license.txt), Copyright Unicode, Inc.

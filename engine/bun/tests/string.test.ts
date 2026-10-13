@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { camelCase, collapse, escapeHtml, escapeRegExp, initials, isBlank, kebabCase, mask, pascalCase, slugify, snakeCase, titleCase, truncate, words } from "@engine/string";
+import { camelCase, catalog, collapse, digits, escapeHtml, escapeRegExp, fold, initials, isBlank, kebabCase, mask, pascalCase, rank, slugify, snakeCase, titleCase, truncate, words } from "@engine/string";
 
 describe("string", () => {
 
@@ -76,6 +76,31 @@ describe("cases and escapes", () => {
         expect(isBlank(" \n")).toBe(true);
         expect(isBlank(null)).toBe(true);
         expect(isBlank("x")).toBe(false);
+
+    });
+
+});
+describe("search", () => {
+
+    test("folding erases marks and unifies arabic letter forms; a catalog ranks exact, prefix, then contains", () => {
+
+        expect(fold("مِصْر")).toBe("مصر");
+        expect(fold("السعودية")).toBe("السعوديه");
+        expect(fold("أحمد إلى آمنة")).toBe("احمد الي امنه");
+        expect(fold("Côte")).toBe("cote");
+        expect(digits("+20 (10) 99")).toBe("201099");
+        expect(rank("ab", ["ab"])).toBe(0);
+        expect(rank("ab", ["abc", "xab"])).toBe(1);
+        expect(rank("ab", ["xab"])).toBe(2);
+        expect(rank("ab", ["zz"])).toBe(-1);
+
+        const items = catalog([{ code: "A", words: ["apple", "تفاح"] }, { code: "B", words: ["pineapple"] }, { code: "C", words: ["app"] }], ( item ) => item.code, ( item ) => item.words);
+
+        expect(items.search("app").map(( item ) => item.code)).toEqual(["C", "A", "B"]);
+        expect(items.search("تُفاح").map(( item ) => item.code)).toEqual(["A"]);
+        expect(items.get("a")?.code).toBe("A");
+        expect(items.has("z")).toBe(false);
+        expect(items.search("  ")).toEqual([]);
 
     });
 

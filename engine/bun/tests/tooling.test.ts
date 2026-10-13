@@ -5,15 +5,21 @@ import { resolve } from "node:path";
 import {
     analyze,
     assetHash,
+    buildCatalog,
     type Connection,
+    catalogModule,
     composeMessages,
     createCore,
+    emojiKey,
     guard,
     messageIssues,
     modeOf,
+    parseAnnotations,
+    parseEmojiTest,
     type Rules,
     selectConnection,
     specAliases,
+    tonedGlyphs,
     walk,
     within,
 } from "@engine/tooling";
@@ -184,6 +190,52 @@ describe("message contracts", () => {
             "ar: missing errors.rules.max",
         ]);
         expect(messageIssues(dictionaries, { reasons: ["not_found"], rules: ["min"] })).toEqual([]);
+
+    });
+
+});
+describe("emoji sources", () => {
+
+    const sample = [
+        "# group: Smileys & Emotion",
+        "1F600                                                  ; fully-qualified     # 😀 E1.0 grinning face",
+        "1F600                                                  ; minimally-qualified # 😀 E1.0 grinning face",
+        "# group: People & Body",
+        "1F44D                                                  ; fully-qualified     # 👍 E0.6 thumbs up",
+        "1F44D 1F3FB                                            ; fully-qualified     # 👍🏻 E1.0 thumbs up: light skin tone",
+        "1F44D 1F3FF                                            ; fully-qualified     # 👍🏿 E1.0 thumbs up: dark skin tone",
+        "# group: Smileys & Emotion",
+        "2764 FE0F                                              ; fully-qualified     # ❤️ E0.6 red heart",
+        "# group: Component",
+        "1F3FB                                                  ; component           # 🏻 E1.0 light skin tone",
+    ].join("\n");
+    const english = parseAnnotations('<ldml><annotations><annotation cp="😀">face | grin</annotation><annotation cp="😀" type="tts">grinning face</annotation><annotation cp="👍">+1 | thumbs up | up</annotation><annotation cp="👍" type="tts">thumbs up</annotation><annotation cp="❤">heart &amp; love</annotation><annotation cp="❤" type="tts">red heart</annotation><annotation cp="🏻" type="tts">light skin tone</annotation><annotation cp="🏼" type="tts">medium-light skin tone</annotation><annotation cp="🏽" type="tts">medium skin tone</annotation><annotation cp="🏾" type="tts">medium-dark skin tone</annotation><annotation cp="🏿" type="tts">dark skin tone</annotation></annotations></ldml>');
+    const arabic = parseAnnotations('<ldml><annotations><annotation cp="😀" type="tts">وجه مبتسم</annotation><annotation cp="😀">وجه | ابتسامة</annotation><annotation cp="👍" type="tts">قبول</annotation><annotation cp="❤" type="tts">قلب أحمر</annotation><annotation cp="🏻" type="tts">فاتح</annotation><annotation cp="🏼" type="tts">فاتح متوسط</annotation><annotation cp="🏽" type="tts">متوسط</annotation><annotation cp="🏾" type="tts">غامق متوسط</annotation><annotation cp="🏿" type="tts">غامق</annotation></annotations></ldml>');
+
+    test("the unicode list keeps fully-qualified rows with their group; annotations split keywords and decode entities", () => {
+
+        const rows = parseEmojiTest(sample);
+
+        expect(rows.map(( row ) => row.glyph)).toEqual(["😀", "👍", "👍🏻", "👍🏿", "❤️"]);
+        expect(rows[1]).toEqual({ codes: ["1F44D"], glyph: "👍", name: "thumbs up", group: "People & Body" });
+        expect(english.get("❤")).toEqual({ name: "red heart", keywords: ["heart & love"] });
+        expect(emojiKey("❤️")).toBe("2764");
+
+    });
+    test("the catalog folds tones into their base, drops the keyword that repeats the name and marks the artwork it has", () => {
+
+        const rows = parseEmojiTest(sample);
+        const catalog = buildCatalog(rows, english, arabic, { statics: new Set(["1f600", "1f44d", "1f44d-1f3fb", "1f44d-1f3fc", "1f44d-1f3fd", "1f44d-1f3fe", "1f44d-1f3ff"]), animated: new Set(["1f44d"]) });
+
+        expect(catalog.tuples).toEqual([
+            ["😀", 0, "grinning face", "وجه مبتسم", "face|grin", "وجه|ابتسامة", "", 1],
+            ["👍", 1, "thumbs up", "قبول", "+1|up", "", "👍🏻", 7],
+            ["❤️", 0, "red heart", "قلب أحمر", "heart & love", "", "", 0],
+        ]);
+        expect(catalog.tones[4]).toEqual({ key: "dark", modifier: "🏿", name: { en: "dark skin tone", ar: "غامق" } });
+        expect(tonedGlyphs(catalog.tuples[1] as never)).toEqual(["👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"]);
+        expect(catalogModule(catalog)).toContain('["👍",1,"thumbs up","قبول","+1|up","","👍🏻",7],');
+        expect(() => buildCatalog(rows, english, new Map(), { statics: new Set(), animated: new Set() })).toThrow("No Arabic annotation");
 
     });
 

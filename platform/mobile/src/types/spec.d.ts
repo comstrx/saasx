@@ -45,3 +45,7 @@ declare module "@spec/flags" {
     const flags: Readonly<Record<string, number>>;
     export default flags;
 }
+declare module "@spec/emoji" {
+    const emoji: Readonly<Record<string, number>>;
+    export default emoji;
+}

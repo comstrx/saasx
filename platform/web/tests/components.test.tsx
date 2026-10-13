@@ -3,6 +3,7 @@ import { Failure } from "@engine/error";
 import { renderToString } from "react-dom/server";
 import DataTable from "../src/components/data-table";
 import Status from "../src/components/status";
+import Emoji from "../src/elements/emoji";
 import Flag from "../src/elements/flag";
 
 describe("status", () => {
@@ -56,6 +57,19 @@ describe("flag", () => {
         expect(renderToString(<Flag code="eg" />)).toContain('src="/images/flag/eg.svg"');
         expect(renderToString(<Flag code="EG" size="sm" />)).toContain('data-size="sm"');
         expect(renderToString(<Flag code="FR" />)).toContain("🇫🇷");
+
+    });
+
+});
+describe("emoji", () => {
+
+    test("inline stays text, a still draws from public, a live reaction offers motion only to those who welcome it", () => {
+
+        expect(renderToString(<Emoji glyph="👍" context="inline" />)).toContain('aria-label="thumbs up">👍<');
+        expect(renderToString(<Emoji glyph="👍" context="picker" />)).toContain('src="/images/emoji/static/1f44d.webp"');
+        expect(renderToString(<Emoji glyph="👍🏿" context="picker" size="sm" />)).toContain('src="/images/emoji/static/1f44d-1f3ff.webp"');
+        expect(renderToString(<Emoji glyph="👍" context="reaction" active />)).toContain('media="(prefers-reduced-motion: no-preference)" srcSet="/images/emoji/animated/1f44d.webp"');
+        expect(renderToString(<Emoji glyph="🇪🇬" context="reaction" active />)).toContain("🇪🇬");
 
     });
 

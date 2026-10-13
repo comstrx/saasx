@@ -2,22 +2,13 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "root": true,
   "files": {
-    "includes": [
-      "**",
-      "!**/node_modules",
-      "!**/coverage",
-      "!bun.lock",
-      "!**/*.d.ts",
-      "!assets"
-    ]
+    "includes": ["**", "!**/node_modules", "!**/coverage", "!bun.lock", "!**/*.d.ts", "!assets"]
   },
   "formatter": {
     "enabled": false
   },
   "javascript": {
-    "globals": [
-      "Bun"
-    ]
+    "globals": ["Bun"]
   },
   "json": {
     "formatter": {
@@ -80,9 +71,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "packages/**"
-      ],
+      "includes": ["packages/**"],
       "linter": {
         "rules": {
           "style": {
@@ -102,13 +91,7 @@
               "options": {
                 "patterns": [
                   {
-                    "group": [
-                      "bun",
-                      "bun:*",
-                      "bun:*/**",
-                      "node:*",
-                      "node:*/**"
-                    ],
+                    "group": ["bun", "bun:*", "bun:*/**", "node:*", "node:*/**"],
                     "message": "packages are runtime-agnostic"
                   }
                 ]
@@ -119,9 +102,17 @@
       }
     },
     {
-      "includes": [
-        "packages/tooling/**"
-      ],
+      "includes": ["packages/emoji/src/catalog.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noExcessiveLinesPerFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/tooling/**"],
       "linter": {
         "rules": {
           "correctness": {
@@ -137,9 +128,7 @@
       }
     },
     {
-      "includes": [
-        "tests/**"
-      ],
+      "includes": ["tests/**"],
       "linter": {
         "rules": {
           "correctness": {
