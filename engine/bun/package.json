@@ -38,6 +38,7 @@
     "@engine/translate": "workspace:*",
     "@engine/ui": "workspace:*",
     "@engine/validate": "workspace:*",
+    "@engine/world": "workspace:*",
     "@types/bun": "1.4.2",
     "@types/react": "19.3.0",
     "mitata": "1.0.34",

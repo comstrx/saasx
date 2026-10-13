@@ -26,6 +26,7 @@
         "@engine/translate": "workspace:*",
         "@engine/ui": "workspace:*",
         "@engine/validate": "workspace:*",
+        "@engine/world": "workspace:*",
         "@types/bun": "1.4.2",
         "@types/react": "19.3.0",
         "mitata": "1.0.34",
@@ -201,6 +202,10 @@
         "zod": "4.6.5",
       },
     },
+    "packages/world": {
+      "name": "@engine/world",
+      "version": "0.1.0",
+    },
   },
   "packages": {
     "@biomejs/biome": ["@biomejs/biome@2.5.15", "", { "optionalDependencies": { "@biomejs/cli-darwin-arm64": "2.5.15", "@biomejs/cli-darwin-x64": "2.5.15", "@biomejs/cli-linux-arm64": "2.5.15", "@biomejs/cli-linux-arm64-musl": "2.5.15", "@biomejs/cli-linux-x64": "2.5.15", "@biomejs/cli-linux-x64-musl": "2.5.15", "@biomejs/cli-win32-arm64": "2.5.15", "@biomejs/cli-win32-x64": "2.5.15" }, "bin": { "biome": "bin/biome" } }, "sha512-WZTW4slm/pdkh92K6t/3aEN++44JD1PQ7squ7RCMLI1flHGl43DVOIGXvCjHiZgBMO1V4uYxoFNtqrIA4qGuIQ=="],
@@ -260,6 +265,8 @@
     "@engine/ui": ["@engine/ui@workspace:packages/ui"],
 
     "@engine/validate": ["@engine/validate@workspace:packages/validate"],
+
+    "@engine/world": ["@engine/world@workspace:packages/world"],
 
     "@types/bun": ["@types/bun@1.4.2", "", { "dependencies": { "bun-types": "1.4.2" } }, "sha512-GimotNn7+ZV0uVArItBbriZsR1oNf0+WTzPkdcFrzShI7k2norL0uzEaJT8T33dWr7O/c9ZDuAFQrctKCi72oQ=="],
 
