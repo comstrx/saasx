@@ -1,0 +1,55 @@
+- name: rust
+  color: 'DEA584'
+  description: The Rust engine (engine/rust)
+
+- name: bun
+  color: 'F9F1E1'
+  description: The TypeScript engine (engine/bun)
+
+- name: api
+  color: '0E8A16'
+  description: The backend services (platform/api)
+
+- name: infra
+  color: '1D76DB'
+  description: The infrastructure engine (platform/infra)
+
+- name: skill
+  color: '5319E7'
+  description: The knowledge runtime (platform/skill)
+
+- name: web
+  color: '0075CA'
+  description: The web engine (platform/web)
+
+- name: mobile
+  color: 'C2E0C6'
+  description: The mobile engine (platform/mobile)
+
+- name: global
+  color: 'BFDADC'
+  description: Root governance, shared by every part
+
+- name: ci
+  color: 'FBCA04'
+  description: Workflows and automation
+
+- name: deps
+  color: 'E4E669'
+  description: Dependencies, manifests and lockfiles
+
+- name: docs
+  color: 'D4C5F9'
+  description: Documentation only
+
+- name: security
+  color: 'B60205'
+  description: Security policy, scanning and supply chain
+
+- name: bug
+  color: 'D73A4A'
+  description: Something is not working
+
+- name: enhancement
+  color: 'A2EEEF'
+  description: A capability that does not exist yet

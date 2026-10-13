@@ -11,6 +11,7 @@ updates:
     groups:
       actions:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'global(deps)'
 
@@ -24,6 +25,7 @@ updates:
     groups:
       rust:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'engine(deps)'
 
@@ -37,6 +39,7 @@ updates:
     groups:
       bun:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'engine(deps)'
 
@@ -50,6 +53,7 @@ updates:
     groups:
       rust:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'api(deps)'
 
@@ -63,6 +67,7 @@ updates:
     groups:
       rust:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'infra(deps)'
 
@@ -76,6 +81,7 @@ updates:
     groups:
       rust:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'skill(deps)'
 
@@ -89,6 +95,7 @@ updates:
     groups:
       bun:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'web(deps)'
 
@@ -102,5 +109,6 @@ updates:
     groups:
       bun:
         patterns: ['*']
+    labels: [deps]
     commit-message:
       prefix: 'mobile(deps)'

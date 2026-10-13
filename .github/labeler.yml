@@ -1,0 +1,59 @@
+rust:
+  - changed-files:
+    - any-glob-to-any-file: ['engine/rust/**']
+
+bun:
+  - changed-files:
+    - any-glob-to-any-file: ['engine/bun/**']
+
+api:
+  - changed-files:
+    - any-glob-to-any-file: ['platform/api/**']
+
+infra:
+  - changed-files:
+    - any-glob-to-any-file: ['platform/infra/**']
+
+skill:
+  - changed-files:
+    - any-glob-to-any-file: ['platform/skill/**']
+
+web:
+  - changed-files:
+    - any-glob-to-any-file: ['platform/web/**']
+
+mobile:
+  - changed-files:
+    - any-glob-to-any-file: ['platform/mobile/**']
+
+global:
+  - changed-files:
+    - any-glob-to-any-file: ['*', '.*', '.github/**']
+
+ci:
+  - changed-files:
+    - any-glob-to-any-file: ['.github/workflows/**', '.github/dependabot.yml', '.zizmor.yml']
+
+deps:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+      - '**/package.json'
+      - '**/bun.lock'
+      - '**/supply-chain/**'
+
+docs:
+  - changed-files:
+    - all-globs-to-all-files: ['**/*.md', 'LICENSE']
+
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'SECURITY.md'
+      - '.gitleaks.toml'
+      - '.trivy.yml'
+      - '.syft.yml'
+      - '.zizmor.yml'
+      - '**/.deny.toml'
+      - '**/supply-chain/**'

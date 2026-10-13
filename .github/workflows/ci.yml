@@ -20,12 +20,12 @@ defaults:
     shell: bash
 
 env:
-  PRETTIER: prettier@3.8.1
+  PRETTIER: prettier@3.9.10
   TAPLO: taplo-cli@0.10.0
 
 jobs:
   leaks:
-    name: Leaks
+    name: leaks
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -37,7 +37,7 @@ jobs:
 
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           GITLEAKS_CONFIG: .gitleaks.toml
 
   vulns:
@@ -77,6 +77,22 @@ jobs:
           name: sbom
           path: sbom.json
           if-no-files-found: error
+
+  review:
+    name: review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low
+          comment-summary-in-pr: on-failure
 
   actions:
     name: actions
@@ -131,25 +147,19 @@ jobs:
         run: taplo fmt --check && taplo lint
 
       - name: Prettier
-        run: bunx "${PRETTIER}" --config .prettierrc.yml --ignore-path .gitignore --no-error-on-unmatched-pattern --check "**/*.{md,mdx,yml,yaml,json,jsonc}"
+        run: >
+          bunx "${PRETTIER}" --config .prettierrc.yml
+          --ignore-path .gitignore --ignore-path .prettierignore
+          --no-error-on-unmatched-pattern
+          --check "**/*.{md,mdx,yml,yaml,json,jsonc}"
 
   gate:
     name: gate
     if: always()
-    needs: [leaks, vulns, sbom, actions, spelling, formatting]
+    needs: [leaks, vulns, sbom, review, actions, spelling, formatting]
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-      - name: Require every job
-        env:
-          RESULTS: ${{ toJSON(needs) }}
-        run: |
-          failed=0
-
-          while IFS='=' read -r job result; do
-              printf '%-10s %s\n' "${result}" "${job}"
-              [[ "${result}" == "success" ]] || failed=1
-          done < <(jq -r 'to_entries[] | "\(.key)=\(.value.result)"' <<< "${RESULTS}")
-
-          (( failed == 0 )) || { echo "gate: required jobs did not succeed." >&2; exit 1; }
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

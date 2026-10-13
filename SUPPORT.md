@@ -37,8 +37,8 @@ When opening an Issue, please include:
 
 Helpful links:
 
-- [Bug report template](https://github.com/comstrx/saasx/issues/new?template=bug_report.md)
-- [Feature request template](https://github.com/comstrx/saasx/issues/new?template=feature_request.md)
+- [Bug report template](https://github.com/comstrx/saasx/issues/new?template=bug_report.yml)
+- [Feature request template](https://github.com/comstrx/saasx/issues/new?template=feature_request.yml)
 
 ---
 

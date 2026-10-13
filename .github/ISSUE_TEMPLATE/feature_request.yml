@@ -1,0 +1,41 @@
+name: Feature request
+description: A capability that does not exist yet
+title: '<part>: <short description>'
+labels: [enhancement]
+
+body:
+  - type: dropdown
+    id: part
+    attributes:
+      label: Part
+      options: [rust, bun, api, infra, skill, web, mobile, global]
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: The real problem this solves, not the solution
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: dropdown
+    id: home
+    attributes:
+      label: Where does it belong
+      options: [a generic engine, a generic part, specs or domain code]
+    validations:
+      required: true

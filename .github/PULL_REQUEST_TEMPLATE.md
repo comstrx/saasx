@@ -1,6 +1,6 @@
 ## Part
 
-<!-- engine | api | infra | skill | web | mobile | global -->
+<!-- rust | bun | api | infra | skill | web | mobile | global -->
 
 ## What
 
