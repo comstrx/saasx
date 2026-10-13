@@ -29,14 +29,14 @@ function withTexts ( record: Record<string, unknown> | undefined, translations: 
     return merged;
 
 }
-export type Options = { title: string; submit: string; saved: string; queued: string; failed: string; loading: string; offline: string; cached: string; empty: string; leave: string; next: string; labels: Labels; choices: Choices; errors: Messages };
+export type Options = { title: string; submit: string; saved: string; queued: string; failed: string; loading: string; offline: string; cached: string; empty: string; leave: string; next: string; autosave: number; labels: Labels; choices: Choices; errors: Messages };
 
 export default function Editor ({ options, ports, route, feature }: FeatureProps<Options>) {
 
     const router = useRouter();
     const item = usePort(ports.item, route);
     const texts = usePort(ports.texts, route);
-    const form = useForm(ports.save, route, { errors: options.errors, queue: true });
+    const form = useForm(ports.save, route, { errors: options.errors, queue: true, autosave: options.autosave });
     const loaded = useRef<string>("");
 
     useDirtyGuard(form.dirty && form.status !== "done", options.leave);

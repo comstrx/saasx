@@ -13,7 +13,7 @@ import { outbox } from "@/stores/outbox";
 
 export type Saved = Record<string, unknown> | unknown[] | null;
 export type Queued = { queued: true };
-type Options = { errors?: Messages | undefined; queue?: boolean | undefined; initial?: Record<string, unknown> | undefined };
+type Options = { errors?: Messages | undefined; queue?: boolean | undefined; initial?: Record<string, unknown> | undefined; autosave?: number | undefined };
 
 export function isQueued ( result: unknown ): result is Queued {
 
@@ -23,9 +23,10 @@ export function isQueued ( result: unknown ): result is Queued {
 /**
  * A form over a write port: its fields come from the port, its bound inputs ride along on submit,
  * one idempotency key covers every retry of the same values, its failures speak through the
- * errors dictionary, and with `queue` an undeliverable submit waits in the outbox.
+ * errors dictionary, with `queue` an undeliverable submit waits in the outbox, and with `autosave`
+ * a dirty form submits itself that many milliseconds after its last change.
  */
-export function useForm ( port: CompiledPort | undefined, route: Route, { errors, queue = false, initial }: Options = {} ): FormState<Saved | Queued> {
+export function useForm ( port: CompiledPort | undefined, route: Route, { errors, queue = false, initial, autosave }: Options = {} ): FormState<Saved | Queued> {
 
     const api = useRef<ApiSurface>(useApi() as ApiSurface);
     const write = port?.kind === "write" ? port : undefined;
@@ -39,6 +40,7 @@ export function useForm ( port: CompiledPort | undefined, route: Route, { errors
         locale,
         errors,
         initial,
+        autosave,
         submit: async ( values, options: RequestOptions ) => {
 
             const call = write ? api.current[write.feature]?.[write.operation] : undefined;

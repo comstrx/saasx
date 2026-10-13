@@ -1,3 +1,4 @@
+import { pathGet } from "@engine/base";
 import type { FormState, FormValue } from "@engine/context";
 import { languageName } from "@engine/translate";
 import type { FieldFact } from "@engine/validate";
@@ -24,7 +25,7 @@ function text ( value: FormValue ): string {
 export default function SchemaForm ({ form, labels, choices, submit, note, actions }: Props) {
 
     const busy = form.status === "pending";
-    const label = ( field: FieldFact ): string => labels[field.name] ?? field.name;
+    const label = ( field: FieldFact ): string => labels[field.name] ?? (typeof pathGet(labels, field.name) === "string" ? (pathGet(labels, field.name) as string) : field.name);
     const control = ( field: FieldFact ): ReactNode => {
 
         const value = form.values[field.name] ?? null;
