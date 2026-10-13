@@ -1,8 +1,8 @@
 "use client";
 
 import { type ApiClient, createApi, requestContext } from "@engine/api";
-import { choose, uuid } from "@engine/base";
-import { observeCall } from "../../lib/observe/browser.ts";
+import { choose } from "@engine/base";
+import { observeCall, trace } from "../../lib/observe/browser.ts";
 import { browser } from "../../lib/spec/browser.ts";
 import { routing } from "../../lib/spec/config.ts";
 import { type Endpoints, endpoints } from "../features/index.ts";
@@ -18,7 +18,7 @@ export function browserApi ( locale: string, session: Session, denied?: Denied )
         language,
         host: window.location.host,
         auth: session() ?? undefined,
-        requestId: uuid(),
+        requestId: trace,
     }), { execution: "client", observe: observeCall, onFailure: ( failure ) => { if ( failure.status === 401 && session() ) denied?.(); } });
 
 }
