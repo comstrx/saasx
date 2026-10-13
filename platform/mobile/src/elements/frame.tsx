@@ -18,7 +18,7 @@ export default function Frame ({ palette, header, tabs, children, direction }: P
 
             {header ? <View>{header}</View> : null}
 
-            <ScrollView contentContainerStyle={styles.body}>{children}</ScrollView>
+            <ScrollView contentContainerStyle={styles.body} removeClippedSubviews>{children}</ScrollView>
 
             {tabs ? <View>{tabs}</View> : null}
 

@@ -39,6 +39,7 @@ With a lab build installed and a phone over `adb`, Maestro flows under `flows/` 
 ADMIN_EMAIL=… ADMIN_PASSWORD=… OTP=… bun run flow login   # credentials, code, then LANDING (a test id, default dashboard-table)
 ROW_TEXT="…" bun run flow row                                   # a row by its text, e.g. after a broadcast
 bun run perf                                                    # cold start to first frame ≤ COLD_MS (1500), janky frames while scrolling ≤ JANK_PERCENT (1)
+bun run compare                                                 # the same two numbers for this app and the phone's own apps (COMPARE=pkg,pkg…), one method for all
 ```
 
 `MAESTRO` names the Maestro binary when it is not on the path; `APP_ID` names the installed package.
