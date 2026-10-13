@@ -14,7 +14,7 @@
     "lint": "biome ci .",
     "fmt": "biome check --write .",
     "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done",
-    "gates": "bun run check && bun run lint && bun test && bun audit"
+    "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

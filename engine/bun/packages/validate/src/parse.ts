@@ -61,7 +61,9 @@ export function rulesOf(error: z.ZodError): Issues {
     return issues;
 }
 /**
- * Parses without throwing; a rejection is an `input` failure carrying the field errors.
+ * Parses without throwing; a rejection is an `input` failure carrying the field errors and rule
+ * issues, never the zod error itself: with inputs reported, that error holds the raw values
+ * (passwords included), and a failure travels into logs and beacons.
  */
 export function parse<T extends z.ZodType>(schema: T, value: unknown, reason = "invalid_input"): Parsed<z.output<T>> {
     const result = schema.safeParse(value, { reportInput: true });
@@ -74,7 +76,6 @@ export function parse<T extends z.ZodType>(schema: T, value: unknown, reason = "
             errors: issuesOf(result.error),
             issues: rulesOf(result.error),
             reason,
-            cause: result.error,
         }),
     };
 }

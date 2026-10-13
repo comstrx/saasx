@@ -104,7 +104,6 @@ async function exchange(
             reason: "invalid_input",
             errors: issuesOf(input.error),
             issues: rulesOf(input.error),
-            cause: input.error,
         });
 
     const current = typeof setup.context === "function" ? await setup.context() : setup.context;
