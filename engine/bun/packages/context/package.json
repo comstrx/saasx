@@ -1,0 +1,22 @@
+{
+  "name": "@engine/context",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Application state as one DSL over zustand: defined stores, selectors, persistence through storage and React bindings.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/api": "workspace:*",
+    "@engine/array": "workspace:*",
+    "@engine/base": "workspace:*",
+    "@engine/error": "workspace:*",
+    "@engine/spec": "workspace:*",
+    "@engine/storage": "workspace:*",
+    "@engine/validate": "workspace:*",
+    "react": "19.3.0",
+    "zustand": "5.0.15"
+  }
+}

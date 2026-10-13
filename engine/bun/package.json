@@ -1,0 +1,46 @@
+{
+  "name": "engine",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.3",
+  "engines": {
+    "bun": ">=1.4.3"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "tsc -p .",
+    "lint": "biome ci .",
+    "fmt": "biome check --write .",
+    "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done",
+    "gates": "bun run check && bun run lint && bun test && bun audit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@engine/api": "workspace:*",
+    "@engine/array": "workspace:*",
+    "@engine/base": "workspace:*",
+    "@engine/cache": "workspace:*",
+    "@engine/context": "workspace:*",
+    "@engine/cookie": "workspace:*",
+    "@engine/device": "workspace:*",
+    "@engine/error": "workspace:*",
+    "@engine/file": "workspace:*",
+    "@engine/log": "workspace:*",
+    "@engine/net": "workspace:*",
+    "@engine/parse": "workspace:*",
+    "@engine/socket": "workspace:*",
+    "@engine/spec": "workspace:*",
+    "@engine/storage": "workspace:*",
+    "@engine/string": "workspace:*",
+    "@engine/tooling": "workspace:*",
+    "@engine/translate": "workspace:*",
+    "@engine/ui": "workspace:*",
+    "@engine/validate": "workspace:*",
+    "@types/bun": "1.4.2",
+    "@types/react": "19.3.0",
+    "mitata": "1.0.34",
+    "typescript": "7.0.2"
+  }
+}

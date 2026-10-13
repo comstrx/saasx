@@ -1,0 +1,15 @@
+{
+  "name": "@engine/validate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Schema validation over zod: the shared field vocabulary and failures that speak the engine's error model.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/error": "workspace:*",
+    "zod": "4.6.5"
+  }
+}

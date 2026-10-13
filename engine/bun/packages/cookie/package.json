@@ -1,0 +1,17 @@
+{
+  "name": "@engine/cookie",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cookies as one jar contract: parse and serialize, server headers, the browser document and a storage-backed jar for hosts without cookies.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/base": "workspace:*",
+    "@engine/storage": "workspace:*",
+    "@engine/translate": "workspace:*",
+    "@engine/validate": "workspace:*"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@engine/string",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Text as data: unicode-aware slugs, case conversions, word splitting, truncation, masking and escaping — pure functions with no locale or runtime assumptions.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}

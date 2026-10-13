@@ -1,0 +1,20 @@
+{
+  "name": "@engine/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A typed endpoint catalogue, its wire contract and the client that speaks it.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/base": "workspace:*",
+    "@engine/cache": "workspace:*",
+    "@engine/error": "workspace:*",
+    "@engine/file": "workspace:*",
+    "@engine/net": "workspace:*",
+    "@engine/parse": "workspace:*",
+    "@engine/validate": "workspace:*"
+  }
+}

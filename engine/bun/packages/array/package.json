@@ -1,0 +1,12 @@
+{
+  "name": "@engine/array",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lists as data: keyed lookups, grouping, ordering, chunking and the row operations a cached list needs (upsert, remove, move) — pure, allocation-light, no runtime assumptions.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}

@@ -1,0 +1,400 @@
+{
+  "resolved": {
+    "api": {
+      "context": {
+        "spec": "site",
+        "currency": "USD",
+        "sessionCookie": null,
+        "proxies": 0,
+        "tenant": "www.shop.test"
+      },
+      "connections": {
+        "primary": {
+          "baseUrl": "https://api.shop.test/v1",
+          "browser": true,
+          "browserBaseUrl": null,
+          "timeoutMs": 10000,
+          "retries": 1,
+          "retryOn": [502, 503, 504],
+          "maxResponseBytes": 1048576,
+          "credentials": "omit"
+        }
+      }
+    },
+    "contract": {
+      "values": {
+        "content": {
+          "name": "Site",
+          "links": [],
+          "socials": [],
+          "seo": {
+            "keywords": [],
+            "robots": {
+              "allow": [],
+              "disallow": []
+            },
+            "sitemap": [],
+            "verification": {}
+          }
+        },
+        "settings": {
+          "language": "en",
+          "languages": ["en"],
+          "currency": "USD",
+          "currencies": ["USD"],
+          "theme": "light",
+          "themes": ["light"]
+        }
+      },
+      "features": {
+        "products": {
+          "list": {
+            "enabled": true,
+            "execution": "hybrid",
+            "encoding": "json",
+            "method": "GET",
+            "path": "/products",
+            "cache": 30,
+            "request": {
+              "headers": {
+                "accept": {
+                  "name": "Accept"
+                },
+                "contentType": {
+                  "name": "Content-Type"
+                },
+                "language": {
+                  "name": "Locale"
+                },
+                "currency": {
+                  "name": "X-Currency"
+                },
+                "tenant": {
+                  "name": "X-Tenant-Domain"
+                },
+                "client": {
+                  "name": "X-Client"
+                },
+                "idempotency": {
+                  "name": "Idempotency-Key"
+                },
+                "requestId": {
+                  "name": "X-Request-Id"
+                },
+                "auth": {
+                  "name": "Authorization",
+                  "prefix": "Bearer "
+                }
+              },
+              "fields": {
+                "type": "query:filters[type]"
+              }
+            },
+            "response": {
+              "data": "data",
+              "success": {
+                "path": "status",
+                "equals": true
+              },
+              "message": "message",
+              "errors": "errors",
+              "code": "code",
+              "reason": "reason",
+              "requestId": "meta.request_id",
+              "fields": {},
+              "pagination": {
+                "page": "meta.page",
+                "limit": "meta.limit",
+                "total": "meta.total",
+                "pages": "meta.pages"
+              },
+              "empty": false
+            }
+          },
+          "save": {
+            "enabled": true,
+            "execution": "client",
+            "encoding": "json",
+            "method": "POST",
+            "path": "/products",
+            "cache": 30,
+            "request": {
+              "headers": {
+                "accept": {
+                  "name": "Accept"
+                },
+                "contentType": {
+                  "name": "Content-Type"
+                },
+                "language": {
+                  "name": "Locale"
+                },
+                "currency": {
+                  "name": "X-Currency"
+                },
+                "tenant": {
+                  "name": "X-Tenant-Domain"
+                },
+                "client": {
+                  "name": "X-Client"
+                },
+                "idempotency": {
+                  "name": "Idempotency-Key"
+                },
+                "requestId": {
+                  "name": "X-Request-Id"
+                },
+                "auth": {
+                  "name": "Authorization",
+                  "prefix": "Bearer "
+                }
+              },
+              "fields": {}
+            },
+            "response": {
+              "data": "data",
+              "success": {
+                "path": "status",
+                "equals": true
+              },
+              "message": "message",
+              "errors": "errors",
+              "code": "code",
+              "reason": "reason",
+              "requestId": "meta.request_id",
+              "fields": {},
+              "pagination": {
+                "page": "meta.page",
+                "limit": "meta.limit",
+                "total": "meta.total",
+                "pages": "meta.pages"
+              },
+              "empty": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "browser": {
+    "api": {
+      "context": {
+        "spec": "site",
+        "currency": "USD",
+        "sessionCookie": null,
+        "proxies": 0,
+        "tenant": "www.shop.test"
+      },
+      "connections": {
+        "primary": {
+          "baseUrl": "https://api.shop.test/v1",
+          "browser": true,
+          "browserBaseUrl": null,
+          "timeoutMs": 10000,
+          "retries": 1,
+          "retryOn": [502, 503, 504],
+          "maxResponseBytes": 1048576,
+          "credentials": "omit"
+        }
+      }
+    },
+    "contract": {
+      "values": {
+        "content": {
+          "name": "Site",
+          "links": [],
+          "socials": [],
+          "seo": {
+            "keywords": [],
+            "robots": {
+              "allow": [],
+              "disallow": []
+            },
+            "sitemap": [],
+            "verification": {}
+          }
+        },
+        "settings": {
+          "language": "en",
+          "languages": ["en"],
+          "currency": "USD",
+          "currencies": ["USD"],
+          "theme": "light",
+          "themes": ["light"]
+        }
+      },
+      "features": {
+        "products": {
+          "list": {
+            "enabled": true,
+            "execution": "hybrid",
+            "encoding": "json",
+            "method": "GET",
+            "path": "/products",
+            "cache": 30,
+            "request": {
+              "headers": {
+                "accept": {
+                  "name": "Accept"
+                },
+                "contentType": {
+                  "name": "Content-Type"
+                },
+                "language": {
+                  "name": "Locale"
+                },
+                "currency": {
+                  "name": "X-Currency"
+                },
+                "tenant": {
+                  "name": "X-Tenant-Domain"
+                },
+                "client": {
+                  "name": "X-Client"
+                },
+                "idempotency": {
+                  "name": "Idempotency-Key"
+                },
+                "requestId": {
+                  "name": "X-Request-Id"
+                },
+                "auth": {
+                  "name": "Authorization",
+                  "prefix": "Bearer "
+                }
+              },
+              "fields": {
+                "type": "query:filters[type]"
+              }
+            },
+            "response": {
+              "data": "data",
+              "success": {
+                "path": "status",
+                "equals": true
+              },
+              "message": "message",
+              "errors": "errors",
+              "code": "code",
+              "reason": "reason",
+              "requestId": "meta.request_id",
+              "fields": {},
+              "pagination": {
+                "page": "meta.page",
+                "limit": "meta.limit",
+                "total": "meta.total",
+                "pages": "meta.pages"
+              },
+              "empty": false
+            }
+          },
+          "save": {
+            "enabled": true,
+            "execution": "client",
+            "encoding": "json",
+            "method": "POST",
+            "path": "/products",
+            "cache": 30,
+            "request": {
+              "headers": {
+                "accept": {
+                  "name": "Accept"
+                },
+                "contentType": {
+                  "name": "Content-Type"
+                },
+                "language": {
+                  "name": "Locale"
+                },
+                "currency": {
+                  "name": "X-Currency"
+                },
+                "tenant": {
+                  "name": "X-Tenant-Domain"
+                },
+                "client": {
+                  "name": "X-Client"
+                },
+                "idempotency": {
+                  "name": "Idempotency-Key"
+                },
+                "requestId": {
+                  "name": "X-Request-Id"
+                },
+                "auth": {
+                  "name": "Authorization",
+                  "prefix": "Bearer "
+                }
+              },
+              "fields": {}
+            },
+            "response": {
+              "data": "data",
+              "success": {
+                "path": "status",
+                "equals": true
+              },
+              "message": "message",
+              "errors": "errors",
+              "code": "code",
+              "reason": "reason",
+              "requestId": "meta.request_id",
+              "fields": {},
+              "pagination": {
+                "page": "meta.page",
+                "limit": "meta.limit",
+                "total": "meta.total",
+                "pages": "meta.pages"
+              },
+              "empty": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "facts": {
+    "products": {
+      "list": {
+        "method": "GET",
+        "path": "/products",
+        "many": true,
+        "input": ["limit", "type"],
+        "fields": [
+          {
+            "name": "limit",
+            "kind": "number",
+            "required": false,
+            "nullable": false
+          },
+          {
+            "name": "type",
+            "kind": "text",
+            "required": false,
+            "nullable": false
+          }
+        ],
+        "output": ["id", "title"],
+        "permissions": [],
+        "touches": []
+      },
+      "save": {
+        "method": "POST",
+        "path": "/products",
+        "many": false,
+        "input": ["title"],
+        "fields": [
+          {
+            "name": "title",
+            "kind": "text",
+            "required": true,
+            "nullable": false
+          }
+        ],
+        "output": ["id", "title"],
+        "permissions": [],
+        "touches": []
+      }
+    }
+  }
+}

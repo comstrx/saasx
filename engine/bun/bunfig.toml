@@ -1,0 +1,9 @@
+telemetry = false
+
+[install]
+exact             = true
+linker            = "isolated"
+minimumReleaseAge = 259200
+
+[test]
+randomize = true

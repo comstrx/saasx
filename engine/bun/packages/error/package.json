@@ -1,0 +1,14 @@
+{
+  "name": "@engine/error",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A single failure model: kinds, HTTP status, codes, field errors, cause chains and the questions every caller asks of a failure.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/base": "workspace:*"
+  }
+}

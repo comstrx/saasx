@@ -1,0 +1,144 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "root": true,
+  "files": {
+    "includes": ["**", "!**/node_modules", "!**/coverage", "!bun.lock"]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 4,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    },
+    "globals": ["Bun"]
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2
+    }
+  },
+  "linter": {
+    "domains": {
+      "project": "all",
+      "test": "all"
+    },
+    "rules": {
+      "a11y": "error",
+      "correctness": "error",
+      "security": "error",
+      "complexity": {
+        "recommended": true,
+        "useMaxParams": {
+          "level": "error",
+          "options": {
+            "max": 6
+          }
+        }
+      },
+      "performance": {
+        "recommended": true,
+        "noBarrelFile": "off",
+        "useTopLevelRegex": "off"
+      },
+      "style": {
+        "recommended": true,
+        "noMagicNumbers": "off",
+        "noTernary": "off",
+        "noContinue": "off",
+        "useBlockStatements": "off",
+        "useExportsLast": "off",
+        "noExcessiveLinesPerFile": {
+          "level": "error",
+          "options": {
+            "maxLines": 400
+          }
+        },
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "type"
+          }
+        }
+      },
+      "suspicious": {
+        "recommended": true,
+        "noBitwiseOperators": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "Bun": "packages are runtime-agnostic",
+                  "process": "packages are runtime-agnostic",
+                  "Buffer": "packages are runtime-agnostic",
+                  "require": "packages are runtime-agnostic"
+                }
+              }
+            },
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["bun", "bun:*", "bun:*/**", "node:*", "node:*/**"],
+                    "message": "packages are runtime-agnostic"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/tooling/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off",
+            "noUndeclaredVariables": "off",
+            "useQwikValidLexicalScope": "off"
+          },
+          "style": {
+            "noRestrictedGlobals": "off",
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off",
+            "useQwikValidLexicalScope": "off"
+          },
+          "security": {
+            "noSecrets": "off"
+          }
+        }
+      }
+    }
+  ]
+}

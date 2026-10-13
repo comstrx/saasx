@@ -1,0 +1,14 @@
+{
+  "name": "@engine/log",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Structured logging: one JSON line per signal, levels, bound facts, redaction and pluggable sinks.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/error": "workspace:*"
+  }
+}

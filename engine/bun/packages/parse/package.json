@@ -1,0 +1,15 @@
+{
+  "name": "@engine/parse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Parsers and formatters for the small grammars every surface meets: path patterns, query strings, templates, scalars, durations and byte sizes.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/base": "workspace:*",
+    "@engine/error": "workspace:*"
+  }
+}

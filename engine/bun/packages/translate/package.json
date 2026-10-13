@@ -1,0 +1,15 @@
+{
+  "name": "@engine/translate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Messages, locales and formatting: dictionaries, interpolation, plurals, negotiation, direction and Intl formatting that survives bidi.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@engine/base": "workspace:*",
+    "@engine/parse": "workspace:*"
+  }
+}

@@ -1,0 +1,265 @@
+import {
+    type ApiConfig,
+    type ApiInput,
+    type Connection,
+    type Contract,
+    type ContractOverrides,
+    type Endpoint,
+    type Layer,
+    resolveApi,
+    type Seeds,
+} from "@engine/api";
+import { compact, isRecord, mapValues } from "@engine/base";
+import { patternKeys } from "@engine/parse";
+import {
+    type Catalogue,
+    compileBlock,
+    createWalk,
+    type Features,
+    mergeOptions,
+    optionIssues,
+    type Walk,
+} from "./compile.ts";
+import type { CompiledBlock, SiteBlock } from "./shapes.ts";
+
+export type Choice = { default: string; enabled: string[] };
+export type ShellValue = string | { feature: string; options?: Record<string, unknown> | undefined } | null;
+export type Settings = {
+    locale: Choice;
+    currency: Choice;
+    theme: Choice;
+    maintenance: boolean;
+    maintenanceMessage: string;
+    shell: Record<string, ShellValue>;
+};
+export type Contents = { name: string; path: string };
+export type Declared = { contents: Contents };
+export type Backend = {
+    api: ApiInput;
+    overrides: ContractOverrides;
+    development: Connection["development"];
+};
+export type ApiPlan = {
+    identity: string;
+    endpoints: Readonly<Record<string, Readonly<Record<string, Endpoint>>>>;
+    seeds: Seeds;
+    currency: string;
+    backend: Backend | null;
+    switches: ContractOverrides["features"];
+    core?: Layer | undefined;
+};
+export type Compiled = { api: ApiConfig | null; contract: Contract };
+export type ScreenPlan<B extends object> = {
+    name: string;
+    path: string;
+    blocks: readonly SiteBlock<B>[];
+    access: unknown;
+    redirect: string | null | undefined;
+    issues: string[];
+    client: boolean;
+    session: boolean;
+    backend: boolean;
+    realtime?: boolean | undefined;
+    block: B;
+    site: Readonly<Record<string, unknown>>;
+    features: Features;
+    catalogue: Catalogue;
+};
+export type Compiledscreen<B extends object> = { walk: Walk<B>; blocks: CompiledBlock<B>[] };
+
+type Patch = Record<string, unknown>;
+
+/**
+ * Settings merged one record deep: a given record patches the default record, anything else given
+ * replaces the default, and `undefined` never overwrites.
+ */
+export function mergeSettings<T extends Patch>(defaults: T, given: Patch): T {
+    return {
+        ...defaults,
+        ...compact(given),
+        ...Object.fromEntries(
+            Object.entries(defaults)
+                .filter(([key, value]) => isRecord(value) && isRecord(given[key]))
+                .map(([key, value]) => [key, { ...(value as Patch), ...compact(given[key] as Patch) }]),
+        ),
+    } as T;
+}
+/**
+ * The settings document a backend would otherwise serve, seeded from the compiled settings.
+ */
+export function settingsResource(settings: Settings): Record<string, unknown> {
+    return {
+        language: settings.locale.default,
+        languages: settings.locale.enabled,
+        currency: settings.currency.default,
+        currencies: settings.currency.enabled,
+        theme: settings.theme.default,
+        themes: settings.theme.enabled,
+        maintenance: settings.maintenance,
+        maintenance_message: settings.maintenanceMessage,
+    };
+}
+export function choiceIssues({ locale, currency, theme }: Settings): string[] {
+    return Object.entries({ locale, currency, theme }).flatMap(([name, choice]) => [
+        ...(new Set(choice.enabled).size !== choice.enabled.length
+            ? [`settings.${name}.enabled contains duplicates.`]
+            : []),
+        ...(choice.enabled.some((value) => value === choice.default)
+            ? []
+            : [`settings.${name}.default must be enabled.`]),
+    ]);
+}
+export function shellFeature(value: ShellValue): string | null {
+    return typeof value === "string" ? value : (value?.feature ?? null);
+}
+export function shellIssues(shell: Record<string, ShellValue>, features: Features): string[] {
+    return Object.entries(shell).flatMap(([part, value]) => {
+        const name = shellFeature(value);
+        const manifest = name === null ? undefined : features[name];
+
+        if (name === null) return [];
+        if (!manifest) return [`settings.shell.${part}: no feature named ${name}.`];
+
+        const given = typeof value === "object" && value ? (value.options ?? {}) : {};
+
+        return optionIssues(given, manifest.options, name, `settings.shell.${part}`);
+    });
+}
+export function shellOptions<K extends string>(
+    shell: Record<K, ShellValue>,
+    features: Features,
+): Record<K, Record<string, unknown>> {
+    const entries = Object.entries<ShellValue>(shell).map(([part, value]) => {
+        const name = shellFeature(value);
+        const defaults = name ? (features[name]?.options ?? {}) : {};
+        const given = typeof value === "object" && value ? (value.options ?? {}) : {};
+
+        return [part, mergeOptions(defaults, given)];
+    });
+
+    return Object.fromEntries(entries) as Record<K, Record<string, unknown>>;
+}
+/**
+ * The rules every surface shares about its screen list: unique names and paths, no reserved path,
+ * and a home screen once any screen exists.
+ */
+export function screenIssues(screens: readonly Declared[], reserved: RegExp): string[] {
+    const issues: string[] = [];
+    const names = new Set<string>();
+    const paths = new Set<string>();
+
+    for (const {
+        contents: { name, path },
+    } of screens) {
+        if (names.has(name)) issues.push(`Duplicate screen name: ${name}`);
+        if (paths.has(path)) issues.push(`Duplicate screen path: ${path}`);
+        if (reserved.test(path)) issues.push(`Reserved screen path: ${path}`);
+
+        names.add(name);
+        paths.add(path);
+    }
+    if (screens.length && !paths.has("/")) issues.push("schema.screens must declare the home path /.");
+
+    return issues;
+}
+/**
+ * Every screen icon must be one the surface can draw; a surface without an icon set accepts any.
+ */
+export function iconIssues(
+    screens: readonly { contents: { name: string; icon?: string | null | undefined } }[],
+    icons: readonly string[] | undefined,
+): string[] {
+    if (!icons) return [];
+
+    return screens.flatMap(({ contents: { name, icon } }) =>
+        icon && !icons.includes(icon) ? [`${name}: no icon named ${icon}; the surface knows ${icons.join(", ")}.`] : [],
+    );
+}
+/**
+ * One screen's blocks compiled through a walk, with the rules every surface shares: one heading
+ * owner per screen with content, and a redirect for every gated screen.
+ */
+export function compileScreen<B extends object>(plan: ScreenPlan<B>): Compiledscreen<B> {
+    const { name, path, issues } = plan;
+    const walk = createWalk({
+        issues,
+        params: patternKeys(path),
+        client: plan.client,
+        session: plan.session,
+        backend: plan.backend,
+        realtime: plan.realtime ?? false,
+        block: plan.block,
+        site: plan.site,
+        features: plan.features,
+        catalogue: plan.catalogue,
+    });
+    const blocks = plan.blocks.map((block, index) => compileBlock(block, walk, `${name}.blocks[${index}]`));
+
+    if (blocks.length && walk.headings !== 1) issues.push(`${name}: exactly one feature owns the screen heading.`);
+
+    for (const signal of walk.consumed) {
+        if (!walk.emitted.has(signal))
+            issues.push(`${name}: signal ${signal} is read but no feature on the screen emits it.`);
+    }
+    if (plan.access !== "any" && !plan.redirect) issues.push(`${name}: a gated screen names its redirect.`);
+
+    return { walk, blocks };
+}
+/**
+ * Marks the shell features a screen shows as used, so they compile and register.
+ */
+export function claimShell<B>(
+    walk: Walk<B>,
+    options: Record<string, unknown>,
+    shell: Record<string, ShellValue>,
+): void {
+    for (const [part, value] of Object.entries(shell)) {
+        const name = shellFeature(value);
+
+        if (options[part] && name) walk.used.add(name);
+    }
+}
+export function at(origin: string | null, path: string): string | null {
+    return origin === null ? null : path ? `${origin}/${path}` : origin;
+}
+/**
+ * The resolved api and contract of a surface: with no backend every operation compiles switched
+ * off and no switch may be given; with one, the backend's connection carries the development
+ * addresses too.
+ */
+export function compileApi(plan: ApiPlan): Compiled {
+    const { identity, endpoints, seeds, currency, backend, switches, core = {} } = plan;
+
+    if (!backend) {
+        if (Object.keys(switches ?? {}).length)
+            throw new Error("features: a spec without contracts cannot switch operations.");
+
+        const context = { spec: identity, currency, sessionCookie: null, proxies: 0, tenant: null };
+        const { contract } = resolveApi(endpoints, { context, connections: {} }, {}, seeds, core);
+        const features = mapValues(contract.features, (operations) =>
+            mapValues(operations, () => ({ enabled: false as const })),
+        );
+
+        return { api: null, contract: { ...contract, features } };
+    }
+
+    const resolved = resolveApi(endpoints, backend.api, { ...backend.overrides, features: switches }, seeds, core);
+    const connections = mapValues(resolved.api.connections, (connection) => ({
+        ...connection,
+        development: backend.development,
+    }));
+
+    return { api: { ...resolved.api, connections }, contract: resolved.contract };
+}
+export function schemaFacts(screens: readonly { features: string[]; operations: string[] }[]): {
+    features: string[];
+    operations: string[];
+} {
+    return {
+        features: [...new Set(screens.flatMap((screen) => screen.features))].sort(),
+        operations: [...new Set(screens.flatMap((screen) => screen.operations))].sort(),
+    };
+}
+export function assertClean(issues: readonly string[]): void {
+    if (issues.length) throw new Error(issues.join("\n"));
+}
