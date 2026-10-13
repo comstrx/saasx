@@ -13,7 +13,7 @@ publish = false
 
 [workspace.dependencies]
 base = { path = "../../engine/rust/crates/base", version = "0.1.0" }
-criterion = { version = "=0.8.1", default-features = false, features = ["cargo_bench_support"] }
+criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
 
 [workspace.lints.rust]
 deprecated_safe = { level = "deny", priority = -1 }
