@@ -1,12 +1,12 @@
 {
-    "name": "@engine/world",
-    "version": "0.1.0",
-    "private": true,
-    "type": "module",
-    "description": "Countries, currencies, languages and dialing codes with Arabic, English and native names, searchable and filterable; the flag convention a surface draws by.",
-    "exports": {
-        ".": "./src/index.ts"
-    },
-    "sideEffects": false,
-    "dependencies": {}
+  "name": "@engine/world",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Countries, currencies, languages and dialing codes with Arabic, English and native names, searchable and filterable; the flag convention a surface draws by.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {}
 }
