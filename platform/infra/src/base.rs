@@ -1,9 +1,9 @@
-use engine::error::{Failure, Result};
+use engine::error::Result;
 use std::io::{Write as _, stdout};
 use engine::process::{Args, Boot};
-use engine::net::Runtime;
+use engine::thread::Runtime;
 
-use crate::arch::Infra;
+use crate::arch::{Faults, Infra};
 
 impl Infra {
 
@@ -11,10 +11,10 @@ impl Infra {
 
     pub(crate) fn run () -> Result<()> {
 
-        let env  = Runtime::block_on(Boot::env())??;
+        let env   = Runtime::run(Boot::env())?;
         let infra = Self { args: Args::current(), log: Boot::log(&env, "INFRA", "infra")? };
 
-        Runtime::block_on(infra.dispatch())?
+        Runtime::run(infra.dispatch())
 
     }
 
@@ -25,7 +25,7 @@ impl Infra {
             Some("service") => self.service().await?,
             Some("package") => self.package().await?,
             Some(_)         => return Err(self.args.unknown().context(Self::USAGE)),
-            None            => return Err(Failure::usage("a command is required").keyed("no_command").context(Self::USAGE)),
+            None            => return Err(Faults::NO_COMMAND.fail().context(Self::USAGE)),
         };
 
         stdout().lock().write_all(text.as_bytes())?;
@@ -37,13 +37,13 @@ impl Infra {
 
     pub(crate) fn name ( &self ) -> Result<&str> {
 
-        self.args.positional(1).ok_or_else(|| Failure::usage("a name is required").keyed("no_name").context(Self::USAGE))
+        self.args.positional(1).ok_or_else(|| Faults::NO_NAME.fail().context(Self::USAGE))
 
     }
 
     pub(crate) fn action ( &self ) -> Result<&str> {
 
-        self.args.positional(0).ok_or_else(|| Failure::usage("an action is required").keyed("no_action").context(Self::USAGE))
+        self.args.positional(0).ok_or_else(|| Faults::NO_ACTION.fail().context(Self::USAGE))
 
     }
 

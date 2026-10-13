@@ -1,9 +1,9 @@
 use engine::process::{Provider, Service, Spec, State, System};
-use engine::error::{Failure, Result};
+use engine::error::Result;
 use engine::log::Outcome;
 use std::path::PathBuf;
 
-use crate::arch::Infra;
+use crate::arch::{Faults, Infra};
 
 impl Infra {
 
@@ -20,7 +20,7 @@ impl Infra {
             "start"     => self.change(name, "start").await,
             "stop"      => self.change(name, "stop").await,
             "restart"   => self.change(name, "restart").await,
-            other       => Err(Failure::usage(format!("{other} is not a service action")).keyed("unknown_action")),
+            other       => Err(Faults::UNKNOWN_ACTION.because(format!("{other} is not a service action"))),
         }
 
     }
@@ -68,7 +68,7 @@ impl Infra {
             Some("systemd") => Ok(Provider::Systemd),
             Some("launchd") => Ok(Provider::Launchd),
             Some("windows") => Ok(Provider::Windows),
-            Some(other)     => Err(Failure::usage(format!("{other} is not a provider: systemd, launchd or windows")).keyed("unknown_provider")),
+            Some(other)     => Err(Faults::UNKNOWN_PROVIDER.because(format!("{other} is not a provider: systemd, launchd or windows"))),
             None            => Provider::detect(),
         }
 

@@ -2,6 +2,7 @@
 
 mod arch;
 mod base;
+mod faults;
 mod doctor;
 mod package;
 mod service;

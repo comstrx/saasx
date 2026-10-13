@@ -5,3 +5,5 @@ pub(crate) struct Infra {
     pub(crate) args: Args,
     pub(crate) log:  Log,
 }
+
+pub(crate) struct Faults;

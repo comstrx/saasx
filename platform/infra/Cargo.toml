@@ -10,7 +10,7 @@ publish      = false
 description  = "An infrastructure engine: define, provision, deploy, operate and roll back."
 
 [dependencies]
-engine = { path = "../../engine/rust/crates/engine", version = "0.1.0" }
+engine = { path = "../../engine/rust/crates/engine", version = "0.1.0", features = ["process"] }
 
 [dev-dependencies]
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
