@@ -1,6 +1,6 @@
-use error::{Detail, Problem};
+use error::{Detail, Fault, Faults as ErrorFaults, Problem};
 
-use crate::Number;
+use crate::{Faults, Number};
 
 impl Number<'_> {
 
@@ -8,7 +8,7 @@ impl Number<'_> {
     #[inline]
     pub fn at_least ( &mut self, floor: i64 ) -> &mut Self {
 
-        self.rule(self.value >= floor, "too_small", format!("must be at least {floor}"))
+        self.say(self.value >= floor, Faults::TOO_SMALL, format!("must be at least {floor}"))
 
     }
 
@@ -16,7 +16,7 @@ impl Number<'_> {
     #[inline]
     pub fn at_most ( &mut self, ceiling: i64 ) -> &mut Self {
 
-        self.rule(self.value <= ceiling, "too_large", format!("must be at most {ceiling}"))
+        self.say(self.value <= ceiling, Faults::TOO_LARGE, format!("must be at most {ceiling}"))
 
     }
 
@@ -24,7 +24,7 @@ impl Number<'_> {
     #[inline]
     pub fn between ( &mut self, floor: i64, ceiling: i64 ) -> &mut Self {
 
-        self.rule((floor..=ceiling).contains(&self.value), "out_of_range", format!("must be between {floor} and {ceiling}"))
+        self.say((floor..=ceiling).contains(&self.value), ErrorFaults::OUT_OF_RANGE, format!("must be between {floor} and {ceiling}"))
 
     }
 
@@ -32,17 +32,17 @@ impl Number<'_> {
     #[inline]
     pub fn positive ( &mut self ) -> &mut Self {
 
-        self.rule(self.value > 0, "not_positive", "must be positive")
+        self.rule(self.value > 0, Faults::NOT_POSITIVE)
 
     }
 
-    /// Passes the caller's own test, else fails with this key and detail.
+    /// Passes the caller's own test, else fails with the caller's own declared fault.
     #[inline]
-    pub fn satisfies ( &mut self, test: impl FnOnce(i64) -> bool, key: &'static str, detail: impl Into<Detail> ) -> &mut Self {
+    pub fn satisfies ( &mut self, test: impl FnOnce(i64) -> bool, fault: Fault ) -> &mut Self {
 
         let holds = test(self.value);
 
-        self.rule(holds, key, detail)
+        self.rule(holds, fault)
 
     }
 
@@ -55,12 +55,18 @@ impl Number<'_> {
 
     }
 
-    fn rule ( &mut self, holds: bool, key: &'static str, detail: impl Into<Detail> ) -> &mut Self {
+    fn rule ( &mut self, holds: bool, fault: Fault ) -> &mut Self {
+
+        self.say(holds, fault, fault.detail())
+
+    }
+
+    fn say ( &mut self, holds: bool, fault: Fault, detail: impl Into<Detail> ) -> &mut Self {
 
         if self.failed || holds { return self; }
 
         self.failed = true;
-        self.form.problems.push(Problem::new(self.field, key, detail));
+        self.form.problems.push(Problem::new(self.field, fault, detail));
 
         self
 

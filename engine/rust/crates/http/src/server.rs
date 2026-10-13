@@ -1,5 +1,6 @@
 use hyper_util::server::conn::auto::{Builder, UpgradeableConnection};
-use net::{Address, Bind, Peer, Runtime, Stop, Stream};
+use net::{Address, Bind, Peer, Stream};
+use thread::{Runtime, Stop};
 use hyper_util::rt::{TokioIo, TokioTimer};
 use core::future::{Future as _, poll_fn};
 use core::result::Result as StdResult;

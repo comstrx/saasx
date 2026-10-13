@@ -1,8 +1,8 @@
 use core::fmt::{Display, Formatter, Result as FmtResult};
 use core::net::{IpAddr, Ipv6Addr, SocketAddr};
-use error::{Failure, Result};
+use error::Result;
 
-use crate::{Address, Peer};
+use crate::{Address, Faults, Peer};
 
 impl Address {
 
@@ -19,14 +19,14 @@ impl Address {
 
         if let Ok(addr) = text.parse::<SocketAddr>() { return Ok(Self::Tcp(addr)); }
 
-        let ( host, port ) = text.rsplit_once(':').ok_or_else(|| Failure::invalid("not an address: ip:port, host:port or unix:/path").keyed("not_address"))?;
-        let port = port.parse::<u16>().ok().filter(|_port| port.bytes().all(|byte| byte.is_ascii_digit())).ok_or_else(|| Failure::invalid("not an address: the port is not a number").keyed("not_address"))?;
+        let ( host, port ) = text.rsplit_once(':').ok_or_else(|| Faults::NOT_ADDRESS.fail())?;
+        let port = port.parse::<u16>().ok().filter(|_port| port.bytes().all(|byte| byte.is_ascii_digit())).ok_or_else(|| Faults::NOT_ADDRESS.because("not an address: the port is not a number"))?;
         let bracketed = host.starts_with('[');
         let host = Self::unbracketed(host)?;
 
-        if host.is_empty() || !host.bytes().all(Self::hostly) || host.eq_ignore_ascii_case("unix") { return Err(Failure::invalid("not an address: the host is empty, has characters a host cannot, or is the word unix").keyed("not_address")); }
+        if host.is_empty() || !host.bytes().all(Self::hostly) || host.eq_ignore_ascii_case("unix") { return Err(Faults::NOT_ADDRESS.because("not an address: the host is empty, has characters a host cannot, or is the word unix")); }
 
-        if host.contains(':') != bracketed || (bracketed && !Self::literal(host)) { return Err(Failure::invalid("not an address: brackets hold an IPv6 literal and nothing else does").keyed("not_address")); }
+        if host.contains(':') != bracketed || (bracketed && !Self::literal(host)) { return Err(Faults::NOT_ADDRESS.because("not an address: brackets hold an IPv6 literal and nothing else does")); }
 
         Ok(host.parse::<IpAddr>().map_or_else(|_name| Self::Name(host.into(), port), |address| Self::Tcp(SocketAddr::new(address, port))))
 
@@ -35,9 +35,9 @@ impl Address {
     fn unbracketed ( host: &str ) -> Result<&str> {
 
         match ( host.strip_prefix('['), host.ends_with(']') ) {
-            ( Some(inner), true )  => inner.strip_suffix(']').ok_or_else(|| Failure::invalid("not an address: unbalanced brackets").keyed("not_address")),
+            ( Some(inner), true )  => inner.strip_suffix(']').ok_or_else(|| Faults::NOT_ADDRESS.because("not an address: unbalanced brackets")),
             ( None, false )        => Ok(host),
-            ( Some(_), false ) | ( None, true ) => Err(Failure::invalid("not an address: unbalanced brackets").keyed("not_address")),
+            ( Some(_), false ) | ( None, true ) => Err(Faults::NOT_ADDRESS.because("not an address: unbalanced brackets")),
         }
 
     }
@@ -70,7 +70,7 @@ impl Address {
     #[inline]
     pub fn unix ( path: &str ) -> Result<Self> {
 
-        if path.trim().is_empty() { return Err(Failure::invalid("not an address: the unix path is empty").keyed("not_address")); }
+        if path.trim().is_empty() { return Err(Faults::NOT_ADDRESS.because("not an address: the unix path is empty")); }
 
         Ok(Self::Unix(path.trim().into()))
 

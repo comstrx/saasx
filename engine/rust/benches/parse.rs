@@ -1,7 +1,7 @@
 //! What parsing costs: integers, units, percent-decoding, a query string, a dotenv text.
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use parse::{Lines, List, Parse, Percent, Query};
+use engine::parse::{Lines, List, Parse, Percent, Query};
 use core::hint::black_box;
 
 fn bench_parse ( harness: &mut Criterion ) {

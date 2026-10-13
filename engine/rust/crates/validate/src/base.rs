@@ -1,6 +1,6 @@
-use error::{Detail, Failure, Problem, Result};
+use error::{Failure, Fault, Problem, Result};
 
-use crate::{Form, Number, Text};
+use crate::{Faults, Form, Number, Text};
 
 impl Form {
 
@@ -29,11 +29,11 @@ impl Form {
 
     }
 
-    /// States a rule of the caller's own: when `holds` is false, the field fails with this key and detail.
+    /// States a rule of the caller's own: when `holds` is false, the field fails with the caller's own declared fault.
     #[inline]
-    pub fn check ( &mut self, field: &'static str, holds: bool, key: &'static str, detail: impl Into<Detail> ) -> &mut Self {
+    pub fn check ( &mut self, field: &'static str, holds: bool, fault: Fault ) -> &mut Self {
 
-        if !holds { self.problems.push(Problem::new(field, key, detail)); }
+        if !holds { self.problems.push(Problem::new(field, fault, fault.detail())); }
 
         self
 
@@ -66,7 +66,7 @@ impl Form {
 
         if self.problems.is_empty() { return Ok(()); }
 
-        Err(self.problems.into_iter().fold(Failure::invalid("some fields are invalid").keyed("invalid_fields"), Failure::with))
+        Err(self.problems.into_iter().fold(Faults::INVALID_FIELDS.fail(), Failure::with))
 
     }
 

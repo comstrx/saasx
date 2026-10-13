@@ -1,7 +1,7 @@
 //! What a tool's plumbing costs: parsing a command line, typing a variable, rendering a unit, finding a program.
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use process::{Args, Env, Provider, Run, Spec};
+use engine::process::{Args, Env, Provider, Run, Spec};
 use core::hint::black_box;
 
 fn bench_process ( harness: &mut Criterion ) {

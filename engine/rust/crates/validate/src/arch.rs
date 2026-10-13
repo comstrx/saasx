@@ -23,3 +23,8 @@ pub struct Number <'f> {
     pub(crate) value:  i64,
     pub(crate) failed: bool,
 }
+
+/// The failures this crate raises, the form as a whole and each field problem a client translates.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

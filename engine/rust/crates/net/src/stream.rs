@@ -2,8 +2,10 @@ use tokio::io::{AsyncRead, AsyncReadExt as _, AsyncWrite, AsyncWriteExt as _, Re
 use std::io::{IoSlice, Result as IoResult};
 use core::task::{Context, Poll};
 use error::{Failure, Result};
+use std::net::TcpStream as StdStream;
 use core::pin::Pin;
 
+use crate::arch::Link;
 use crate::Stream;
 
 impl Stream {
@@ -13,7 +15,21 @@ impl Stream {
     #[must_use]
     pub const fn is_tcp ( &self ) -> bool {
 
-        matches!(self, Self::Tcp(_))
+        matches!(self.link, Link::Tcp(_))
+
+    }
+
+    /// The TCP socket itself, taken off this thread's runtime to hand to another thread; `None` for a
+    /// Unix socket, or when the runtime will not let it go.
+    #[inline]
+    #[must_use]
+    pub fn release ( self ) -> Option<StdStream> {
+
+        match self.link {
+            Link::Tcp(stream)  => stream.into_std().ok(),
+            #[cfg(unix)]
+            Link::Unix(_)      => None,
+        }
 
     }
 
@@ -57,10 +73,10 @@ impl AsyncRead for Stream {
     #[inline]
     fn poll_read ( self: Pin<&mut Self>, cx: &mut Context<'_>, buf: &mut ReadBuf<'_> ) -> Poll<IoResult<()>> {
 
-        match self.get_mut() {
-            Self::Tcp(stream)  => Pin::new(stream).poll_read(cx, buf),
+        match &mut self.get_mut().link {
+            Link::Tcp(stream)  => Pin::new(stream).poll_read(cx, buf),
             #[cfg(unix)]
-            Self::Unix(stream) => Pin::new(stream).poll_read(cx, buf),
+            Link::Unix(stream) => Pin::new(stream).poll_read(cx, buf),
         }
 
     }
@@ -72,10 +88,10 @@ impl AsyncWrite for Stream {
     #[inline]
     fn poll_write ( self: Pin<&mut Self>, cx: &mut Context<'_>, buf: &[u8] ) -> Poll<IoResult<usize>> {
 
-        match self.get_mut() {
-            Self::Tcp(stream)  => Pin::new(stream).poll_write(cx, buf),
+        match &mut self.get_mut().link {
+            Link::Tcp(stream)  => Pin::new(stream).poll_write(cx, buf),
             #[cfg(unix)]
-            Self::Unix(stream) => Pin::new(stream).poll_write(cx, buf),
+            Link::Unix(stream) => Pin::new(stream).poll_write(cx, buf),
         }
 
     }
@@ -83,10 +99,10 @@ impl AsyncWrite for Stream {
     #[inline]
     fn poll_write_vectored ( self: Pin<&mut Self>, cx: &mut Context<'_>, bufs: &[IoSlice<'_>] ) -> Poll<IoResult<usize>> {
 
-        match self.get_mut() {
-            Self::Tcp(stream)  => Pin::new(stream).poll_write_vectored(cx, bufs),
+        match &mut self.get_mut().link {
+            Link::Tcp(stream)  => Pin::new(stream).poll_write_vectored(cx, bufs),
             #[cfg(unix)]
-            Self::Unix(stream) => Pin::new(stream).poll_write_vectored(cx, bufs),
+            Link::Unix(stream) => Pin::new(stream).poll_write_vectored(cx, bufs),
         }
 
     }
@@ -94,10 +110,10 @@ impl AsyncWrite for Stream {
     #[inline]
     fn is_write_vectored ( &self ) -> bool {
 
-        match self {
-            Self::Tcp(stream)  => stream.is_write_vectored(),
+        match &self.link {
+            Link::Tcp(stream)  => stream.is_write_vectored(),
             #[cfg(unix)]
-            Self::Unix(stream) => stream.is_write_vectored(),
+            Link::Unix(stream) => stream.is_write_vectored(),
         }
 
     }
@@ -105,10 +121,10 @@ impl AsyncWrite for Stream {
     #[inline]
     fn poll_flush ( self: Pin<&mut Self>, cx: &mut Context<'_> ) -> Poll<IoResult<()>> {
 
-        match self.get_mut() {
-            Self::Tcp(stream)  => Pin::new(stream).poll_flush(cx),
+        match &mut self.get_mut().link {
+            Link::Tcp(stream)  => Pin::new(stream).poll_flush(cx),
             #[cfg(unix)]
-            Self::Unix(stream) => Pin::new(stream).poll_flush(cx),
+            Link::Unix(stream) => Pin::new(stream).poll_flush(cx),
         }
 
     }
@@ -116,10 +132,10 @@ impl AsyncWrite for Stream {
     #[inline]
     fn poll_shutdown ( self: Pin<&mut Self>, cx: &mut Context<'_> ) -> Poll<IoResult<()>> {
 
-        match self.get_mut() {
-            Self::Tcp(stream)  => Pin::new(stream).poll_shutdown(cx),
+        match &mut self.get_mut().link {
+            Link::Tcp(stream)  => Pin::new(stream).poll_shutdown(cx),
             #[cfg(unix)]
-            Self::Unix(stream) => Pin::new(stream).poll_shutdown(cx),
+            Link::Unix(stream) => Pin::new(stream).poll_shutdown(cx),
         }
 
     }

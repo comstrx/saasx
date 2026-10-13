@@ -4,12 +4,12 @@
 mod tests {
 
     use std::path::{Path as StdPath, PathBuf};
-    use file::{Dir, File, Kind, Path};
-    use memory::{Space as _, Stack};
-    use error::{Code, Result};
+    use engine::file::{Dir, File, Kind, Path};
+    use engine::memory::{Space as _, Stack};
+    use engine::error::{Code, Result};
     use std::env::temp_dir;
     use std::process::id;
-    use net::Runtime;
+    use engine::thread::Runtime;
 
     fn scratch ( name: &str ) -> PathBuf {
 

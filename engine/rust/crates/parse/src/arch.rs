@@ -34,3 +34,8 @@ pub struct Lines <'a> {
 pub struct List <'a> {
     pub(crate) items: Split<'a, char>,
 }
+
+/// The failures this crate raises, each one for text that is not what it was read as.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

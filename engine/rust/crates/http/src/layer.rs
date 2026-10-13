@@ -1,11 +1,9 @@
+use error::{Failure, Result};
 use core::time::Duration;
-use tokio::time::timeout;
-use error::Failure;
+use thread::Time;
 use log::Log;
 
-use error::Result;
-
-use crate::{Limit, Middleware, Next, Pending, Request, Response, Timeout, Trace};
+use crate::{Faults, Limit, Middleware, Next, Pending, Request, Response, Timeout, Trace};
 
 impl Trace {
 
@@ -27,7 +25,7 @@ impl Middleware for Trace {
 
         Box::pin(async move {
 
-            let ( method, path, peer, ident, started ) = ( request.method().clone(), request.path().to_owned(), request.peer().to_string(), request.ident(), request.started );
+            let ( method, path, peer, ident, started ) = ( request.method(), request.path().to_owned(), request.peer().to_string(), request.ident(), request.started );
             let outcome = next.run(request).await;
             let micros  = u64::try_from(started.elapsed().as_micros()).unwrap_or(u64::MAX);
 
@@ -83,7 +81,7 @@ impl Middleware for Timeout {
 
         Box::pin(async move {
 
-            timeout(self.after, next.run(request)).await.unwrap_or_else(|_elapsed| Err(Failure::timeout("the request took too long").keyed("request_timeout")))
+            Time::within(self.after, next.run(request)).await.unwrap_or_else(|| Err(Faults::REQUEST_TIMEOUT.fail()))
 
         })
 

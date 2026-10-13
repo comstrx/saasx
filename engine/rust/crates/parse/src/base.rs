@@ -1,8 +1,8 @@
 use core::error::Error as StdError;
-use error::{Failure, Result};
+use error::{Faults as ErrorFaults, Result};
 use core::str::FromStr;
 
-use crate::Parse;
+use crate::{Faults, Parse};
 
 impl Parse {
 
@@ -68,7 +68,7 @@ impl Parse {
     #[inline]
     pub fn f64 ( text: &str ) -> Result<f64> {
 
-        text.trim().parse().map_err(|error| Failure::invalid("not a number").keyed("not_number").caused_by(error))
+        text.trim().parse().map_err(|error| ErrorFaults::NOT_NUMBER.fail().caused_by(error))
 
     }
 
@@ -82,7 +82,7 @@ impl Parse {
         match text.trim().to_ascii_lowercase().as_str() {
             "true" | "yes" | "on" | "1"  => Ok(true),
             "false" | "no" | "off" | "0" => Ok(false),
-            _                            => Err(Failure::invalid("not a flag: true/false, yes/no, on/off, 1/0").keyed("not_bool")),
+            _                            => Err(Faults::NOT_BOOL.fail()),
         }
 
     }
@@ -91,9 +91,9 @@ impl Parse {
 
         let trimmed = text.trim();
 
-        if trimmed.starts_with('+') || trimmed.contains('_') { return Err(Failure::invalid("not an integer").keyed("not_integer")); }
+        if trimmed.starts_with('+') || trimmed.contains('_') { return Err(ErrorFaults::NOT_INTEGER.fail()); }
 
-        trimmed.parse().map_err(|error| Failure::invalid("not an integer").keyed("not_integer").caused_by(error))
+        trimmed.parse().map_err(|error| ErrorFaults::NOT_INTEGER.fail().caused_by(error))
 
     }
 

@@ -7,10 +7,11 @@
 pub mod prelude;
 
 mod arch;
+mod faults;
 mod base;
 mod dir;
 mod path;
 mod reader;
 mod writer;
 
-pub use crate::arch::{Dir, Entry, File, Info, Kind, Path, Reader, Writer};
+pub use crate::arch::{Dir, Entry, Faults, File, Info, Kind, Path, Reader, Writer};

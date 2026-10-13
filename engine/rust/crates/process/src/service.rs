@@ -1,8 +1,8 @@
-use error::{Code, Failure, Result};
+use error::Result;
 use std::path::{Path, PathBuf};
 use file::{Dir, File};
 
-use crate::{Output, Platform, Provider, Restart, Run, Service, Spec, State, System};
+use crate::{Faults, Output, Platform, Provider, Restart, Run, Service, Spec, State, System};
 
 impl Spec {
 
@@ -125,7 +125,7 @@ impl Provider {
             Platform::Linux if Run::exists("systemctl")  => Ok(Self::Systemd),
             Platform::Macos if Run::exists("launchctl")  => Ok(Self::Launchd),
             Platform::Windows if Run::exists("sc")       => Ok(Self::Windows),
-            Platform::Linux | Platform::Macos | Platform::Windows | Platform::Other => Err(Failure::unsupported("no service manager was found on this machine").keyed("no_provider")),
+            Platform::Linux | Platform::Macos | Platform::Windows | Platform::Other => Err(Faults::NO_PROVIDER.fail()),
         }
 
     }
@@ -345,7 +345,7 @@ impl Service {
 
     async fn control ( self, args: &[&str] ) -> Result<()> {
 
-        Failure::ensure(self.elevate, Code::Forbidden, "the Windows service manager needs an administrator").map_err(|failure| failure.keyed("needs_root"))?;
+        Faults::NEEDS_ROOT.ensure(self.elevate).map_err(|failure| failure.detailed("the Windows service manager needs an administrator"))?;
 
         Run::new("sc").args(args).ok().await.map(|_out| ()).map_err(|failure| failure.context(format!("sc {}", args.join(" "))))
 

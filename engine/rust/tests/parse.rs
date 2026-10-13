@@ -5,12 +5,12 @@ extern crate alloc;
 #[cfg(test)]
 mod tests {
 
-    use parse::{Lines, List, Parse, Percent, Query};
+    use engine::parse::{Lines, List, Parse, Percent, Query};
     use core::time::Duration;
     use alloc::borrow::Cow;
-    use error::Code;
+    use engine::error::{Code, Result};
 
-    fn key <T> ( outcome: error::Result<T> ) -> Option<&'static str> {
+    fn key <T> ( outcome: Result<T> ) -> Option<&'static str> {
 
         outcome.err().map(|failure| failure.key())
 

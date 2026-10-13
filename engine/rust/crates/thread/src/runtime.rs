@@ -1,11 +1,9 @@
 use std::thread::{Builder as Thread, available_parallelism};
-use tokio::task::{LocalSet, spawn_local};
 use error::{Failure, Result};
-use tokio::runtime::Builder;
 use core::future::Future;
 use core::num::NonZero;
 
-use crate::{Runtime, Workers};
+use crate::{Executor, Faults, Runtime, Workers};
 
 impl Runtime {
 
@@ -25,17 +23,18 @@ impl Runtime {
     #[inline]
     pub fn block_on <F: Future> ( future: F ) -> Result<F::Output> {
 
-        let runtime = Builder::new_current_thread().enable_io().enable_time().build().map_err(|error| Failure::from(error).context("building a runtime"))?;
-
-        Ok(LocalSet::new().block_on(&runtime, future))
+        Ok(Executor::new()?.block_on(future))
 
     }
 
-    /// Spawns a task on this thread's local set; it runs until done or until the set is dropped.
+    /// Runs `future` like [`Runtime::block_on`] and hands back its own result.
+    ///
+    /// # Errors
+    /// The runtime cannot be built, or `future` failed.
     #[inline]
-    pub fn spawn <F: Future + 'static> ( future: F ) {
+    pub fn run <T, F: Future<Output = Result<T>>> ( future: F ) -> Result<T> {
 
-        drop(spawn_local(future));
+        Self::block_on(future)?
 
     }
 
@@ -91,7 +90,7 @@ impl Workers {
     #[inline]
     pub fn join ( self ) -> Result<()> {
 
-        self.handles.into_iter().map(|handle| handle.join().unwrap_or_else(|_panic| Err(Failure::internal("a worker panicked").keyed("worker_panicked")))).fold(Ok(()), Result::and)
+        self.handles.into_iter().map(|handle| handle.join().unwrap_or_else(|_panic| Err(Faults::WORKER_PANICKED.fail()))).fold(Ok(()), Result::and)
 
     }
 

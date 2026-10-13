@@ -5,7 +5,11 @@ use core::net::SocketAddr;
 use tokio::net::TcpStream;
 use core::time::Duration;
 
-use crate::{Bind, Tcp};
+use crate::arch::Tcp;
+use crate::Bind;
+
+#[cfg(not(all(unix, not(target_os = "solaris"), not(target_os = "illumos"))))]
+use crate::Faults;
 
 impl Bind {
 
@@ -64,12 +68,7 @@ impl Default for Bind {
 
 impl Tcp {
 
-    /// A non-blocking TCP listener: address reuse, port sharing when asked and the platform allows, no delay.
-    ///
-    /// # Errors
-    /// The socket cannot be made, bound or listened on.
-    #[inline]
-    pub fn listen ( addr: SocketAddr, bind: Bind ) -> Result<StdListener> {
+    pub(crate) fn listen ( addr: SocketAddr, bind: Bind ) -> Result<StdListener> {
 
         let socket = Raw::new(Domain::for_address(addr), Type::STREAM, Some(Proto::TCP)).map_err(|error| Failure::from(error).context("making a socket"))?;
 
@@ -84,9 +83,7 @@ impl Tcp {
 
     }
 
-    /// No delay and a keep-alive probe after a minute idle; a failure to set either is ignored.
-    #[inline]
-    pub fn tune ( stream: &TcpStream ) {
+    pub(crate) fn tune ( stream: &TcpStream ) {
 
         let raw = SockRef::from(stream);
 
@@ -107,7 +104,7 @@ impl Tcp {
     #[cfg(not(all(unix, not(target_os = "solaris"), not(target_os = "illumos"))))]
     fn share ( _socket: &Raw, reuse: bool ) -> Result<()> {
 
-        if reuse { return Err(Failure::unsupported("port sharing is not available on this platform").keyed("no_reuse_port")); }
+        if reuse { return Err(Faults::NO_REUSE_PORT.fail()); }
 
         Ok(())
 

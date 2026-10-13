@@ -2,18 +2,18 @@
 
 use criterion::{Criterion, criterion_group, criterion_main};
 use std::path::Path as StdPath;
-use tokio::runtime::Builder;
-use file::{Dir, File, Path};
+use engine::thread::Executor;
+use engine::file::{Dir, File, Path};
 use core::hint::black_box;
 use std::env::temp_dir;
 use std::process::id;
-use memory::Stack;
+use engine::memory::Stack;
 
 fn bench_file ( harness: &mut Criterion ) {
 
     let mut group = harness.benchmark_group("file");
 
-    let runtime = Builder::new_current_thread().enable_all().build().ok();
+    let runtime = Executor::new().ok();
     let dir     = temp_dir().join(format!("saasx-bench-file-{}", id()));
     let path    = dir.join("small.txt");
 

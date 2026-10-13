@@ -1,7 +1,7 @@
 use error::{Failure, Result};
 use core::str::from_utf8;
 
-use crate::{Cursor, Simd};
+use crate::{Cursor, Faults, Simd};
 
 impl <'a> Cursor<'a> {
 
@@ -104,7 +104,7 @@ impl <'a> Cursor<'a> {
     #[inline]
     pub fn until ( &mut self, separator: u8 ) -> Result<&'a [u8]> {
 
-        let index = Simd::find(self.tail, separator).ok_or_else(|| Failure::invalid("the separator never comes").keyed("unterminated"))?;
+        let index = Simd::find(self.tail, separator).ok_or_else(|| Faults::UNTERMINATED.fail())?;
         let ( head, tail ) = self.tail.split_at_checked(index + 1).ok_or_else(Self::short)?;
 
         self.advance(tail, index + 1);
@@ -227,7 +227,7 @@ impl <'a> Cursor<'a> {
 
     fn short () -> Failure {
 
-        Failure::invalid("the input ends early").keyed("truncated")
+        Faults::TRUNCATED.fail()
 
     }
 

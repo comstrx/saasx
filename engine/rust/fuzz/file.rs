@@ -6,7 +6,7 @@
 use std::path::{Component, Path as StdPath};
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
-use file::Path;
+use engine::file::Path;
 
 fuzz_target!(|data: &[u8]| {
 

@@ -3,7 +3,7 @@
 #![no_main]
 #![expect(clippy::disallowed_methods, reason = "the libFuzzer entry macro expands to `expect`")]
 
-use memory::{Buffer, Cursor, Simd, Space as _, Stack};
+use engine::memory::{Buffer, Cursor, Simd, Space as _, Stack};
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
 

@@ -28,9 +28,6 @@ deny = [
     { crate = "git2", reason = "Prefer gix to avoid libgit2/openssl baggage", use-instead = "gix" },
     "libssh2-sys",
 ]
-skip = [
-    { crate = "http@1.5.0", reason = "The engine's own crate is named http; hyper's http is a different package, not a second version of ours" },
-]
 skip-tree = [
     { crate = "windows-sys", reason = "Foundational crate; version churn is expected across the ecosystem" },
 ]

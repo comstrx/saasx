@@ -1,14 +1,15 @@
 //! What a request costs end to end on the loopback, what a response costs to build, what the handshake digest costs.
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use http::{Client, Digest, Response, Router, Server};
+use engine::http::{Client, Response, Router, Server};
 use core::net::{IpAddr, Ipv4Addr, SocketAddr};
-use net::{Address, Runtime, Stop};
+use engine::net::Address;
+use engine::thread::{Runtime, Stop};
 use std::sync::mpsc::channel;
 use core::hint::black_box;
 use core::time::Duration;
 use std::thread::spawn;
-use error::Failure;
+use engine::error::Failure;
 
 const LOOPBACK: Address = Address::Tcp(SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 0));
 
@@ -40,7 +41,6 @@ fn measure ( harness: &mut Criterion, base: Option<&str> ) {
     group.bench_function("get/loopback", |bencher| bencher.iter(|| Runtime::block_on(async { match base { Some(uri) => client.get(uri).await.map(|response| response.code()), None => Err(Failure::internal("no server")) } })));
     group.bench_function("response/text", |bencher| bencher.iter(|| Response::text(black_box("ok")).code()));
     group.bench_function("response/failure", |bencher| bencher.iter(|| Response::from(Failure::forbidden(black_box("no"))).code()));
-    group.bench_function("digest/accept-key", |bencher| bencher.iter(|| Digest::base64(&Digest::sha1(black_box(b"dGhlIHNhbXBsZSBub25jZQ==258EAFA5-E914-47DA-95CA-C5AB0DC85B11")))));
     group.finish();
 
 }

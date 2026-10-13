@@ -3,7 +3,7 @@
 #![no_main]
 #![expect(clippy::disallowed_methods, reason = "the libFuzzer entry macro expands to `expect`")]
 
-use process::{Args, Provider, Restart, Spec};
+use engine::process::{Args, Provider, Restart, Spec};
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
 

@@ -3,11 +3,11 @@
 #![no_main]
 #![expect(clippy::disallowed_methods, reason = "the libFuzzer entry macro expands to `expect`")]
 
-use error::{Code, Fail as _, Failure, Result};
+use engine::error::{Code, Fail as _, Failure, Fault, Result};
 use std::io::{Error as IoError, ErrorKind};
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
-use log::{Capture, Setup};
+use engine::log::{Capture, Setup};
 
 const KINDS: [ErrorKind; 8] = [
     ErrorKind::NotFound,
@@ -43,7 +43,7 @@ fuzz_target!(|data: &[u8]| {
     let frames = rest.get(2).map_or(0, |&byte| usize::from(byte % 5));
     let status = rest.first_chunk::<2>().map_or(0, |chunk| u16::from_le_bytes(*chunk));
 
-    let mut failure = Failure::new(code).detailed(detail.clone()).caused_by(IoError::new(kind, "io")).about(frame.clone()).retry_after(status.into()).problem(frame.clone(), code.key(), detail.clone());
+    let mut failure = Failure::new(code).detailed(detail.clone()).caused_by(IoError::new(kind, "io")).about(frame.clone()).retry_after(status.into()).problem(frame.clone(), Fault::new(code.key(), code, "fuzzed"), detail.clone());
 
     for _ in 0..frames { failure = failure.context(frame.clone()); }
 

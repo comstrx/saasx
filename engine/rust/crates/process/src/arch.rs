@@ -178,3 +178,8 @@ pub struct Cargo;
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Pid;
+
+/// The failures this crate raises, each one a tool's arguments, environment, programs, packages or services can end in.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

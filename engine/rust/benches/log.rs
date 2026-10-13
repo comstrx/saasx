@@ -1,11 +1,11 @@
 //! What a record costs: filtered out, rendered as text, rendered as JSON, stamped, escaped.
 
 use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
-use log::{Json, Level, Log, Record, Setup, Shape, Sink, Stamp};
+use engine::log::{Json, Level, Log, Record, Setup, Shape, Sink, Stamp};
 use std::io::{Result as IoResult, sink};
 use core::fmt::Write as _;
 use core::hint::black_box;
-use memory::Stack;
+use engine::memory::Stack;
 
 struct Null {
     shape: Shape,

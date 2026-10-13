@@ -1,7 +1,7 @@
 use core::error::Error as StdError;
 use log::Level;
 
-use crate::{Code, Detail, Failure, Problem, Report, Result, Wire};
+use crate::{Code, Detail, Failure, Fault, Problem, Report, Result, Wire};
 use crate::arch::Extra;
 
 impl Failure {
@@ -208,10 +208,7 @@ impl Failure {
 
     }
 
-    /// The same failure under a more specific key, such as `email_taken` under `Conflict`.
-    #[inline]
-    #[must_use]
-    pub const fn keyed ( mut self, key: &'static str ) -> Self {
+    pub(crate) const fn keyed ( mut self, key: &'static str ) -> Self {
 
         self.key = Some(key);
 
@@ -274,12 +271,12 @@ impl Failure {
 
     }
 
-    /// Adds one failed field with its stable key and its words; the failure itself stays one.
+    /// Adds one failed field under its declared fault, in its own words; the failure itself stays one.
     #[inline]
     #[must_use]
-    pub fn problem ( self, field: impl Into<Detail>, key: &'static str, detail: impl Into<Detail> ) -> Self {
+    pub fn problem ( self, field: impl Into<Detail>, fault: Fault, detail: impl Into<Detail> ) -> Self {
 
-        self.with(Problem::new(field, key, detail))
+        self.with(Problem::new(field, fault, detail))
 
     }
 
@@ -444,12 +441,12 @@ impl Failure {
 
 impl Problem {
 
-    /// A failed field with its stable key and its words.
+    /// A failed field under its declared fault, in its own words.
     #[inline]
     #[must_use]
-    pub fn new ( field: impl Into<Detail>, key: &'static str, detail: impl Into<Detail> ) -> Self {
+    pub fn new ( field: impl Into<Detail>, fault: Fault, detail: impl Into<Detail> ) -> Self {
 
-        Self { field: field.into(), key, detail: detail.into() }
+        Self { field: field.into(), key: fault.key(), detail: detail.into() }
 
     }
 

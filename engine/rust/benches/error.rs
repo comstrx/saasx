@@ -2,11 +2,13 @@
 
 use std::io::{Error as IoError, ErrorKind, Result as IoResult, sink};
 use criterion::{Criterion, criterion_group, criterion_main};
-use error::{Code, Fail as _, Failure, Result};
-use log::{Level, Record, Setup, Shape, Sink};
+use engine::error::{Code, Fail as _, Failure, Fault, Result};
+use engine::log::{Level, Record, Setup, Shape, Sink};
 use core::fmt::Write as _;
 use core::hint::black_box;
-use memory::Stack;
+use engine::memory::Stack;
+
+const EMAIL_TAKEN: Fault = Fault::new("email_taken", Code::Conflict, "the email is taken");
 
 struct Null;
 
@@ -34,7 +36,7 @@ fn read () -> Result<()> {
 
 fn sample () -> Failure {
 
-    Failure::conflict("taken").keyed("email_taken").context("saving").context("handling").caused_by(IoError::other("disk"))
+    EMAIL_TAKEN.because("taken").context("saving").context("handling").caused_by(IoError::other("disk"))
 
 }
 

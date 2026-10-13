@@ -1,7 +1,7 @@
 use std::path::{Component, Path as StdPath, PathBuf};
-use error::{Failure, Result};
+use error::Result;
 
-use crate::Path;
+use crate::{Faults, Path};
 
 impl Path {
 
@@ -68,7 +68,7 @@ impl Path {
             Component::Normal(part)                 => { joined.push(part); Ok(depth + 1) }
             Component::CurDir                       => Ok(depth),
             Component::ParentDir if depth > 0       => { joined.pop(); Ok(depth - 1) }
-            Component::ParentDir | Component::RootDir | Component::Prefix(_) => Err(Failure::forbidden("the path leaves its root").keyed("escapes_root")),
+            Component::ParentDir | Component::RootDir | Component::Prefix(_) => Err(Faults::ESCAPES_ROOT.fail()),
         }
 
     }

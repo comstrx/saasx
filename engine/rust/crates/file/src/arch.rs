@@ -60,3 +60,8 @@ pub struct Writer {
     pub(crate) temporary: PathBuf,
     pub(crate) target:    PathBuf,
 }
+
+/// The failures this crate raises, each one when a path does not stay where it was put.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

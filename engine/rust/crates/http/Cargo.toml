@@ -1,5 +1,5 @@
 [package]
-name                   = "http"
+name                   = "engine-http"
 version.workspace      = true
 edition.workspace      = true
 rust-version.workspace = true
@@ -17,8 +17,11 @@ error.workspace          = true
 memory.workspace         = true
 parse.workspace          = true
 net.workspace            = true
-tokio.workspace          = true
+thread.workspace         = true
+crypto.workspace         = true
+tokio                    = { workspace = true, features = ["rt", "time", "sync", "io-util"] }
 hyper.workspace          = true
+bytes.workspace          = true
 hyper-util.workspace     = true
 http-body.workspace      = true
 http-body-util.workspace = true

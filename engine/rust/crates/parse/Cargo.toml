@@ -1,5 +1,5 @@
 [package]
-name                   = "parse"
+name                   = "engine-parse"
 version.workspace      = true
 edition.workspace      = true
 rust-version.workspace = true

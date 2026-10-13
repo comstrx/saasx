@@ -9,16 +9,7 @@ license.workspace      = true
 description            = "Criterion benchmarks of the foundation crates."
 
 [dependencies]
-log.workspace      = true
-error.workspace    = true
-memory.workspace   = true
-parse.workspace    = true
-validate.workspace = true
-file.workspace     = true
-net.workspace      = true
-http.workspace     = true
-process.workspace  = true
-tokio.workspace    = true
+engine = { workspace = true, features = ["file", "net", "http", "process"] }
 
 [dev-dependencies]
 criterion.workspace = true
@@ -70,3 +61,18 @@ harness = false
 
 [lints]
 workspace = true
+
+[[bench]]
+name    = "thread"
+path    = "thread.rs"
+harness = false
+
+[[bench]]
+name    = "rand"
+path    = "rand.rs"
+harness = false
+
+[[bench]]
+name    = "crypto"
+path    = "crypto.rs"
+harness = false

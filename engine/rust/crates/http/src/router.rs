@@ -1,7 +1,7 @@
 use core::fmt::{Debug, Formatter, Result as FmtResult};
-use hyper::header::{HeaderName, HeaderValue};
+use hyper::header::HeaderValue;
 use core::future::{Future, Ready, ready};
-use error::{Failure, Result};
+use error::Result;
 use hyper::body::Incoming;
 use std::time::Instant;
 use core::cell::Cell;
@@ -9,9 +9,8 @@ use alloc::rc::Rc;
 use hyper::Method;
 use net::Peer;
 
-use crate::{Body, Handler, Ident, Middleware, Next, Params, Pending, Request, Response, Router, Table};
-
-const REQUEST_ID: HeaderName = HeaderName::from_static("x-request-id");
+use crate::{Body, Faults, Header, Ident, Middleware, Next, Params, Pending, Request, Response, Router};
+use crate::arch::{Handler, Table};
 
 impl Router {
 
@@ -138,28 +137,25 @@ impl Router {
 
         let mut response = outcome.unwrap_or_else(Response::from);
 
-        if let Ok(value) = HeaderValue::from_str(&ident.to_string()) { response.inner.headers_mut().insert(REQUEST_ID, value); }
+        if let Ok(value) = HeaderValue::from_str(&ident.to_string()) { response.inner.headers_mut().insert(Header::REQUEST_ID.inner, value); }
 
         response
 
     }
 
-    /// Wraps what hyper hands over as a [`Request`] with the next id on this worker.
-    #[inline]
-    #[must_use]
-    pub fn take ( &self, inner: hyper::Request<Incoming>, peer: Peer ) -> Request {
+    pub(crate) fn take ( &self, inner: hyper::Request<Incoming>, peer: Peer ) -> Request {
 
         let serial = self.serial.get().wrapping_add(1);
 
         self.serial.set(serial);
 
-        Request { inner: inner.map(Body::Incoming), peer, params: Params::default(), ident: Ident { worker: self.worker, serial }, started: Instant::now(), limit: self.limit }
+        Request { inner: inner.map(Body::arriving), peer, params: Params::default(), ident: Ident { worker: self.worker, serial }, started: Instant::now(), limit: self.limit }
 
     }
 
     async fn route ( &self, mut request: Request ) -> Result<Response> {
 
-        let ( handler, params ) = self.pick(request.method(), request.path());
+        let ( handler, params ) = self.pick(request.inner.method(), request.path());
 
         request.params = params;
 
@@ -211,7 +207,7 @@ impl Router {
 
         drop(request);
 
-        ready(Err(Failure::method("the method is not allowed on this path").keyed("method_not_allowed")))
+        ready(Err(Faults::METHOD_NOT_ALLOWED.fail()))
 
     }
 
@@ -221,7 +217,7 @@ impl Router {
 
         drop(request);
 
-        ready(Err(Failure::not_found("no such route").keyed("no_route").context(path)))
+        ready(Err(Faults::NO_ROUTE.fail().context(path)))
 
     }
 

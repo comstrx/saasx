@@ -9,16 +9,11 @@ license.workspace      = true
 description            = "Public-API contract tests for the foundation crates, linked the way a consumer links."
 
 [dependencies]
-log.workspace      = true
-error.workspace    = true
-memory.workspace   = true
-parse.workspace    = true
-validate.workspace = true
-file.workspace     = true
-net.workspace      = true
-http.workspace     = true
-process.workspace  = true
-tokio.workspace    = true
+engine = { workspace = true, features = ["file", "net", "http", "process"] }
+
+[[test]]
+name = "engine"
+path = "engine.rs"
 
 [[test]]
 name = "log"
@@ -39,6 +34,18 @@ path = "parse.rs"
 [[test]]
 name = "validate"
 path = "validate.rs"
+
+[[test]]
+name = "thread"
+path = "thread.rs"
+
+[[test]]
+name = "rand"
+path = "rand.rs"
+
+[[test]]
+name = "crypto"
+path = "crypto.rs"
 
 [[test]]
 name = "file"

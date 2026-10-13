@@ -1,11 +1,11 @@
 use core::fmt::{Debug, Formatter, Result as FmtResult};
 use std::sync::{Mutex, PoisonError};
 use core::ops::{Deref, DerefMut};
-use error::{Failure, Result};
+use error::Result;
 use core::iter::repeat_with;
 use core::mem::take;
 
-use crate::{Buffer, Lease, Pool, Space as _};
+use crate::{Buffer, Faults, Lease, Pool, Space as _};
 
 impl Pool {
 
@@ -27,7 +27,7 @@ impl Pool {
 
         let buffer = self.idle.lock().unwrap_or_else(PoisonError::into_inner).pop();
 
-        buffer.map_or_else(|| Err(Failure::exhausted("every buffer is on loan").keyed("pool_empty")), |buffer| Ok(Lease { pool: self, buffer }))
+        buffer.map_or_else(|| Err(Faults::POOL_EMPTY.fail()), |buffer| Ok(Lease { pool: self, buffer }))
 
     }
 

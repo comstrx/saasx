@@ -4,7 +4,7 @@
 #![expect(clippy::disallowed_methods, reason = "the libFuzzer entry macro expands to `expect`")]
 
 use libfuzzer_sys::fuzz_target;
-use validate::Form;
+use engine::validate::Form;
 
 fuzz_target!(|data: &[u8]| {
 

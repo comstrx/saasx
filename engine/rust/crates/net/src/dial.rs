@@ -2,12 +2,13 @@ use error::{Failure, Result};
 use core::net::SocketAddr;
 use tokio::net::TcpStream;
 use core::time::Duration;
-use tokio::time::timeout;
+use thread::Time;
 
 #[cfg(not(unix))]
 use core::future::{Ready, ready};
 
-use crate::{Address, Dial, Resolve, Stream, Tcp};
+use crate::{Address, Dial, Faults, Resolve, Stream};
+use crate::arch::{Link, Tcp};
 
 impl Dial {
 
@@ -28,18 +29,18 @@ impl Dial {
 
     async fn tcp ( addr: SocketAddr, deadline: Duration ) -> Result<Stream> {
 
-        let connected = timeout(deadline, TcpStream::connect(addr)).await.map_err(|_elapsed| Failure::timeout("connecting took too long").context(addr.to_string()))?;
+        let connected = Time::within(deadline, TcpStream::connect(addr)).await.ok_or_else(|| Faults::CONNECT_TIMEOUT.fail().context(addr.to_string()))?;
         let stream    = connected.map_err(|error| Failure::from(error).context(format!("connecting to {addr}")))?;
 
         Tcp::tune(&stream);
 
-        Ok(Stream::Tcp(stream))
+        Ok(Stream { link: Link::Tcp(stream) })
 
     }
 
     async fn named ( host: &str, port: u16, deadline: Duration ) -> Result<Stream> {
 
-        let mut last = Failure::unavailable("the name resolved to nothing").keyed("no_address").context(format!("{host}:{port}"));
+        let mut last = Faults::NO_ADDRESS.fail().context(format!("{host}:{port}"));
 
         for addr in Resolve::lookup(host, port).await? {
 
@@ -59,16 +60,16 @@ impl Dial {
 
         use tokio::net::UnixStream;
 
-        let connected = timeout(deadline, UnixStream::connect(path)).await.map_err(|_elapsed| Failure::timeout("connecting took too long").context(format!("unix:{path}")))?;
+        let connected = Time::within(deadline, UnixStream::connect(path)).await.ok_or_else(|| Faults::CONNECT_TIMEOUT.fail().context(format!("unix:{path}")))?;
 
-        connected.map(Stream::Unix).map_err(|error| Failure::from(error).context(format!("connecting to unix:{path}")))
+        connected.map(|stream| Stream { link: Link::Unix(stream) }).map_err(|error| Failure::from(error).context(format!("connecting to unix:{path}")))
 
     }
 
     #[cfg(not(unix))]
     fn unix ( _path: &str, _deadline: Duration ) -> Ready<Result<Stream>> {
 
-        ready(Err(Failure::unsupported("unix sockets are not available on this platform").keyed("no_unix_socket")))
+        ready(Err(Faults::NO_UNIX_SOCKET.fail()))
 
     }
 

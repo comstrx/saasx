@@ -3,13 +3,13 @@
 #[cfg(test)]
 mod tests {
 
-    use memory::{Arena, BufMut as _, Buffer, Bytes, Cursor, Pool, Simd, Space, Stack};
+    use engine::memory::{Arena, Buffer, Bytes, Cursor, Pool, Simd, Space, Stack};
     use std::io::{Error as IoError, ErrorKind, Read, Result as IoResult, Write as _};
     use core::fmt::{Error as FmtError, Write as _};
     use std::collections::HashSet;
     use core::iter::repeat_with;
     use std::thread::scope;
-    use error::Code;
+    use engine::error::Code;
 
     struct Flaky {
         interruptions: usize,
@@ -434,6 +434,16 @@ mod tests {
 
     }
 
+    fn spell ( chunk: &mut [u8] ) -> usize {
+
+        let word = b"abc";
+
+        for ( slot, byte ) in chunk.iter_mut().zip(word) { *slot = *byte; }
+
+        word.len()
+
+    }
+
     #[test]
     fn an_arena_bumps_out_shared_slices_and_reuses_its_chunk () {
 
@@ -441,7 +451,7 @@ mod tests {
 
         let first  = arena.copy(b"hello");
         let second = arena.text(" world");
-        let third  = arena.write(3, |chunk| chunk.put_slice(b"abc"));
+        let third  = arena.write(4, spell);
 
         assert_eq!(( &*first, &*second, &*third ), ( &b"hello"[..], &b" world"[..], &b"abc"[..] ));
         assert_eq!(arena.remaining(), 64 - 14);

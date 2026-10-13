@@ -1,7 +1,7 @@
 //! Lanes against naive scans at three sizes, stores against the heap, pools, cursors and splits.
 
 use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
-use memory::{Buffer, Cursor, Pool, Simd, Space as _, Stack};
+use engine::memory::{Buffer, Cursor, Pool, Simd, Space as _, Stack};
 use core::hint::black_box;
 
 const SIZES: [usize; 3] = [64, 1024, 65_536];

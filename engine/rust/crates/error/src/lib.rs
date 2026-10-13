@@ -14,7 +14,9 @@ mod code;
 mod convert;
 mod emit;
 mod exit;
+mod fault;
+mod faults;
 mod fail;
 mod report;
 
-pub use crate::arch::{Code, Detail, Exit, Fail, Failure, Problem, Report, Result, Wire};
+pub use crate::arch::{Code, Detail, Exit, Fail, Failure, Fault, Faults, Problem, Report, Result, Wire};

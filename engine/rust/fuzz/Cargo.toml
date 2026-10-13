@@ -12,16 +12,7 @@ description            = "Fuzz targets of the foundation crates, one flat file p
 cargo-fuzz = true
 
 [dependencies]
-log.workspace           = true
-error.workspace         = true
-memory.workspace        = true
-parse.workspace         = true
-validate.workspace      = true
-file.workspace          = true
-net.workspace           = true
-http.workspace          = true
-process.workspace       = true
-tokio.workspace         = true
+engine                  = { workspace = true, features = ["file", "net", "http", "process"] }
 libfuzzer-sys.workspace = true
 
 [[bin]]
@@ -89,3 +80,24 @@ doc   = false
 
 [lints]
 workspace = true
+
+[[bin]]
+name  = "thread"
+path  = "thread.rs"
+test  = false
+bench = false
+doc   = false
+
+[[bin]]
+name  = "rand"
+path  = "rand.rs"
+test  = false
+bench = false
+doc   = false
+
+[[bin]]
+name  = "crypto"
+path  = "crypto.rs"
+test  = false
+bench = false
+doc   = false

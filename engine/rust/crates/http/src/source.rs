@@ -3,9 +3,10 @@ use tokio::sync::mpsc::{Sender, channel};
 use core::iter::{once, repeat_with};
 use error::{Failure, Result};
 use core::net::SocketAddr;
-use tokio::net::TcpStream;
 
 use crate::arch::{Door, Handoff, Source};
+
+use crate::Faults;
 
 const DEPTH: usize = 1024;
 
@@ -80,7 +81,7 @@ impl Source {
 
         match self {
             Self::Socket(door)                      => door.listener()?.accept().await,
-            Self::Channel(receiver)                 => Self::adopt(receiver.recv().await.ok_or_else(|| Failure::unavailable("the acceptor went away").keyed("acceptor_gone"))?),
+            Self::Channel(receiver)                 => Self::adopt(receiver.recv().await.ok_or_else(|| Faults::ACCEPTOR_GONE.fail())?),
             Self::Fanout { door, senders, next }    => Self::spread_one(door.listener()?, senders, next).await,
         }
 
@@ -103,9 +104,12 @@ impl Source {
         *next = (turn + 1) % (senders.len() + 1);
 
         let Some(target) = turn.checked_sub(1).and_then(|index| senders.get(index)) else { return Some(accepted); };
-        let ( Stream::Tcp(tcp), peer ) = accepted else { return Some(accepted); };
-        let Some(addr) = Self::socket(&peer) else { return Some(( Stream::Tcp(tcp), peer )); };
-        let Ok(std) = tcp.into_std() else { return None; };
+        let ( stream, peer ) = accepted;
+
+        if !stream.is_tcp() { return Some(( stream, peer )); }
+
+        let Some(addr) = Self::socket(&peer) else { return Some(( stream, peer )); };
+        let std = stream.release()?;
 
         match target.try_send(( std, addr )) {
             Ok(())        => None,
@@ -116,9 +120,7 @@ impl Source {
 
     fn adopt ( ( std, addr ): Handoff ) -> Result<( Stream, Peer )> {
 
-        let tcp = TcpStream::from_std(std).map_err(|error| Failure::from(error).context("registering a handed-off socket"))?;
-
-        Ok(Listener::adopt(tcp, addr))
+        Listener::adopt(std, addr)
 
     }
 

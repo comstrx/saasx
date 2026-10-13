@@ -1,9 +1,9 @@
 use core::fmt::{Result as FmtResult, Write};
-use error::{Failure, Result};
+use error::Result;
 use alloc::borrow::Cow;
 
 use crate::arch::Decoded;
-use crate::Percent;
+use crate::{Faults, Percent};
 
 impl Percent {
 
@@ -28,7 +28,7 @@ impl Percent {
 
         }
 
-        String::from_utf8(out).map(Cow::Owned).map_err(|error| Failure::invalid("not UTF-8 once decoded").keyed("not_percent").caused_by(error.utf8_error()))
+        String::from_utf8(out).map(Cow::Owned).map_err(|error| Faults::NOT_PERCENT.because("not UTF-8 once decoded").caused_by(error.utf8_error()))
 
     }
 
@@ -72,9 +72,9 @@ impl Percent {
 
     fn escape ( tail: &[u8] ) -> Decoded<'_> {
 
-        let ( pair, rest ) = tail.split_first_chunk::<2>().ok_or_else(|| Failure::invalid("a percent escape needs two hex digits").keyed("not_percent"))?;
-        let high = Self::hex(pair[0]).ok_or_else(|| Failure::invalid("a percent escape needs two hex digits").keyed("not_percent"))?;
-        let low  = Self::hex(pair[1]).ok_or_else(|| Failure::invalid("a percent escape needs two hex digits").keyed("not_percent"))?;
+        let ( pair, rest ) = tail.split_first_chunk::<2>().ok_or_else(|| Faults::NOT_PERCENT.because("a percent escape needs two hex digits"))?;
+        let high = Self::hex(pair[0]).ok_or_else(|| Faults::NOT_PERCENT.because("a percent escape needs two hex digits"))?;
+        let low  = Self::hex(pair[1]).ok_or_else(|| Faults::NOT_PERCENT.because("a percent escape needs two hex digits"))?;
 
         Ok(( (high << 4) | low, rest ))
 

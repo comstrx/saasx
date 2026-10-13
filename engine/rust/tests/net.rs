@@ -1,14 +1,14 @@
-//! Public-API contract of `net`: addresses, listeners with hooks, streams, dialing, resolving, workers and stop.
+//! Public-API contract of `net`: addresses, listeners with hooks, streams, dialing and resolving.
 
 #[cfg(test)]
 mod tests {
 
-    use net::{Address, Bind, Dial, Listener, Peer, Protocol, Resolve, Runtime, Stop, Workers};
-    use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
+    use engine::net::{Address, Bind, Dial, Listener, Peer, Protocol, Resolve};
+
+    use engine::thread::{Runtime, Task, Time};
     use core::net::{IpAddr, Ipv4Addr, SocketAddr};
-    use error::{Code, Failure, Result};
+    use engine::error::{Code, Failure, Result};
     use core::time::Duration;
-    use tokio::time::timeout;
 
     const LOOPBACK: Address = Address::Tcp(SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 0));
 
@@ -48,13 +48,13 @@ mod tests {
         let local    = listener.local().clone();
         let bound    = local.port().is_some_and(|port| port > 0);
 
-        let server = tokio::spawn(async move {
+        let server = Task::spawn(async move {
 
             let ( mut stream, peer ) = listener.accept().await?;
             let mut buf = [0u8; 5];
 
-            stream.read_exact(&mut buf).await.map_err(Failure::from)?;
-            stream.write_all(&buf).await.map_err(Failure::from)?;
+            stream.fill(&mut buf).await?;
+            stream.send(&buf).await?;
 
             Ok::<bool, Failure>(peer.host() == Some(IpAddr::V4(Ipv4Addr::LOCALHOST)) && stream.is_tcp())
 
@@ -62,13 +62,13 @@ mod tests {
 
         let mut client = Dial::connect(&local, Duration::from_secs(5)).await?;
 
-        client.write_all(b"hello").await.map_err(Failure::from)?;
+        client.send(b"hello").await?;
 
         let mut back = vec![0u8; 5];
 
-        client.read_exact(&mut back).await.map_err(Failure::from)?;
+        client.fill(&mut back).await?;
 
-        let confirmed = server.await.map_err(|error| Failure::internal(error.to_string()))??;
+        let confirmed = server.join().await??;
 
         Ok(( back, bound, confirmed ))
 
@@ -87,7 +87,7 @@ mod tests {
         let local    = listener.local().clone();
 
         let dialed = Dial::connect(&local, Duration::from_secs(5)).await.is_ok();
-        let waited = timeout(Duration::from_millis(300), listener.accept()).await.is_err();
+        let waited = Time::within(Duration::from_millis(300), listener.accept()).await.is_none();
 
         Ok(( dialed, waited ))
 
@@ -118,43 +118,6 @@ mod tests {
 
         assert!(found.iter().all(|addr| addr.port() == 80 && addr.ip().is_loopback()));
         assert_ne!(found.len(), 0);
-
-    }
-
-    #[test]
-    fn workers_run_one_runtime_each_and_report_the_first_failure () {
-
-        let fine = Runtime::workers(3, |index| async move { Failure::ensure(index < 3, Code::Internal, "no") });
-
-        assert_eq!(fine.map(|workers| ( workers.len(), workers.is_empty() )).ok(), Some(( 3, false )));
-        assert_eq!(Runtime::workers(2, |_index| async { Ok(()) }).and_then(Workers::join).ok(), Some(()));
-        assert_eq!(Runtime::workers(2, |index| async move { Failure::ensure(index != 1, Code::Config, "bad") }).and_then(Workers::join).err().map(|failure| failure.code()), Some(Code::Config));
-        assert_eq!(Runtime::block_on(async { 41 + 1 }).ok(), Some(42));
-        assert!(Runtime::cores() >= 1);
-
-    }
-
-    async fn signaled () -> ( bool, bool, bool, bool, bool ) {
-
-        let stop  = Stop::new();
-        let other = stop.clone();
-
-        let before = stop.raised();
-        let quiet  = timeout(Duration::from_millis(50), other.wait()).await.is_err();
-
-        stop.raise();
-
-        let after = other.raised();
-        let woke  = timeout(Duration::from_millis(50), other.wait()).await.is_ok();
-
-        ( before, quiet, after, woke, Stop::default().raised() )
-
-    }
-
-    #[test]
-    fn a_stop_signal_reaches_every_clone () {
-
-        assert_eq!(Runtime::block_on(signaled()).ok(), Some(( false, true, true, true, false )));
 
     }
 

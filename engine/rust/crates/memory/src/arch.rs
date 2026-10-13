@@ -2,15 +2,21 @@ use core::fmt::{Arguments, Write as _};
 use error::{Failure, Result};
 use core::str::from_utf8;
 use std::sync::Mutex;
-use bytes::BytesMut;
+use bytes::{Bytes as Shared, BytesMut};
 
-/// A bump region for the hot path: one chunk, handed out as shared [`Bytes`](bytes::Bytes) slices.
+/// A bump region for the hot path: one chunk, handed out as shared [`Bytes`] slices.
 ///
 /// Each write costs a pointer bump; the chunk is reused once every slice is dropped and replaced
 /// when it runs out, so a request's small allocations never reach the allocator one by one.
 pub struct Arena {
     pub(crate) chunk: BytesMut,
     pub(crate) size:  usize,
+}
+
+/// Shared, immutable bytes: a clone counts a reference, a slice never copies.
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Bytes {
+    pub(crate) inner: Shared,
 }
 
 /// Bytes on the stack: a fixed array and a length, never the heap.
@@ -193,8 +199,13 @@ pub trait Space {
     #[must_use]
     fn exhausted () -> Failure where Self: Sized {
 
-        Failure::exhausted("the store is full").keyed("store_full")
+        Faults::STORE_FULL.fail()
 
     }
 
 }
+
+/// The failures this crate raises, each one when a store or a reader cannot go on.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

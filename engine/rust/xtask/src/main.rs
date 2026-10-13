@@ -9,12 +9,12 @@
 )]
 
 use core::fmt::{Display, Formatter, Result as FmtResult};
-use core::iter::once;
+use std::fs::{create_dir_all, read_dir, read_to_string, remove_dir_all};
+use std::io::{Error as IoError, ErrorKind::NotFound};
 use std::process::{Command, ExitCode, Output};
 use std::env::{args, current_dir};
 use std::path::{Path, PathBuf};
-use std::io::{Error as IoError, ErrorKind::NotFound};
-use std::fs::{create_dir_all, read_dir, remove_dir_all};
+use core::iter::once;
 
 type Step   = fn(&Gate) -> Result<(), Failure>;
 type Entry  = ( &'static str, &'static str, Step );
@@ -35,9 +35,9 @@ const TASKS: &[Entry] = &[
     ( "vet",        "cargo vet, offline against supply-chain/",                                       Gate::vet ),
     ( "udeps",      "unused dependencies on nightly",                                                 Gate::udeps ),
     ( "hack",       "feature powerset compiles",                                                      Gate::hack ),
-    ( "semver",     "public API against a git baseline (--baseline <rev>, default main)",             Gate::semver ),
+    ( "semver",     "every library's public API against the merge base of --baseline <rev> (main)",   Gate::semver ),
     ( "fuzz",       "libFuzzer targets on nightly (--run, --time <secs> each or --budget in all)",    Gate::fuzz ),
-    ( "miri",       "the pure suites under Miri on nightly: log error memory parse validate",         Gate::miri ),
+    ( "miri",       "the pure suites under Miri on nightly, from log up to the facade contract",      Gate::miri ),
     ( "sanitizer",  "the test suite under a sanitizer on nightly (--sanitizer asan|tsan|msan|lsan)",  Gate::sanitizer ),
     ( "doctor",     "which toolchains and tools are present, then a compile check",                   Gate::doctor ),
 ];
@@ -56,7 +56,7 @@ const TOOLS: &[( &str, &str )] = &[
 const BINSTALL: ( &str, &str ) = ( "cargo-binstall", "cargo install cargo-binstall --locked" );
 const MIRI: ( &str, &str )     = ( "cargo-miri", "rustup component add miri --toolchain (see NIGHTLY)" );
 
-const MIRI_SUITES: &[&str] = &["log", "error", "memory", "parse", "validate"];
+const MIRI_SUITES: &[&str] = &["log", "error", "memory", "parse", "validate", "rand", "crypto", "engine"];
 
 const SANITIZERS: &[( &str, &str )] = &[
     ( "asan", "address" ),
@@ -122,6 +122,17 @@ impl Node {
             .map(PathBuf::from);
 
         Some(( depth.parse().ok()?, Self { name: name.to_owned(), path } ))
+
+    }
+
+    fn named ( manifest: &str ) -> Option<&str> {
+
+        manifest
+            .lines()
+            .skip_while(|line| line.trim() != "[package]")
+            .skip(1)
+            .take_while(|line| !line.starts_with('['))
+            .find_map(|line| line.split_once('=').filter(|( key, _ )| key.trim() == "name").map(|( _, value )| value.trim().trim_matches('"')))
 
     }
 
@@ -335,7 +346,9 @@ impl Gate {
 
         self.require("cargo-semver-checks")?;
 
-        if self.members("src/lib.rs")?.is_empty() {
+        let libraries: Vec<Node> = self.nodes()?.into_iter().filter(|node| node.has("src/lib.rs")).collect();
+
+        if libraries.is_empty() {
 
             println!("semver: no library crate in this workspace");
 
@@ -343,17 +356,50 @@ impl Gate {
 
         }
 
-        let store = self.root.join("target").join("semver").join(self.baseline.replace('/', "-"));
+        if self.baseline.bytes().all(|byte| byte == b'0') {
+
+            println!("semver: no commit before this push; nothing to compare");
+
+            return Ok(());
+
+        }
+
+        let base  = self.capture("git", &["merge-base", &self.baseline, "HEAD"])?.trim().to_owned();
+        let store = self.root.join("target").join("semver").join(&base);
         let tar   = store.join("baseline.tar");
 
         remove_dir_all(&store).or_else(|error| if error.kind() == NotFound { Ok(()) } else { Err(error) }).map_err(Failure::Root)?;
         create_dir_all(&store).map_err(Failure::Root)?;
 
-        let ( store, tar ) = ( store.to_string_lossy().into_owned(), tar.to_string_lossy().into_owned() );
+        let ( root, archive ) = ( store.to_string_lossy().into_owned(), tar.to_string_lossy().into_owned() );
 
-        self.shell("git", &["archive", "--format=tar", "-o", &tar, &self.baseline, "--", "."], &[])?;
-        self.shell("tar", &["-xf", &tar, "-C", &store], &[])?;
-        self.cargo(&["semver-checks", "check-release", "--workspace", "--baseline-root", &store])
+        self.shell("git", &["archive", "--format=tar", "-o", &archive, &base, "--", "."], &[])?;
+        self.shell("tar", &["-xf", &archive, "-C", &root], &[])?;
+
+        let ( kept, fresh ) = libraries.iter().partition::<Vec<_>, _>(|node| self.existed(&store, node));
+
+        for node in &fresh {
+
+            println!("semver: `{}` has no baseline at {base}; nothing to compare", node.name);
+
+        }
+
+        if kept.is_empty() { return Ok(()); }
+
+        let packages  = kept.iter().flat_map(|node| ["--package", node.name.as_str()]);
+        let arguments = ["semver-checks", "check-release", "--baseline-root", root.as_str()].into_iter().chain(packages).collect::<Vec<_>>();
+
+        self.cargo(&arguments)
+
+    }
+
+    fn existed ( &self, store: &Path, node: &Node ) -> bool {
+
+        node.path
+            .as_deref()
+            .and_then(|path| path.strip_prefix(&self.root).ok())
+            .and_then(|relative| read_to_string(store.join(relative).join("Cargo.toml")).ok())
+            .is_some_and(|manifest| Node::named(&manifest) == Some(node.name.as_str()))
 
     }
 

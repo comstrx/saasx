@@ -1,4 +1,4 @@
-use error::{Code, Failure, Result};
+use error::{Code, Result};
 use std::path::{Path, PathBuf};
 use std::collections::HashMap;
 use parse::{Lines, Parse};
@@ -7,7 +7,7 @@ use std::env::var_os;
 use file::File;
 
 use crate::arch::Parser;
-use crate::Env;
+use crate::{Env, Faults};
 
 impl Env {
 
@@ -61,7 +61,7 @@ impl Env {
     #[inline]
     pub fn need ( &self, name: &str ) -> Result<String> {
 
-        self.text(name).ok_or_else(|| Failure::config(format!("{name} is not set")).keyed("env_missing").about(name.to_owned()))
+        self.text(name).ok_or_else(|| Faults::ENV_MISSING.because(format!("{name} is not set")).about(name.to_owned()))
 
     }
 

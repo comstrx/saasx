@@ -1,8 +1,8 @@
 use core::fmt::{Arguments, Debug, Formatter, Result as FmtResult, Write as _};
-use bytes::{BufMut as _, Bytes, BytesMut};
+use bytes::{BufMut as _, BytesMut};
 use error::{Failure, Result};
 
-use crate::Arena;
+use crate::{Arena, Bytes};
 
 impl Arena {
 
@@ -18,14 +18,21 @@ impl Arena {
 
     }
 
-    /// Reserves `room` bytes, lets `fill` write into them, and hands out what it wrote.
+    /// Reserves `room` zeroed bytes, lets `fill` write into them and say how many it used, and hands those out.
     #[inline]
-    pub fn write ( &mut self, room: usize, fill: impl FnOnce(&mut BytesMut) ) -> Bytes {
+    pub fn write ( &mut self, room: usize, fill: impl FnOnce(&mut [u8]) -> usize ) -> Bytes {
 
         self.room(room);
-        fill(&mut self.chunk);
 
-        self.chunk.split().freeze()
+        let start = self.chunk.len();
+
+        self.chunk.resize(start + room, 0);
+
+        let used = fill(self.chunk.get_mut(start..).unwrap_or_default()).min(room);
+
+        self.chunk.truncate(start + used);
+
+        Bytes::from(self.chunk.split().freeze())
 
     }
 
@@ -33,7 +40,10 @@ impl Arena {
     #[inline]
     pub fn copy ( &mut self, bytes: &[u8] ) -> Bytes {
 
-        self.write(bytes.len(), |chunk| chunk.put_slice(bytes))
+        self.room(bytes.len());
+        self.chunk.put_slice(bytes);
+
+        Bytes::from(self.chunk.split().freeze())
 
     }
 
@@ -62,7 +72,7 @@ impl Arena {
 
         }
 
-        Ok(self.chunk.split().freeze())
+        Ok(Bytes::from(self.chunk.split().freeze()))
 
     }
 

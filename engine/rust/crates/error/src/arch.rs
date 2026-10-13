@@ -47,6 +47,20 @@ pub enum Code {
     Exhausted,
 }
 
+/// One failure a crate declares once: the key a client translates by, the code it always carries,
+/// and the detail it says unless a site says more.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Fault {
+    pub(crate) key:    &'static str,
+    pub(crate) code:   Code,
+    pub(crate) detail: &'static str,
+}
+
+/// The failures this crate raises on its own: conversions from the standard library's errors.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;
+
 /// Owned or static text for a detail or a frame; static text costs nothing.
 pub type Detail = Cow<'static, str>;
 

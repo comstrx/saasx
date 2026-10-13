@@ -1,7 +1,7 @@
 use core::fmt::{Display, Formatter, Result as FmtResult};
-use error::{Failure, Result};
+use error::Result;
 
-use crate::{Manager, Package, Platform, Run, System};
+use crate::{Faults, Manager, Package, Platform, Run, System};
 
 impl Manager {
 
@@ -29,7 +29,7 @@ impl Manager {
             ( Platform::Linux | Platform::Other, _ )                                                    => Self::ALL,
         };
 
-        preferred.iter().chain(Self::ALL).copied().find(|manager| Run::exists(manager.binary())).ok_or_else(|| Failure::unsupported("no package manager was found on this machine").keyed("no_manager"))
+        preferred.iter().chain(Self::ALL).copied().find(|manager| Run::exists(manager.binary())).ok_or_else(|| Faults::NO_MANAGER.fail())
 
     }
 
@@ -103,7 +103,7 @@ impl Manager {
 
         let elevate = self.elevates() && !System::is_root().await;
 
-        if elevate && !Run::exists("sudo") { return Err(Failure::forbidden(format!("{} needs the superuser and sudo is not here", self.binary())).keyed("needs_root")); }
+        if elevate && !Run::exists("sudo") { return Err(Faults::NEEDS_ROOT.because(format!("{} needs the superuser and sudo is not here", self.binary()))); }
 
         let run = if elevate { Run::new("sudo").args(["-n", self.binary()]).args(args) } else { Run::new(self.binary()).args(args) };
 
@@ -199,7 +199,7 @@ impl Package {
     #[inline]
     pub fn name ( &self, manager: Manager ) -> Result<&str> {
 
-        self.names.iter().find(|( known, _ )| *known == manager).map(|( _, name )| &**name).or(self.any.as_deref()).ok_or_else(|| Failure::unsupported(format!("no package name for {manager}")).keyed("no_package"))
+        self.names.iter().find(|( known, _ )| *known == manager).map(|( _, name )| &**name).or(self.any.as_deref()).ok_or_else(|| Faults::NO_PACKAGE.because(format!("no package name for {manager}")))
 
     }
 

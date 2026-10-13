@@ -6,8 +6,9 @@
 pub mod prelude;
 
 mod arch;
+mod faults;
 mod base;
 mod number;
 mod text;
 
-pub use crate::arch::{Form, Number, Text};
+pub use crate::arch::{Faults, Form, Number, Text};

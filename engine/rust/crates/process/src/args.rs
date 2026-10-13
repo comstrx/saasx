@@ -1,7 +1,7 @@
 use error::{Failure, Result};
 use std::env::args_os;
 
-use crate::Args;
+use crate::{Args, Faults};
 
 impl Args {
 
@@ -83,7 +83,7 @@ impl Args {
     #[inline]
     pub fn need ( &self, name: &str ) -> Result<&str> {
 
-        self.get(name).ok_or_else(|| Failure::usage(format!("--{name} is required")).keyed("flag_missing").about(name.to_owned()))
+        self.get(name).ok_or_else(|| Faults::FLAG_MISSING.because(format!("--{name} is required")).about(name.to_owned()))
 
     }
 
@@ -110,7 +110,7 @@ impl Args {
     #[must_use]
     pub fn unknown ( &self ) -> Failure {
 
-        Failure::usage(format!("{} does not know the command {}", self.program, self.command.as_deref().unwrap_or("(none)"))).keyed("unknown_command")
+        Faults::UNKNOWN_COMMAND.because(format!("{} does not know the command {}", self.program, self.command.as_deref().unwrap_or("(none)")))
 
     }
 

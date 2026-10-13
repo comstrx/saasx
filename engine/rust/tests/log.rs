@@ -3,7 +3,7 @@
 #[cfg(test)]
 mod tests {
 
-    use log::{Binding, Capture, Field, Fields, Json, Level, Log, Logfile, Nature, Outcome, Owned, Record, Setup, Shape, Sink, Stamp, Value};
+    use engine::log::{Binding, Capture, Field, Fields, Json, Level, Log, Logfile, Nature, Outcome, Owned, Record, Setup, Shape, Sink, Stamp, Value};
     use core::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
     use std::io::{Error as IoError, ErrorKind, Result as IoResult};
     use std::fs::{read_to_string, remove_file};
@@ -11,7 +11,7 @@ mod tests {
     use std::env::temp_dir;
     use std::thread::scope;
     use std::process::id;
-    use error::Result;
+    use engine::error::Result;
 
     struct Broken;
 

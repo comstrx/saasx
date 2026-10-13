@@ -1,10 +1,7 @@
 use std::net::TcpListener as StdTcpListener;
-use tokio::sync::watch::{Receiver, Sender};
 use tokio::net::{TcpListener, TcpStream};
-use std::thread::JoinHandle;
 use core::net::SocketAddr;
 use alloc::sync::Arc;
-use error::Result;
 
 #[cfg(unix)]
 use tokio::net::{UnixListener, UnixStream};
@@ -43,10 +40,8 @@ pub enum Protocol {
     Grpc,
 }
 
-/// Tcp creation and tuning.
-#[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Tcp;
+pub(crate) struct Tcp;
 
 /// How to bind: the accept backlog and whether several listeners may share the port.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -83,12 +78,14 @@ pub struct Listener {
 }
 
 /// One connection, whichever transport carried it.
-#[non_exhaustive]
 #[derive(Debug)]
-pub enum Stream {
-    /// Over TCP.
+pub struct Stream {
+    pub(crate) link: Link,
+}
+
+#[derive(Debug)]
+pub(crate) enum Link {
     Tcp(TcpStream),
-    /// Over a Unix socket.
     #[cfg(unix)]
     Unix(UnixStream),
 }
@@ -103,20 +100,7 @@ pub struct Dial;
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Resolve;
 
-/// One current-thread Tokio runtime per worker thread, each with its own local task set.
+/// The failures this crate raises, each one when an address, a listener or a connection cannot be had.
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Runtime;
-
-/// The threads a [`Runtime`] started, joined together.
-#[derive(Debug)]
-pub struct Workers {
-    pub(crate) handles: Vec<JoinHandle<Result<()>>>,
-}
-
-/// A stop signal: any clone can raise it, every clone can wait for it.
-#[derive(Debug, Clone)]
-pub struct Stop {
-    pub(crate) sender:   Arc<Sender<bool>>,
-    pub(crate) receiver: Receiver<bool>,
-}
+pub struct Faults;

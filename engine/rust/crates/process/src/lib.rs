@@ -9,6 +9,7 @@
 pub mod prelude;
 
 mod arch;
+mod faults;
 mod args;
 mod boot;
 mod cargo;
@@ -20,4 +21,4 @@ mod service;
 mod system;
 mod unit;
 
-pub use crate::arch::{Args, Boot, Cargo, Env, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Var};
+pub use crate::arch::{Args, Boot, Cargo, Env, Faults, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Var};

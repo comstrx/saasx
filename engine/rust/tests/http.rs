@@ -3,25 +3,22 @@
 #[cfg(test)]
 mod tests {
 
-    use http::{Client, Digest, Limit, Message, Request, Response, Router, Server, Settings, Socket, Timeout, Token, Trace};
-    use http::header::{CONTENT_TYPE, HeaderName, RETRY_AFTER};
-    use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
-    use net::{Address, Dial, Protocol, Runtime, Stop};
+    use engine::http::{Client, Header, Limit, Message, Method, Request, Response, Router, Server, Settings, Socket, Timeout, Trace, Version};
+    use engine::crypto::Digest;
+    use engine::net::{Address, Dial, Protocol};
+    use engine::thread::{Runtime, Stop, Task, Time};
     use core::net::{IpAddr, Ipv4Addr, SocketAddr};
-    use tokio::task::{LocalSet, spawn_local};
-    use std::sync::mpsc::{Sender, channel};
+    use std::sync::mpsc::channel;
     use std::thread::{JoinHandle, spawn};
-    use error::{Code, Failure, Result};
-    use tokio::time::{sleep, timeout};
-    use log::{Capture, Level, Setup};
+    use engine::error::{Code, Failure, Fault, Result};
+    use engine::log::{Capture, Level, Setup};
     use std::collections::HashSet;
-    use core::iter::repeat_with;
     use core::time::Duration;
     use std::time::Instant;
 
-    const LOOPBACK: Address = Address::Tcp(SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 0));
+    const NOT_OWNER: Fault = Fault::new("not_owner", Code::Forbidden, "not yours");
 
-    const REQUEST_ID: HeaderName = HeaderName::from_static("x-request-id");
+    const LOOPBACK: Address = Address::Tcp(SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 0));
 
     type Run = ( Stop, JoinHandle<Result<()>> );
 
@@ -36,8 +33,8 @@ mod tests {
             .get("/users/{id}", |request: Request| async move { Ok(Response::json(&format!("{{\"id\":\"{}\"}}", request.param("id").unwrap_or_default()))) })
             .post("/echo", |mut request: Request| async move { let body = request.text().await?; Ok(Response::text(body)) })
             .post("/form", |mut request: Request| async move { Ok(Response::text(request.posted().await?.get("name").unwrap_or_default().to_owned())) })
-            .get("/fail", |_request| async { Err::<Response, Failure>(Failure::forbidden("not yours").keyed("not_owner").retry_after(7)) })
-            .get("/slow", |_request| async { sleep(Duration::from_millis(400)).await; Ok(Response::text("late")) })
+            .get("/fail", |_request| async { Err::<Response, Failure>(NOT_OWNER.fail().retry_after(7)) })
+            .get("/slow", |_request| async { Time::sleep(Duration::from_millis(400)).await; Ok(Response::text("late")) })
             .get("/query", |request: Request| async move { Ok(Response::text(request.arg("q")?.unwrap_or_default())) })
             .get("/ws", |mut request: Request| async move { upgraded(&mut request) })
             .layer(Trace::new(log))
@@ -50,7 +47,7 @@ mod tests {
 
         let ( response, upgrade ) = Socket::accept(request)?;
 
-        drop(spawn_local(async move { echo(upgrade.ready().await).await; }));
+        drop(Task::spawn(async move { echo(upgrade.ready().await).await; }));
 
         Ok(response)
 
@@ -119,11 +116,11 @@ mod tests {
 
             let request = match method {
                 "POST" => Request::post(&format!("{base}{path}"), body, kind(path))?,
-                other  => Request::build(other.parse().map_err(|_error| Failure::internal("method"))?, &format!("{base}{path}"))?,
+                other  => Request::build(Method::named(other)?, &format!("{base}{path}"))?,
             };
 
             let mut response = client.send(request).await?;
-            let tagged = response.head(HeaderName::from_static("x-request-id")).is_some();
+            let tagged = response.head(&Header::REQUEST_ID).is_some();
             let text = response.text_body(1 << 16).await?;
 
             seen.push(( response.code(), text, tagged ));
@@ -172,7 +169,7 @@ mod tests {
 
         let client = Client::new().protocol(Protocol::Http2).timeout(Duration::from_secs(5));
         let mut response = client.get(&format!("{base}/users/h2")).await?;
-        let version = response.inner().version() == http::Version::HTTP_2;
+        let version = response.version() == Version::Http2;
         let text = response.text_body(1024).await?;
 
         Ok(( response.code(), text, version ))
@@ -214,33 +211,33 @@ mod tests {
         let nonce      = Digest::base64(b"the sample nonce");
         let handshake  = format!("GET /ws HTTP/1.1\r\nHost: {local}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: {nonce}\r\n\r\n");
 
-        stream.write_all(handshake.as_bytes()).await?;
+        stream.send(handshake.as_bytes()).await?;
 
         let mut head = vec![0u8; 512];
-        let came = stream.read(&mut head).await?;
+        let came = stream.recv(&mut head).await?;
         let head = String::from_utf8_lossy(head.get(..came).unwrap_or_default()).into_owned();
 
-        stream.write_all(&masked(0x1, b"hi")).await?;
+        stream.send(&masked(0x1, b"hi")).await?;
 
         let mut first = vec![0u8; 64];
-        let came = stream.read(&mut first).await?;
+        let came = stream.recv(&mut first).await?;
         let first = first.get(..came).unwrap_or_default().to_vec();
 
         let big = vec![b'x'; 300];
 
-        stream.write_all(&masked(0x2, &big)).await?;
+        stream.send(&masked(0x2, &big)).await?;
 
         let mut second = vec![0u8; 400];
         let mut got = 0;
 
-        while got < 304 { got += stream.read(second.get_mut(got..).unwrap_or_default()).await?; }
+        while got < 304 { got += stream.recv(second.get_mut(got..).unwrap_or_default()).await?; }
 
-        stream.write_all(&masked(0x8, &1000u16.to_be_bytes())).await?;
+        stream.send(&masked(0x8, &1000u16.to_be_bytes())).await?;
 
         let mut close = [0u8; 16];
         let mut came = 0;
 
-        while came < 4 { came += stream.read(close.get_mut(came..).unwrap_or_default()).await?; }
+        while came < 4 { came += stream.recv(close.get_mut(came..).unwrap_or_default()).await?; }
 
         Ok(( head, first, second.get(..4).unwrap_or_default().to_vec(), close.get(..came).unwrap_or_default().to_vec() ))
 
@@ -274,7 +271,7 @@ mod tests {
 
             let response = client.get(uri).await?;
 
-            workers.insert(response.head(REQUEST_ID).and_then(|ident| ident.split_once('-')).map(|( worker, _ )| worker.to_owned()).unwrap_or_default());
+            workers.insert(response.head(&Header::REQUEST_ID).and_then(|ident| ident.split_once('-')).map(|( worker, _ )| worker.to_owned()).unwrap_or_default());
 
         }
 
@@ -300,45 +297,63 @@ mod tests {
 
     }
 
-    #[test]
-    fn digests_match_the_known_vectors () {
+    async fn knock ( local: &Address, origin: &str ) -> Result<String> {
 
-        assert_eq!(Digest::sha1(b"abc"), [0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81, 0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50, 0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d]);
-        assert_eq!(Digest::sha1(b""), [0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b, 0x0d, 0x32, 0x55, 0xbf, 0xef, 0x95, 0x60, 0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09]);
-        assert_eq!(Digest::sha1(&[b'a'; 1000]).first(), Some(&0x29));
-        assert_eq!(Digest::base64(b""), "");
-        assert_eq!(Digest::base64(b"f"), "Zg==");
-        assert_eq!(Digest::base64(b"ab"), "YWI=");
-        assert_eq!(Digest::base64(b"foo"), "Zm9v");
-        assert_eq!(Digest::base64(b"foobar"), "Zm9vYmFy");
-        assert_eq!(Digest::base64(&Digest::sha1(b"dGhlIHNhbXBsZSBub25jZQ==258EAFA5-E914-47DA-95CA-C5AB0DC85B11")), "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=");
+        let mut stream = Dial::connect(local, Duration::from_secs(5)).await?;
+        let nonce      = Digest::base64(b"the sample nonce");
+        let handshake  = format!("GET /ws HTTP/1.1\r\nHost: {local}\r\nOrigin: {origin}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: {nonce}\r\n\r\n");
+
+        stream.send(handshake.as_bytes()).await?;
+
+        let mut head = [0u8; 512];
+        let came     = stream.recv(&mut head).await?;
+
+        Ok(String::from_utf8_lossy(head.get(..came).unwrap_or_default()).into_owned())
 
     }
 
     #[test]
-    fn tokens_are_shaped_unique_and_url_safe () {
+    fn websockets_open_for_their_own_origin_only () {
 
-        let fresh: HashSet<String> = repeat_with(Token::fresh).take(2000).collect();
+        let mut runs = Vec::new();
+        let ( local, _ ) = host(&mut runs);
+        let foreign = Runtime::block_on(knock(&local, "http://evil.example")).ok().and_then(Result::ok).unwrap_or_default();
+        let own     = Runtime::block_on(knock(&local, &format!("http://{local}"))).ok().and_then(Result::ok).unwrap_or_default();
 
-        assert_eq!(fresh.len(), 2000);
-        assert!(fresh.iter().all(|token| Token::looks_like(token) && token.len() == Token::LEN));
-        assert!(!Token::looks_like("short") && !Token::looks_like(&"+".repeat(27)));
-        assert_eq!(Token::fingerprint("abc").len(), 8);
-        assert_eq!(Token::fingerprint("abc"), Token::fingerprint("abc"));
-        assert_ne!(Token::fingerprint("abc"), Token::fingerprint("abx"));
+        assert!(finish(runs));
+        assert!(foreign.starts_with("HTTP/1.1 403"), "{foreign}");
+        assert!(own.starts_with("HTTP/1.1 101"), "{own}");
+
+    }
+
+    #[test]
+    fn requests_refuse_downgrades_and_credentials_in_the_uri () {
+
+        assert_eq!(Request::get("https://example.com/").err().map(|failure| ( failure.code(), failure.key() )), Some(( Code::Unsupported, "no_tls" )));
+        assert_eq!(Request::get("http://a:b@example.com/").err().map(|failure| failure.key()), Some("uri_credentials"));
+        assert_eq!(Request::get("ftp://example.com/").err().map(|failure| failure.key()), Some("not_uri"));
+        assert_eq!(Request::get("http://[::1]:8080/x").ok().map(|request| request.peer().to_string()), Some("[::1]:8080".to_owned()));
+        assert_eq!(Request::get("http://10.0.0.1/").ok().map(|request| request.peer().to_string()), Some("10.0.0.1:80".to_owned()));
+        assert_eq!(Request::get("http://api.internal:81/").ok().map(|request| request.peer().to_string()), Some("api.internal:81".to_owned()));
 
     }
 
     #[test]
     fn responses_and_requests_speak_the_vocabulary () {
 
-        let response = Response::text("hi").with_status(201).header(HeaderName::from_static("x-a"), "b");
+        let custom = Header::named("x-a").ok();
+        let Some(custom) = custom else { return assert!(custom.is_some()); };
 
-        assert_eq!(( response.code(), response.head(CONTENT_TYPE), response.head(HeaderName::from_static("x-a")) ), ( 201, Some("text/plain; charset=utf-8"), Some("b") ));
+        let response = Response::text("hi").with_status(201).header(custom.clone(), "b");
+
+        assert_eq!(( response.code(), response.head(&Header::CONTENT_TYPE), response.head(&custom) ), ( 201, Some("text/plain; charset=utf-8"), Some("b") ));
+        assert_eq!(( Method::named("PROPFIND").map(|method| method.to_string()).ok(), Method::named("BAD METHOD").err().map(|failure| failure.key()) ), ( Some("PROPFIND".to_owned()), Some("not_method") ));
+        assert_eq!(( Header::named("X-Trace").map(|name| name.to_string()).ok(), Header::named("bad name").err().map(|failure| failure.key()) ), ( Some("x-trace".to_owned()), Some("not_header") ));
+        assert_eq!(( Method::GET.as_str(), Version::Http2.to_string() ), ( "GET", "HTTP/2".to_owned() ));
         assert_eq!(Response::redirect("/next").code(), 303);
         assert_eq!(Response::no_content().code(), 204);
-        assert_eq!(Response::from(Failure::throttled("wait").retry_after(3)).head(RETRY_AFTER), Some("3"));
-        assert_eq!(Response::html("<p>").head(CONTENT_TYPE), Some("text/html; charset=utf-8"));
+        assert_eq!(Response::from(Failure::throttled("wait").retry_after(3)).head(&Header::RETRY_AFTER), Some("3"));
+        assert_eq!(Response::html("<p>").head(&Header::CONTENT_TYPE), Some("text/html; charset=utf-8"));
         assert_eq!(Request::get("http://h:8080/a/b?x=1").ok().map(|request| ( request.path().to_owned(), request.query().to_owned(), request.host().map(str::to_owned), request.peer().to_string() )), Some(( "/a/b".to_owned(), "x=1".to_owned(), Some("h".to_owned()), "h:8080".to_owned() )));
         assert_eq!(Request::get("/relative").err().map(|failure| failure.key()), Some("not_uri"));
         assert_eq!(Request::get("http://h/").ok().and_then(|request| request.param("id").map(str::to_owned)), None);
@@ -346,24 +361,18 @@ mod tests {
 
     }
 
-    fn ignore ( _sender: Sender<()> ) {}
-
     #[test]
     fn a_stopped_server_drains_and_returns () {
 
         let mut runs = Vec::new();
         let ( local, _ ) = host(&mut runs);
         let started = Instant::now();
-        let probe = Runtime::block_on(async { timeout(Duration::from_secs(5), Client::new().get(&format!("http://{local}/health"))).await.ok().and_then(Result::ok).map(|response| response.code()) }).ok().flatten();
+        let probe = Runtime::block_on(async { Time::within(Duration::from_secs(5), Client::new().get(&format!("http://{local}/health"))).await.and_then(Result::ok).map(|response| response.code()) }).ok().flatten();
 
         assert_eq!(probe, Some(200));
         assert!(finish(runs));
         assert!(started.elapsed() < Duration::from_secs(10));
 
-        let ( sender, _receiver ) = channel::<()>();
-
-        ignore(sender);
-        drop(LocalSet::new());
         assert_eq!(Code::Timeout.http(), 504);
 
     }

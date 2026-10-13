@@ -1,17 +1,17 @@
 use std::env::{split_paths, var_os};
-use error::{Code, Failure, Result};
+use error::{Failure, Result};
 use tokio::io::AsyncWriteExt as _;
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
 use tokio::process::Command;
 use core::time::Duration;
-use tokio::time::timeout;
+use thread::Time;
 use std::process::Stdio;
 use std::time::Instant;
 use core::iter::once;
 use memory::Bytes;
 
-use crate::{Output, Run};
+use crate::{Faults, Output, Run};
 
 impl Run {
 
@@ -118,7 +118,7 @@ impl Run {
         if let ( Some(input), Some(mut stdin) ) = ( self.input.clone(), child.stdin.take() ) { stdin.write_all(&input).await.map_err(|error| Failure::from(error).context("feeding standard input"))?; }
 
         let waited = match self.timeout {
-            Some(after) => timeout(after, child.wait_with_output()).await.map_err(|_elapsed| Failure::timeout(format!("{} did not finish in time", self.program.to_string_lossy())).keyed("command_timeout"))?,
+            Some(after) => Time::within(after, child.wait_with_output()).await.ok_or_else(|| Faults::COMMAND_TIMEOUT.because(format!("{} did not finish in time", self.program.to_string_lossy())))?,
             None        => child.wait_with_output().await,
         };
 
@@ -143,7 +143,7 @@ impl Run {
         let said = out.stderr_text();
         let said = said.trim();
 
-        Err(Failure::internal(format!("{name} exited with {}", out.code.map_or_else(|| "a signal".to_owned(), |code| code.to_string()))).keyed("command_failed").context(if said.is_empty() { name } else { said.to_owned() }))
+        Err(Faults::COMMAND_FAILED.because(format!("{name} exited with {}", out.code.map_or_else(|| "a signal".to_owned(), |code| code.to_string()))).context(if said.is_empty() { name } else { said.to_owned() }))
 
     }
 
@@ -161,7 +161,7 @@ impl Run {
         let mut child = command.spawn().map_err(|error| Failure::from(error).context(format!("starting {}", self.program.to_string_lossy())))?;
 
         let waited = match self.timeout {
-            Some(after) => timeout(after, child.wait()).await.map_err(|_elapsed| Failure::timeout(format!("{} did not finish in time", self.program.to_string_lossy())).keyed("command_timeout"))?,
+            Some(after) => Time::within(after, child.wait()).await.ok_or_else(|| Faults::COMMAND_TIMEOUT.because(format!("{} did not finish in time", self.program.to_string_lossy())))?,
             None        => child.wait().await,
         };
 
@@ -293,7 +293,7 @@ impl Output {
     #[inline]
     pub fn checked ( &self ) -> Result<()> {
 
-        Failure::ensure(self.success(), Code::Internal, "the command failed").map_err(|failure| failure.keyed("command_failed").context(self.stderr_text().trim().to_owned()))
+        Faults::COMMAND_FAILED.ensure(self.success()).map_err(|failure| failure.context(self.stderr_text().trim().to_owned()))
 
     }
 

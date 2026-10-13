@@ -3,8 +3,14 @@
 #[cfg(test)]
 mod tests {
 
-    use error::{Code, Problem};
-    use validate::Form;
+    use engine::validate::{Faults, Form};
+    use engine::error::{Code, Fault, Problem};
+
+    const MUST_ACCEPT: Fault = Fault::new("must_accept", Code::Invalid, "accept the terms");
+
+    const CUSTOM: Fault = Fault::new("custom", Code::Invalid, "too short for me");
+
+    const ODD: Fault = Fault::new("odd", Code::Invalid, "must be even");
 
     #[test]
     fn a_clean_form_finishes_with_nothing () {
@@ -13,7 +19,7 @@ mod tests {
 
         form.text("email", "a@b.co").required().email().max(255);
         form.number("age", 30).between(18, 120).positive();
-        form.check("terms", true, "must_accept", "accept the terms");
+        form.check("terms", true, MUST_ACCEPT);
 
         assert!(form.is_clean());
         assert_eq!(form.finish().ok(), Some(()));
@@ -28,7 +34,7 @@ mod tests {
         form.text("email", "nope").required().email().max(2);
         form.text("name", "  ").required().min(2);
         form.number("age", 7).at_least(18).at_most(5);
-        form.check("terms", false, "must_accept", "accept the terms");
+        form.check("terms", false, MUST_ACCEPT);
 
         let failure = form.finish().err().map(|failure| ( failure.code(), failure.key(), failure.problems().iter().map(|problem| ( problem.field().to_owned(), problem.key() )).collect::<Vec<_>>() ));
 
@@ -65,7 +71,7 @@ mod tests {
         assert!(!form.text("m", "tab\t").ascii().ok());
         assert!(form.text("n", "b").one_of(&["a", "b"]).ok());
         assert!(!form.text("o", "c").one_of(&["a", "b"]).ok());
-        assert!(!form.text("p", "x").satisfies(|value| value.len() > 3, "custom", "too short for me").ok());
+        assert!(!form.text("p", "x").satisfies(|value| value.len() > 3, CUSTOM).ok());
         assert_eq!(form.problems().len(), 5);
 
     }
@@ -81,7 +87,7 @@ mod tests {
         assert!(!form.number("d", 6).at_most(5).ok());
         assert!(!form.number("e", 0).positive().ok());
         assert!(!form.number("f", 121).between(18, 120).ok());
-        assert!(form.number("g", 4).satisfies(|value| value % 2 == 0, "odd", "must be even").ok());
+        assert!(form.number("g", 4).satisfies(|value| value % 2 == 0, ODD).ok());
         assert_eq!(form.problems().iter().map(Problem::key).collect::<Vec<_>>(), ["too_small", "too_large", "not_positive", "out_of_range"]);
         assert!(form.problems().iter().all(|problem| !problem.detail().is_empty()));
 
@@ -97,6 +103,22 @@ mod tests {
 
         assert_eq!(form.finish().err().map(|failure| failure.wire().to_string()), Some("{\"code\":\"invalid\",\"key\":\"invalid_fields\",\"message\":\"some fields are invalid\",\"fields\":{\"email\":{\"key\":\"required\",\"message\":\"is required\"},\"age\":{\"key\":\"too_small\",\"message\":\"must be at least 2\"}}}".to_owned()));
         assert_eq!(Form::default(), Form::new());
+
+    }
+
+    #[test]
+    fn every_field_problem_is_a_declared_fault () {
+
+        let mut form = Form::new();
+
+        form.text("handle", "no spaces").slug();
+        form.number("count", 0).positive();
+
+        let keys: Vec<&str> = form.problems().iter().map(Problem::key).collect();
+
+        assert_eq!(keys, [Faults::NOT_SLUG.key(), Faults::NOT_POSITIVE.key()]);
+        assert!(Faults::ALL.iter().all(|fault| fault.code() == Code::Invalid));
+        assert!(Faults::INVALID_FIELDS.matches(&form.finish().err().unwrap_or_else(|| Faults::REQUIRED.fail())));
 
     }
 

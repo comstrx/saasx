@@ -3,7 +3,7 @@
 #![no_main]
 #![expect(clippy::disallowed_methods, reason = "the libFuzzer entry macro expands to `expect`")]
 
-use parse::{Lines, List, Parse, Percent, Query};
+use engine::parse::{Lines, List, Parse, Percent, Query};
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
 

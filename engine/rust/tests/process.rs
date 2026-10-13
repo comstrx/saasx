@@ -3,15 +3,15 @@
 #[cfg(test)]
 mod tests {
 
-    use process::{Args, Boot, Cargo, Env, Manager, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System};
+    use engine::process::{Args, Boot, Cargo, Env, Manager, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System};
     use std::path::{Path, PathBuf};
-    use error::{Code, Result};
+    use engine::error::{Code, Result};
     use core::time::Duration;
     use std::env::temp_dir;
     use std::process::id;
-    use net::Runtime;
-    use file::File;
-    use log::Level;
+    use engine::thread::Runtime;
+    use engine::file::File;
+    use engine::log::Level;
 
     fn scratch ( name: &str ) -> PathBuf {
 

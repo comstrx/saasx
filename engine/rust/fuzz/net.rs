@@ -5,7 +5,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use core::hint::black_box;
-use net::{Address, Peer};
+use engine::net::{Address, Peer};
 
 fuzz_target!(|data: &[u8]| {
 

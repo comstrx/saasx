@@ -6,7 +6,7 @@ use hyper::StatusCode;
 use core::mem::take;
 use memory::Bytes;
 
-use crate::{Body, Response};
+use crate::{Body, Header, Response, Version};
 
 impl Response {
 
@@ -15,7 +15,7 @@ impl Response {
     #[must_use]
     pub fn status ( code: u16 ) -> Self {
 
-        let mut inner = hyper::Response::new(Body::Empty);
+        let mut inner = hyper::Response::new(Body::empty());
 
         *inner.status_mut() = StatusCode::from_u16(code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
         inner.headers_mut().insert(CONTENT_LENGTH, HeaderValue::from_static("0"));
@@ -74,7 +74,7 @@ impl Response {
     #[must_use]
     pub fn redirect ( location: &str ) -> Self {
 
-        Self::status(303).header(LOCATION, location)
+        Self::status(303).with(LOCATION, location)
 
     }
 
@@ -86,7 +86,7 @@ impl Response {
         let response = Self::status(failure.http()).bytes(failure.wire().to_string(), "application/json");
 
         match failure.retry_seconds() {
-            Some(secs) => response.header(RETRY_AFTER, &secs.to_string()),
+            Some(secs) => response.with(RETRY_AFTER, &secs.to_string()),
             None       => response,
         }
 
@@ -106,11 +106,9 @@ impl Response {
     /// The same response with a header set; a value that is not a header value is dropped.
     #[inline]
     #[must_use]
-    pub fn header ( mut self, name: HeaderName, value: &str ) -> Self {
+    pub fn header ( self, name: Header, value: &str ) -> Self {
 
-        if let Ok(value) = HeaderValue::from_str(value) { self.inner.headers_mut().insert(name, value); }
-
-        self
+        self.with(name.inner, value)
 
     }
 
@@ -122,9 +120,9 @@ impl Response {
         let bytes = bytes.into();
 
         self.inner.headers_mut().insert(CONTENT_LENGTH, HeaderValue::from(bytes.len()));
-        *self.inner.body_mut() = Body::Full(bytes);
+        *self.inner.body_mut() = Body::full(bytes);
 
-        self.header(CONTENT_TYPE, content_type)
+        self.with(CONTENT_TYPE, content_type)
 
     }
 
@@ -152,27 +150,18 @@ impl Response {
     /// A header as text.
     #[inline]
     #[must_use]
-    pub fn head ( &self, name: HeaderName ) -> Option<&str> {
+    pub fn head ( &self, name: &Header ) -> Option<&str> {
 
-        self.inner.headers().get(name).and_then(|value| value.to_str().ok())
-
-    }
-
-    /// Every header.
-    #[inline]
-    #[must_use]
-    pub fn headers ( &self ) -> &hyper::HeaderMap {
-
-        self.inner.headers()
+        self.inner.headers().get(&name.inner).and_then(|value| value.to_str().ok())
 
     }
 
-    /// Every header, to change.
+    /// The HTTP version the response traveled over.
     #[inline]
     #[must_use]
-    pub fn headers_mut ( &mut self ) -> &mut hyper::HeaderMap {
+    pub fn version ( &self ) -> Version {
 
-        self.inner.headers_mut()
+        Version::from_hyper(self.inner.version())
 
     }
 
@@ -211,21 +200,29 @@ impl Response {
 
     }
 
-    /// The hyper response underneath.
-    #[inline]
-    #[must_use]
-    pub const fn inner ( &self ) -> &hyper::Response<Body> {
+    pub(crate) fn with ( mut self, name: HeaderName, value: &str ) -> Self {
 
-        &self.inner
+        if let Ok(value) = HeaderValue::from_str(value) { self.inner.headers_mut().insert(name, value); }
+
+        self
 
     }
 
-    /// Takes the hyper response underneath.
-    #[inline]
-    #[must_use]
-    pub fn into_inner ( self ) -> hyper::Response<Body> {
+    pub(crate) fn headers_mut ( &mut self ) -> &mut hyper::HeaderMap {
+
+        self.inner.headers_mut()
+
+    }
+
+    pub(crate) fn into_inner ( self ) -> hyper::Response<Body> {
 
         self.inner
+
+    }
+
+    pub(crate) fn arrived ( value: hyper::Response<Incoming> ) -> Self {
+
+        Self { inner: value.map(Body::arriving) }
 
     }
 
@@ -237,17 +234,6 @@ impl From<Failure> for Response {
     fn from ( value: Failure ) -> Self {
 
         Self::failure(&value)
-
-    }
-
-}
-
-impl From<hyper::Response<Incoming>> for Response {
-
-    #[inline]
-    fn from ( value: hyper::Response<Incoming> ) -> Self {
-
-        Self { inner: value.map(Body::Incoming) }
 
     }
 

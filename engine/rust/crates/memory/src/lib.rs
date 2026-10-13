@@ -9,17 +9,18 @@
 pub mod prelude;
 
 mod arch;
+mod faults;
 mod arena;
 mod buffer;
 mod cursor;
 mod pool;
+mod shared;
 mod simd;
 mod space;
 mod split;
 mod stack;
 
-pub use crate::arch::{Arena, Buffer, Cursor, Lease, Pool, Simd, Space, Split, Stack};
-pub use bytes::{Buf, BufMut, Bytes, BytesMut};
+pub use crate::arch::{Arena, Buffer, Bytes, Cursor, Faults, Lease, Pool, Simd, Space, Split, Stack};
 
 #[cfg(feature = "alloc")]
 pub use mimalloc::MiMalloc as Alloc;

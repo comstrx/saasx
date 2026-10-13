@@ -1,5 +1,5 @@
 [package]
-name                   = "file"
+name                   = "engine-file"
 version.workspace      = true
 edition.workspace      = true
 rust-version.workspace = true
@@ -14,7 +14,7 @@ keywords               = ["file", "directory", "path", "async", "atomic"]
 [dependencies]
 error.workspace  = true
 memory.workspace = true
-tokio.workspace  = true
+tokio            = { workspace = true, features = ["fs", "io-util"] }
 
 [lints]
 workspace = true

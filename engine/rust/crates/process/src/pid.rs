@@ -1,9 +1,9 @@
-use error::{Failure, Result};
+use error::Result;
 use std::path::Path;
 use parse::Parse;
 use file::File;
 
-use crate::{Pid, Platform, Run, System};
+use crate::{Faults, Pid, Platform, Run, System};
 
 impl Pid {
 
@@ -65,7 +65,7 @@ impl Pid {
             Platform::Linux | Platform::Macos | Platform::Other => Run::new("kill").args(["-TERM", &pid.to_string()]),
         };
 
-        run.ok().await.map(|_out| ()).map_err(|failure| Failure::unavailable(format!("process {pid} could not be signaled")).keyed("no_process").caused_by(failure))
+        run.ok().await.map(|_out| ()).map_err(|failure| Faults::NO_PROCESS.because(format!("process {pid} could not be signaled")).caused_by(failure))
 
     }
 

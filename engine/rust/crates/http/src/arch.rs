@@ -1,9 +1,12 @@
-use net::{Address, Bind, Bound, Listener, Peer, Protocol, Stop};
+use net::{Address, Bind, Bound, Listener, Peer, Protocol};
+use thread::Stop;
 use hyper::upgrade::{OnUpgrade, Upgraded};
 use tokio::sync::mpsc::{Receiver, Sender};
 use std::net::TcpStream as StdStream;
 use http_body::Frame as HttpFrame;
-use memory::{Bytes, BytesMut};
+use bytes::{Bytes as Shared, BytesMut};
+use hyper::header::HeaderName;
+use memory::Bytes;
 use hyper_util::rt::TokioIo;
 use hyper::body::Incoming;
 use core::net::SocketAddr;
@@ -20,17 +23,42 @@ use error::Result;
 use log::Log;
 
 /// What a request or a response carries: nothing, bytes in hand, or bytes still arriving.
-#[non_exhaustive]
-#[derive(Debug)]
-pub enum Body {
-    /// No bytes at all.
+#[derive(Debug, Default)]
+pub struct Body {
+    pub(crate) flow: Flow,
+}
+
+#[derive(Debug, Default)]
+pub(crate) enum Flow {
+    #[default]
     Empty,
-    /// Every byte already in hand.
-    Full(Bytes),
-    /// Bytes still arriving from the peer.
+    Full(Shared),
     Incoming(Incoming),
-    /// Bytes still arriving, refused past a limit.
     Limited(Incoming, usize),
+}
+
+/// A request method: the standard ones by name, any other kept as it was sent.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Method {
+    pub(crate) inner: hyper::Method,
+}
+
+/// A header name: the common ones by name, any other checked once.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Header {
+    pub(crate) inner: HeaderName,
+}
+
+/// The HTTP version a message traveled over.
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Version {
+    /// HTTP/1.1, or an older 1.x.
+    Http1,
+    /// HTTP/2.
+    Http2,
+    /// HTTP/3.
+    Http3,
 }
 
 /// One request's identity: the worker that took it and its serial there.
@@ -75,8 +103,7 @@ pub struct Response {
 /// What a handler or a middleware hands back.
 pub type Pending <'a> = Pin<Box<dyn Future<Output = Result<Response>> + 'a>>;
 
-/// An async function of a request, shared by every connection on the worker.
-pub type Handler = Rc<dyn Fn(Request) -> Pending<'static>>;
+pub(crate) type Handler = Rc<dyn Fn(Request) -> Pending<'static>>;
 
 /// Runs around a handler: sees the request first and the response last, and may answer alone.
 pub trait Middleware: 'static {
@@ -93,9 +120,8 @@ pub struct Next <'a> {
     pub(crate) handler: &'a Handler,
 }
 
-/// The handlers one path serves, by method.
 #[derive(Default, Clone)]
-pub struct Table {
+pub(crate) struct Table {
     pub(crate) get:     Option<Handler>,
     pub(crate) post:    Option<Handler>,
     pub(crate) put:     Option<Handler>,
@@ -165,16 +191,6 @@ pub struct Limit {
     pub(crate) bytes: usize,
 }
 
-/// Opaque tokens for sessions and the like: URL-safe, unguessable, unique for this process.
-#[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Token;
-
-/// SHA-1 and Base64, the two primitives the `WebSocket` handshake needs.
-#[non_exhaustive]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Digest;
-
 /// One `WebSocket` message.
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -214,7 +230,7 @@ pub(crate) type Halt = Pin<Box<dyn Future<Output = ()>>>;
 
 pub(crate) type Close <F> = fn(Pin<&mut F>);
 
-pub(crate) type Polled = Poll<Option<Result<HttpFrame<Bytes>>>>;
+pub(crate) type Polled = Poll<Option<Result<HttpFrame<Shared>>>>;
 
 pub(crate) struct Graceful <F> {
     pub(crate) inner:  Pin<Box<F>>,
@@ -226,7 +242,7 @@ pub(crate) struct Graceful <F> {
 pub(crate) struct Frame {
     pub(crate) fin:    bool,
     pub(crate) opcode: u8,
-    pub(crate) data:   Bytes,
+    pub(crate) data:   Shared,
 }
 
 pub(crate) type Extent = ( usize, Option<usize> );
@@ -260,3 +276,8 @@ pub(crate) struct Worker {
 pub(crate) struct Slot {
     pub(crate) active: Rc<Cell<usize>>,
 }
+
+/// The failures this crate raises, each one a request, a response, a route or a socket can end in.
+#[non_exhaustive]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Faults;

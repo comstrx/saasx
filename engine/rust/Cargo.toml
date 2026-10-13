@@ -1,6 +1,24 @@
 [workspace]
 resolver = "3"
-members  = ["benches", "tests", "fuzz", "xtask", "crates/log", "crates/error", "crates/memory", "crates/parse", "crates/validate", "crates/file", "crates/net", "crates/http", "crates/process", "crates/engine"]
+members  = [
+    "benches",
+    "tests",
+    "fuzz",
+    "xtask",
+    "crates/log",
+    "crates/error",
+    "crates/memory",
+    "crates/parse",
+    "crates/validate",
+    "crates/thread",
+    "crates/rand",
+    "crates/crypto",
+    "crates/file",
+    "crates/net",
+    "crates/http",
+    "crates/process",
+    "crates/engine"
+]
 
 [workspace.package]
 version      = "0.1.0"
@@ -12,18 +30,22 @@ readme       = "README.md"
 publish      = false
 
 [workspace.dependencies]
-log            = { path = "crates/log", version = "0.1.0" }
-error          = { path = "crates/error", version = "0.1.0" }
-memory         = { path = "crates/memory", version = "0.1.0" }
-parse          = { path = "crates/parse", version = "0.1.0" }
-validate       = { path = "crates/validate", version = "0.1.0" }
-file           = { path = "crates/file", version = "0.1.0" }
-net            = { path = "crates/net", version = "0.1.0" }
-http           = { path = "crates/http", version = "0.1.0" }
-process        = { path = "crates/process", version = "0.1.0" }
+log            = { path = "crates/log", package = "engine-log", version = "0.1.0" }
+error          = { path = "crates/error", package = "engine-error", version = "0.1.0" }
+memory         = { path = "crates/memory", package = "engine-memory", version = "0.1.0" }
+parse          = { path = "crates/parse", package = "engine-parse", version = "0.1.0" }
+validate       = { path = "crates/validate", package = "engine-validate", version = "0.1.0" }
+thread         = { path = "crates/thread", package = "engine-thread", version = "0.1.0" }
+rand           = { path = "crates/rand", package = "engine-rand", version = "0.1.0" }
+crypto         = { path = "crates/crypto", package = "engine-crypto", version = "0.1.0" }
+file           = { path = "crates/file", package = "engine-file", version = "0.1.0" }
+net            = { path = "crates/net", package = "engine-net", version = "0.1.0" }
+http           = { path = "crates/http", package = "engine-http", version = "0.1.0" }
+process        = { path = "crates/process", package = "engine-process", version = "0.1.0" }
 engine         = { path = "crates/engine", version = "0.1.0" }
 bytes          = "=1.12.1"
-tokio          = { version = "=1.53.2", default-features = false, features = ["rt", "net", "time", "sync", "signal", "macros", "io-util", "fs", "process"] }
+getrandom      = "=0.4.3"
+tokio          = { version = "=1.53.2", default-features = false }
 hyper          = { version = "=1.12.0", default-features = false, features = ["http1", "http2", "server", "client"] }
 hyper-util     = { version = "=0.1.21", default-features = false, features = ["tokio", "server-auto", "http1", "http2"] }
 http-body      = "=1.1.0"

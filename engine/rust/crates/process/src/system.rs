@@ -7,7 +7,7 @@ use core::num::NonZero;
 use std::process::id;
 use file::File;
 
-use crate::{Platform, Run, System};
+use crate::{Faults, Platform, Run, System};
 
 impl System {
 
@@ -123,7 +123,7 @@ impl System {
         match Self::platform() {
             Platform::Linux => Self::meminfo().await,
             Platform::Macos => Self::sysctl_memory().await,
-            Platform::Windows | Platform::Other => Err(Failure::unsupported("memory figures are not read on this platform").keyed("no_memory_figures")),
+            Platform::Windows | Platform::Other => Err(Faults::NO_MEMORY_FIGURES.fail()),
         }
 
     }
@@ -141,7 +141,7 @@ impl System {
                 let secs = text.split(['.', ' ']).next().and_then(|first| first.parse::<u64>().ok());
                 secs.ok_or_else(|| Failure::internal("/proc/uptime is not as expected"))
             }
-            Platform::Macos | Platform::Windows | Platform::Other => Err(Failure::unsupported("uptime is not read on this platform").keyed("no_uptime")),
+            Platform::Macos | Platform::Windows | Platform::Other => Err(Faults::NO_UPTIME.fail()),
         }
 
     }

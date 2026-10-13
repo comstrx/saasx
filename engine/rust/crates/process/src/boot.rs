@@ -1,10 +1,10 @@
 use log::{Level, Log, Logfile, Setup, Stderr};
 use error::{Failure, Result};
-use net::{Runtime, Stop};
+use thread::{Runtime, Stop};
 use std::thread::spawn;
 use std::path::Path;
 
-use crate::{Boot, Env};
+use crate::{Boot, Env, Faults};
 
 impl Boot {
 
@@ -56,7 +56,7 @@ impl Boot {
 
     fn level ( prefix: &str, value: &str ) -> Result<Level> {
 
-        Level::parse(value).ok_or_else(|| Failure::config(format!("{prefix}_LOG is not a level: trace, debug, info, warn, error or fatal")).keyed("not_level").about(format!("{prefix}_LOG")))
+        Level::parse(value).ok_or_else(|| Faults::NOT_LEVEL.because(format!("{prefix}_LOG is not a level: trace, debug, info, warn, error or fatal")).about(format!("{prefix}_LOG")))
 
     }
 

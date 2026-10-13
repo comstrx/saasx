@@ -1,41 +1,59 @@
-use hyper::header::{CONNECTION, CONTENT_LENGTH, SEC_WEBSOCKET_ACCEPT, SEC_WEBSOCKET_KEY, SEC_WEBSOCKET_VERSION, UPGRADE};
+use hyper::header::{CONNECTION, CONTENT_LENGTH, ORIGIN, SEC_WEBSOCKET_ACCEPT, SEC_WEBSOCKET_KEY, SEC_WEBSOCKET_VERSION, UPGRADE};
 use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
-use memory::{Buf, Bytes, BytesMut, Space as _, Stack};
-use std::io::Error as IoError;
+use bytes::{Buf, Bytes as Shared, BytesMut};
+use memory::{Bytes, Space as _, Stack};
 use error::{Failure, Result};
+use std::io::Error as IoError;
 use hyper_util::rt::TokioIo;
 use hyper::upgrade::on;
+use crypto::Digest;
 use parse::List;
 
-use crate::{Digest, Message, Request, Response, Socket, Upgrade};
+use crate::{Faults, Message, Request, Response, Socket, Upgrade};
 use crate::arch::{Extent, Frame, Step};
 
 const GUID: &[u8] = b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 impl Socket {
 
-    /// Answers a `WebSocket` handshake: the `101` to return, and the upgrade to wait for after it went out.
+    /// Answers a same-origin `WebSocket` handshake: the `101` to return, and the upgrade to wait for after it went out.
     ///
     /// # Errors
-    /// `Invalid` keyed `not_websocket` when the request is not a version-13 `WebSocket` handshake.
+    /// `Invalid` keyed `not_websocket` when the request is not a version-13 `WebSocket` handshake; `Forbidden`
+    /// keyed `cross_origin` when a browser sent it from another origin.
     #[inline]
     pub fn accept ( request: &mut Request ) -> Result<( Response, Upgrade )> {
 
-        let upgrade    = request.head(UPGRADE).is_some_and(|value| value.eq_ignore_ascii_case("websocket"));
-        let connection = request.head(CONNECTION).is_some_and(|value| List::has(value, "upgrade"));
-        let version    = request.head(SEC_WEBSOCKET_VERSION).is_some_and(|value| value.trim() == "13");
-        let key        = request.head(SEC_WEBSOCKET_KEY).map(str::trim).filter(|key| !key.is_empty()).map(str::to_owned);
+        let upgrade    = request.field(&UPGRADE).is_some_and(|value| value.eq_ignore_ascii_case("websocket"));
+        let connection = request.field(&CONNECTION).is_some_and(|value| List::has(value, "upgrade"));
+        let version    = request.field(&SEC_WEBSOCKET_VERSION).is_some_and(|value| value.trim() == "13");
+        let key        = request.field(&SEC_WEBSOCKET_KEY).map(str::trim).filter(|key| !key.is_empty()).map(str::to_owned);
 
-        let Some(key) = key.filter(|_| upgrade && connection && version) else { return Err(Failure::invalid("not a WebSocket handshake").keyed("not_websocket")); };
+        let Some(key) = key.filter(|_| upgrade && connection && version) else { return Err(Faults::NOT_WEBSOCKET.fail()); };
+
+        Self::origin(request)?;
 
         let accept  = Digest::base64(&Digest::sha1(&[key.as_bytes(), GUID].concat()));
         let pending = on(request.inner_mut());
 
-        let mut response = Response::status(101).header(UPGRADE, "websocket").header(CONNECTION, "upgrade").header(SEC_WEBSOCKET_ACCEPT, &accept);
+        let mut response = Response::status(101).with(UPGRADE, "websocket").with(CONNECTION, "upgrade").with(SEC_WEBSOCKET_ACCEPT, &accept);
 
         response.headers_mut().remove(CONTENT_LENGTH);
 
         Ok(( response, Upgrade { pending, limit: 1 << 20 } ))
+
+    }
+
+    fn origin ( request: &Request ) -> Result<()> {
+
+        let Some(origin) = request.field(&ORIGIN) else { return Ok(()); };
+
+        let same = origin
+            .split_once("://")
+            .zip(request.host())
+            .is_some_and(|( ( _, authority ), host )| authority.eq_ignore_ascii_case(host));
+
+        Faults::CROSS_ORIGIN.ensure(same)
 
     }
 
@@ -70,14 +88,14 @@ impl Socket {
     #[inline]
     pub async fn send ( &mut self, message: Message ) -> Result<()> {
 
-        if self.closed { return Err(Failure::unavailable("the socket is closed").keyed("socket_closed")); }
+        if self.closed { return Err(Faults::SOCKET_CLOSED.fail()); }
 
         let ( opcode, data ) = match message {
-            Message::Text(text)    => ( 0x1, Bytes::from(text) ),
-            Message::Binary(bytes) => ( 0x2, bytes ),
-            Message::Ping(bytes)   => ( 0x9, bytes ),
-            Message::Pong(bytes)   => ( 0xA, bytes ),
-            Message::Close(code)   => ( 0x8, code.map_or_else(Bytes::new, |code| Bytes::copy_from_slice(&code.to_be_bytes())) ),
+            Message::Text(text)    => ( 0x1, Shared::from(text) ),
+            Message::Binary(bytes) => ( 0x2, Shared::from(bytes) ),
+            Message::Ping(bytes)   => ( 0x9, Shared::from(bytes) ),
+            Message::Pong(bytes)   => ( 0xA, Shared::from(bytes) ),
+            Message::Close(code)   => ( 0x8, code.map_or_else(Shared::new, |code| Shared::copy_from_slice(&code.to_be_bytes())) ),
         };
 
         self.write(opcode, &data).await
@@ -156,7 +174,7 @@ impl Socket {
 
         let came = self.link.read_buf(&mut self.buffer).await.map_err(Self::carried)?;
 
-        Failure::ensure(came > 0, error::Code::Unavailable, "the peer went away").map_err(|failure| failure.keyed("socket_gone"))
+        Faults::SOCKET_GONE.ensure(came > 0)
 
     }
 
@@ -164,14 +182,14 @@ impl Socket {
 
         let Some(&[first, second]) = self.buffer.first_chunk::<2>() else { return Ok(None); };
 
-        Failure::ensure(first & 0x70 == 0, error::Code::Invalid, "a reserved bit is set").map_err(Self::protocol)?;
-        Failure::ensure(second & 0x80 != 0, error::Code::Invalid, "a client frame is not masked").map_err(Self::protocol)?;
+        Self::holds(first & 0x70 == 0, "a reserved bit is set")?;
+        Self::holds(second & 0x80 != 0, "a client frame is not masked")?;
 
         let ( extra, payload ) = Self::extent(&self.buffer, second & 0x7F)?;
         let Some(payload) = payload else { return Ok(None); };
         let header = 2 + extra + 4;
 
-        Failure::ensure(payload <= self.limit, error::Code::TooLarge, "a frame passes the limit").map_err(|failure| failure.keyed("socket_too_large"))?;
+        Faults::SOCKET_TOO_LARGE.ensure(payload <= self.limit)?;
 
         if self.buffer.len() < header + payload { return Ok(None); }
 
@@ -189,7 +207,7 @@ impl Socket {
 
         match short {
             126 => Ok(( 2, buffer.get(2..4).and_then(|bytes| bytes.first_chunk::<2>()).map(|bytes| usize::from(u16::from_be_bytes(*bytes))) )),
-            127 => buffer.get(2..10).and_then(|bytes| bytes.first_chunk::<8>()).map_or(Ok(( 8, None )), |bytes| usize::try_from(u64::from_be_bytes(*bytes)).map(|len| ( 8, Some(len) )).map_err(|error| Failure::too_large("a frame passes what this machine holds").keyed("socket_too_large").caused_by(error))),
+            127 => buffer.get(2..10).and_then(|bytes| bytes.first_chunk::<8>()).map_or(Ok(( 8, None )), |bytes| usize::try_from(u64::from_be_bytes(*bytes)).map(|len| ( 8, Some(len) )).map_err(|error| Faults::SOCKET_TOO_LARGE.because("a frame passes what this machine holds").caused_by(error))),
             len => Ok(( 0, Some(usize::from(len)) )),
         }
 
@@ -201,16 +219,16 @@ impl Socket {
             0x0        => self.continued(&frame, pending),
             0x1 | 0x2  => Self::started(frame, pending),
             0x8        => self.closing(&frame.data).await,
-            0x9        => self.write(0xA, &frame.data).await.map(|()| Some(Some(Message::Ping(frame.data)))),
-            0xA        => Ok(Some(Some(Message::Pong(frame.data)))),
-            _          => Err(Self::protocol(Failure::invalid("an unknown opcode"))),
+            0x9        => self.write(0xA, &frame.data).await.map(|()| Some(Some(Message::Ping(Bytes::from(frame.data))))),
+            0xA        => Ok(Some(Some(Message::Pong(Bytes::from(frame.data))))),
+            _          => Err(Faults::WEBSOCKET_PROTOCOL.because("an unknown opcode")),
         }
 
     }
 
     fn started ( frame: Frame, pending: &mut Option<( u8, BytesMut )> ) -> Result<Step> {
 
-        Failure::ensure(pending.is_none(), error::Code::Invalid, "a new message began inside another").map_err(Self::protocol)?;
+        Self::holds(pending.is_none(), "a new message began inside another")?;
 
         if frame.fin { return Self::deliver(frame.opcode, frame.data); }
 
@@ -222,9 +240,9 @@ impl Socket {
 
     fn continued ( &self, frame: &Frame, pending: &mut Option<( u8, BytesMut )> ) -> Result<Step> {
 
-        let Some(( opcode, mut data )) = pending.take() else { return Err(Self::protocol(Failure::invalid("a continuation without a start"))); };
+        let Some(( opcode, mut data )) = pending.take() else { return Err(Faults::WEBSOCKET_PROTOCOL.because("a continuation without a start")); };
 
-        Failure::ensure(data.len() + frame.data.len() <= self.limit, error::Code::TooLarge, "a message passes the limit").map_err(|failure| failure.keyed("socket_too_large"))?;
+        Faults::SOCKET_TOO_LARGE.ensure(data.len() + frame.data.len() <= self.limit)?;
         data.extend_from_slice(&frame.data);
 
         if frame.fin { return Self::deliver(opcode, data.freeze()); }
@@ -235,7 +253,7 @@ impl Socket {
 
     }
 
-    async fn closing ( &mut self, data: &Bytes ) -> Result<Step> {
+    async fn closing ( &mut self, data: &Shared ) -> Result<Step> {
 
         let code = data.first_chunk::<2>().map(|bytes| u16::from_be_bytes(*bytes));
 
@@ -252,23 +270,23 @@ impl Socket {
 
     }
 
-    fn deliver ( opcode: u8, data: Bytes ) -> Result<Step> {
+    fn deliver ( opcode: u8, data: Shared ) -> Result<Step> {
 
-        if opcode == 0x2 { return Ok(Some(Some(Message::Binary(data)))); }
+        if opcode == 0x2 { return Ok(Some(Some(Message::Binary(Bytes::from(data))))); }
 
-        String::from_utf8(data.to_vec()).map(|text| Some(Some(Message::Text(text)))).map_err(|error| Self::protocol(Failure::from(error.utf8_error())))
+        String::from_utf8(data.to_vec()).map(|text| Some(Some(Message::Text(text)))).map_err(|error| Faults::WEBSOCKET_PROTOCOL.because("a text message is not UTF-8").caused_by(error.utf8_error()))
 
     }
 
-    const fn protocol ( failure: Failure ) -> Failure {
+    fn holds ( condition: bool, detail: &'static str ) -> Result<()> {
 
-        failure.keyed("websocket_protocol")
+        if condition { Ok(()) } else { Err(Faults::WEBSOCKET_PROTOCOL.because(detail)) }
 
     }
 
     fn carried ( error: IoError ) -> Failure {
 
-        Failure::from(error).keyed("socket_gone").context("on the websocket")
+        Faults::SOCKET_GONE.fail().caused_by(error).context("on the websocket")
 
     }
 
@@ -294,7 +312,7 @@ impl Upgrade {
     #[inline]
     pub async fn ready ( self ) -> Result<Socket> {
 
-        let upgraded = self.pending.await.map_err(|error| Failure::unavailable("the connection did not upgrade").keyed("socket_gone").caused_by(error))?;
+        let upgraded = self.pending.await.map_err(|error| Faults::SOCKET_GONE.because("the connection did not upgrade").caused_by(error))?;
 
         Ok(Socket { link: TokioIo::new(upgraded), buffer: BytesMut::with_capacity(4096), limit: self.limit, closed: false })
 

@@ -26,30 +26,35 @@ The engine grows only by pull: a crate exists because a consumer needed it, and 
 Cargo.toml · Cargo.lock                         the workspace root
 .clippy.toml · .deny.toml · .config/nextest.toml   governance, applies to every crate
 xtask/             the gate runner
-crates/<name>/     member crates, one layer each, lowest first: log, error, memory, parse, validate, file, net, http, process; `engine` re-exports them all
+crates/<name>/     member crates, one layer each, lowest first: log, error, memory, parse, validate, thread, rand, crypto, file, net, http, process; `engine` is the facade
 tests/             public-API contract tests, flat files, linked the way a consumer links
 benches/           criterion benchmarks, flat files
 fuzz/              libFuzzer targets, flat files; a workspace member, so every gate compiles them
 ```
 
-Consumers depend on the `engine` facade crate by path and name nothing else. A consumer's own crates never reach the registry directly; when one needs a capability, the engine learns it — by growing a crate or by adding one for that domain, improving on the libraries it wraps or offering a DSL over them.
+Consumers depend on the `engine` facade crate by path and name nothing else; no type of a dependency crosses it, so tokio, hyper or any other library underneath can change without a consumer noticing. A consumer's own crates never reach the registry directly; when one needs a capability, the engine learns it — by growing a crate or by adding one for that domain, improving on the libraries it wraps or offering a DSL over them.
 
 ## Crates
 
 ```text
 log        structured events and audit records as values, bound fields, text or JSON, sinks with size rotation; nothing written without a sink
-error      the one failure every crate returns: a stable code with its HTTP status, exit code and level, a key, a detail, frames, a cause, field problems
-memory     bytes without surprises: a stack store, a preallocated buffer, a pool, a bump arena of shared bytes, a zero-copy cursor, byte lanes eight at a time
-parse      text into values: integers, reals, flags, sizes, durations, percent-encoding, query strings, dotenv lines, comma lists, each failure keyed
-validate   forms that collect every failed field into one keyed failure
+error      the one failure every crate returns: a stable code with its HTTP status, exit code and level, a key declared once as a fault, a detail, frames, a cause, field problems
+memory     bytes without surprises: shared bytes, a stack store, a preallocated buffer, a pool, a bump arena, a zero-copy cursor, byte lanes eight at a time
+parse      text into values: integers, reals, flags, sizes, durations, percent-encoding, query strings, dotenv lines, comma lists
+validate   forms that collect every failed field into one failure, each field problem a declared fault
+thread     concurrency: a runtime per worker thread, a kept executor, tasks on the local set or the blocking pool, deadlines, a stop signal
+rand       randomness from the operating system's secure source: unbiased numbers, reals, strings, identifiers, picks, shuffles, dates, UUIDs of version 4 and 7
+crypto     SHA-1 and Base64 without dependencies, unguessable tokens with their fingerprints, secrets compared in constant time
 file       files, directories and paths, every I/O call asynchronous, atomic writes, paths confined to a root
-net        addresses, tuned sockets, listeners with accept-time hooks, streams, dialing with a deadline, resolution, a thread-per-core runtime, a stop signal
-http       hyper underneath: a router of async handlers behind middleware, requests and responses as values, a client, WebSockets over an upgrade
+net        addresses, listeners with accept-time hooks, streams, dialing with a deadline, resolution
+http       hyper underneath, none of it on the surface: routes, middleware, requests, responses, methods and headers of its own, a client that refuses what it cannot secure, same-origin WebSockets
 process    what a command-line tool stands on: boot, arguments, typed environment with a dotenv file, programs run with a deadline, the machine, its package manager, its service manager, pid files
-engine     the one door: every crate above as a module, so a consumer declares one dependency
+engine     the facade: each crate as a module whose surface is named item by item, a prelude, and the contract of every code and declared fault
 ```
 
-The layers depend downward only: `log` ← `error` ← `memory` ← `parse` ← `validate`, and `file`, `net`, `http`, `process` stand on those in that order. A failure is a value that is printed, logged or journaled only when a caller says so; a store fails with `Exhausted` instead of growing; every I/O call is asynchronous; the HTTP server runs one worker per core, each with its own listener and router, and drains on a stop signal. TLS is not served yet.
+Each crate is packaged as `engine-<name>` and reached as `engine::<name>`, so no package shares a name with a registry crate and no scanner mistakes ours for theirs. The layers depend downward only: `log` ← `error` ← `memory`, `parse`, `validate`, `thread`, `rand` ← `crypto`, `file`, `net` ← `http`, `process`. The facade's `file`, `net`, `http` (with `net`) and `process` are features each consumer names, so a command-line tool that takes only `process` compiles no network stack; `alloc` adds the global allocator, a unit type whose whole contract is the standard `GlobalAlloc`.
+
+Every failure a crate raises is declared once in its `Faults`: a stable key a client translates by, the one code it carries, and a default detail; `engine::Contract` lists every code and every declared fault, and a part declares its own the same way. A failure is a value that is printed, logged or journaled only when a caller says so; a store fails with `Exhausted` instead of growing; every I/O call is asynchronous; the HTTP server runs one worker per core, each with its own listener and router, and drains on a stop signal. TLS is neither served nor spoken yet, so the client refuses an `https` URI rather than send it in clear; it also refuses a URI that carries credentials.
 
 ## Crate anatomy
 
@@ -77,12 +82,12 @@ cargo run -q --manifest-path xtask/Cargo.toml -- setup    # install every missin
 cargo run -q --manifest-path xtask/Cargo.toml -- gates    # clippy · test · doc · audit · vet · udeps · hack · semver · fuzz (one minute per target)
 cargo run -q --manifest-path xtask/Cargo.toml -- bloat    # release binary size per crate, every binary
 cargo run -q --manifest-path xtask/Cargo.toml -- fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each, --run --budget 3600 shares an hour
-cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the pure suites (log error memory parse validate) under Miri on nightly
+cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the pure suites (log error memory parse validate rand crypto engine) under Miri on nightly
 cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer tsan   # the test suite under asan (default), tsan, msan or lsan
 cargo run -q --manifest-path xtask/Cargo.toml -- doctor   # toolchains and tools present, then a compile check
 ```
 
-The runner lists every task when called without one. CI runs `gates` on Linux, macOS and Windows on every change (fuzzing is skipped on Windows, where libFuzzer does not run); the daily workflow runs `sanitizer`, `miri` and an hour of fuzzing shared by every target (`fuzz --run --budget 3600`). A test running past three minutes is killed (`.config/nextest.toml`).
+The runner lists every task when called without one. CI runs `gates` on Linux, macOS and Windows on every change (fuzzing is skipped on Windows, where libFuzzer does not run); the daily workflow runs `sanitizer`, `miri` and an hour of fuzzing shared by every target (`fuzz --run --budget 3600`). A test running past three minutes is killed (`.config/nextest.toml`). `semver` compares every library crate with its merge base against `--baseline`: the commit before the push on `main`, the base of a pull request, `main` locally; a breaking change needs a version that says so, and a crate absent from the baseline is reported, not compared. Items are compared in the crate that defines them, so the facade's re-exports are guarded there.
 
 The minimum supported Rust version is <code>1.99.0</code>. `cargo udeps`, `cargo fuzz`, Miri and the sanitizers use the pinned nightly named in `xtask/src/main.rs`; everything else builds on the current stable toolchain. No formatter governs the code: it is written by hand in the house style.
 

@@ -1,14 +1,13 @@
 use hyper::client::conn::{http1, http2};
 use hyper::header::{HOST, HeaderValue};
 use net::{Dial, Protocol, Stream};
-use tokio::task::spawn_local;
 use error::{Failure, Result};
 use hyper_util::rt::TokioIo;
 use core::time::Duration;
-use tokio::time::timeout;
+use thread::{Task, Time};
 use hyper::Uri;
 
-use crate::{Body, Client, Request, Response};
+use crate::{Body, Client, Faults, Request, Response};
 use crate::arch::LocalExec;
 
 impl Client {
@@ -51,7 +50,7 @@ impl Client {
     #[inline]
     pub async fn send ( &self, request: Request ) -> Result<Response> {
 
-        timeout(self.timeout, self.exchange(request)).await.unwrap_or_else(|_elapsed| Err(Failure::timeout("the exchange took too long").keyed("client_timeout")))
+        Time::within(self.timeout, Box::pin(self.exchange(request))).await.unwrap_or_else(|| Err(Faults::CLIENT_TIMEOUT.fail()))
 
     }
 
@@ -95,16 +94,17 @@ impl Client {
 
         let ( mut sender, connection ) = http1::handshake(link).await.map_err(Self::transport)?;
 
-        drop(spawn_local(connection));
+        drop(Task::spawn(connection));
 
         let uri   = inner.uri().clone();
-        let host  = uri.authority().map(|authority| authority.as_str().to_owned()).unwrap_or_default();
-        let value = HeaderValue::from_str(&host).map_err(|error| Failure::invalid("the host is not a header value").keyed("not_uri").caused_by(error))?;
+        let host  = uri.host().unwrap_or_default();
+        let host  = uri.port_u16().map_or_else(|| host.to_owned(), |port| format!("{host}:{port}"));
+        let value = HeaderValue::from_str(&host).map_err(|error| Faults::NOT_URI.because("the host is not a header value").caused_by(error))?;
 
         inner.headers_mut().entry(HOST).or_insert(value);
         *inner.uri_mut() = Self::origin(&uri)?;
 
-        sender.send_request(inner).await.map(Response::from).map_err(Self::transport)
+        sender.send_request(inner).await.map(Response::arrived).map_err(Self::transport)
 
     }
 
@@ -112,9 +112,9 @@ impl Client {
 
         let ( mut sender, connection ) = http2::handshake(LocalExec, link).await.map_err(Self::transport)?;
 
-        drop(spawn_local(connection));
+        drop(Task::spawn(connection));
 
-        sender.send_request(inner).await.map(Response::from).map_err(Self::transport)
+        sender.send_request(inner).await.map(Response::arrived).map_err(Self::transport)
 
     }
 
@@ -122,13 +122,13 @@ impl Client {
 
         let target = uri.path_and_query().map_or("/", |target| target.as_str());
 
-        target.parse().map_err(|error| Failure::invalid("the URI path is not usable").keyed("not_uri").caused_by(error))
+        target.parse().map_err(|error| Faults::NOT_URI.because("the URI path is not usable").caused_by(error))
 
     }
 
     fn transport ( error: hyper::Error ) -> Failure {
 
-        Failure::unavailable("the HTTP exchange failed").keyed("http_transport").caused_by(error)
+        Faults::HTTP_TRANSPORT.fail().caused_by(error)
 
     }
 

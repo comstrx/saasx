@@ -1,6 +1,6 @@
-use error::{Detail, Problem};
+use error::{Detail, Fault, Problem};
 
-use crate::Text;
+use crate::{Faults, Text};
 
 impl Text<'_, '_> {
 
@@ -8,7 +8,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn required ( &mut self ) -> &mut Self {
 
-        self.rule(!self.value.trim().is_empty(), "required", "is required")
+        self.rule(!self.value.trim().is_empty(), Faults::REQUIRED)
 
     }
 
@@ -16,7 +16,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn min ( &mut self, count: usize ) -> &mut Self {
 
-        self.rule(self.value.chars().count() >= count, "too_short", format!("needs at least {count} characters"))
+        self.say(self.value.chars().count() >= count, Faults::TOO_SHORT, format!("needs at least {count} characters"))
 
     }
 
@@ -24,7 +24,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn max ( &mut self, count: usize ) -> &mut Self {
 
-        self.rule(self.value.chars().count() <= count, "too_long", format!("allows at most {count} characters"))
+        self.say(self.value.chars().count() <= count, Faults::TOO_LONG, format!("allows at most {count} characters"))
 
     }
 
@@ -32,7 +32,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn email ( &mut self ) -> &mut Self {
 
-        self.rule(Self::looks_like_email(self.value), "not_email", "is not an email address")
+        self.rule(Self::looks_like_email(self.value), Faults::NOT_EMAIL)
 
     }
 
@@ -40,7 +40,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn ascii ( &mut self ) -> &mut Self {
 
-        self.rule(self.value.bytes().all(|byte| (b' '..=b'~').contains(&byte)), "not_ascii", "allows only printable ASCII")
+        self.rule(self.value.bytes().all(|byte| (b' '..=b'~').contains(&byte)), Faults::NOT_ASCII)
 
     }
 
@@ -48,7 +48,7 @@ impl Text<'_, '_> {
     #[inline]
     pub fn slug ( &mut self ) -> &mut Self {
 
-        self.rule(!self.value.is_empty() && self.value.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'_' || byte == b'-'), "not_slug", "allows only letters, digits, _ and -")
+        self.rule(!self.value.is_empty() && self.value.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'_' || byte == b'-'), Faults::NOT_SLUG)
 
     }
 
@@ -56,17 +56,17 @@ impl Text<'_, '_> {
     #[inline]
     pub fn one_of ( &mut self, allowed: &[&str] ) -> &mut Self {
 
-        self.rule(allowed.contains(&self.value), "not_allowed", "is not one of the allowed values")
+        self.rule(allowed.contains(&self.value), Faults::NOT_ALLOWED)
 
     }
 
-    /// Passes the caller's own test, else fails with this key and detail.
+    /// Passes the caller's own test, else fails with the caller's own declared fault.
     #[inline]
-    pub fn satisfies ( &mut self, test: impl FnOnce(&str) -> bool, key: &'static str, detail: impl Into<Detail> ) -> &mut Self {
+    pub fn satisfies ( &mut self, test: impl FnOnce(&str) -> bool, fault: Fault ) -> &mut Self {
 
         let holds = test(self.value);
 
-        self.rule(holds, key, detail)
+        self.rule(holds, fault)
 
     }
 
@@ -79,12 +79,18 @@ impl Text<'_, '_> {
 
     }
 
-    fn rule ( &mut self, holds: bool, key: &'static str, detail: impl Into<Detail> ) -> &mut Self {
+    fn rule ( &mut self, holds: bool, fault: Fault ) -> &mut Self {
+
+        self.say(holds, fault, fault.detail())
+
+    }
+
+    fn say ( &mut self, holds: bool, fault: Fault, detail: impl Into<Detail> ) -> &mut Self {
 
         if self.failed || holds { return self; }
 
         self.failed = true;
-        self.form.problems.push(Problem::new(self.field, key, detail));
+        self.form.problems.push(Problem::new(self.field, fault, detail));
 
         self
 

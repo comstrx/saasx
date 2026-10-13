@@ -1,6 +1,7 @@
 use hyper::header::{CONTENT_TYPE, HOST, HeaderName, HeaderValue};
 use core::fmt::{Display, Formatter, Result as FmtResult};
-use hyper::{Method, Uri, Version};
+use core::net::{IpAddr, SocketAddr};
+use hyper::Uri;
 use error::{Failure, Result};
 use core::time::Duration;
 use net::{Address, Peer};
@@ -10,34 +11,58 @@ use core::mem::take;
 use memory::Bytes;
 use parse::Query;
 
-use crate::{Body, Ident, Params, Posted, Request};
+use crate::{Body, Faults, Header, Ident, Method, Params, Posted, Request, Version};
 
 impl Request {
 
     /// A request to send with a [`Client`](crate::Client): an absolute URI such as `http://host:port/path`.
     ///
     /// # Errors
-    /// The URI does not parse or has no host.
+    /// `Invalid` keyed `not_uri` when the URI does not parse, is not an absolute `http://` URI or has no
+    /// host; `Unsupported` keyed `no_tls` for `https`, refused rather than sent in the clear; `Invalid`
+    /// keyed `uri_credentials` when the URI carries credentials.
     #[inline]
     pub fn build ( method: Method, uri: &str ) -> Result<Self> {
 
-        let uri: Uri = uri.parse().map_err(|error| Failure::invalid("not a URI").keyed("not_uri").caused_by(error))?;
-        let host = uri.host().ok_or_else(|| Failure::invalid("the URI has no host").keyed("not_uri"))?;
-        let peer = Peer::new(Address::Name(host.into(), uri.port_u16().unwrap_or(80)));
+        let uri: Uri = uri.parse().map_err(|error| Faults::NOT_URI.fail().caused_by(error))?;
 
-        let mut inner = hyper::Request::new(Body::Empty);
+        match uri.scheme_str() {
+            Some("http")   => {}
+            Some("https")  => return Err(Faults::NO_TLS.fail()),
+            Some(_) | None => return Err(Faults::NOT_URI.because("a request needs an absolute http:// URI")),
+        }
 
-        *inner.method_mut() = method;
+        let authority = uri.authority().ok_or_else(|| Faults::NOT_URI.because("the URI has no host"))?;
+
+        if authority.as_str().contains('@') {
+
+            return Err(Faults::URI_CREDENTIALS.fail());
+
+        }
+
+        let peer = Peer::new(Self::address(authority.host(), authority.port_u16().unwrap_or(80)));
+
+        let mut inner = hyper::Request::new(Body::empty());
+
+        *inner.method_mut() = method.inner;
         *inner.uri_mut() = uri;
 
         Ok(Self { inner, peer, params: Params::default(), ident: Ident { worker: 0, serial: 0 }, started: Instant::now(), limit: usize::MAX })
 
     }
 
+    fn address ( host: &str, port: u16 ) -> Address {
+
+        let bare = host.trim_start_matches('[').trim_end_matches(']');
+
+        bare.parse::<IpAddr>().map_or_else(|_| Address::Name(bare.into(), port), |literal| Address::Tcp(SocketAddr::new(literal, port)))
+
+    }
+
     /// A `GET` to send.
     ///
     /// # Errors
-    /// The URI does not parse or has no host.
+    /// As [`Request::build`].
     #[inline]
     pub fn get ( uri: &str ) -> Result<Self> {
 
@@ -48,7 +73,7 @@ impl Request {
     /// A `POST` to send, with a body and its content type.
     ///
     /// # Errors
-    /// The URI does not parse or has no host, or the content type is not a header value.
+    /// As [`Request::build`], or the content type is not a header value.
     #[inline]
     pub fn post ( uri: &str, body: impl Into<Body>, content_type: &str ) -> Result<Self> {
 
@@ -56,7 +81,7 @@ impl Request {
 
         *request.inner.body_mut() = body.into();
 
-        request.header(CONTENT_TYPE, content_type)
+        request.header(Header { inner: CONTENT_TYPE }, content_type)
 
     }
 
@@ -65,11 +90,11 @@ impl Request {
     /// # Errors
     /// The value is not a header value.
     #[inline]
-    pub fn header ( mut self, name: HeaderName, value: &str ) -> Result<Self> {
+    pub fn header ( mut self, name: Header, value: &str ) -> Result<Self> {
 
-        let value = HeaderValue::from_str(value).map_err(|error| Failure::invalid("not a header value").keyed("not_header").caused_by(error))?;
+        let value = HeaderValue::from_str(value).map_err(|error| Faults::NOT_HEADER.because("not a header value").caused_by(error))?;
 
-        self.inner.headers_mut().insert(name, value);
+        self.inner.headers_mut().insert(name.inner, value);
 
         Ok(self)
 
@@ -78,18 +103,9 @@ impl Request {
     /// The method.
     #[inline]
     #[must_use]
-    pub fn method ( &self ) -> &Method {
+    pub fn method ( &self ) -> Method {
 
-        self.inner.method()
-
-    }
-
-    /// The URI as received.
-    #[inline]
-    #[must_use]
-    pub fn uri ( &self ) -> &Uri {
-
-        self.inner.uri()
+        Method { inner: self.inner.method().clone() }
 
     }
 
@@ -127,34 +143,16 @@ impl Request {
     #[must_use]
     pub fn version ( &self ) -> Version {
 
-        self.inner.version()
+        Version::from_hyper(self.inner.version())
 
     }
 
     /// A header as text; `None` when absent or not text.
     #[inline]
     #[must_use]
-    pub fn head ( &self, name: HeaderName ) -> Option<&str> {
+    pub fn head ( &self, name: &Header ) -> Option<&str> {
 
-        self.inner.headers().get(name).and_then(|value| value.to_str().ok())
-
-    }
-
-    /// Every header.
-    #[inline]
-    #[must_use]
-    pub fn headers ( &self ) -> &hyper::HeaderMap {
-
-        self.inner.headers()
-
-    }
-
-    /// Every header, to change.
-    #[inline]
-    #[must_use]
-    pub fn headers_mut ( &mut self ) -> &mut hyper::HeaderMap {
-
-        self.inner.headers_mut()
+        self.field(&name.inner)
 
     }
 
@@ -163,7 +161,7 @@ impl Request {
     #[must_use]
     pub fn host ( &self ) -> Option<&str> {
 
-        self.head(HOST).or_else(|| self.inner.uri().host())
+        self.field(&HOST).or_else(|| self.inner.uri().host())
 
     }
 
@@ -271,28 +269,19 @@ impl Request {
 
     }
 
-    /// The hyper request underneath, for what the vocabulary does not cover.
-    #[inline]
-    #[must_use]
-    pub const fn inner ( &self ) -> &hyper::Request<Body> {
+    pub(crate) fn field ( &self, name: &HeaderName ) -> Option<&str> {
 
-        &self.inner
+        self.inner.headers().get(name).and_then(|value| value.to_str().ok())
 
     }
 
-    /// The hyper request underneath, to change.
-    #[inline]
-    #[must_use]
-    pub const fn inner_mut ( &mut self ) -> &mut hyper::Request<Body> {
+    pub(crate) const fn inner_mut ( &mut self ) -> &mut hyper::Request<Body> {
 
         &mut self.inner
 
     }
 
-    /// Takes the hyper request underneath.
-    #[inline]
-    #[must_use]
-    pub fn into_inner ( self ) -> hyper::Request<Body> {
+    pub(crate) fn into_inner ( self ) -> hyper::Request<Body> {
 
         self.inner
 

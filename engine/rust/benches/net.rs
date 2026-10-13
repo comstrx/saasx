@@ -1,7 +1,8 @@
 //! What the transport costs off the wire: parsing an address, printing one, a stop check, a listener bind.
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use net::{Address, Bind, Listener, Stop};
+use engine::net::{Address, Bind, Listener};
+use engine::thread::Stop;
 use core::hint::black_box;
 
 fn bench_net ( harness: &mut Criterion ) {

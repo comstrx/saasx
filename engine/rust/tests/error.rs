@@ -5,11 +5,17 @@ mod tests {
 
     use core::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
     use std::io::{Error as IoError, ErrorKind, Result as IoResult};
-    use error::{Code, Detail, Exit, Fail as _, Failure, Result};
-    use log::{Capture, Level, Log, Record, Setup, Sink};
+    use engine::error::{Code, Detail, Exit, Fail as _, Failure, Fault, Faults, Result};
+    use engine::log::{Capture, Level, Log, Record, Setup, Sink};
     use core::error::Error as StdError;
     use std::thread::spawn;
     use core::mem::size_of;
+
+    const EMAIL_TAKEN: Fault = Fault::new("email_taken", Code::Conflict, "the email is taken");
+
+    const INVALID_FIELDS: Fault = Fault::new("invalid_fields", Code::Invalid, "some fields are invalid");
+
+    const REQUIRED: Fault = Fault::new("required", Code::Invalid, "is required");
 
     #[derive(Debug)]
     struct Inner;
@@ -73,7 +79,7 @@ mod tests {
 
     fn sample () -> Failure {
 
-        Failure::conflict("taken").keyed("email_taken").context("saving the user").context("handling the request").caused_by(Outer)
+        EMAIL_TAKEN.because("taken").context("saving the user").context("handling the request").caused_by(Outer)
     }
 
     fn parse ( text: &str ) -> Result<i32> {
@@ -248,7 +254,7 @@ mod tests {
     #[test]
     fn fields_retries_and_problems_ride_along () {
 
-        let failure = Failure::invalid("check the form").keyed("invalid_fields").problem("email", "required", "give an email").problem("age", "out_of_range", "18 to 120");
+        let failure = INVALID_FIELDS.because("check the form").problem("email", REQUIRED, "give an email").problem("age", Faults::OUT_OF_RANGE, "18 to 120");
         let single  = Failure::throttled("slow down").retry_after(30).about("token");
 
         assert_eq!(failure.problems().len(), 2);
@@ -378,6 +384,25 @@ mod tests {
         let handle = spawn(|| sample().context("from a thread"));
 
         assert_eq!(handle.join().ok().map(|failure| failure.to_string()), Some("from a thread: handling the request: saving the user: taken".to_owned()));
+
+    }
+
+    #[test]
+    fn faults_are_declared_once_and_raised_the_same_way_everywhere () {
+
+        let failed = EMAIL_TAKEN.fail();
+        let said   = EMAIL_TAKEN.because("ada@example.com is taken");
+        let raised: Failure = EMAIL_TAKEN.into();
+
+        assert_eq!(( failed.code(), failed.key(), failed.detail() ), ( Code::Conflict, "email_taken", "the email is taken" ));
+        assert_eq!(( said.key(), said.detail() ), ( "email_taken", "ada@example.com is taken" ));
+        assert!(EMAIL_TAKEN.matches(&raised) && !EMAIL_TAKEN.matches(&Failure::conflict("other")));
+        assert_eq!(EMAIL_TAKEN.ensure(true).ok(), Some(()));
+        assert_eq!(EMAIL_TAKEN.ensure(false).err().map(|failure| failure.key()), Some("email_taken"));
+        assert_eq!(( EMAIL_TAKEN.key(), EMAIL_TAKEN.code(), EMAIL_TAKEN.detail() ), ( "email_taken", Code::Conflict, "the email is taken" ));
+        assert_eq!(Faults::ALL.len(), 5);
+        assert!(Faults::ALL.iter().all(|fault| fault.code() == Code::Invalid || *fault == Faults::POISONED));
+        assert_eq!("12x".parse::<u8>().map_err(Failure::from).err().map(|failure| Faults::NOT_INTEGER.matches(&failure)), Some(true));
 
     }
 

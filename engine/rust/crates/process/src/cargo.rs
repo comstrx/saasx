@@ -1,9 +1,9 @@
-use error::{Code, Failure, Result};
+use error::{Failure, Result};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::env::var_os;
 
-use crate::Cargo;
+use crate::{Cargo, Faults};
 
 impl Cargo {
 
@@ -20,7 +20,7 @@ impl Cargo {
 
         let built = Command::new(cargo).args(["build", "-p", package, "--locked", "--message-format=json"]).args(profile).current_dir(root).output().map_err(|error| Failure::from(error).context("running cargo build"))?;
 
-        Failure::ensure(built.status.success(), Code::Internal, "cargo build failed").map_err(|failure| failure.keyed("build_failed").context(String::from_utf8_lossy(&built.stderr).trim().to_owned()))?;
+        Faults::BUILD_FAILED.ensure(built.status.success()).map_err(|failure| failure.context(String::from_utf8_lossy(&built.stderr).trim().to_owned()))?;
 
         let lines = String::from_utf8_lossy(&built.stdout);
         let wanted = format!("\"name\":\"{package}\"");
@@ -32,7 +32,7 @@ impl Cargo {
             .filter_map(|tail| tail.split('"').next())
             .next_back()
             .map(|path| PathBuf::from(path.replace("\\\\", "\\")))
-            .ok_or_else(|| Failure::not_found(format!("cargo reported no binary for {package}")).keyed("no_binary"))
+            .ok_or_else(|| Faults::NO_BINARY.because(format!("cargo reported no binary for {package}")))
 
     }
 

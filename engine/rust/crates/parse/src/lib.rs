@@ -9,6 +9,7 @@ extern crate alloc;
 pub mod prelude;
 
 mod arch;
+mod faults;
 mod base;
 mod lines;
 mod list;
@@ -16,4 +17,4 @@ mod percent;
 mod query;
 mod unit;
 
-pub use crate::arch::{Lines, List, Pair, Parse, Percent, Query};
+pub use crate::arch::{Faults, Lines, List, Pair, Parse, Percent, Query};

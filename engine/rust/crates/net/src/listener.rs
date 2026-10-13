@@ -1,5 +1,6 @@
 use core::fmt::{Debug, Formatter, Result as FmtResult};
 use tokio::net::{TcpListener, TcpStream};
+use std::net::TcpStream as StdStream;
 use error::{Failure, Result};
 use core::net::SocketAddr;
 use alloc::sync::Arc;
@@ -13,7 +14,8 @@ use std::io::ErrorKind;
 #[cfg(unix)]
 use std::fs::remove_file;
 
-use crate::{Address, Bind, Bound, Hook, Listener, Peer, Stream, Tcp};
+use crate::{Address, Bind, Bound, Faults, Hook, Listener, Peer, Stream};
+use crate::arch::{Link, Tcp};
 
 impl Bound {
 
@@ -27,7 +29,7 @@ impl Bound {
         match address {
             Address::Tcp(addr)  => Self::tcp(*addr, bind),
             Address::Unix(path) => Self::unix(path),
-            Address::Name(..)   => Err(Failure::usage("a listener needs an ip:port or unix:/path, not a name").keyed("not_address")),
+            Address::Name(..)   => Err(Faults::NOT_LISTENABLE.fail()),
         }
 
     }
@@ -87,7 +89,7 @@ impl Bound {
     #[cfg(not(unix))]
     fn unix ( _path: &str ) -> Result<Self> {
 
-        Err(Failure::unsupported("unix sockets are not available on this platform").keyed("no_unix_socket"))
+        Err(Faults::NO_UNIX_SOCKET.fail())
 
     }
 
@@ -141,14 +143,19 @@ impl Listener {
 
     }
 
-    /// An already accepted TCP stream wrapped the same way the listener wraps its own.
+    /// A TCP socket [released](Stream::release) on another thread, registered on this one and
+    /// wrapped the way the listener wraps its own.
+    ///
+    /// # Errors
+    /// This thread has no runtime to register it with.
     #[inline]
-    #[must_use]
-    pub fn adopt ( stream: TcpStream, peer: SocketAddr ) -> ( Stream, Peer ) {
+    pub fn adopt ( stream: StdStream, peer: SocketAddr ) -> Result<( Stream, Peer )> {
+
+        let stream = TcpStream::from_std(stream).map_err(|error| Failure::from(error).context("registering a handed-off socket"))?;
 
         Tcp::tune(&stream);
 
-        ( Stream::Tcp(stream), Peer::new(Address::Tcp(peer)) )
+        Ok(( Stream { link: Link::Tcp(stream) }, Peer::new(Address::Tcp(peer)) ))
 
     }
 
@@ -168,7 +175,7 @@ impl Listener {
 
             let ( stream, _ ) = unix.accept().await.map_err(|error| Failure::from(error).context("accepting"))?;
 
-            return Ok(( Stream::Unix(stream), Peer::new(self.local.clone()) ));
+            return Ok(( Stream { link: Link::Unix(stream) }, Peer::new(self.local.clone()) ));
 
         }
 
@@ -177,7 +184,7 @@ impl Listener {
 
         Tcp::tune(&stream);
 
-        Ok(( Stream::Tcp(stream), Peer::new(Address::Tcp(peer)) ))
+        Ok(( Stream { link: Link::Tcp(stream) }, Peer::new(Address::Tcp(peer)) ))
 
     }
 

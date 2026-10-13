@@ -1,7 +1,7 @@
-use error::{Failure, Result};
+use error::Result;
 use core::time::Duration;
 
-use crate::Parse;
+use crate::{Faults, Parse};
 
 impl Parse {
 
@@ -20,13 +20,13 @@ impl Parse {
             "m" | "mb" | "mib"          => 1 << 20,
             "g" | "gb" | "gib"          => 1 << 30,
             "t" | "tb" | "tib"          => 1 << 40,
-            _                           => return Err(Failure::invalid("not a size: a number with b, k, m, g or t").keyed("not_size")),
+            _                           => return Err(Faults::NOT_SIZE.fail()),
         };
 
         Self::u64(number)
-            .map_err(|failure| failure.keyed("not_size").detailed("not a size: a number with b, k, m, g or t"))?
+            .map_err(|_failure| Faults::NOT_SIZE.fail())?
             .checked_mul(scale)
-            .ok_or_else(|| Failure::invalid("the size does not fit").keyed("not_size"))
+            .ok_or_else(|| Faults::NOT_SIZE.because("the size does not fit"))
 
     }
 
@@ -45,11 +45,11 @@ impl Parse {
             "m" | "min" | "mins"        => ( 60, false ),
             "h" | "hr" | "hrs"          => ( 3600, false ),
             "d" | "day" | "days"        => ( 86_400, false ),
-            _                           => return Err(Failure::invalid("not a duration: a number with ms, s, m, h or d").keyed("not_duration")),
+            _                           => return Err(Faults::NOT_DURATION.fail()),
         };
 
-        let count = Self::u64(number).map_err(|failure| failure.keyed("not_duration").detailed("not a duration: a number with ms, s, m, h or d"))?;
-        let total = count.checked_mul(scale).ok_or_else(|| Failure::invalid("the duration does not fit").keyed("not_duration"))?;
+        let count = Self::u64(number).map_err(|_failure| Faults::NOT_DURATION.fail())?;
+        let total = count.checked_mul(scale).ok_or_else(|| Faults::NOT_DURATION.because("the duration does not fit"))?;
 
         Ok(if unit_ms { Duration::from_millis(total) } else { Duration::from_secs(total) })
 
