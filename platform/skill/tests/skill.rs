@@ -1,14 +1,88 @@
-//! Scenario: the binary's foundation answers as the engine promises.
+//! Scenario: the real `skill` binary: doctor, typed environment with a dotenv file, programs run with a deadline, usage.
 
 #[cfg(test)]
 mod tests {
 
-    use base::Typing;
+    use std::io::{Error as IoError, Result as IoResult};
+    use std::process::{Command, Output};
+    use std::fs::{remove_file, write};
+    use std::env::{temp_dir, vars_os};
+    use std::path::{Path, PathBuf};
+    use engine::process::Cargo;
+    use std::ffi::OsString;
+    use std::process::id;
+
+    fn binary () -> IoResult<PathBuf> {
+
+        Cargo::binary(Path::new(env!("CARGO_MANIFEST_DIR")), "skill", false).map_err(|failure| IoError::other(failure.to_string()))
+
+    }
+
+    fn kept () -> impl Iterator<Item = ( OsString, OsString )> {
+
+        vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("SKILL_"))
+
+    }
+
+    fn run ( args: &[&str], env: &[( &str, &str )] ) -> IoResult<Output> {
+
+        Command::new(binary()?).args(args).env_clear().envs(kept()).envs(env.iter().copied()).output()
+
+    }
+
+    fn text ( bytes: &[u8] ) -> String {
+
+        String::from_utf8_lossy(bytes).into_owned()
+
+    }
 
     #[test]
-    fn greets_through_the_engine () {
+    fn doctor_reports_the_machine_and_its_tools () {
 
-        assert_eq!(Typing::hello_world(), "Hello, world!");
+        let output = run(&["doctor"], &[]).ok();
+        let stdout = output.as_ref().map(|output| text(&output.stdout)).unwrap_or_default();
+
+        assert_eq!(output.and_then(|output| output.status.code()), Some(0));
+        assert!(stdout.starts_with("platform=") && stdout.contains("\ncargo=") && !stdout.contains("\ncargo=absent"));
+
+    }
+
+    #[test]
+    fn the_environment_is_read_typed_and_layered () {
+
+        let file = temp_dir().join(format!("saasx-skill-{}.env", id()));
+
+        write(&file, "SAASX_SKILL_A=1\nSAASX_SKILL_B=\"two words\"\n").unwrap_or_default();
+
+        let both    = run(&["env", "--file", &file.display().to_string(), "SAASX_SKILL_A", "SAASX_SKILL_B"], &[( "SAASX_SKILL_A", "override" )]).ok();
+        let missing = run(&["env", "SAASX_SKILL_NOPE"], &[]).ok();
+        let none    = run(&["env"], &[]).ok();
+
+        remove_file(&file).unwrap_or_default();
+
+        assert_eq!(both.as_ref().and_then(|output| output.status.code()), Some(0));
+        assert_eq!(both.map(|output| text(&output.stdout)), Some("SAASX_SKILL_A=override\nSAASX_SKILL_B=two words\n".to_owned()));
+        assert!(missing.is_some_and(|output| output.status.code() == Some(78) && text(&output.stderr).contains("SAASX_SKILL_NOPE is not set")));
+        assert_eq!(none.and_then(|output| output.status.code()), Some(64));
+
+    }
+
+    #[test]
+    fn programs_run_through_exec_with_their_exit_code_and_a_deadline () {
+
+        let fine = run(&["exec", "--", "cargo", "--version"], &[]).ok();
+        let bad  = run(&["exec", "--", "cargo", "definitely-not-a-command"], &[]).ok();
+        let slow = if cfg!(windows) { run(&["exec", "--deadline", "300ms", "--", "cmd", "/C", "ping -n 4 127.0.0.1 > NUL"], &[]) } else { run(&["exec", "--deadline", "300ms", "--", "sleep", "3"], &[]) }.ok();
+        let gone = run(&["exec", "--", "saasx-no-such-program-xyz"], &[]).ok();
+        let none = run(&["exec"], &[]).ok();
+        let odd  = run(&["exec", "--deadline", "soon", "--", "cargo"], &[]).ok();
+
+        assert!(fine.is_some_and(|output| output.status.code() == Some(0) && text(&output.stdout).starts_with("cargo ")));
+        assert!(bad.is_some_and(|output| output.status.code() == Some(70) && text(&output.stderr).contains("command_failed")));
+        assert_eq!(slow.and_then(|output| output.status.code()), Some(75));
+        assert_eq!(gone.and_then(|output| output.status.code()), Some(66));
+        assert_eq!(none.and_then(|output| output.status.code()), Some(64));
+        assert!(odd.is_some_and(|output| output.status.code() == Some(64) && text(&output.stderr).contains("not a duration")));
 
     }
 

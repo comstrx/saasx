@@ -1,10 +1,17 @@
-//! The skill binary: the smallest consumer of the engine, grown from here.
+//! The skill tool: the machine, the environment and programs it runs, driven by the engine.
 
-use base::Typing;
+mod arch;
+mod base;
+mod doctor;
+mod env;
+mod exec;
 
-#[expect(clippy::disallowed_macros, clippy::print_stdout, reason = "a binary reports to its operator on stdout")]
-fn main () {
+use engine::error::Exit;
 
-    println!("{}", Typing::hello_world());
+use crate::arch::Skill;
+
+fn main () -> Exit {
+
+    Exit::loud(Skill::run())
 
 }

@@ -33,3 +33,15 @@ engine             the runtime and the MCP server
 knowledge          generic engineering, framework, infrastructure and domain knowledge
 packs/<project>    a project's own knowledge, read by the engine, never owned by it
 ```
+
+## Tool
+
+`skill` is the second consumer of the engine's `process` crate:
+
+```text
+skill doctor                                            the machine and which tools are on the PATH
+skill env [--file <path>] <NAME>...                     variables, typed and layered over a dotenv file, 78 when one is missing
+skill exec [--deadline <duration>] [--cwd <dir>] -- <program> [args]...   runs a program; its exit status is the tool's, 75 on the deadline
+```
+
+`SKILL_LOG`, `SKILL_LOG_FILE` and `SKILL_AUDIT` work as in `iam`.

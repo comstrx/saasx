@@ -1,0 +1,38 @@
+use engine::error::{Failure, Result};
+use std::io::{Write as _, stdout};
+use engine::process::{Args, Boot};
+use engine::net::Runtime;
+
+use crate::arch::Skill;
+
+impl Skill {
+
+    const USAGE: &str = "skill doctor | env [--file <path>] <NAME>... | exec [--deadline <duration>] [--cwd <dir>] -- <program> [args]...";
+
+    pub(crate) fn run () -> Result<()> {
+
+        let env  = Runtime::block_on(Boot::env())??;
+        let skill = Self { args: Args::current(), log: Boot::log(&env, "SKILL", "skill")? };
+
+        Runtime::block_on(skill.dispatch())?
+
+    }
+
+    async fn dispatch ( &self ) -> Result<()> {
+
+        let text = match self.args.command() {
+            Some("doctor") => self.doctor().await?,
+            Some("env")    => self.env().await?,
+            Some("exec")   => self.exec().await?,
+            Some(_)        => return Err(self.args.unknown().context(Self::USAGE)),
+            None           => return Err(Failure::usage("a command is required").keyed("no_command").context(Self::USAGE)),
+        };
+
+        stdout().lock().write_all(text.as_bytes())?;
+        self.log.flush()?;
+
+        Ok(())
+
+    }
+
+}
