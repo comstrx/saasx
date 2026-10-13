@@ -15,6 +15,7 @@ export {
     assetHash,
     brandImages,
     type Connection,
+    flagsModule,
     type Mode,
     modeOf,
     type Routing,

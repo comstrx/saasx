@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import process from "node:process";
 import { mapValues } from "@engine/base";
@@ -86,6 +87,23 @@ export function registryModule ( root: string, folder: string, features: readonl
         );
 
         return `    ${JSON.stringify(name)}: () => import(${JSON.stringify(entry)}),`;
+
+    });
+
+    return `export default {\n${lines.join("\n")}\n};\n`;
+
+}
+export function flagsModule ( root: string, folder: string, flags: string, codes: readonly string[], format: string ): string {
+
+    const lines = codes.map(( code ) => {
+
+        const file = resolve(root, flags, `${code.toLowerCase()}.${format}`);
+
+        if ( !existsSync(file) ) throw new Error(`Missing flag: ${relative(root, file)}`);
+
+        const entry = relative(resolve(root, folder), file).replaceAll("\\", "/");
+
+        return `    ${JSON.stringify(code.toLowerCase())}: require(${JSON.stringify(entry)}),`;
 
     });
 
