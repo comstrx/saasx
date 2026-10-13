@@ -19,7 +19,7 @@ labels: bug
 
 - `saasx` commit or tag:
 - OS + architecture:
-- toolchain (rustc / node / pnpm) if relevant:
+- toolchain (rustc / bun) if relevant:
 
 ## Output
 

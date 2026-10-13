@@ -1,0 +1,104 @@
+name: Daily
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_NIGHTLY: nightly-2026-10-08
+
+defaults:
+  run:
+    shell: bash
+    working-directory: engine/rust
+
+jobs:
+  sanitizer:
+    name: sanitizer (${{ matrix.sanitizer }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [asan, tsan, msan, lsan]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          components: rust-src
+          cache: false
+
+      - name: Sanitizer
+        env:
+          SANITIZER: ${{ matrix.sanitizer }}
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer "${SANITIZER}"
+
+  miri:
+    name: miri
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          components: miri
+          cache: false
+
+      - name: Miri
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- miri
+
+  fuzz:
+    name: fuzz
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@3be4ad2b146f3302f92e5956c54fedbb6ae8cccc # v1.25.3
+
+      - name: Install fuzz tools
+        run: cargo binstall --no-confirm cargo-fuzz
+
+      - name: Fuzz
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --time 3600

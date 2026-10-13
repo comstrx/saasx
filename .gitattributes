@@ -56,7 +56,7 @@
 *.cmd                 text eol=crlf
 Cargo.lock            text eol=lf
 package-lock.json     text eol=lf
-pnpm-lock.yaml        text eol=lf
+bun.lock              text eol=lf
 yarn.lock             text eol=lf
 Dockerfile            text eol=lf
 Dockerfile.*          text eol=lf

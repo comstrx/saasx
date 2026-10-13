@@ -15,35 +15,37 @@ exclude = [
     "**/.next/**",
     "**/.nuxt/**",
     "**/*.lock",
+    "**/supply-chain/**",
     "**/__pycache__/**",
 ]
 
 [formatting]
-indent_string = "    "
-column_width = 100
-trailing_newline = true
-align_comments = false
+indent_string       = "    "
+column_width        = 100
+trailing_newline    = true
+align_entries       = true
+align_comments      = true
 allowed_blank_lines = 1
-crlf = false
+crlf                = false
 
 [[rule]]
-include = ["**/Cargo.toml"]
-keys = ["package"]
+include                 = ["**/Cargo.toml"]
+keys                    = ["package"]
 formatting.reorder_keys = false
 
 [[rule]]
-include = ["**/Cargo.toml"]
-keys = ["workspace", "workspace.members", "workspace.exclude"]
+include                 = ["**/Cargo.toml"]
+keys                    = ["workspace", "workspace.members", "workspace.exclude"]
 formatting.reorder_keys = false
 
 [[rule]]
-include = ["**/Cargo.toml"]
-keys = ["workspace.package.*"]
+include                 = ["**/Cargo.toml"]
+keys                    = ["workspace.package.*"]
 formatting.reorder_keys = false
 
 [[rule]]
-include = ["**/Cargo.toml"]
-keys = ["features"]
+include                 = ["**/Cargo.toml"]
+keys                    = ["features"]
 formatting.column_width = 100
 formatting.reorder_keys = false
 

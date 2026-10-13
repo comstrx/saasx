@@ -25,7 +25,7 @@ SaasX builds the evidence.
 ToolX captures the engineering and knowledge.
 ```
 
-Stack: Rust for the backend, infrastructure and knowledge runtime; Next.js for every web surface; React Native for mobile.
+Stack: Rust for the backend, infrastructure and knowledge runtime; TypeScript on Bun for the web and mobile foundation; Next.js for every web surface; React Native for mobile.
 
 ## Layout
 
@@ -34,7 +34,7 @@ One repository, two layers. `engine/` holds the two generic foundations; `platfo
 ```text
 engine/
   rust/      the Rust foundation
-  node/      the TypeScript foundation
+  bun/       the TypeScript foundation
 platform/
   api/       backend services
   infra/     infrastructure engine
@@ -46,7 +46,7 @@ platform/
 | Part                                    | What it is                                                                                                                                                           | Becomes     |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [`engine/rust/`](./engine/rust)         | The Rust foundation: an extended standard library every Rust part builds on, and the only door to the ecosystem. Generic by construction.                            | **RustX**   |
-| [`engine/node/`](./engine/node)         | The TypeScript foundation: the chosen libraries behind one unified surface, shared by the web and mobile parts.                                                      | **NodeX**   |
+| [`engine/bun/`](./engine/bun)           | The TypeScript foundation: the chosen libraries behind one unified surface, shared by the web and mobile parts.                                                      | **NodeX**   |
 | [`platform/api/`](./platform/api)       | The backend services: thin, opinionated crates over the Rust engine — tenancy, identity, authorization, idempotency, outbox, audit — plus the contracts they expose. | **ApiX**    |
 | [`platform/infra/`](./platform/infra)   | A self-contained infrastructure engine on the Rust engine: providers, resources, state, plan, apply, deploy, rollback, health. Intent lives only in manifests.       | **InfraX**  |
 | [`platform/skill/`](./platform/skill)   | A knowledge-graph runtime served over MCP to AI agents: engineering, framework, infrastructure and business knowledge. Product knowledge is a separate pack.         | **SkillX**  |
@@ -61,7 +61,7 @@ Product-specific logic — business rules, branding, roles, products, messages �
 
 ```text
 saasx/engine/rust      → RustX
-saasx/engine/node      → NodeX
+saasx/engine/bun       → NodeX
 saasx/platform/api     → ApiX
 saasx/platform/infra   → InfraX
 saasx/platform/skill   → SkillX

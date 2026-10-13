@@ -84,6 +84,7 @@
 **/.vite/
 **/.parcel-cache/
 **/.next/
+**/_generated/
 **/out/
 **/build/
 **/dist/
@@ -127,3 +128,7 @@
 **/.pytest_cache/
 **/.mypy_cache/
 **/.ruff_cache/
+
+# expo prebuild output (generated, never committed)
+platform/mobile/android/
+platform/mobile/ios/

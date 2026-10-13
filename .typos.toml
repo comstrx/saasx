@@ -37,23 +37,23 @@ extend-ignore-re = [
 extend-ignore-words-re = ["(?i)^fpr$"]
 
 [type.lock]
-extend-glob = ["**/*.lock"]
-check-file = false
+extend-glob    = ["**/*.lock"]
+check-file     = false
 check-filename = false
 
 [type.minified]
 extend-glob = ["**/*.min.js", "**/*.min.css"]
-check-file = false
+check-file  = false
 
 [type.generated]
 extend-glob = ["**/generated/**", "**/*.gen.*", "**/*.g.*"]
-check-file = false
+check-file  = false
 
 [default.extend-identifiers]
 "DNS_ERROR_INVAILD_VIRTUALIZATION_INSTANCE_NAME" = "DNS_ERROR_INVAILD_VIRTUALIZATION_INSTANCE_NAME"
-"ERROR_FILENAME_EXCED_RANGE" = "ERROR_FILENAME_EXCED_RANGE"
-"ERROR_FILENAME_EXCEDE_RANGE" = "ERROR_FILENAME_EXCED_RANGE"
-"INVAILD" = "INVALID"
+"ERROR_FILENAME_EXCED_RANGE"                     = "ERROR_FILENAME_EXCED_RANGE"
+"ERROR_FILENAME_EXCEDE_RANGE"                    = "ERROR_FILENAME_EXCED_RANGE"
+"INVAILD"                                        = "INVALID"
 
 [default.extend-words]
 "widnows" = "windows"

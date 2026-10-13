@@ -1,0 +1,65 @@
+name: Rust
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'engine/rust/**'
+      - '.github/workflows/rust.yml'
+
+  pull_request:
+    paths:
+      - 'engine/rust/**'
+      - '.github/workflows/rust.yml'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_NIGHTLY: nightly-2026-10-08
+
+defaults:
+  run:
+    shell: bash
+    working-directory: engine/rust
+
+jobs:
+  gates:
+    name: gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          cache-workspaces: engine/rust
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          toolchain: ${{ env.RUST_NIGHTLY }}
+          cache: false
+
+      - uses: cargo-bins/cargo-binstall@3be4ad2b146f3302f92e5956c54fedbb6ae8cccc # v1.25.3
+
+      - name: Install gate tools
+        run: cargo binstall --no-confirm cargo-nextest cargo-deny cargo-vet cargo-udeps cargo-hack cargo-semver-checks cargo-fuzz
+
+      - name: Gates
+        env:
+          BASELINE: ${{ github.base_ref || github.ref_name }}
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- gates --baseline "origin/${BASELINE}"
+
+      - name: Fuzz
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --time 60
