@@ -1,0 +1,26 @@
+[package]
+name                   = "fuzz"
+publish.workspace      = true
+version.workspace      = true
+edition.workspace      = true
+rust-version.workspace = true
+authors.workspace      = true
+license.workspace      = true
+description            = "Fuzz targets of the foundation crates, one flat file per target."
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+base.workspace          = true
+libfuzzer-sys.workspace = true
+
+[[bin]]
+name  = "base"
+path  = "base.rs"
+test  = false
+bench = false
+doc   = false
+
+[lints]
+workspace = true

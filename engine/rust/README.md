@@ -23,12 +23,13 @@ The engine grows only by pull: a crate exists because a consumer needed it, and 
 ## Workspace
 
 ```text
-Cargo.toml · Cargo.lock · rust-toolchain.toml   the workspace root
-.clippy.toml · .deny.toml · .rustfmt.toml       governance, applies to every crate
-xtask/             the gate runner, shared by every Rust workspace in the repository
+Cargo.toml · Cargo.lock                         the workspace root
+.clippy.toml · .deny.toml                       governance, applies to every crate
+xtask/             the gate runner
 crates/<name>/     member crates; `base` is the substrate every other one builds on
 tests/             public-API contract tests, flat files, linked the way a consumer links
 benches/           criterion benchmarks, flat files
+fuzz/              libFuzzer targets, flat files; a workspace member, so every gate compiles them
 ```
 
 Consumers depend on member crates by path. A consumer's own crates never reach the registry directly; when one needs a capability, the engine learns it — by growing a crate or by adding one for that domain, improving on the libraries it wraps or offering a DSL over them.
@@ -37,26 +38,36 @@ Consumers depend on member crates by path. A consumer's own crates never reach t
 
 ```text
 crates/<name>/
-  Cargo.toml        inherits every package key from the workspace; owns only its name, description, keywords and categories
-  src/lib.rs        crate docs, module declarations, public re-exports
-  src/prelude.rs    the crate's vocabulary, glob-importable
-  src/<concept>.rs  one file per concept; no inline tests
+  Cargo.toml          inherits every package key from the workspace; owns only its name, description, keywords and categories
+  src/lib.rs          crate docs, module declarations, public re-exports
+  src/prelude.rs      the crate's vocabulary, glob-importable
+  src/<concept>.rs    a concept that fits one file
+  src/<concept>/      a larger concept: mod.rs declares and re-exports, arch.rs holds every type, one impl file per concern
 ```
+
+No file holds tests or benchmarks; those live in `tests/` and `benches/` only, each file a crate with its own one-line doc.
+
+## Code style
+
+The code is written by hand, in one house style, and no formatter runs over it. Types are declared in one predictable place and used through namespaces: a zero-sized struct carries an API spread across concern files. There are no free functions beyond `main`. Comments exist only where a lint demands a doc, and then say the one thing the signature does not.
 
 ## Development
 
-Run from the root of any Rust workspace in the repository:
+Run from the workspace root:
 
 ```bash
-cargo run -q --manifest-path <path-to>/xtask/Cargo.toml -- verify   # fmt · clippy · test · doc · audit · boundary
-cargo run -q --manifest-path <path-to>/xtask/Cargo.toml -- full     # verify + vet · udeps · hack · semver
-cargo run -q --manifest-path <path-to>/xtask/Cargo.toml -- bloat    # release binary size per crate, every binary
-cargo run -q --manifest-path <path-to>/xtask/Cargo.toml -- doctor   # toolchains and tools present, then a compile check
+cargo run -q --manifest-path xtask/Cargo.toml -- setup    # install every missing gate tool and the nightly toolchain; gates runs it first
+cargo run -q --manifest-path xtask/Cargo.toml -- gates    # clippy · test · doc · audit · vet · udeps · hack · semver · fuzz (one minute per target)
+cargo run -q --manifest-path xtask/Cargo.toml -- bloat    # release binary size per crate, every binary
+cargo run -q --manifest-path xtask/Cargo.toml -- fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each
+cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the test suite under Miri on nightly
+cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer tsan   # the test suite under asan (default), tsan, msan or lsan
+cargo run -q --manifest-path xtask/Cargo.toml -- doctor   # toolchains and tools present, then a compile check
 ```
 
-Here `<path-to>` is `.`; from a consumer it is `../../engine/rust`. The runner lists every task when called without one. CI runs nothing that `full` does not run locally.
+The runner lists every task when called without one. CI runs `gates` and nothing else on every change; the daily workflow runs `sanitizer`, `miri` and an hour of `fuzz --run`.
 
-The minimum supported Rust version is <code>1.99.0</code>. `rustfmt` and `cargo udeps` use the pinned nightly named in `xtask/src/main.rs`; everything else builds on the stable toolchain pinned in `rust-toolchain.toml`.
+The minimum supported Rust version is <code>1.99.0</code>. `cargo udeps`, `cargo fuzz`, Miri and the sanitizers use the pinned nightly named in `xtask/src/main.rs`; everything else builds on the current stable toolchain. No formatter governs the code: it is written by hand in the house style.
 
 ## Lint policy
 

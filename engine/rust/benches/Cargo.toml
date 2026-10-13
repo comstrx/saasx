@@ -1,12 +1,12 @@
 [package]
-name = "benches"
-publish.workspace = true
-version.workspace = true
-edition.workspace = true
+name                   = "benches"
+publish.workspace      = true
+version.workspace      = true
+edition.workspace      = true
 rust-version.workspace = true
-authors.workspace = true
-license.workspace = true
-description = "Criterion benchmarks of the foundation crates."
+authors.workspace      = true
+license.workspace      = true
+description            = "Criterion benchmarks of the foundation crates."
 
 [dependencies]
 base.workspace = true
@@ -15,8 +15,8 @@ base.workspace = true
 criterion.workspace = true
 
 [[bench]]
-name = "base"
-path = "base.rs"
+name    = "base"
+path    = "base.rs"
 harness = false
 
 [lints]
