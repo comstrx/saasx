@@ -14,7 +14,8 @@
     "lint": "biome ci .",
     "fmt": "biome check --write .",
     "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done",
-    "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
+    "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit",
+    "release": "bun tools/release/index.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
@@ -42,5 +43,6 @@
     "@types/react": "19.3.0",
     "mitata": "1.0.34",
     "typescript": "7.0.2"
-  }
+  },
+  "version": "0.1.0"
 }

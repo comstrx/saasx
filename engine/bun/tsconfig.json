@@ -18,5 +18,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["packages/*/src", "tests", "benches"]
+  "include": ["packages/*/src", "tests", "benches", "tools"]
 }
