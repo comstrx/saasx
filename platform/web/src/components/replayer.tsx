@@ -7,36 +7,24 @@ import { useApi } from "@/hooks/use-api";
 import { useDevice } from "@/hooks/use-device";
 import { outbox } from "@/stores/outbox";
 
-/**
- * Replays the outbox whenever the device comes back online (and once on mount), so writes queued
- * offline reach the backend with their original idempotency keys.
- */
 export default function Replayer () {
-
     const api = useApi() as ApiSurface;
     const device = useDevice();
 
     useEffect(() => {
-
         const replay = async (): Promise<void> => {
-
             const outcome = await outbox.replay(async ( entry ) => {
-
                 await api[entry.feature]?.[entry.operation]?.(entry.input, { idempotencyKey: entry.idempotencyKey });
                 touched([entry.feature]);
-
             });
 
             if ( outcome.sent ) touched([]);
-
         };
 
         if ( device.info().online ) void replay();
 
         return device.watch("online", ( online ) => { if ( online ) void replay(); });
-
     }, [api, device]);
 
     return null;
-
 }

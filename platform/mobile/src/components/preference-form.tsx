@@ -8,7 +8,6 @@ export type PreferenceField = { name: PreferenceName; label: string; value: stri
 type Props = { fields: readonly PreferenceField[]; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined; onChange: ( name: PreferenceName, value: string ) => void };
 
 export default function PreferenceForm ({ fields, note, onChange }: Props) {
-
     return (
 
         <Stack gap={4}>
@@ -28,5 +27,4 @@ export default function PreferenceForm ({ fields, note, onChange }: Props) {
         </Stack>
 
     );
-
 }

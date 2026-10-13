@@ -11,7 +11,6 @@ import { Providers } from "../providers.tsx";
 export const generateMetadata = siteMetadata;
 
 export default async function RootLayout ({ children }: { children: ReactNode }) {
-
     const [locale, trace, theme] = await Promise.all([requestLocale(), requestTrace(), requestTheme()]);
 
     return (
@@ -23,5 +22,4 @@ export default async function RootLayout ({ children }: { children: ReactNode })
         </Document>
 
     );
-
 }

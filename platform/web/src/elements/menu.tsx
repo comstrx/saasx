@@ -6,7 +6,6 @@ export type MenuEntry = { href: string; label: string; icon?: ReactNode | undefi
 type Props = { label: string; entries: readonly MenuEntry[] };
 
 export default function Menu ({ label, entries }: Props) {
-
     return (
 
         <nav className="menu" aria-label={label}>
@@ -34,5 +33,4 @@ export default function Menu ({ label, entries }: Props) {
         </nav>
 
     );
-
 }

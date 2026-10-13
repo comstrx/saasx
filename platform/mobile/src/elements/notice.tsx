@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Notice ({ tone, message, action, onAction, palette }: Props) {
-
     return (
 
         <View style={styles.notice} accessibilityRole={tone === "failed" ? "alert" : "text"}>
@@ -30,5 +29,4 @@ export default function Notice ({ tone, message, action, onAction, palette }: Pr
         </View>
 
     );
-
 }

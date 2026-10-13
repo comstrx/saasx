@@ -7,20 +7,17 @@ type Meta = { identity: string; insecure: boolean; app: { name: string; slug: st
 const root = import.meta.dirname;
 
 function compiled (): Meta {
-
     const mode = process.env.NODE_ENV === "production" ? "production" : "development";
     const path = resolve(root, "node_modules/.cache/spec", mode, "meta.json");
 
     if ( !existsSync(path) ) throw new Error(`No compiled spec for ${mode}: run \`bun tools/compile/index.ts ${mode}\` first.`);
 
     return JSON.parse(readFileSync(path, "utf8")) as Meta;
-
 }
 const push = resolve(root, "google-services.json");
 const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
-
     const { identity, insecure, app } = compiled();
     const build: [string, Record<string, unknown>] = ["expo-build-properties", {
         android: { usesCleartextTraffic: insecure, enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true, enableBundleCompression: false },
@@ -52,5 +49,4 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
         experiments: { typedRoutes: true, tsconfigPaths: true },
         extra: { ...config.extra, spec: identity, ...(process.env.APP_LAB === "1" && existsSync(push) ? { eas: { projectId: labProject } } : {}) },
     };
-
 };

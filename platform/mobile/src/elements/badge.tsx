@@ -6,7 +6,6 @@ type Props = { label: string };
 const styles = StyleSheet.create({ badge: { alignSelf: "flex-start", paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999 }, label: { fontSize: 11, textTransform: "uppercase" } });
 
 export default function Badge ({ label }: Props) {
-
     const palette = usePalette();
 
     return (
@@ -18,5 +17,4 @@ export default function Badge ({ label }: Props) {
         </View>
 
     );
-
 }

@@ -11,9 +11,7 @@ const alive = base ? await fetch(`${base}/ready`).then(() => true, () => false) 
 const live = alive ? test : test.skip;
 
 describe("the app's compiled client against the backend behind the spec", () => {
-
     live("reads the catalogue through the client projection with the declared tenant", async () => {
-
         if ( !client ) return;
 
         const api = createApi(endpoints, client.api, client.contract, () => requestContext(client.api.context, { language: "ar", requestId: "app-live-1" }), { execution: "client" });
@@ -22,7 +20,5 @@ describe("the app's compiled client against the backend behind the spec", () => 
         expect(result.resource.length).toBe(2);
         expect(result.resource.every(( row ) => row.type === "hotel")).toBe(true);
         expect(result.meta.pagination?.limit).toBe(2);
-
     });
-
 });

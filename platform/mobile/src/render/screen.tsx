@@ -16,16 +16,13 @@ import { Gate } from "./gate";
 type Props = { screen: Facing; route: Route };
 
 function part ( name: keyof Shell, screen: Facing, route: Route, locale: Locale ): ReactNode {
-
     const chosen = shellFeature(config.settings.shell[name]);
 
     if ( !chosen || !screen.options[name] ) return null;
 
     return createElement(feature(chosen), { options: localize(shell[name], locale), ports: {}, screen, route });
-
 }
 export function Screen ({ screen, route }: Props) {
-
     const locale = useLocale();
     const colors = palette(useTheme());
     const facts: Facts = { screen, route, loader: <Loading palette={colors} />, palette: colors };
@@ -42,5 +39,4 @@ export function Screen ({ screen, route }: Props) {
         </Frame>
 
     );
-
 }

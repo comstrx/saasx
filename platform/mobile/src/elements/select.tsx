@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Select ({ name, value, choices, disabled = false, onChange }: Props) {
-
     const palette = usePalette();
 
     return (
@@ -20,7 +19,6 @@ export default function Select ({ name, value, choices, disabled = false, onChan
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row} testID={name}>
 
             {choices.map(( choice ) => {
-
                 const chosen = choice.value === value;
 
                 return (
@@ -39,11 +37,9 @@ export default function Select ({ name, value, choices, disabled = false, onChan
                     </Pressable>
 
                 );
-
             })}
 
         </ScrollView>
 
     );
-
 }

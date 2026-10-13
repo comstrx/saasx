@@ -16,7 +16,6 @@ const kinds = {
 } as const;
 
 export default function Input ({ name, kind = "text", value, placeholder, invalid = false, disabled = false, onChange, onSubmit }: Props) {
-
     const palette = usePalette();
 
     return (
@@ -36,5 +35,4 @@ export default function Input ({ name, kind = "text", value, placeholder, invali
         />
 
     );
-
 }

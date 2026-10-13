@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Frame ({ palette, header, tabs, children, direction }: Props) {
-
     return (
 
         <SafeAreaView style={[styles.frame, { backgroundColor: palette.body, direction }]}>
@@ -25,5 +24,4 @@ export default function Frame ({ palette, header, tabs, children, direction }: P
         </SafeAreaView>
 
     );
-
 }

@@ -8,7 +8,6 @@ import ActionCard, { type Note } from "./action-card";
 type Props = { title: string; alt: string; image: string | null | undefined; status?: ReactNode | undefined; pick: string; camera: string; busy: boolean; note?: Note | undefined; onPick: ( source: "library" | "camera" ) => void };
 
 export default function AvatarCard ({ title, alt, image, status, pick, camera, busy, note, onPick }: Props) {
-
     return (
 
         <ActionCard icon="user" title={title} note={note}>
@@ -26,5 +25,4 @@ export default function AvatarCard ({ title, alt, image, status, pick, camera, b
         </ActionCard>
 
     );
-
 }

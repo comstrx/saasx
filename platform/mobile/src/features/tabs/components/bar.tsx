@@ -7,14 +7,11 @@ import { screens, text } from "@/lib/spec/runtime";
 export type Options = { label: string };
 
 function accessOf ( access: string | readonly string[] ): readonly string[] {
-
     if ( Array.isArray(access) ) return access;
 
     return access === "user" ? ["user"] : [];
-
 }
 export default function Bar ({ options, screen }: FeatureProps<Options>) {
-
     const locale = useLocale();
     const entries: TabEntry[] = menuOf(screens, "tabs").map(( item ) => ({
         name: item.name,
@@ -26,5 +23,4 @@ export default function Bar ({ options, screen }: FeatureProps<Options>) {
     }));
 
     return <TabMenu label={options.label} entries={entries} />;
-
 }

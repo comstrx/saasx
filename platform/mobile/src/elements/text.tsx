@@ -10,10 +10,8 @@ const styles = StyleSheet.create({
 });
 
 export default function Text ({ text, tone = "default", size = "md" }: Props) {
-
     const palette = usePalette();
     const colors = { default: palette.ink, muted: palette.muted, danger: palette.danger, success: palette.success, inverse: palette.panel };
 
     return <Native style={[styles[size], { color: colors[tone] }]}>{text}</Native>;
-
 }

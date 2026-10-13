@@ -9,7 +9,6 @@ import type { FeatureProps } from "@/lib/spec/feature";
 export type Options = { brand: string; home: string; login: string; account: string };
 
 export default function Menu ({ options }: FeatureProps<Options>) {
-
     const locale = useLocale();
     const pathname = usePathname();
     const { ready, user } = useSession();
@@ -25,5 +24,4 @@ export default function Menu ({ options }: FeatureProps<Options>) {
         />
 
     );
-
 }

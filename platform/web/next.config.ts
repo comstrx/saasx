@@ -15,16 +15,13 @@ const headers = [
 ];
 
 function compiled ( mode: "development" | "production" ): Meta {
-
     const path = resolve(root, "node_modules/.cache/spec", mode, "meta.json");
 
     if ( !existsSync(path) ) throw new Error(`No compiled spec for ${mode}: run \`bun tools/compile/index.ts ${mode}\` first.`);
 
     return JSON.parse(readFileSync(path, "utf8")) as Meta;
-
 }
 export default function nextConfig ( phase: string ): NextConfig {
-
     const development = phase === PHASE_DEVELOPMENT_SERVER;
     const spec = compiled(development ? "development" : "production");
     const devOrigins = (process.env.NEXT_DEV_ORIGINS ?? "").split(/[\s,]+/).filter(Boolean);
@@ -48,5 +45,4 @@ export default function nextConfig ( phase: string ): NextConfig {
         }),
         headers: async () => [{ source: "/(.*)", headers }],
     };
-
 }

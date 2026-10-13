@@ -18,22 +18,17 @@ type Props = { form: FormState<unknown>; labels: Labels; choices: Choices; submi
 const kinds = { text: "text", email: "email", phone: "phone", password: "password", number: "number", integer: "number", date: "date", datetime: "date" } as const;
 
 function text ( value: FormValue ): string {
-
     return typeof value === "string" ? value : "";
-
 }
 export default function SchemaForm ({ form, labels, choices, submit, note, actions }: Props) {
-
     const busy = form.status === "pending";
     const label = ( field: FieldFact ): string => labels[field.name] ?? (typeof pathGet(labels, field.name) === "string" ? (pathGet(labels, field.name) as string) : field.name);
     const control = ( field: FieldFact ): ReactNode => {
-
         const value = form.values[field.name] ?? null;
         const error = form.errors[field.name];
 
         if ( field.kind === "boolean" ) return <Checkbox key={field.name} name={field.name} label={label(field)} checked={value === true} disabled={busy} onChange={( next ) => form.set(field.name, next)} />;
         if ( field.kind === "choice" ) {
-
             const options = (field.choices ?? []).map(( choice ) => ({ value: choice, label: choices[field.name]?.[choice] ?? choice }));
 
             return (
@@ -45,10 +40,8 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
                 </Field>
 
             );
-
         }
         if ( field.kind === "localized" ) {
-
             const texts: Record<string, string> = value && typeof value === "object" && !Array.isArray(value) && !("uri" in value) && !(value instanceof Blob) ? (value as Record<string, string>) : {};
 
             return Object.keys(texts).map(( locale ) => (
@@ -60,10 +53,8 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
                 </Field>
 
             ));
-
         }
         if ( field.kind === "list" ) {
-
             const items = Array.isArray(value) ? value : [];
 
             return (
@@ -75,7 +66,6 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
                 </Field>
 
             );
-
         }
         if ( !(field.kind in kinds) ) return null;
 
@@ -88,7 +78,6 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
             </Field>
 
         );
-
     };
 
     return (
@@ -112,5 +101,4 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
         </Stack>
 
     );
-
 }

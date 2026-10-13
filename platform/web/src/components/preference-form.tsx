@@ -11,7 +11,6 @@ export type PreferenceField = { name: PreferenceName; label: string; value: stri
 type Props = { fields: readonly PreferenceField[]; busy: boolean; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined; onChange: ( name: PreferenceName, value: string ) => void };
 
 export default function PreferenceForm ({ fields, busy, note, onChange }: Props) {
-
     const id = useId();
 
     return (
@@ -33,5 +32,4 @@ export default function PreferenceForm ({ fields, busy, note, onChange }: Props)
         </Stack>
 
     );
-
 }

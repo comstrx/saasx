@@ -8,10 +8,8 @@ import { useLocale } from "@/hooks/use-locale";
 import { useSession } from "@/hooks/use-session";
 
 export function useApi (): ApiClient<Endpoints> {
-
     const locale = useLocale();
     const { token, end } = useSession();
 
     return useMemo(() => browserApi(locale, () => token, end), [locale, token, end]);
-
 }

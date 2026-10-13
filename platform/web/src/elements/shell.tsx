@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 type Props = { nav?: ReactNode; sidebar?: ReactNode; footer?: ReactNode; children: ReactNode; skip: string; page: string };
 
 export default function Shell ({ nav, sidebar, footer, children, skip, page }: Props) {
-
     return (
 
         <div className="shell" data-page={page}>
@@ -16,7 +15,6 @@ export default function Shell ({ nav, sidebar, footer, children, skip, page }: P
 
                 {sidebar ? <aside className="shell-aside">{sidebar}</aside> : null}
 
-                {/* biome-ignore lint/correctness/useUniqueElementIds: the skip link targets this one landmark */}
                 <main id="content" tabIndex={-1} className="shell-main">{children}</main>
 
             </div>
@@ -26,5 +24,4 @@ export default function Shell ({ nav, sidebar, footer, children, skip, page }: P
         </div>
 
     );
-
 }

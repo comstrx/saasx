@@ -13,7 +13,6 @@ I18nManager.allowRTL(rtl);
 if ( I18nManager.isRTL !== rtl ) I18nManager.forceRTL(rtl);
 
 export default function RootLayout () {
-
     return (
 
         <SessionProvider>
@@ -27,5 +26,4 @@ export default function RootLayout () {
         </SessionProvider>
 
     );
-
 }

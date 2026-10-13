@@ -6,7 +6,6 @@ import Text from "@/elements/text";
 type Props = { greeting: string; detail?: string | undefined; logout: string; busy: boolean; onLogout: () => void };
 
 export default function AccountCard ({ greeting, detail, logout, busy, onLogout }: Props) {
-
     return (
 
         <Card>
@@ -28,5 +27,4 @@ export default function AccountCard ({ greeting, detail, logout, busy, onLogout 
         </Card>
 
     );
-
 }

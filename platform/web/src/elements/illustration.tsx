@@ -9,12 +9,7 @@ const scenes: Record<Scene, { paths: string[]; accent: string[] }> = {
     done: { paths: ["M40 14a26 26 0 1 1 0 52 26 26 0 0 1 0-52z"], accent: ["M28 41l8 8 16-18"] },
 };
 
-/**
- * One scene from the house illustration family: the same stroke, radius and two-tone palette
- * for every state, so empty, failed and offline read as one product.
- */
 export default function Illustration ({ scene, label }: Props) {
-
     const { paths, accent } = scenes[scene];
 
     return (
@@ -30,5 +25,4 @@ export default function Illustration ({ scene, label }: Props) {
         </svg>
 
     );
-
 }

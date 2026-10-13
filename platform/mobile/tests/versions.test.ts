@@ -7,13 +7,11 @@ const pinned = { ...manifest.dependencies, ...manifest.devDependencies } as Reco
 
 describe("expo-bundled versions", () => {
     test("every dependency Expo bundles is pinned inside the range Expo expects", () => {
-
         const drift = Object.entries(pinned)
             .filter(( [name] ) => name in expected)
             .filter(( [name, version] ) => !Bun.semver.satisfies(version, expected[name] ?? ""))
             .map(( [name, version] ) => `${name}: pinned ${version}, Expo expects ${expected[name]}`);
 
         expect(drift).toEqual([]);
-
     });
 });

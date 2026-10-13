@@ -12,9 +12,7 @@ const styles = StyleSheet.create({
 const sizes = { 1: styles.one, 2: styles.two, 3: styles.three } as const;
 
 export default function Heading ({ level, text }: Props) {
-
     const palette = usePalette();
 
     return <Text accessibilityRole="header" style={[styles.heading, sizes[level], { color: palette.ink }]}>{text}</Text>;
-
 }

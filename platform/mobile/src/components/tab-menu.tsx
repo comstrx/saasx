@@ -8,7 +8,6 @@ export type TabEntry = { name: string; path: string; label: string; icon?: strin
 type Props = { label: string; entries: readonly TabEntry[] };
 
 export default function TabMenu ({ label, entries }: Props) {
-
     const router = useRouter();
     const { ready, user } = useSession();
     const tabs = entries
@@ -24,5 +23,4 @@ export default function TabMenu ({ label, entries }: Props) {
     if ( tabs.length < 2 ) return null;
 
     return <TabBar label={label} tabs={tabs} />;
-
 }

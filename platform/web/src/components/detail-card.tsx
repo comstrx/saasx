@@ -11,7 +11,6 @@ export type Detail = { name: string; image?: string | null | undefined; type?: s
 type Props = { item: Detail; back?: { href: string; label: string } | undefined; actions?: ReactNode | undefined };
 
 export default function DetailCard ({ item, back, actions }: Props) {
-
     return (
 
         <Card>
@@ -35,5 +34,4 @@ export default function DetailCard ({ item, back, actions }: Props) {
         </Card>
 
     );
-
 }

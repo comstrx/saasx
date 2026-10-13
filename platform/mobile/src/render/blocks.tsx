@@ -14,7 +14,6 @@ type View = ComponentType<FeatureProps>;
 const loaded = new Map<string, View>();
 
 export function feature ( name: string ): View {
-
     const found = loaded.get(name);
 
     if ( found ) return found;
@@ -28,10 +27,8 @@ export function feature ( name: string ): View {
     loaded.set(name, view);
 
     return view;
-
 }
 function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
-
     const Feature = feature(entry.name);
     const place = { id: entry.id, slug: entry.slug, heading: entry.heading, access: entry.access };
     const held = entry.features.length + entry.blocks.length > 0;
@@ -48,10 +45,8 @@ function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
     ) : undefined;
 
     return createElement(Feature, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
-
 }
 function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
-
     const view = (
 
         <Boundary name={entry.id}>
@@ -67,22 +62,15 @@ function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
     );
 
     return entry.access.length ? <Gate access={entry.access}>{view}</Gate> : view;
-
 }
 function Features ({ entries, facts }: { entries: readonly CompiledFeature[]; facts: Facts }) {
-
     return entries.map(( entry ) => <Placed key={entry.id} entry={entry} facts={facts} />);
-
 }
 export function Blocks ({ blocks, facts }: { blocks: readonly CompiledBlock[]; facts: Facts }) {
-
     return blocks.map(( block ) => {
-
         const features = block.features.map(( entry ) => ({ id: entry.id, node: <Placed entry={entry} facts={facts} /> }));
         const children = block.blocks.map(( child ) => ({ id: child.id, node: <Blocks blocks={[child]} facts={facts} /> }));
 
         return <Block key={block.id} {...block.options} palette={facts.palette} entries={[...features, ...children]} />;
-
     });
-
 }

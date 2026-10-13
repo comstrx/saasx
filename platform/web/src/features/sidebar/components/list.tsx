@@ -9,14 +9,11 @@ import { routing, screens, text } from "@/lib/spec/server";
 export type Options = { title: string };
 
 function accessOf ( access: string | readonly string[] ): readonly string[] {
-
     if ( Array.isArray(access) ) return access;
 
     return access === "user" ? ["user"] : [];
-
 }
 export default async function List ({ options, screen }: FeatureProps<Options>) {
-
     const locale = await requestLocale() as Locale;
     const entries: SideEntry[] = menuOf(screens, "sidebar").map(( item ) => ({
         href: localePath(locale, item.path, routing),
@@ -27,5 +24,4 @@ export default async function List ({ options, screen }: FeatureProps<Options>) 
     }));
 
     return <SideMenu label={options.title} entries={entries} />;
-
 }

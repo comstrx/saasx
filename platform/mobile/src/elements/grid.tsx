@@ -7,7 +7,6 @@ type Props = { columns: number; entries: readonly Entry[] };
 const styles = StyleSheet.create({ grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 }, cell: { minWidth: 0 } });
 
 export default function Grid ({ columns, entries }: Props) {
-
     const width = `${Math.floor(100 / Math.max(1, columns)) - 2}%` as const;
 
     return (
@@ -19,5 +18,4 @@ export default function Grid ({ columns, entries }: Props) {
         </View>
 
     );
-
 }

@@ -9,7 +9,6 @@ import Stack from "@/elements/stack";
 type Props = { initial: string; placeholder: string; go: string; onSearch: ( value: string ) => void };
 
 export default function SearchBar ({ initial, placeholder, go, onSearch }: Props) {
-
     const id = useId();
     const [value, setValue] = useState(initial);
 
@@ -28,5 +27,4 @@ export default function SearchBar ({ initial, placeholder, go, onSearch }: Props
         </Form>
 
     );
-
 }

@@ -11,7 +11,6 @@ import { config } from "@/lib/spec/runtime";
 export type Options = { title: string; language: string; currency: string; theme: string; themes: { light: string; dark: string; system: string }; saved: string };
 
 export default function Panel ({ options, feature }: FeatureProps<Options>) {
-
     const current = usePreferences();
     const [changed, setChanged] = useState(false);
     const themeLabel = ( name: string ): string => options.themes[name as keyof Options["themes"]] ?? name;
@@ -21,13 +20,11 @@ export default function Panel ({ options, feature }: FeatureProps<Options>) {
         { name: "theme", label: options.theme, value: current.theme, choices: config.settings.theme.enabled.map(( name ) => ({ value: name, label: themeLabel(name) })) },
     ];
     const change = ( name: PreferenceName, value: string ): void => {
-
         if ( name === "language" ) current.choose({ language: value as Locale });
         else if ( name === "theme" ) current.choose({ theme: value as "light" | "dark" | "system" });
         else current.choose({ currency: value });
 
         setChanged(true);
-
     };
 
     return (
@@ -39,5 +36,4 @@ export default function Panel ({ options, feature }: FeatureProps<Options>) {
         </Titled>
 
     );
-
 }

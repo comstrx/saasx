@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
 });
 
 export default function TabBar ({ label, tabs }: Props) {
-
     const palette = usePalette();
 
     return (
@@ -35,5 +34,4 @@ export default function TabBar ({ label, tabs }: Props) {
         </View>
 
     );
-
 }

@@ -19,12 +19,10 @@ const aliases = {
 const config = getDefaultConfig(root);
 
 config.watchFolders = [...(config.watchFolders ?? []), engine];
-// Metro bundles whatever a module reaches and zod/mini's entry reaches every locale and the JSON
-// Schema writers, none of which the engine calls; they resolve to nothing here.
+
 const unreached = [/\/zod\/v4\/locales\/index\.c?js$/, /\/zod\/v4\/core\/json-schema-processors\.c?js$/];
 
 config.resolver.resolveRequest = ( context, moduleName, platform ) => {
-
     const aliased = aliases[moduleName];
 
     if ( aliased ) return { type: "sourceFile", filePath: aliased };
@@ -34,18 +32,15 @@ config.resolver.resolveRequest = ( context, moduleName, platform ) => {
     const fromEngine = context.originModulePath.startsWith(engine);
 
     if ( bare && fromEngine ) {
-
         const name = moduleName.startsWith("@") ? moduleName.split("/").slice(0, 2).join("/") : moduleName.split("/")[0];
 
         if ( !host(name) ) return context.resolveRequest(context, moduleName, platform);
         if ( !declared.includes(name) ) throw new Error(`The engine reaches ${name}, a host package; declare it in package.json so one copy is bundled.`);
 
         return context.resolveRequest({ ...context, originModulePath: resolve(root, "package.json") }, moduleName, platform);
-
     }
 
     return context.resolveRequest(context, moduleName, platform);
-
 };
 
 module.exports = config;

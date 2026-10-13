@@ -4,7 +4,6 @@ import type { Palette } from "@/styles/theme";
 const styles = StyleSheet.create({ loading: { padding: 24, alignItems: "center" } });
 
 export default function Loading ({ palette }: { palette: Palette }) {
-
     return (
 
         <View style={styles.loading}>
@@ -14,5 +13,4 @@ export default function Loading ({ palette }: { palette: Palette }) {
         </View>
 
     );
-
 }

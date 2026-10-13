@@ -6,7 +6,6 @@ const icons = createIcons<IconNode>(glyphs, glyphs.circle);
 type Props = { name: string; label?: string | undefined; size?: "sm" | "md" | undefined };
 
 export default function Icon ({ name, label, size = "md" }: Props) {
-
     const nodes = icons.get(name);
 
     return (
@@ -22,5 +21,4 @@ export default function Icon ({ name, label, size = "md" }: Props) {
         </svg>
 
     );
-
 }

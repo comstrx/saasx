@@ -10,7 +10,6 @@ import type { FeatureProps } from "@/lib/spec/feature";
 export type Options = { from: string; missing: string; back: string };
 
 export default async function View ({ options, ports, route, feature }: FeatureProps<Options>) {
-
     const locale = await requestLocale();
     const item = row(await portOf(ports, "item", route).catch(() => undefined));
 
@@ -36,5 +35,4 @@ export default async function View ({ options, ports, route, feature }: FeatureP
         </Titled>
 
     );
-
 }

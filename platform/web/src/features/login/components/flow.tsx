@@ -20,7 +20,6 @@ export type Options = { title: string; email: string; password: string; continue
 type Challenge = { token: string; destination: string };
 
 export default function Flow ({ options, ports, feature }: FeatureProps<Options>) {
-
     const router = useRouter();
     const locale = useLocale();
     const { start } = useSession();
@@ -28,16 +27,13 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
     const verify = useWrite(ports.verify);
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const submitCredentials = async ( value: Credentials ): Promise<void> => {
-
         const answer = await login.run(value);
         const data = row(answer?.resource);
         const token = field(data, "challenge_token");
 
         if ( token ) setChallenge({ token, destination: field(data, "destination") ?? "" });
-
     };
     const submitCode = async ( otp: string ): Promise<void> => {
-
         if ( !challenge ) return;
 
         const answer = await verify.run({ challenge_token: challenge.token, otp });
@@ -46,12 +42,9 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
         const user = data?.user;
 
         if ( token && user && typeof user === "object" ) {
-
             start(token, user as { id: number; permissions: string[] });
             router.replace(`/${locale}` as Route);
-
         }
-
     };
 
     return (
@@ -82,5 +75,4 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
         </Titled>
 
     );
-
 }

@@ -5,7 +5,6 @@ import Section from "@/elements/section";
 type Props = { id: string; title: string; primary: boolean; children: ReactNode };
 
 export default function Titled ({ id, title, primary, children }: Props) {
-
     const heading = `${id}-heading`;
 
     return (
@@ -19,5 +18,4 @@ export default function Titled ({ id, title, primary, children }: Props) {
         </Section>
 
     );
-
 }

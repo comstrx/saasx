@@ -6,7 +6,6 @@ type Props = { name: string; label: string; checked: boolean; disabled?: boolean
 const styles = StyleSheet.create({ row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12, minHeight: 44 }, label: { fontSize: 15, flex: 1 } });
 
 export default function Checkbox ({ name, label, checked, disabled = false, onChange }: Props) {
-
     const palette = usePalette();
 
     return (
@@ -20,5 +19,4 @@ export default function Checkbox ({ name, label, checked, disabled = false, onCh
         </View>
 
     );
-
 }

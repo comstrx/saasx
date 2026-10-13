@@ -24,36 +24,27 @@ const policy = contentSecurityPolicy({
 });
 
 function redirect ( request: NextRequest, path: string ): NextResponse {
-
     const url = request.nextUrl.clone();
 
     url.pathname = path;
 
     return NextResponse.redirect(url, 307);
-
 }
 function canonical ( request: NextRequest, path: string ): NextResponse {
-
     const url = request.nextUrl.clone();
 
     url.pathname = path;
 
     return NextResponse.redirect(url, 308);
-
 }
 function remember ( response: NextResponse, cookies: [string, string][] ): NextResponse {
-
     for ( const [name, value] of cookies ) {
-
         response.cookies.set(name, value, cookieOptions);
-
     }
 
     return response;
-
 }
 export function proxy ( request: NextRequest ) {
-
     const saved = readPreferences(( name ) => request.cookies.get(name)?.value);
     const detected = detectPreferences(request.headers, saved);
     const cookies = preferenceCookies(detected);
@@ -82,7 +73,6 @@ export function proxy ( request: NextRequest ) {
     response.headers.set("x-request-id", id);
 
     return remember(response, cookies);
-
 }
 export const config = {
     matcher: ["/((?!api/|_next/|images/|fonts/|videos/|audios/|_generated/|\\.well-known/|robots.txt|sitemap.xml|favicon.ico).*)"],

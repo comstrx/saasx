@@ -16,17 +16,11 @@ export const shell = schema.shell;
 export const tabs = schema.tabs;
 
 export function screenAt ( segments: readonly string[] = [] ): Matched | undefined {
-
     return matchScreen(screens, segments);
-
 }
 export function text ( value: SpecText, locale: Locale ): string {
-
     return messageText(value, messages[locale], locale);
-
 }
 export function localize<T> ( value: T, locale: Locale ): Localized<T> {
-
     return localizeTree(value, messages[locale], locale);
-
 }

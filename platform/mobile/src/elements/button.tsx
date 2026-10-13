@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Button ({ label, name, tone = "primary", busy = false, disabled = false, icon, onPress }: Props) {
-
     const palette = usePalette();
     const fill = tone === "danger" ? palette.danger : tone === "primary" ? palette.primary : "transparent";
     const ink = tone === "ghost" ? palette.primary : palette.panel;
@@ -35,5 +34,4 @@ export default function Button ({ label, name, tone = "primary", busy = false, d
         </Pressable>
 
     );
-
 }

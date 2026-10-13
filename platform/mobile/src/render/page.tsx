@@ -6,7 +6,6 @@ import { palette } from "@/styles/theme";
 import { Screen } from "./screen";
 
 export function Page () {
-
     const pathname = usePathname();
     const query = useLocalSearchParams<Record<string, string | string[]>>();
     const locale = useLocale();
@@ -18,5 +17,4 @@ export function Page () {
     const { path: _path, ...rest } = query;
 
     return <Screen screen={localize({ ...screen, parameters: {} }, locale)} route={{ parameters: screen.parameters, query: rest }} />;
-
 }

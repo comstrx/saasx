@@ -2,7 +2,6 @@ type Fact = { key: string; label: string; value: string };
 type Props = { facts: readonly Fact[] };
 
 export default function Facts ({ facts }: Props) {
-
     return (
 
         <dl className="facts">
@@ -22,5 +21,4 @@ export default function Facts ({ facts }: Props) {
         </dl>
 
     );
-
 }

@@ -19,7 +19,6 @@ type Props = { screen: Facing; route: Route };
 const parts = ["nav", "sidebar", "footer", "loader"] as const;
 
 async function part ( name: keyof ShellParts, screen: Facing, route: Route ): Promise<ReactNode> {
-
     const chosen = config.settings.shell[name];
 
     if ( !chosen || !screen.options[name] ) return null;
@@ -27,10 +26,8 @@ async function part ( name: keyof ShellParts, screen: Facing, route: Route ): Pr
     const locale = await requestLocale() as Locale;
 
     return createElement(await feature(shellFeature(chosen) ?? ""), { options: localize(shell[name], locale), ports: {}, screen, route });
-
 }
 export async function Screen ({ screen, route }: Props) {
-
     const [nav, sidebar, footer, loader] = await Promise.all(parts.map(( name ) => part(name, screen, route)));
     const locale = await requestLocale() as Locale;
     const facts: Facts = { screen, route, loader };
@@ -47,5 +44,4 @@ export async function Screen ({ screen, route }: Props) {
         </Shell>
 
     );
-
 }

@@ -14,13 +14,7 @@ type Options = { queue?: boolean | undefined };
 
 const nowhere: Route = { parameters: {}, query: {} };
 
-/**
- * A write port as a runnable action: the inputs the spec bound (route parameters, signals) ride
- * along, the session's permission to run it is known before the first press, and with `queue`
- * a write the network cannot deliver waits in the outbox instead of failing.
- */
 export function useWrite ( port: CompiledPort | undefined, route: Route = nowhere, { queue = false }: Options = {} ): Write {
-
     const signals = useSignals();
     const permission = usePermission(port);
     const runner = useOperation(useApi() as ApiSurface, port, queue ? outbox : undefined);
@@ -30,5 +24,4 @@ export function useWrite ( port: CompiledPort | undefined, route: Route = nowher
     const queued = runner.status === "done" && runner.result?.meta.source === "queued";
 
     return { ...runner, ...permission, run, queued };
-
 }

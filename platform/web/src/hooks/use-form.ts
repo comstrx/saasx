@@ -17,18 +17,10 @@ export type Queued = { queued: true };
 type Options = { errors?: Messages | undefined; queue?: boolean | undefined; initial?: Record<string, unknown> | undefined; autosave?: number | undefined };
 
 export function isQueued ( result: unknown ): result is Queued {
-
     return typeof result === "object" && result !== null && "queued" in result;
-
 }
-/**
- * A form over a write port: its fields come from the port, its bound inputs ride along on submit,
- * one idempotency key covers every retry of the same values, its failures speak through the
- * errors dictionary, with `queue` an undeliverable submit waits in the outbox, and with `autosave`
- * a dirty form submits itself that many milliseconds after its last change.
- */
-export function useForm ( port: CompiledPort | undefined, route: Route, { errors, queue = false, initial, autosave }: Options = {} ): FormState<Saved | Queued> {
 
+export function useForm ( port: CompiledPort | undefined, route: Route, { errors, queue = false, initial, autosave }: Options = {} ): FormState<Saved | Queued> {
     const api = useRef<ApiSurface>(useApi() as ApiSurface);
     const write = port?.kind === "write" ? port : undefined;
     const locale = useLocale();
@@ -43,7 +35,6 @@ export function useForm ( port: CompiledPort | undefined, route: Route, { errors
         initial,
         autosave,
         submit: async ( values, options: RequestOptions ) => {
-
             const call = write ? api.current[write.feature]?.[write.operation] : undefined;
 
             if ( !call || !write ) throw new Error("No write bound to this form.");
@@ -52,25 +43,19 @@ export function useForm ( port: CompiledPort | undefined, route: Route, { errors
             const idempotencyKey = options.idempotencyKey ?? uuid();
 
             try {
-
                 const result = await call(input, { ...options, idempotencyKey });
 
                 touched(write.touches);
 
                 return result.resource as Saved;
-
             }
             catch ( error ) {
-
                 if ( !queue || !transient(error) ) throw error;
 
                 await outbox.add({ feature: write.feature, operation: write.operation, input, idempotencyKey });
 
                 return { queued: true };
-
             }
-
         },
     });
-
 }

@@ -5,7 +5,6 @@ import { assetFiles, composeAssets, specPaths } from "../assets/index.ts";
 import { loadSpec, root, type Spec, specFromEnvironment, writeFile, writeJson } from "../core/index.ts";
 
 export function assemble ( spec: Spec, mode: Mode ) {
-
     const { config } = spec;
     const api = config.api ? { ...config.api, connections: selectConnections(config.api.connections, mode) } : null;
 
@@ -16,10 +15,8 @@ export function assemble ( spec: Spec, mode: Mode ) {
         routing: routingOf(config.settings),
         client: api ? browserConfig(api, config.contract) : null,
     };
-
 }
 export async function compileSpec ( mode: Mode ) {
-
     const spec = await loadSpec(specFromEnvironment());
     const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
     const folder = `node_modules/.cache/spec/${mode}`;
@@ -59,11 +56,8 @@ export async function compileSpec ( mode: Mode ) {
     report(`Compiled ${spec.identity}: ${screens.length} screen(s), ${features.length} feature(s), ${operations.length} operation(s), ${assets.size} spec assets.`);
 
     return meta;
-
 }
 
 task(import.meta.url, async () => {
-
     await compileSpec(modeOf(process.argv[2]));
-
 });

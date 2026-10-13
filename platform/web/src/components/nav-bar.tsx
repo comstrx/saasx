@@ -7,7 +7,6 @@ export type NavItem = { href: string; label: string; current?: boolean | undefin
 type Props = { brand: string; items: readonly NavItem[]; action: NavItem };
 
 export default function NavBar ({ brand, items, action }: Props) {
-
     return (
 
         <Bar
@@ -17,5 +16,4 @@ export default function NavBar ({ brand, items, action }: Props) {
         />
 
     );
-
 }
