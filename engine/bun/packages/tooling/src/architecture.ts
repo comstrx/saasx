@@ -184,7 +184,6 @@ function ownershipIssues (
     return [];
 
 }
-
 export function analyze ( path: string, code: string, rules: Rules, owner?: string ): Analysis {
 
     const scope = scopeOf(path, rules);
@@ -238,7 +237,6 @@ function featureIssues ( tree: string, name: string, rules: Rules ): string[] {
     ];
 
 }
-
 export function layoutIssues ( rules: Rules, tree: string = rules.source ): string[] {
 
     const layers = readdirSync(tree)
@@ -316,7 +314,6 @@ function ownerOf ( path: string, sources: Sources ): string | undefined {
     return manifest ? /owner:\s*["'](server|client)["']/.exec(manifest)?.[1] : undefined;
 
 }
-
 export function inspect ( sources: Sources, rules: Rules ): string[] {
 
     const problems: string[] = [];

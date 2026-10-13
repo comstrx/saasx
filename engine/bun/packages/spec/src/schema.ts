@@ -25,7 +25,6 @@ export function countShape ( max: number ) {
     return z.number().int().min(1).max(max);
 
 }
-
 export function entityShape ( entities: Entities ) {
 
     const kinds = Object.keys(entities);
@@ -47,7 +46,6 @@ export function entityRoute (
     return { path: screen.path, kind: chosen.kind, parameter };
 
 }
-
 export function screenShapes<S extends z.ZodObject, B extends z.ZodObject, X extends z.ZodRawShape> (
     screenOptions: S,
     blockOptions: B,

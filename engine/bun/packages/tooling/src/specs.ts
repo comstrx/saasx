@@ -57,7 +57,6 @@ function brandIssues ( folder: string, brandFolders: readonly string[] ): void {
     if ( unknown.length ) throw new Error(`brand/ holds only ${brandFolders.join(", ")}; found ${unknown.join(", ")}.`);
 
 }
-
 export function createLoader<C, L extends string> ( options: LoaderOptions<C, L> ): Loader<C, L> {
 
     const { root, variable, locales, brandFolders, catalogue, validate } = options;

@@ -130,7 +130,6 @@ function resource ( wire: Wire, endpoint: Endpoint, local: Local, body: unknown 
     return parsed.data;
 
 }
-
 export function decode ( wire: Wire, endpoint: Endpoint, local: Local, reply: Reply ): ApiResult<unknown> {
 
     const requestId = read(reply.body, wire.response.requestId, 100, identifier);

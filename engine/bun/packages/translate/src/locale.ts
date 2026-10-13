@@ -59,7 +59,6 @@ export function preferredPath (
     return routing.locales.includes(preferred) ? prefixed(preferred, path) : undefined;
 
 }
-
 export function negotiate ( header: string | null | undefined, locales: readonly string[] ): string | undefined {
 
     return ranked(header)
@@ -136,7 +135,6 @@ export function languageName ( code: string, locale: string ): string {
     }
 
 }
-
 export function languageFacts ( code: string ): Language {
 
     const [language = code, given] = code.split(/[-_]/);
@@ -149,7 +147,6 @@ export function languageFacts ( code: string ): Language {
     };
 
 }
-
 function likelyRegion ( code: string ): string | undefined {
 
     const host = globalThis.Intl as {

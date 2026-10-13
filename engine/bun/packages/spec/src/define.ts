@@ -45,7 +45,6 @@ export function read ( operation: string, input?: Input, live?: Live ): Binding 
     return { read: operation, ...(input ? { input } : {}), ...(live ? { live } : {}) };
 
 }
-
 export function live (
     channel: string,
     events: string[] = [],
@@ -69,7 +68,6 @@ export function live (
     };
 
 }
-
 export function write ( operation: string, input?: Input, fields?: string[] ): Binding {
 
     return { write: operation, ...(input ? { input } : {}), ...(fields ? { fields } : {}) };
@@ -95,7 +93,6 @@ export function query ( name: string ): Reference {
     return { query: name };
 
 }
-
 export function signal ( name: string, options: { wait?: boolean } = {} ): Reference {
 
     return options.wait ? { signal: name, wait: true } : { signal: name };

@@ -14,7 +14,6 @@ export function words ( text: string ): string[] {
         .filter(Boolean);
 
 }
-
 export function slugify ( text: string, separator = "-" ): string {
 
     return words(text)
@@ -56,13 +55,11 @@ export function snakeCase ( text: string ): string {
     return slugify(text, "_");
 
 }
-
 export function collapse ( text: string ): string {
 
     return text.replace(/\s+/g, " ").trim();
 
 }
-
 export function truncate ( text: string, max: number, ellipsis = "…" ): string {
 
     const characters = [...text];
@@ -74,7 +71,6 @@ export function truncate ( text: string, max: number, ellipsis = "…" ): string
     return `${characters.slice(0, keep).join("")}${ellipsis}`;
 
 }
-
 export function mask ( text: string, start = 1, end = 0, mark = "*" ): string {
 
     const at = text.indexOf("@");

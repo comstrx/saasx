@@ -129,7 +129,7 @@ function kindOf ( schema: Inner, def: Def ): FieldKind {
 
     if ( def.type === "string" && def.format && formats[def.format] ) return formats[def.format] as FieldKind;
 
-    if ( def.type === "number" && def.checks?.some(( { _zod } ) => _zod.def.check === "number_format") ) return "integer";
+    if ( def.type === "number" && def.checks?.some(({ _zod }) => _zod.def.check === "number_format") ) return "integer";
 
     return kinds[def.type] ?? "unknown";
 
@@ -164,7 +164,6 @@ function facts ( shape: Record<string, unknown>, prefix: string, within: boolean
     });
 
 }
-
 export function fieldFacts ( schema: z.ZodType ): FieldFact[] {
 
     const shape = (schema as z.ZodType & { shape?: Record<string, unknown> }).shape;

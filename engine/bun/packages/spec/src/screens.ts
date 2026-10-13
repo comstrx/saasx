@@ -29,7 +29,6 @@ export function matchScreen<S extends { path: string }> (
     return undefined;
 
 }
-
 export function messageText ( value: SpecText, messages: Messages, locale: string ): string {
 
     if ( typeof value === "string" ) return value;
@@ -41,7 +40,6 @@ export function messageText ( value: SpecText, messages: Messages, locale: strin
     return found;
 
 }
-
 export function localizeTree<T> ( value: T, messages: Messages, locale: string ): Localized<T> {
 
     const walk = ( item: unknown ): unknown => {
@@ -59,7 +57,6 @@ export function localizeTree<T> ( value: T, messages: Messages, locale: string )
     return walk(value) as Localized<T>;
 
 }
-
 export function granted ( held: Held, access: readonly string[] ): boolean {
 
     if ( !held ) return false;
@@ -67,7 +64,6 @@ export function granted ( held: Held, access: readonly string[] ): boolean {
     return access.every(( permission ) => permission === "user" || held.permissions.includes(permission));
 
 }
-
 export function portSource ( api: ApiSurface, site: () => Promise<unknown> | unknown ): PortSource {
 
     return {
@@ -92,7 +88,6 @@ export function portSource ( api: ApiSurface, site: () => Promise<unknown> | unk
     };
 
 }
-
 export function localPort (
     port: CompiledPort | undefined,
     site: unknown,

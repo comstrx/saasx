@@ -46,7 +46,6 @@ export function memoryStore (): Store {
     };
 
 }
-
 export function webStore ( storage: WebStorage ): Store {
 
     const guard = <T>( work: () => T ): T => {
@@ -72,7 +71,6 @@ export function webStore ( storage: WebStorage ): Store {
     };
 
 }
-
 export function lazyStore ( open: () => Store ): Store {
 
     let opened: Store | undefined;
@@ -92,7 +90,6 @@ export function lazyStore ( open: () => Store ): Store {
     };
 
 }
-
 export function driverStore ( driver: Driver ): Store {
 
     return {
@@ -103,7 +100,6 @@ export function driverStore ( driver: Driver ): Store {
     };
 
 }
-
 export function namespaced ( store: Store, prefix: string ): Store {
 
     const own = `${prefix}.`;

@@ -68,7 +68,6 @@ function websocket ( url: string, handlers: Parameters<Opener>[1] ): Transport {
     return { send: ( data ) => socket.send(data), close: () => socket.close() };
 
 }
-
 export function createConnection ( options: ConnectionOptions ): Connection {
 
     const { url, open = websocket, logger, trace, observe } = options;

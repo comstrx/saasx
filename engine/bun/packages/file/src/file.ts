@@ -41,7 +41,6 @@ export function mimeOf ( name: string ): string {
     return mimes[extensionOf(name)] ?? "application/octet-stream";
 
 }
-
 export function isFileRef ( value: unknown ): value is FileRef {
 
     const ref = value as Partial<FileRef> | null;
@@ -60,7 +59,6 @@ export function isImage ( type: string ): boolean {
     return type.startsWith("image/");
 
 }
-
 export function checkFile ( file: Blob, limits: Limits = uploadLimits, field = "file" ): void {
 
     if ( file.size > limits.maxBytes ) {
@@ -103,7 +101,6 @@ function append ( data: FormData, key: string, item: Part, limits: Limits, count
     data.append(key, String(item));
 
 }
-
 export function toFormData ( value: Record<string, unknown>, limits: Limits = uploadLimits ): FormData {
 
     const data = new FormData();

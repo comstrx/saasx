@@ -7,13 +7,11 @@ function keyOf<T> ( key: Key<T> ): ( item: T ) => unknown {
     return typeof key === "function" ? key : ( item ) => item[key];
 
 }
-
 export function unique<T> ( items: readonly T[] ): T[] {
 
     return [...new Set(items)];
 
 }
-
 export function uniqueBy<T> ( items: readonly T[], key: Key<T> ): T[] {
 
     const pick = keyOf(key);
@@ -57,7 +55,6 @@ export function indexBy<T> ( items: readonly T[], key: Key<T> ): Map<unknown, T>
     return new Map(items.map(( item ) => [pick(item), item]));
 
 }
-
 export function sortBy<T> ( items: readonly T[], key: Key<T>, direction: Direction = "asc" ): T[] {
 
     const pick = keyOf(key);
@@ -100,7 +97,6 @@ export function partition<T> ( items: readonly T[], keep: ( item: T ) => boolean
     return [yes, no];
 
 }
-
 export function upsertBy<T> ( items: readonly T[], row: T, key: Key<T>, insert = true ): Upsert<T> {
 
     const pick = keyOf(key);

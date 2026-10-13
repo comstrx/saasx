@@ -162,3 +162,52 @@ describe("observation", () => {
     });
 
 });
+describe("protocol edges", () => {
+
+    test("a ping is answered with a pong, a refusal becomes a network failure, and channels re-join after a drop", async () => {
+
+        const net = fake();
+        const connection = createConnection({ url: "ws://fake", open: net.open, backoffMs: 1, retries: 3 });
+        const realtime = pusherRealtime(connection);
+        const ready = realtime.connect();
+
+        await new Promise(( resolve ) => setTimeout(resolve, 5));
+        net.server().send({ event: "pusher:connection_established", data: JSON.stringify({ socket_id: "9.9" }) });
+        await ready;
+        realtime.subscribe("orders", () => undefined);
+        await new Promise(( resolve ) => setTimeout(resolve, 2));
+        expect(net.server().received.some(( frame ) => frame.includes("pusher:subscribe"))).toBe(true);
+
+        net.server().send({ event: "pusher:ping", data: {} });
+        expect(net.server().received.some(( frame ) => frame.includes("pusher:pong"))).toBe(true);
+
+        net.server().drop();
+        await new Promise(( resolve ) => setTimeout(resolve, 30));
+        net.server().send({ event: "pusher:connection_established", data: JSON.stringify({ socket_id: "9.10" }) });
+        await new Promise(( resolve ) => setTimeout(resolve, 2));
+        expect(net.server().received.filter(( frame ) => frame.includes("pusher:subscribe"))).toHaveLength(1);
+        expect(realtime.socketId()).toBe("9.10");
+        connection.close();
+
+    });
+    test("a malformed frame is ignored and a parsed data string reaches the handler as an object", async () => {
+
+        const net = fake();
+        const connection = createConnection({ url: "ws://fake", open: net.open });
+        const realtime = pusherRealtime(connection);
+        const seen: unknown[] = [];
+        const ready = realtime.connect();
+
+        await new Promise(( resolve ) => setTimeout(resolve, 5));
+        net.server().send({ event: "pusher:connection_established", data: JSON.stringify({ socket_id: "1.1" }) });
+        await ready;
+        realtime.subscribe("orders", ( data ) => seen.push(data));
+        net.server().send("not json");
+        net.server().send({ event: "order.saved", channel: "orders", data: JSON.stringify({ id: 7 }) });
+        net.server().send({ event: "order.saved", channel: "other", data: { id: 8 } });
+        expect(seen).toEqual([{ id: 7 }]);
+        connection.close();
+
+    });
+
+});

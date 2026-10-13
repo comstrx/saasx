@@ -72,7 +72,6 @@ export function choice<T extends Shape> ( value: T ) {
     return z.strictObject({ default: value, enabled: z.array(value).min(1) });
 
 }
-
 export function baseSettings<L extends z.ZodEnum, F extends Shape> ( locale: L, fonts: F ) {
 
     return {
@@ -113,7 +112,6 @@ export function settingsInput<S extends z.ZodObject> ( settings: S, required: re
     return required.length ? input : input.default({});
 
 }
-
 export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I extends Shape, B extends z.ZodObject> (
     content: C,
     settings: S,

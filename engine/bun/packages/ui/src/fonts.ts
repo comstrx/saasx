@@ -19,7 +19,6 @@ export function fontFace ( face: FontFace ): string {
     return `@font-face { ${parts.join("; ")}; }`;
 
 }
-
 export function fontStack ( families: readonly string[], generic = "sans-serif" ): string {
 
     return [...families.map(( family ) => `"${family}"`), generic].join(", ");

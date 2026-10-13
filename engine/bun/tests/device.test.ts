@@ -17,7 +17,7 @@ function browser (): { host: Host; fire: ( type: string ) => void; flip: ( query
             languages: ["ar-EG", "en"],
             onLine: true,
             maxTouchPoints: 5,
-            permissions: { query: async ( { name } ) => ({ state: name === "geolocation" ? "granted" : "prompt" }) },
+            permissions: { query: async ({ name }) => ({ state: name === "geolocation" ? "granted" : "prompt" }) },
             geolocation: {
                 getCurrentPosition: ( ok ) =>
                     ok({ coords: { latitude: 30.04, longitude: 31.23, accuracy: 10 }, timestamp: 5 }),

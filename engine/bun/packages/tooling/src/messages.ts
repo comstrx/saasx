@@ -49,8 +49,7 @@ function compose ( locale: string, core: string, brand: string | undefined ): Me
     return override && existsSync(override) ? mergeMessages(base, read(override), override) : base;
 
 }
-
-export function composeMessages<L extends string> ( { core, brand, locales }: MessageSources<L> ): Dictionaries<L> {
+export function composeMessages<L extends string> ({ core, brand, locales }: MessageSources<L>): Dictionaries<L> {
 
     registered(core, locales);
 

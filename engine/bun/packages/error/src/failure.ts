@@ -54,7 +54,6 @@ export class Failure extends Error {
     readonly retryAfter: number | undefined;
     readonly requestId: string | undefined;
     readonly spoken: boolean;
-
     constructor ( kind: Kind, { status = 0, errors = {}, issues = {}, message, ...detail }: Detail = {} ) {
 
         const resolved = status >= lowest && status <= highest ? status : kinds[kind];
@@ -73,7 +72,6 @@ export class Failure extends Error {
         this.spoken = message !== undefined;
 
     }
-
     facts (): Facts {
 
         return {
@@ -93,7 +91,6 @@ export function isFailure ( value: unknown ): value is Failure {
     return value instanceof Failure;
 
 }
-
 export function transient ( error: unknown ): boolean {
 
     if ( !isFailure(error) ) return false;
@@ -103,13 +100,11 @@ export function transient ( error: unknown ): boolean {
     );
 
 }
-
 export function settled ( error: unknown ): boolean {
 
     return isFailure(error) && (error.kind === "configuration" || error.kind === "missing" || error.kind === "denied");
 
 }
-
 export function guarded<T> ( work: () => T, kind: Kind = "input" ): T {
 
     try {
@@ -136,7 +131,6 @@ export async function attempt<T> ( work: () => Promise<T>, kind: Kind = "unknown
     }
 
 }
-
 export function failureOf ( error: unknown ): Failure {
 
     if ( isFailure(error) ) return error;
@@ -149,7 +143,6 @@ export function failureOf ( error: unknown ): Failure {
     return new Failure("unknown", { message: String(error), cause: error });
 
 }
-
 export function describe ( error: unknown, depth = 0 ): Record<string, unknown> {
 
     if ( !(error instanceof Error) ) return { message: String(error) };
@@ -165,7 +158,6 @@ export function describe ( error: unknown, depth = 0 ): Record<string, unknown> 
     return facts;
 
 }
-
 export function reference ( error: unknown ): string | null {
 
     if ( !isFailure(error) || !error.requestId ) return null;
@@ -176,7 +168,6 @@ export function reference ( error: unknown ): string | null {
         .toUpperCase()}`;
 
 }
-
 export function formErrors ( error: unknown, fallback: string ): Record<string, string> {
 
     if ( !isFailure(error) ) return { _form: fallback };

@@ -32,7 +32,6 @@ function ancestor ( path: string ): string {
     return realpathSync(current);
 
 }
-
 export function within ( base: string, path: string ): boolean {
 
     const target = resolve(path);
@@ -107,7 +106,6 @@ export function report ( line: string ): void {
     process.stdout.write(`${line}\n`);
 
 }
-
 export function task ( url: string, run: () => void | Promise<void> ): void {
 
     if ( process.argv[1] !== fileURLToPath(url) ) return;
@@ -122,7 +120,6 @@ export function task ( url: string, run: () => void | Promise<void> ): void {
         });
 
 }
-
 export function createCore ( root: URL | string ): Core {
 
     const base = resolve(typeof root === "string" ? root : fileURLToPath(root));

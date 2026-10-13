@@ -26,7 +26,6 @@ export function defineTokens ( input: Tokens ): Tokens {
     };
 
 }
-
 export function cssVariables ( tokens: Tokens, scheme: Scheme, selector: string ): string {
 
     const lines = [
@@ -43,7 +42,6 @@ export function cssVariables ( tokens: Tokens, scheme: Scheme, selector: string 
     return `${selector} {\n${lines.map(( line ) => `    ${line}`).join("\n")}\n}`;
 
 }
-
 export function nativeTokens ( tokens: Tokens, scheme: Scheme ): NativeTokens {
 
     return {

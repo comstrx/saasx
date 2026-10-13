@@ -32,7 +32,7 @@ export function bind<S extends object, A extends object> ( defined: Defined<S, A
     };
 
     return {
-        Provider: ( { children } ) => {
+        Provider: ({ children }) => {
 
             const [instance] = useState(defined.create);
 

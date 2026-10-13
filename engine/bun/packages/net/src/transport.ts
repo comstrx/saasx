@@ -36,7 +36,6 @@ function status ( response: Response, retryOn: readonly number[] ): void {
     throw new Failure("http", { status: response.status, retryAfter: retryAfter(response.headers.get("retry-after")) });
 
 }
-
 export async function send ( url: string, init: RequestInit, options: SendOptions = {} ): Promise<Reply> {
 
     const timeoutMs = options.timeoutMs ?? defaults.timeoutMs;
@@ -73,7 +72,6 @@ export async function send ( url: string, init: RequestInit, options: SendOption
     }
 
 }
-
 export async function readText ( response: Response, maxBytes: number ): Promise<string> {
 
     const length = Number(response.headers.get("content-length"));

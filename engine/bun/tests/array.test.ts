@@ -1,18 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-    chunk,
-    groupBy,
-    indexBy,
-    move,
-    partition,
-    range,
-    removeBy,
-    sortBy,
-    sumBy,
-    uniqueBy,
-    upsertBy,
-    zip,
-} from "@engine/array";
+import { chunk, groupBy, indexBy, move, partition, range, removeBy, sortBy, sumBy, uniqueBy, upsertBy, zip } from "@engine/array";
 
 const rows = [
     { id: 3, name: "c", price: 3 },
@@ -71,6 +58,44 @@ describe("array", () => {
             [1, "a"],
             [2, "b"],
         ]);
+
+    });
+
+});
+describe("edges", () => {
+
+    test("move copies on an out-of-range index and reorders otherwise", () => {
+
+        expect(move([1, 2, 3], 5, 0)).toEqual([1, 2, 3]);
+        expect(move([1, 2, 3], 0, 2)).toEqual([2, 3, 1]);
+        expect(move([1, 2, 3], 2, 0)).toEqual([3, 1, 2]);
+
+    });
+    test("chunk refuses a size below one and keeps the tail short", () => {
+
+        expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+        expect(chunk([1, 2], 0)).toEqual([]);
+
+    });
+    test("zip stops at the shorter side and range never goes negative", () => {
+
+        expect(zip([1, 2, 3], ["a", "b"])).toEqual([[1, "a"], [2, "b"]]);
+        expect(range(-2)).toEqual([]);
+        expect(range(3, 5)).toEqual([5, 6, 7]);
+
+    });
+    test("sumBy reads numbers out of strings and treats missing as zero", () => {
+
+        expect(sumBy([{ n: "2.5" }, { n: undefined }, { n: 1 }], "n")).toBe(3.5);
+        expect(sumBy([], "n")).toBe(0);
+
+    });
+    test("groupBy keeps first-seen order of groups and of members", () => {
+
+        const groups = groupBy([{ k: "b", v: 1 }, { k: "a", v: 2 }, { k: "b", v: 3 }], "k");
+
+        expect([...groups.keys()]).toEqual(["b", "a"]);
+        expect(groups.get("b")?.map(( item ) => item.v)).toEqual([1, 3]);
 
     });
 

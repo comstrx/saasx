@@ -1,20 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Failure } from "@engine/error";
-import {
-    directionOf,
-    failureMessages,
-    formatDate,
-    formatMoney,
-    formatNumber,
-    languageFacts,
-    languageName,
-    mergeMessages,
-    missingKeys,
-    negotiate,
-    plural,
-    splitLocale,
-    translator,
-} from "@engine/translate";
+import { dictionary, directionOf, failureMessages, formatDate, formatMoney, formatNumber, formatPercent, formatRange, isolate, isTimeZone, languageFacts, languageName, localePath, mergeMessages, messageTree, missingKeys, negotiate, plural, preferredPath, prefixed, regionOf, splitLocale, translator } from "@engine/translate";
 
 const routing = { locales: ["en", "ar"], defaultLocale: "en" };
 
@@ -159,6 +145,79 @@ describe("failure messages", () => {
 
         expect(failureMessages(new Failure("network", { status: 502 }), dictionary, "Failed")).toEqual({ _form: "Failed" });
         expect(failureMessages(new Failure("timeout"), dictionary, "Failed")).toEqual({ _form: "Failed" });
+
+    });
+
+});
+describe("dictionaries", () => {
+
+    test("a dictionary refuses dotted or unsafe keys, blank text and empty groups", () => {
+
+        expect(() => dictionary({ "a.b": "x" })).toThrow('invalid key "a.b"');
+        expect(() => dictionary(JSON.parse('{"__proto__":{"x":"y"}}'))).toThrow("invalid key");
+        expect(() => dictionary({ a: "  " })).toThrow("non-empty");
+        expect(() => dictionary({ a: {} })).toThrow("empty message group");
+        expect(() => dictionary("no")).toThrow("expected a message object");
+        expect(dictionary({ a: { b: "c" } })).toEqual({ a: { b: "c" } });
+
+    });
+    test("merging keeps the base shape: a leaf cannot become a tree and new keys are welcome", () => {
+
+        const base = { nav: { home: "Home", back: "Back" }, title: "T" };
+
+        expect(mergeMessages(base, { nav: { home: "Start" }, extra: "E" })).toEqual({ nav: { home: "Start", back: "Back" }, title: "T", extra: "E" });
+        expect(() => mergeMessages(base, { nav: "flat" })).toThrow("change the message shape");
+        expect(missingKeys(base, { nav: { home: "x" } })).toEqual(["nav.back", "title"]);
+        expect(messageTree(base, "nav")).toEqual({ home: "Home", back: "Back" });
+        expect(messageTree(base, "title")).toBeUndefined();
+
+    });
+
+});
+describe("locales and paths", () => {
+
+    const routing = { locales: ["en", "ar"], defaultLocale: "en" };
+
+    test("a path splits into locale and rest, and prefixes only when the locale is not the default", () => {
+
+        expect(splitLocale("/ar/account", routing)).toEqual({ locale: "ar", path: "/account", explicit: true });
+        expect(splitLocale("/account", routing)).toEqual({ locale: "en", path: "/account", explicit: false });
+        expect(splitLocale("", routing)).toEqual({ locale: "en", path: "/", explicit: false });
+        expect(localePath("ar", "/", routing)).toBe("/ar");
+        expect(localePath("en", "/x", routing)).toBe("/x");
+        expect(prefixed("ar", "/x")).toBe("/ar/x");
+
+    });
+    test("a preferred locale redirects an implicit path only, and only to a supported non-default locale", () => {
+
+        expect(preferredPath({ locale: "en", path: "/x", explicit: false }, "ar", routing)).toBe("/ar/x");
+        expect(preferredPath({ locale: "ar", path: "/x", explicit: true }, "ar", routing)).toBeUndefined();
+        expect(preferredPath({ locale: "en", path: "/x", explicit: false }, "fr", routing)).toBeUndefined();
+        expect(preferredPath({ locale: "en", path: "/x", explicit: false }, "en", routing)).toBeUndefined();
+
+    });
+    test("regions come from the first tag that names one; time zones are checked by the host", () => {
+
+        expect(regionOf("ar-EG,en;q=0.5")).toBe("EG");
+        expect(regionOf("en;q=0.3, fr-ca;q=0.9")).toBe("CA");
+        expect(regionOf("ar")).toBeUndefined();
+        expect(regionOf("junk;;")).toBeUndefined();
+        expect(isTimeZone("Africa/Cairo")).toBe(true);
+        expect(isTimeZone("Mars/Olympus")).toBe(false);
+        expect(negotiate("de, ar;q=0.8, en;q=0.9", ["en", "ar"])).toBe("en");
+        expect(negotiate("fr", ["en", "ar"])).toBeUndefined();
+
+    });
+    test("dates follow the style and the zone; ranges and isolation are stable", () => {
+
+        const at = new Date(Date.UTC(2026, 9, 13, 10, 30));
+
+        expect(formatDate("en", at, "month", "UTC")).toBe("October 2026");
+        expect(formatDate("en", at, "time", "UTC")).toBe("10:30 AM");
+        expect(formatDate("en", "2020-01-05T00:00:00Z", "day", "UTC")).toBe("Jan 5, 2020");
+        expect(formatRange("en", at, new Date(Date.UTC(2026, 9, 15)), "UTC")).toBe("Oct 13 – 15");
+        expect(isolate("$")).toBe("⁨$⁩");
+        expect(formatPercent("en", 0.256, 1)).toBe("25.6%");
 
     });
 

@@ -25,7 +25,6 @@ export function assetFiles ( folder: string, skip: Skip, publicFiles = false ): 
     return files;
 
 }
-
 export function composeAssets ( folders: readonly AssetFolder[], shared: string, brand: string, skip: Skip ): Files {
 
     const assets = folders.flatMap(( folder ) => {

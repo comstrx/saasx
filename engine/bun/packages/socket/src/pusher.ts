@@ -36,7 +36,6 @@ function parse ( raw: unknown ): Frame | undefined {
     }
 
 }
-
 export function pusherRealtime ( connection: Connection, authorize?: Authorizer ): Realtime {
 
     const handlers = new Map<string, Set<Handler>>();
@@ -148,7 +147,6 @@ export function pusherUrl ( base: string, key: string, client = "engine", trace?
     return trace ? `${address}&trace=${encodeURIComponent(trace)}` : address;
 
 }
-
 export function liveSource ( realtime: Realtime ): LiveSource {
 
     let opened = false;

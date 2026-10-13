@@ -117,7 +117,6 @@ function readPort<B> (
     };
 
 }
-
 function editable (
     facts: OperationFacts,
     input: Record<string, Value>,

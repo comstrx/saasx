@@ -13,7 +13,7 @@ export type SessionActions = {
 };
 export type SessionOptions = { name: string; store: Store };
 
-export function defineSession ( { name, store }: SessionOptions ): Defined<Session, SessionActions> {
+export function defineSession ({ name, store }: SessionOptions): Defined<Session, SessionActions> {
 
     return defineStore<Session, SessionActions>({
         name,

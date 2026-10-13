@@ -76,7 +76,6 @@ export function serializeCookie ( key: string, value: string, options: CookieOpt
     return parts.join("; ");
 
 }
-
 export function headerJar ( cookieHeader: string | null | undefined, write: ( setCookie: string ) => void ): Jar {
 
     const current = parseCookies(cookieHeader);
@@ -99,7 +98,6 @@ export function headerJar ( cookieHeader: string | null | undefined, write: ( se
     };
 
 }
-
 export function documentJar ( target: ReadableDocument ): Jar {
 
     return {
@@ -120,7 +118,6 @@ export function documentJar ( target: ReadableDocument ): Jar {
     };
 
 }
-
 export function storageJar ( store: Store ): Jar {
 
     type Kept = { value: string; expires: number | null };

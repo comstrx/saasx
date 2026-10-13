@@ -249,7 +249,6 @@ function compileConfig<
     });
 
 }
-
 export function compileSurface<
     C extends SurfaceConfig,
     I extends ConfigInputBase,
@@ -317,7 +316,6 @@ export function compileSurface<
     return { config, schema };
 
 }
-
 export function surfaceValidator<
     C extends SurfaceConfig,
     I extends ConfigInputBase,

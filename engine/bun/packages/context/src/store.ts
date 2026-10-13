@@ -35,7 +35,6 @@ function pick<S extends object> ( state: S, keys: readonly string[] ): Partial<S
     return Object.fromEntries(keys.map(( key ) => [key, state[key as keyof S]])) as Partial<S>;
 
 }
-
 export function defineStore<S extends object, A extends object> ( definition: Definition<S, A> ): Defined<S, A> {
 
     const { name, initial, actions, persist } = definition;

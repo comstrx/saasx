@@ -48,13 +48,11 @@ function clean ( value: unknown, redact: readonly string[], depth = 0 ): unknown
     return value;
 
 }
-
 export function logLine ( level: Level, event: string, facts: Facts = {}, redact: readonly string[] = secrets ): string {
 
     return JSON.stringify({ level, event, at: new Date().toISOString(), ...(clean(facts, redact) as Facts) });
 
 }
-
 export function memorySink (): Sink & { entries: Entry[]; lines: string[] } {
 
     const entries: Entry[] = [];
@@ -72,7 +70,6 @@ export function memorySink (): Sink & { entries: Entry[]; lines: string[] } {
     return sink;
 
 }
-
 export function lineSink ( write: ( line: string ) => void ): Sink {
 
     return ( _entry, line ) => {

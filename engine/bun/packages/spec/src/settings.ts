@@ -84,7 +84,6 @@ export function mergeSettings<T extends Patch> ( defaults: T, given: Patch ): T 
     } as T;
 
 }
-
 export function settingsResource ( settings: Settings ): Record<string, unknown> {
 
     return {
@@ -99,7 +98,7 @@ export function settingsResource ( settings: Settings ): Record<string, unknown>
     };
 
 }
-export function choiceIssues ( { locale, currency, theme }: Settings ): string[] {
+export function choiceIssues ({ locale, currency, theme }: Settings): string[] {
 
     return Object.entries({ locale, currency, theme }).flatMap(( [name, choice] ) => [
         ...(new Set(choice.enabled).size !== choice.enabled.length
@@ -152,7 +151,6 @@ export function shellOptions<K extends string> (
     return Object.fromEntries(entries) as Record<K, Record<string, unknown>>;
 
 }
-
 export function screenIssues ( screens: readonly Declared[], reserved: RegExp ): string[] {
 
     const issues: string[] = [];
@@ -179,7 +177,6 @@ export function screenIssues ( screens: readonly Declared[], reserved: RegExp ):
     return issues;
 
 }
-
 export function iconIssues (
     screens: readonly { contents: { name: string; icon?: string | null | undefined } }[],
     icons: readonly string[] | undefined,
@@ -187,12 +184,11 @@ export function iconIssues (
 
     if ( !icons ) return [];
 
-    return screens.flatMap(( { contents: { name, icon } } ) =>
+    return screens.flatMap(({ contents: { name, icon } }) =>
         icon && !icons.includes(icon) ? [`${name}: no icon named ${icon}; the surface knows ${icons.join(", ")}.`] : [],
     );
 
 }
-
 export function compileScreen<B extends object> ( plan: ScreenPlan<B> ): CompiledScreen<B> {
 
     const { name, path, issues } = plan;
@@ -224,7 +220,6 @@ export function compileScreen<B extends object> ( plan: ScreenPlan<B> ): Compile
     return { walk, blocks };
 
 }
-
 export function claimShell<B> (
     walk: Walk<B>,
     options: Record<string, unknown>,
@@ -245,7 +240,6 @@ export function address ( origin: string | null, path: string ): string | null {
     return origin === null ? null : path ? `${origin}/${path}` : origin;
 
 }
-
 export function compileApi ( plan: ApiPlan ): Compiled {
 
     const { identity, endpoints, seeds, currency, backend, switches, core = {} } = plan;

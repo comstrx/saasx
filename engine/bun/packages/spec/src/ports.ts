@@ -49,7 +49,6 @@ export function fillInput ( input: Input, route: Route ): Record<string, unknown
     );
 
 }
-
 export async function portValue (
     port: CompiledPort | undefined,
     route: Route,
@@ -60,7 +59,6 @@ export async function portValue (
     return (await portAnswer(port, route, source, signal)).value;
 
 }
-
 export async function portAnswer (
     port: CompiledPort | undefined,
     route: Route,
@@ -77,13 +75,11 @@ export async function portAnswer (
     return source.read(port.feature, port.operation, fillInput(port.input, route), port.many, signal);
 
 }
-
 export function rows ( value: unknown ): Rows {
 
     return Array.isArray(value) ? value.filter(isRecord) : [];
 
 }
-
 export function row ( value: unknown ): Record<string, unknown> | undefined {
 
     if ( Array.isArray(value) ) return value.find(isRecord);
@@ -91,7 +87,6 @@ export function row ( value: unknown ): Record<string, unknown> | undefined {
     return isRecord(value) ? value : undefined;
 
 }
-
 export function field ( record: Record<string, unknown> | undefined, path: string ): string | undefined {
 
     const value = record ? pathGet(record, path) : undefined;

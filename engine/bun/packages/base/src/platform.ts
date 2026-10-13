@@ -29,7 +29,6 @@ export function now (): number {
     return globals.performance?.now?.() ?? Date.now();
 
 }
-
 export function randomBytes ( size: number ): Uint8Array {
 
     const bytes = new Uint8Array(size);

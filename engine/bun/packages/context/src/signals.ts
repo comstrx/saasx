@@ -44,7 +44,7 @@ export function bindSignals (): SignalBinding {
     };
 
     return {
-        Provider: ( { children } ) => {
+        Provider: ({ children }) => {
 
             const [store] = useState(createSignals);
 

@@ -56,7 +56,6 @@ export function messageAt ( messages: Messages, key: string ): string | undefine
     return typeof value === "string" ? value : undefined;
 
 }
-
 export function messageTree ( messages: Messages, key: string ): Messages | undefined {
 
     const value = pathGet(messages, key);
@@ -93,7 +92,6 @@ export function mergeMessages ( base: Messages, overrides: Messages, path = "mes
     return result;
 
 }
-
 export function missingKeys ( reference: Messages, other: Messages ): string[] {
 
     const known = new Set(messageKeys(other));
@@ -101,7 +99,6 @@ export function missingKeys ( reference: Messages, other: Messages ): string[] {
     return messageKeys(reference).filter(( key ) => !known.has(key));
 
 }
-
 export function translator ( messages: Messages, onMissing?: ( key: string ) => void ): Translate {
 
     return ( key, scope = {} ) => {

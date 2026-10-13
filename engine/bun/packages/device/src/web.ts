@@ -155,7 +155,6 @@ function hostEvents ( host: Host, types: readonly string[], listener: () => void
     };
 
 }
-
 export function webAdapter ( host: Host = globalThis as Host ): Adapter {
 
     const navigator = host.navigator;

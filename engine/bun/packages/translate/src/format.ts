@@ -10,7 +10,6 @@ function tag ( locale: string, numerals: Numerals ): string {
     return `${locale}-u-nu-${numerals}`;
 
 }
-
 export function formatNumber (
     locale: string,
     value: number,
@@ -26,7 +25,6 @@ export function formatPercent ( locale: string, ratio: number, digits = 0, numer
     return formatNumber(locale, ratio, { style: "percent", maximumFractionDigits: digits }, numerals);
 
 }
-
 export function formatMoney ( locale: string, amount: number, currency: string, numerals: Numerals = "latn" ): MoneyParts {
 
     const parts = new Intl.NumberFormat(tag(locale, numerals), {
@@ -49,7 +47,6 @@ export function formatMoney ( locale: string, amount: number, currency: string, 
     };
 
 }
-
 export function formatDate (
     locale: string,
     value: Date | string | number,
@@ -77,7 +74,6 @@ export function formatRange ( locale: string, from: Date, to: Date, timeZone?: s
     return new Intl.DateTimeFormat(tag(locale, "latn"), options).formatRange(from, to);
 
 }
-
 export function plural ( locale: string, count: number, forms: Partial<Record<Intl.LDMLPluralRule, string>> ): string {
 
     const category = new Intl.PluralRules(locale).select(count);
@@ -86,7 +82,6 @@ export function plural ( locale: string, count: number, forms: Partial<Record<In
     return form.replaceAll("{n}", formatNumber(locale, count));
 
 }
-
 export function isolate ( text: string ): string {
 
     return `${isolateStart}${text}${isolateEnd}`;

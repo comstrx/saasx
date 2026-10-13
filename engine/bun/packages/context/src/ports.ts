@@ -48,7 +48,6 @@ function newer ( current: unknown, incoming: unknown, version: string | undefine
     return String(after) >= String(before);
 
 }
-
 export function applyPatch ( current: unknown, many: boolean, event: string, data: unknown, patch: Patch ): Patched {
 
     const incoming = pathGet(data, patch.path);
@@ -81,7 +80,6 @@ export function applyPatch ( current: unknown, many: boolean, event: string, dat
     return { value: { ...held, ...incoming }, applied: true };
 
 }
-
 export function portKey ( port: CompiledPort | undefined, route: Route, identity: readonly unknown[] ): string {
 
     const input = port?.kind === "read" ? fillInput(port.input, route) : undefined;
@@ -190,7 +188,6 @@ export function useOperation (
     return useAction<Input, Written | Queued, RequestOptions>(perform);
 
 }
-
 export function usePortResource (
     api: ApiSurface,
     port: CompiledPort | undefined,

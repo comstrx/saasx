@@ -62,7 +62,6 @@ async function manifestOf ( folder: string, name: string ): Promise<Manifest> {
     return parsed.data;
 
 }
-
 export async function featureFacts ( folder: string ): Promise<Features> {
 
     const facts: Features = {};

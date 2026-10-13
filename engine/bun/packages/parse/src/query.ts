@@ -33,7 +33,6 @@ export function isQuery ( value: unknown, depth = 0 ): value is QueryInput {
     return typeof value === "object" && Object.values(value).every(( item ) => isQuery(item, depth + 1));
 
 }
-
 export function queryEntries ( query: Query ): [string, string][] {
 
     return Object.entries(query).flatMap(( [key, value] ) => entries(key, value, 0));
@@ -46,7 +45,6 @@ export function queryString ( query: Query ): string {
     return params.size ? `?${params}` : "";
 
 }
-
 export function parseQuery ( search: string ): Record<string, string | string[]> {
 
     const result: Record<string, string | string[]> = {};

@@ -129,7 +129,6 @@ function fill (
     );
 
 }
-
 function placed ( fields: readonly FieldFact[], errors: Record<string, string> ): Record<string, string> {
 
     const known = new Set(fields.map(( field ) => field.name));
@@ -152,7 +151,6 @@ function same ( a: FormValues, b: FormValues ): boolean {
     return JSON.stringify(a) === JSON.stringify(b);
 
 }
-
 export function createForm<T> ({
     fields,
     locales,

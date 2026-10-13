@@ -81,7 +81,6 @@ export function isLoopback ( value: string ): boolean {
     }
 
 }
-
 export function sameOrigin ( origin: string | null | undefined, host: string, secure: boolean ): boolean {
 
     if ( !origin || !host ) return false;

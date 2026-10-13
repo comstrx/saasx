@@ -74,7 +74,6 @@ export function expiring<T> ( lifetime: number ): Expiring<T> {
     };
 
 }
-
 export function lru<K, V> ( capacity: number ): Lru<K, V> {
 
     const entries = new Map<K, V>();
@@ -121,7 +120,6 @@ export function lru<K, V> ( capacity: number ): Lru<K, V> {
     };
 
 }
-
 export function dedupe<T> (): Dedupe<T> {
 
     const pending = new Map<string, Promise<T>>();
@@ -145,7 +143,6 @@ export function dedupe<T> (): Dedupe<T> {
     };
 
 }
-
 export function remember<T> ( lifetime: number, keep: ( error: unknown ) => boolean = () => false ): Remember<T> {
 
     const entries = new Map<string, Pending<T>>();

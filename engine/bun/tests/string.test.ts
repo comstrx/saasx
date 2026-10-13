@@ -1,20 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-    camelCase,
-    collapse,
-    escapeHtml,
-    escapeRegExp,
-    initials,
-    isBlank,
-    kebabCase,
-    mask,
-    pascalCase,
-    slugify,
-    snakeCase,
-    titleCase,
-    truncate,
-    words,
-} from "@engine/string";
+import { camelCase, collapse, escapeHtml, escapeRegExp, initials, isBlank, kebabCase, mask, pascalCase, slugify, snakeCase, titleCase, truncate, words } from "@engine/string";
 
 describe("string", () => {
 
@@ -56,6 +41,40 @@ describe("string", () => {
         expect(escapeHtml("<a href='x'>&</a>")).toBe("&lt;a href=&#39;x&#39;&gt;&amp;&lt;/a&gt;");
         expect(new RegExp(escapeRegExp("a.b*c")).test("a.b*c")).toBe(true);
         expect(isBlank(" ")).toBe(true);
+        expect(isBlank("x")).toBe(false);
+
+    });
+
+});
+describe("cases and escapes", () => {
+
+    test("every case form agrees on the same words", () => {
+
+        expect(camelCase("Walk  Form_hotel-2")).toBe("walkFormHotel2");
+        expect(pascalCase("walk form")).toBe("WalkForm");
+        expect(snakeCase("WalkFormHotel")).toBe("walk_form_hotel");
+        expect(kebabCase("café Crème")).toBe("cafe-creme");
+        expect(titleCase("the big ONE")).toBe("The Big One");
+
+    });
+    test("initials take the first letters of the first words only", () => {
+
+        expect(initials("Abdulrahman Yasser Mohamed")).toBe("AY");
+        expect(initials("single", 3)).toBe("S");
+        expect(initials("")).toBe("");
+
+    });
+    test("html escaping covers every dangerous character and nothing else", () => {
+
+        expect(escapeHtml(`<a href="x" title='y'>&</a>`)).toBe("&lt;a href=&quot;x&quot; title=&#39;y&#39;&gt;&amp;&lt;/a&gt;");
+        expect(escapeHtml("plain text")).toBe("plain text");
+
+    });
+    test("collapse folds any whitespace run and trims; blank is any whitespace or nothing", () => {
+
+        expect(collapse("  a \n\t b  ")).toBe("a b");
+        expect(isBlank(" \n")).toBe(true);
+        expect(isBlank(null)).toBe(true);
         expect(isBlank("x")).toBe(false);
 
     });

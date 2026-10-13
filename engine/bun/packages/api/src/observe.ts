@@ -23,7 +23,6 @@ function severity ( error: Failure ): Level | undefined {
     return error.kind !== "http" || error.status >= serverFloor ? "error" : undefined;
 
 }
-
 export function reportOf ( { call, ms, trace, request, error }: Outcome, slow: number ): Report | undefined {
 
     const time = Math.round(ms);
@@ -53,7 +52,7 @@ export function createMeter (): Meter {
     let counters = new Map<string, Metric>();
 
     return {
-        record: ( { call, ms, error } ) => {
+        record: ({ call, ms, error }) => {
 
             const time = Math.round(ms);
             const metric = counters.get(call) ?? { call, count: 0, failures: 0, ms: 0, max: 0 };

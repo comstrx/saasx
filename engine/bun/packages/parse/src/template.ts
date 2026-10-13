@@ -13,7 +13,6 @@ export function textOf ( value: unknown ): string {
     return "";
 
 }
-
 export function interpolate (
     template: string,
     scope: Scope,

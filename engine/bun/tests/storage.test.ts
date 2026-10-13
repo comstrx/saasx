@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { driverStore, lazyStore, memoryStore, namespaced, typed } from "@engine/storage";
+import { Failure } from "@engine/error";
+import { driverStore, lazyStore, memoryStore, namespaced, typed, webStore } from "@engine/storage";
 
 describe("storage", () => {
 
@@ -58,6 +59,53 @@ describe("storage", () => {
         await store.set("k", "v");
         expect(await store.get("k")).toBe("v");
         expect(await store.keys()).toEqual(["k"]);
+
+    });
+
+});
+describe("edges", () => {
+
+    test("a throwing web storage surfaces as a configuration failure, never a raw error", () => {
+
+        const broken = {
+            getItem: () => {
+
+                throw new Error("QuotaExceeded");
+
+            },
+            setItem: () => undefined,
+            removeItem: () => undefined,
+            key: () => null,
+            length: 0,
+        };
+        const store = webStore(broken);
+
+        expect(() => store.get("x")).toThrow(Failure);
+        expect(store.keys()).toEqual([]);
+
+    });
+    test("web storage keys skip holes and a custom codec round-trips its own shape", async () => {
+
+        const items = new Map<string, string>([["a", "1"], ["b", "2"]]);
+        const storage = {
+            getItem: ( key: string ) => items.get(key) ?? null,
+            setItem: ( key: string, value: string ) => void items.set(key, value),
+            removeItem: ( key: string ) => void items.delete(key),
+            key: ( index: number ) => [...items.keys()][index] ?? null,
+            get length () {
+
+                return items.size;
+
+            },
+        };
+        const store = webStore(storage);
+        const numbers = typed<number>(store, { encode: ( value ) => `n:${value}`, decode: ( text ) => (text.startsWith("n:") ? Number(text.slice(2)) : undefined) });
+
+        expect(store.keys()).toEqual(["a", "b"]);
+        await numbers.write("n", 7);
+        expect(await numbers.read("n")).toBe(7);
+        expect(await numbers.read("a")).toBeUndefined();
+        expect(store.get("a")).toBeNull();
 
     });
 

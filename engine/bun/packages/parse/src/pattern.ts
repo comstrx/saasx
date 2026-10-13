@@ -10,7 +10,6 @@ export function templateKeys ( template: string ): string[] {
     return [...template.matchAll(placeholder)].map(( match ) => match[1] ?? "");
 
 }
-
 export function expandTemplate ( template: string, params: Readonly<Record<string, string | number | boolean>> ): string {
 
     const path = template.replace(placeholder, ( _: string, key: string ) => {
@@ -36,7 +35,6 @@ export function expandTemplate ( template: string, params: Readonly<Record<strin
     return path;
 
 }
-
 export function patternKeys ( pattern: string ): string[] {
 
     return pattern
@@ -45,7 +43,6 @@ export function patternKeys ( pattern: string ): string[] {
         .map(( part ) => part.slice(1));
 
 }
-
 export function matchPattern ( pattern: string, segments: readonly string[] ): Record<string, string> | undefined {
 
     const parts = pattern.split("/").filter(Boolean);
@@ -66,7 +63,6 @@ export function matchPattern ( pattern: string, segments: readonly string[] ): R
     return params;
 
 }
-
 export function fillPattern ( pattern: string, params: Params ): string {
 
     const parts = pattern
@@ -85,7 +81,6 @@ export function segmentsOf ( path: string ): string[] {
     return path.split("/").filter(Boolean);
 
 }
-
 export function entityParam ( id: number, slug?: string | null ): string {
 
     return slug && /^[a-z0-9][a-z0-9-]*$/.test(slug) ? `${id}-${slug}` : String(id);

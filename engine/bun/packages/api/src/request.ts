@@ -31,7 +31,6 @@ export function resolveTenant ( host: string | undefined ): string | undefined {
     return host ? hostname(host) : undefined;
 
 }
-
 export function requestContext (
     settings: Pick<ApiConfig["context"], "currency" | "tenant">,
     values: ContextValues,
@@ -118,7 +117,6 @@ function split ( wire: Wire, input: Record<string, unknown> ): Parts {
     return parts;
 
 }
-
 export function encode ( wire: Wire, input: Record<string, unknown>, baseUrl: string ): Encoded {
 
     return guarded(() => {

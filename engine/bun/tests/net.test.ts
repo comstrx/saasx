@@ -1,15 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Failure } from "@engine/error";
-import {
-    contentSecurityPolicy,
-    forwardedFor,
-    isOrigin,
-    joinUrl,
-    readJson,
-    retryAfter,
-    sameOrigin,
-    send,
-} from "@engine/net";
+import { contentSecurityPolicy, forwardedFor, hostname, isEndpoint, isLoopback, isOrigin, joinUrl, originOf, readJson, retryAfter, sameOrigin, send } from "@engine/net";
 
 describe("net", () => {
 
@@ -66,6 +57,60 @@ describe("same origin", () => {
         expect(sameOrigin("http://evil.test", "shop.test", false)).toBe(false);
         expect(sameOrigin(null, "shop.test", false)).toBe(false);
         expect(sameOrigin("null", "shop.test", false)).toBe(false);
+
+    });
+
+});
+describe("edges", () => {
+
+    test("forwarded-for counts hops from the right and gives up past the chain", () => {
+
+        expect(forwardedFor("1.1.1.1, 2.2.2.2, 3.3.3.3", 1)).toBe("3.3.3.3");
+        expect(forwardedFor("1.1.1.1, 2.2.2.2, 3.3.3.3", 2)).toBe("2.2.2.2");
+        expect(forwardedFor("1.1.1.1", 3)).toBeUndefined();
+        expect(forwardedFor("1.1.1.1", 0)).toBeUndefined();
+        expect(forwardedFor(null, 1)).toBeUndefined();
+
+    });
+    test("retry-after reads seconds or a date and never goes negative", () => {
+
+        expect(retryAfter("30")).toBe(30);
+        expect(retryAfter("-1")).toBeUndefined();
+        expect(retryAfter(new Date(Date.now() - 60_000).toUTCString())).toBe(0);
+        expect(retryAfter("soon")).toBeUndefined();
+        expect(retryAfter(null)).toBeUndefined();
+
+    });
+    test("a content security policy drops empty and false sources", () => {
+
+        expect(contentSecurityPolicy({ "default-src": ["'self'"], "img-src": ["'self'", false, "", null, "https:"], "frame-ancestors": [] }))
+            .toBe("default-src 'self'; img-src 'self' https:; frame-ancestors");
+
+    });
+    test("origins and endpoints are strict about credentials, paths, queries and schemes", () => {
+
+        expect(isOrigin("https://a.test")).toBe(true);
+        expect(isOrigin("https://a.test/")).toBe(false);
+        expect(isOrigin("https://u:p@a.test")).toBe(false);
+        expect(isOrigin("ftp://a.test")).toBe(false);
+        expect(isEndpoint("https://a.test/v1/")).toBe(true);
+        expect(isEndpoint("https://a.test/v1?x=1")).toBe(false);
+        expect(hostname("A.Test:8080")).toBe("a.test");
+        expect(hostname("::bad::")).toBeUndefined();
+        expect(originOf("a.test:3000", false)).toBe("http://a.test:3000");
+
+    });
+    test("joined urls keep one slash and spread query arrays; loopbacks are recognized in every spelling", () => {
+
+        const url = joinUrl("https://a.test/", "/v1/items", { ids: [1, 2], q: "x y" });
+
+        expect(url.toString()).toBe("https://a.test/v1/items?ids%5B%5D=1&ids%5B%5D=2&q=x+y");
+        expect(isLoopback("http://localhost:3000")).toBe(true);
+        expect(isLoopback("http://app.localhost")).toBe(true);
+        expect(isLoopback("http://[::1]:80")).toBe(true);
+        expect(isLoopback("http://10.0.0.1")).toBe(false);
+        expect(sameOrigin("https://A.test", "a.test", true)).toBe(true);
+        expect(sameOrigin("http://a.test", "a.test", true)).toBe(false);
 
     });
 

@@ -72,7 +72,6 @@ export function many<T extends z.ZodType> ( item: T ): Many<T> {
     return { many: item };
 
 }
-
 export function feature<const T extends Record<string, Endpoint>> ( defaults: Layer & Partial<Facts>, endpoints: T ): T {
 
     const { permissions = [], touches = [], ...layer } = defaults;
@@ -92,7 +91,6 @@ export function factsOf ( endpoints: object ): Facts {
     return facts.get(endpoints) ?? { permissions: [], touches: [] };
 
 }
-
 export function document<R extends Resource> ( resource: R, path?: string, wire: Layer = {} ) {
 
     return {
@@ -108,7 +106,6 @@ export function document<R extends Resource> ( resource: R, path?: string, wire:
     };
 
 }
-
 export function need<E extends Endpoint> ( permissions: readonly string[], endpoint: E ): E {
 
     return { ...endpoint, permissions: [...new Set([...endpoint.permissions, ...permissions])] };

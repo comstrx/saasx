@@ -200,7 +200,6 @@ async function request (
     }
 
 }
-
 export function createSurface (
     catalogue: Catalogue,
     settings: Settings,

@@ -47,7 +47,6 @@ export function parseInteger ( value: unknown ): number | undefined {
     return parsed !== undefined && Number.isSafeInteger(parsed) ? parsed : undefined;
 
 }
-
 export function parseDuration ( value: string | number ): number {
 
     if ( typeof value === "number" ) return value;
@@ -61,7 +60,6 @@ export function parseDuration ( value: string | number ): number {
     return Math.round(Number(match[1]) * factor);
 
 }
-
 export function parseBytes ( value: string | number ): number {
 
     if ( typeof value === "number" ) return value;

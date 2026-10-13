@@ -22,7 +22,7 @@ export type Outbox = {
     ) => Promise<Replay>;
 };
 
-export function createOutbox ( { store, key }: { store: Store; key: string } ): Outbox {
+export function createOutbox ({ store, key }: { store: Store; key: string }): Outbox {
 
     const box = typed<Pending[]>(store);
     const list = async (): Promise<Pending[]> => (await box.read(key)) ?? [];

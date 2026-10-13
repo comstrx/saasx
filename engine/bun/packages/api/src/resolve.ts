@@ -122,7 +122,6 @@ function strangers ( catalogue: Catalogue, parsed: Overrides ): string[] {
     });
 
 }
-
 export function resolveApi (
     catalogue: Catalogue,
     input: ApiInput,
@@ -146,7 +145,6 @@ export function resolveApi (
     return { api: { context: api.context, connections: mapValues(api.connections, connect) }, contract };
 
 }
-
 export function browserConfig ( api: ApiConfig, contract: Contract ): BrowserConfig {
 
     const features = mapValues(contract.features, ( operations ) =>

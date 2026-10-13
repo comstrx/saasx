@@ -17,7 +17,6 @@ export function modeOf ( asked: string | undefined ): Mode {
     return process.env.NODE_ENV === "production" ? "production" : "development";
 
 }
-
 export function selectConnection<T extends Connection> ( value: T, mode: Mode ): T {
 
     const { development, ...connection } = value;
@@ -38,7 +37,6 @@ export function routingOf ( settings: { locale: { enabled: string[]; default: st
     return { locales: settings.locale.enabled, defaultLocale: settings.locale.default };
 
 }
-
 export function assetHash ( assets: ReadonlyMap<string, Uint8Array> ): string {
 
     const digest = createHash("sha256");
@@ -62,7 +60,6 @@ export function brandImages ( paths: readonly (string | null)[], assets: Readonl
     }
 
 }
-
 export function specAliases (
     root: string,
     folder: string,
@@ -79,7 +76,6 @@ export function specAliases (
     };
 
 }
-
 export function registryModule ( root: string, folder: string, features: readonly string[] ): string {
 
     const lines = features.map(( name ) => {

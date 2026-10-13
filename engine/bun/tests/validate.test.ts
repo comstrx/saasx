@@ -1,17 +1,5 @@
 import { describe, expect, expectTypeOf, test } from "bun:test";
-import {
-    assert,
-    email,
-    fieldFacts,
-    issuesOf,
-    localized,
-    parse,
-    password,
-    phone,
-    rulesOf,
-    shapeKeys,
-    z,
-} from "@engine/validate";
+import { assert, currency, email, fieldFacts, issuesOf, key, language, localized, money, parse, password, path, phone, rulesOf, shapeKeys, slug, z } from "@engine/validate";
 
 describe("validate", () => {
 
@@ -213,6 +201,65 @@ describe("fieldFacts over nested objects", () => {
             ["address.zip", "text", false, undefined],
             ["tags", "object", true, undefined],
         ]);
+
+    });
+
+});
+describe("rules from issues", () => {
+
+    test("every zod issue code maps to one engine rule with its parameters", () => {
+
+        const shape = z.strictObject({
+            name: z.string().min(2),
+            count: z.number().max(3),
+            kind: z.enum(["a", "b"]),
+            mail: z.email(),
+            flag: z.boolean(),
+        });
+        const result = z.safeParse(shape, { name: "x", count: 9, kind: "c", mail: "no", extra: 1 });
+
+        expect(result.success).toBe(false);
+
+        const rules = rulesOf((result as { error: z.ZodError }).error);
+
+        expect(rules.name).toEqual([{ rule: "min", params: { minimum: 2 } }]);
+        expect(rules.count).toEqual([{ rule: "max", params: { maximum: 3 } }]);
+        expect(rules.kind).toEqual([{ rule: "choice", params: { choices: "a, b" } }]);
+        expect(rules.mail).toEqual([{ rule: "format", params: { format: "email" } }]);
+        expect(rules.flag).toEqual([{ rule: "required" }]);
+        expect(rules._form).toEqual([{ rule: "unknown" }]);
+
+    });
+    test("a wrong type names what was expected, and parse carries its reason", () => {
+
+        const parsed = parse(z.object({ n: z.number() }), { n: "1" }, "bad_input");
+
+        expect(parsed.ok).toBe(false);
+
+        if ( parsed.ok ) return;
+
+        expect(parsed.failure.reason).toBe("bad_input");
+        expect(parsed.failure.issues.n).toEqual([{ rule: "type", params: { expected: "number" } }]);
+        expect(() => assert(z.number(), "x")).toThrow();
+        expect(assert(z.number(), 1)).toBe(1);
+
+    });
+    test("the field vocabulary refuses what it should", () => {
+
+        expect(z.safeParse(phone, "01099188572").success).toBe(false);
+        expect(z.safeParse(phone, "+201099188572").success).toBe(true);
+        expect(z.safeParse(password, "short").success).toBe(false);
+        expect(z.safeParse(email, "a@b").success).toBe(false);
+        expect(z.safeParse(key, "Not-A-Key").success).toBe(false);
+        expect(z.safeParse(key, "a-key-1").success).toBe(true);
+        expect(z.safeParse(slug, "-bad").success).toBe(false);
+        expect(z.safeParse(currency, "usd").success).toBe(false);
+        expect(z.safeParse(money, "12.345678").success).toBe(true);
+        expect(z.safeParse(money, "12.3456789").success).toBe(false);
+        expect(z.safeParse(path, "/a/b-c").success).toBe(true);
+        expect(z.safeParse(path, "a/b").success).toBe(false);
+        expect(z.safeParse(language, "ar-EG").success).toBe(true);
+        expect(z.safeParse(language, "arabic").success).toBe(false);
 
     });
 

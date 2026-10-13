@@ -41,7 +41,6 @@ export function stateIssues ( features: Features ): string[] {
     });
 
 }
-
 function kind ( value: unknown ): string {
 
     return isSpecKey(value) ? "string" : kindOf(value);

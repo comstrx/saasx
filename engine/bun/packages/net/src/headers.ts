@@ -39,7 +39,7 @@ export function retryAfter ( value: string | null ): number | undefined {
 
     const seconds = Number(value);
 
-    if ( Number.isFinite(seconds) && seconds >= 0 ) return seconds;
+    if ( Number.isFinite(seconds) ) return seconds >= 0 ? seconds : undefined;
 
     const at = Date.parse(value);
 

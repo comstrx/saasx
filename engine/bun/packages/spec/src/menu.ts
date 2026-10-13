@@ -16,6 +16,6 @@ export function menuOf ( screens: readonly MenuScreen[], part: string ): MenuIte
 
     return screens
         .filter(( screen ) => screen.options[part] === true && !screen.path.includes(":") && screen.access !== "guest")
-        .map(( { name, path, title, icon, access } ) => ({ name, path, title, icon: icon ?? null, access }));
+        .map(({ name, path, title, icon, access }) => ({ name, path, title, icon: icon ?? null, access }));
 
 }

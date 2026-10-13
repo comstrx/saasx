@@ -53,7 +53,6 @@ function ruleOf ( issue: RawIssue ): Issue {
     return { rule: "invalid" };
 
 }
-
 export function rulesOf ( error: z.ZodError ): Issues {
 
     const issues: Issues = {};
@@ -69,7 +68,6 @@ export function rulesOf ( error: z.ZodError ): Issues {
     return issues;
 
 }
-
 export function parse<T extends z.ZodType> ( schema: T, value: unknown, reason = "invalid_input" ): Parsed<z.output<T>> {
 
     const result = schema.safeParse(value, { reportInput: true });
@@ -95,7 +93,6 @@ export function assert<T extends z.ZodType> ( schema: T, value: unknown, reason 
     return result.value;
 
 }
-
 export function shapeKeys ( schema: z.ZodType ): string[] {
 
     const shape = (schema as z.ZodType & { shape?: Record<string, unknown> }).shape;
