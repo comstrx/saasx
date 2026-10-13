@@ -55,4 +55,4 @@ bun tools/lighthouse <report.json> [seo=50]   category floors
 
 ## Modes, by values alone
 
-The same engine answers six shapes from one spec folder: SEO site (robots allow + sitemap), non-SEO panel (empty lists), with backend (`contracts.urls`), without backend (`contracts: null`, data/site ports only), single tenant (`contracts.options.tenant`) and multi tenant (tenant from the request host). `tests/spec/modes.test.ts` proves each from the real specs.
+The same engine answers six shapes from one spec folder: SEO site (robots allow + sitemap), non-SEO panel (empty lists), with backend (`contracts.urls`), without backend (`contracts: null`, data/site ports only), single tenant (`contracts.options.tenant`) and multi tenant (tenant from the request host). `tests/modes.test.ts` proves each from the real specs.
