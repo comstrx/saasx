@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: true
 
 permissions:
@@ -54,6 +54,6 @@ jobs:
 
       - name: Gates
         env:
-          BASELINE: ${{ github.base_ref || github.ref_name }}
+          BASELINE: ${{ github.event.pull_request.base.sha || github.event.before }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- gates --baseline "origin/${BASELINE}"
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- gates --baseline "${BASELINE:-origin/main}"
