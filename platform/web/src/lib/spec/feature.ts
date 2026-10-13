@@ -1,13 +1,8 @@
+import type { CompiledPort, Localized, FeatureProps as Props, Route as Routed } from "@engine/spec";
 import type { ReactNode } from "react";
-import type { Localized } from "./fields.ts";
-import type { CompiledScreen } from "./screens.ts";
+import type { CompiledScreen } from "./surface.ts";
 
-export type Route = { parameters: Record<string, string>; query: Record<string, string | string[] | undefined> };
+export type Route = Routed;
 export type Screen = Localized<CompiledScreen>;
-export type FeatureProps<O extends Record<string, unknown> = Record<string, unknown>> = {
-    options: O;
-    screen: Screen;
-    route: Route;
-    feature?: { id: string; heading: boolean };
-    children?: ReactNode;
-};
+export type Ports = Record<string, CompiledPort>;
+export type FeatureProps<O extends Record<string, unknown> = Record<string, unknown>> = Props<O, Screen, ReactNode>;

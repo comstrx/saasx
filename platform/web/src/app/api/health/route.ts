@@ -1,5 +1,5 @@
-import { publicApi } from "@/api/workflow/server";
-import { identity } from "@/lib/spec/config";
+import { read } from "@/api/workflow/server";
+import { config, identity } from "@/lib/spec/server";
 
 type Backend = { reachable: boolean; ms: number };
 
@@ -11,9 +11,9 @@ async function probe (): Promise<Backend> {
 
     try {
 
-        await publicApi.policy.read();
+        const result = await read("site", "read");
 
-        return { reachable: true, ms: Math.round(performance.now() - started) };
+        return { reachable: result.meta.source === "remote", ms: Math.round(performance.now() - started) };
 
     }
     catch {
@@ -25,7 +25,8 @@ async function probe (): Promise<Backend> {
 }
 export async function GET ( request: Request ): Promise<Response> {
 
-    const backend = new URL(request.url).searchParams.has("deep") ? await probe() : undefined;
+    const deep = new URL(request.url).searchParams.has("deep") && config.api !== null;
+    const backend = deep ? await probe() : undefined;
     const degraded = backend?.reachable === false;
 
     return Response.json(

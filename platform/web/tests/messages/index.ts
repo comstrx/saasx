@@ -1,1 +1,0 @@
-import "./dictionaries.ts";

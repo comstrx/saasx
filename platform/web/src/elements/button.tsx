@@ -1,58 +1,16 @@
-import type { ButtonHTMLAttributes, Ref } from "react";
-import { tv, type VariantProps } from "@/lib/providers/variants";
+import type { ReactNode } from "react";
 
-type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "style" | "color"> & VariantProps<typeof button> & {
-    pending?: boolean;
-    ref?: Ref<HTMLButtonElement>;
-};
+type Props = { label: string; type?: "button" | "submit" | undefined; tone?: "primary" | "ghost" | "danger" | undefined; busy?: boolean | undefined; disabled?: boolean | undefined; icon?: ReactNode | undefined; onPress?: (() => void) | undefined };
 
-const button = tv({
-    base: "btn",
-    variants: {
-        variant: {
-            filled: "btn-solid",
-            outlined: "btn-outline",
-            subtle: "btn-soft",
-            ghost: "btn-ghost",
-            danger: "btn-danger",
-            link: "btn-link",
-        },
-        size: { xsmall: "btn-xs", small: "btn-sm", medium: "btn-md", large: "btn-lg", xlarge: "btn-xl" },
-        rounded: { soft: "", full: "btn-pill", square: "btn-square" },
-        width: { auto: "", full: "btn-full" },
-        icon: { true: "btn-icon" },
-        align: { center: "", start: "justify-start text-start" },
-    },
-    defaultVariants: { variant: "filled", size: "medium", rounded: "soft", width: "auto", align: "center" },
-});
-
-export default function Button ({
-    variant, size, rounded, width, icon, align, pending, disabled, type = "button", children, ...props
-}: Props) {
+export default function Button ({ label, type = "button", tone = "primary", busy = false, disabled = false, icon, onPress }: Props) {
 
     return (
 
-        <button
-            type={type}
-            disabled={disabled || pending}
-            aria-busy={pending || undefined}
-            className={button({ variant, size, rounded, width, icon, align })}
-            {...props}
-        >
+        <button type={type} className="button" data-tone={tone} data-busy={busy ? "" : undefined} disabled={disabled || busy} aria-busy={busy} onClick={onPress}>
 
-            {pending ? (
+            {icon}
 
-                <svg data-spinner="" aria-hidden="true" viewBox="0 0 24 24" className="spinner">
-
-                    <circle cx="12" cy="12" r="10" />
-
-                    <circle cx="12" cy="12" r="10" pathLength="100" />
-
-                </svg>
-
-            ) : null}
-
-            {children}
+            <span className="button-label">{label}</span>
 
         </button>
 

@@ -1,4 +1,4 @@
-import { type ReactNode, ViewTransition } from "react";
+import type { ReactNode } from "react";
 
 type Props = { nav?: ReactNode; sidebar?: ReactNode; footer?: ReactNode; children: ReactNode; skip: string; page: string };
 
@@ -6,29 +6,22 @@ export default function Shell ({ nav, sidebar, footer, children, skip, page }: P
 
     return (
 
-        <div className="flex min-h-dvh flex-col">
+        <div className="shell" data-page={page}>
 
-            <a href="#content" className="skip-link">{skip}</a>
+            <a href="#content" className="shell-skip">{skip}</a>
 
-            {nav}
+            {nav ? <header className="shell-nav">{nav}</header> : null}
 
-            <div className={sidebar ? "boxed shell-split" : "flex min-w-0 flex-1"}>
+            <div className="shell-body" data-sidebar={sidebar ? "" : undefined}>
 
                 {sidebar ? <aside className="shell-aside">{sidebar}</aside> : null}
 
-                <main id="content" tabIndex={-1} className="page-main min-w-0 flex-1 outline-none">
-
-                    <ViewTransition key={page} enter="page" exit="page" default="none">
-
-                        <div className="min-w-0">{children}</div>
-
-                    </ViewTransition>
-
-                </main>
+                {/* biome-ignore lint/correctness/useUniqueElementIds: the skip link targets this one landmark */}
+                <main id="content" tabIndex={-1} className="shell-main">{children}</main>
 
             </div>
 
-            {footer}
+            {footer ? <footer className="shell-footer">{footer}</footer> : null}
 
         </div>
 

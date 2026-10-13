@@ -1,171 +1,116 @@
 import "server-only";
 
-import type { Metadata, MetadataRoute, Viewport } from "next";
-import { PHASE_PRODUCTION_BUILD } from "next/constants.js";
-import { cache } from "react";
-import { type Data, type EntityKind, entities, entityKinds } from "@/api/features";
-import { readContent, readSitemap, siteSettings } from "@/api/workflow/server";
-import { getLocale } from "@/lib/providers/intl-server";
-import { requestOrigin } from "@/lib/site/request";
+import { rows } from "@engine/spec";
+import { localePath } from "@engine/translate";
+import type { Metadata, MetadataRoute } from "next";
+import { entities, type Feature, type OperationOf } from "@/api/features";
+import { read } from "@/api/workflow/server";
 import type { Locale } from "@/lib/spec/languages";
-import { config, indexable, screens } from "@/lib/spec/server";
-import { includes } from "@/lib/std/object";
-import { patternKeys } from "@/lib/std/route";
-import { absolute, parseUrl } from "@/lib/std/url";
-import { localeAlternates, pageUrl, resolveFields, type Site, writtenLocales } from "./fields";
-import { toGraph } from "./graph";
-import { toMetadata } from "./metadata";
-import { entityPage, entityPath, type Page, shownEntity, source } from "./source";
+import { languages } from "@/lib/spec/languages";
+import type { Matched } from "@/lib/spec/server";
+import { config, crawlable, routing, screens, text } from "@/lib/spec/server";
 
-type Listing = {
-    path: string;
-    locales: readonly Locale[];
-    alternates: Record<string, string>;
-    modifiedAt?: string | null;
-    image?: string | null;
-};
-type Row = Data<"sitemap", "list">;
+type Page = Pick<Matched, "title" | "description" | "options" | "path" | "listed">;
 
-function listed ( site: Site, { path, locales, alternates, modifiedAt, image }: Listing ): MetadataRoute.Sitemap {
+function absolute ( path: string ): string | undefined {
 
-    return locales.map(( locale ) => ({
-        url: pageUrl(site, locale, path),
-        ...(modifiedAt ? { lastModified: modifiedAt } : {}),
-        ...(image ? { images: [image] } : {}),
-        ...(Object.keys(alternates).length ? { alternates: { languages: alternates } } : {}),
+    return config.content.url ? `${config.content.url}${path}` : undefined;
+
+}
+function alternates ( path: string ): NonNullable<Metadata["alternates"]> | undefined {
+
+    if ( !config.content.url ) return undefined;
+
+    const languageLinks = Object.fromEntries(routing.locales.map(( locale ) => [locale, absolute(localePath(locale, path, routing))]));
+
+    return { canonical: absolute(localePath(routing.defaultLocale, path, routing)), languages: { ...languageLinks, "x-default": absolute(path) } };
+
+}
+export function pageMetadata ( screen: Page, locale: Locale ): Metadata {
+
+    const site = config.content.name;
+    const title = text(screen.title, locale);
+    const description = text(screen.description, locale);
+    const listed = crawlable && screen.listed;
+
+    return {
+        title: screen.options.title ? `${title} · ${site}` : site,
+        description: crawlable ? description : undefined,
+        robots: { index: listed, follow: listed },
+        alternates: crawlable ? alternates(screen.path) : undefined,
+        openGraph: crawlable ? { title, description, siteName: site, locale: languages[locale].openGraph, type: "website", url: absolute(screen.path) } : undefined,
+    };
+
+}
+export function siteMetadata (): Metadata {
+
+    const { content } = config;
+
+    return {
+        metadataBase: content.url ? new URL(content.url) : undefined,
+        title: content.name,
+        description: content.seo.description ?? content.description ?? undefined,
+        applicationName: content.name,
+        icons: content.icon ? { icon: content.icon } : undefined,
+        verification: Object.keys(content.seo.verification).length ? { other: content.seo.verification } : undefined,
+    };
+
+}
+export function robots (): MetadataRoute.Robots {
+
+    const { allow, disallow } = config.content.seo.robots;
+    const sitemap = absolute("/sitemap.xml");
+    const rules = allow.length || disallow.length ? { userAgent: "*", ...(allow.length ? { allow } : {}), ...(disallow.length ? { disallow } : {}) } : { userAgent: "*", disallow: "/" };
+
+    return { rules, ...(crawlable && config.content.seo.sitemap.length && sitemap ? { sitemap } : {}) };
+
+}
+const pageSize = 50;
+const pageLimit = 20;
+
+function entry ( path: string ): MetadataRoute.Sitemap[number] {
+
+    return {
+        url: absolute(path) ?? path,
+        alternates: { languages: Object.fromEntries(routing.locales.map(( locale ) => [locale, absolute(localePath(locale, path, routing)) ?? path])) },
+    };
+
+}
+function ids ( result: { resource: unknown } | undefined, parameter: string ): string[] {
+
+    return rows(result?.resource).flatMap(( row ) => (row[parameter] === undefined ? [] : [String(row[parameter])]));
+
+}
+async function members ( kind: string, parameter: string ): Promise<string[]> {
+
+    const source = entities[kind as keyof typeof entities] as { parameter: string; list?: string | undefined } | undefined;
+    const [feature, operation] = (source?.list ?? "").split(".") as [Feature, OperationOf<Feature>];
+
+    if ( !source?.list ) return [];
+
+    const load = ( page: number ) => read(feature, operation, { page, limit: pageSize } as never).catch(() => undefined);
+    const first = await load(1);
+    const pages = Math.min(pageLimit, first?.meta.pagination?.pages ?? 1);
+    const rest = await Promise.all(Array.from({ length: Math.max(0, pages - 1) }, ( _, index ) => load(index + 2)));
+
+    return [first, ...rest].flatMap(( result ) => ids(result, parameter));
+
+}
+export async function sitemap (): Promise<MetadataRoute.Sitemap> {
+
+    if ( !crawlable || !config.content.url ) return [];
+
+    const listed = screens.filter(( screen ) => screen.listed && screen.access === "any");
+    const plain = listed.filter(( screen ) => !screen.path.includes(":")).map(( screen ) => entry(screen.path));
+    const owned = await Promise.all(listed.filter(( screen ) => screen.entity && screen.path.includes(":")).map(async ( screen ) => {
+
+        const parameter = screen.path.split("/").find(( part ) => part.startsWith(":"))?.slice(1) ?? "id";
+        const kind = typeof screen.entity === "string" ? screen.entity : screen.entity?.kind ?? "";
+
+        return (await members(kind, parameter)).map(( id ) => entry(screen.path.replace(`:${parameter}`, id)));
+
     }));
 
-}
-function feedListings ( site: Site, kind: EntityKind, rows: readonly Row[] ): Listing[] {
-
-    return rows.flatMap(( row ) => {
-
-        const page = entityPage(kind, row.type);
-
-        if ( !page?.options.seo || !page.options.index ) return [];
-
-        const path = entityPath(page, row);
-        const locales = writtenLocales(site, row.locales);
-
-        return [{ path, locales, alternates: localeAlternates(site, locales, path), modifiedAt: row.updated_at, image: row.image }];
-
-    });
-
-}
-
-export const siteIdentity = cache(async (): Promise<Site> => {
-
-    const [content, settings] = await Promise.all([readContent(), siteSettings()]);
-    const origin = (content.url ? parseUrl(content.url)?.origin : undefined) ?? await requestOrigin();
-
-    return { origin, content, locales: settings.locale.enabled };
-
-});
-export const siteViewport: Viewport = {
-    width: "device-width",
-    initialScale: 1,
-    themeColor: (["light", "dark"] as const).map(( scheme ) => ({
-        media: `(prefers-color-scheme: ${scheme})`,
-        color: config.theme.colors[scheme].body,
-    })),
-};
-export const pageSeo = cache(async ( page: Page, locale: Locale ) => {
-
-    const [site, found] = await Promise.all([siteIdentity(), source(page, locale)]);
-    const fields = resolveFields(page, locale, site, found);
-
-    return {
-        metadata: toMetadata(fields),
-        structuredData: fields.crawled ? toGraph(fields) : undefined,
-        path: fields.path,
-        url: fields.url,
-        locales: fields.locales,
-        alternates: fields.alternates,
-        indexable: fields.indexable,
-        modifiedAt: fields.modifiedAt,
-        redirect: found.path && found.path !== page.path ? found.path : undefined,
-    };
-
-});
-
-export async function siteMetadata (): Promise<Metadata> {
-
-    const { origin, content } = await siteIdentity();
-
-    return {
-        metadataBase: new URL(origin),
-        applicationName: content.name || undefined,
-        icons: {
-            ...(content.icon ? { icon: [{ url: content.icon }] } : {}),
-            ...(content.apple_icon ? { apple: [{ url: content.apple_icon }] } : {}),
-        },
-    };
-
-}
-async function indexed (): Promise<Site | undefined> {
-
-    const site = indexable ? await siteIdentity() : undefined;
-
-    return site?.content.seo.indexable === false ? undefined : site;
-
-}
-async function fixedListings (): Promise<Listing[]> {
-
-    const locale = await getLocale();
-    const fixed = screens.filter(( page ) => !patternKeys(page.path).length);
-    const found = await Promise.all(fixed.map(( page ) => pageSeo(page, locale).catch(() => undefined)));
-
-    return found.flatMap(( entry ) => (entry?.indexable ? [entry] : []));
-
-}
-async function feedPages ( kind: EntityKind ): Promise<{ id: string }[]> {
-
-    const { pages: total } = await readSitemap(entities[kind].feed, 1).catch(() => ({ pages: 0 }));
-
-    return Array.from({ length: total }, ( _, index ) => ({ id: `${kind}-${index + 1}` }));
-
-}
-async function feedListing ( site: Site, id: string ): Promise<Listing[]> {
-
-    const [, kind = "", page = ""] = /^([a-z]+)-(\d+)$/.exec(id) ?? [];
-
-    if ( !includes(entityKinds, kind) ) return [];
-
-    const { rows } = await readSitemap(entities[kind].feed, Number(page)).catch(() => ({ rows: [] }));
-
-    return feedListings(site, kind, rows);
-
-}
-export async function generateSitemaps (): Promise<{ id: string }[]> {
-
-    if ( process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD || !await indexed() ) return [];
-
-    const kinds = entityKinds.filter(( kind ) => screens.some(( page ) => shownEntity(page)?.kind === kind));
-    const feeds = await Promise.all(kinds.map(feedPages));
-
-    return [{ id: "pages" }, ...feeds.flat()];
-
-}
-export async function sitemap ( { id }: { id: Promise<string> } ): Promise<MetadataRoute.Sitemap> {
-
-    const [site, name] = await Promise.all([indexed(), id]);
-
-    if ( !site ) return [];
-
-    const listings = name === "pages" ? await fixedListings() : await feedListing(site, name);
-
-    return listings.flatMap(( entry ) => listed(site, entry)).slice(0, 50000);
-
-}
-export async function robots (): Promise<MetadataRoute.Robots> {
-
-    const { origin } = await siteIdentity();
-    const files = await generateSitemaps();
-
-    return {
-        rules: { userAgent: "*", ...(files.length ? { allow: "/" } : { disallow: "/" }) },
-        sitemap: files.map(( file ) => absolute(origin, `/sitemap/${file.id}.xml`)),
-        host: origin,
-    };
+    return [...plain, ...owned.flat()];
 
 }

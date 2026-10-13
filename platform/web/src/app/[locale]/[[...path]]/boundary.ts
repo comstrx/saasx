@@ -1,11 +1,11 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
-import { reportError } from "@/lib/observe/browser";
 
 type Props = { name: string; children: ReactNode };
 type State = { failed: boolean };
 
+// biome-ignore lint/style/useReactFunctionComponents: an error boundary is a class by React's contract
 export class Boundary extends Component<Props, State> {
 
     override state: State = { failed: false };
@@ -13,11 +13,6 @@ export class Boundary extends Component<Props, State> {
     static getDerivedStateFromError (): State {
 
         return { failed: true };
-
-    }
-    override componentDidCatch ( error: unknown ): void {
-
-        reportError(error, { feature: this.props.name });
 
     }
     override render (): ReactNode {

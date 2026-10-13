@@ -1,16 +1,27 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useUi } from "@/stores/provider";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { type ReactNode, useEffect } from "react";
+import { useAccess } from "@/hooks/use-access";
+import { useSession } from "@/hooks/use-session";
 
-type Props = { permissions: readonly string[]; children: ReactNode };
+type Props = { access: readonly string[]; guest?: boolean; redirect?: string | null; children: ReactNode };
 
-export function Gate ({ permissions, children }: Props) {
+export function Gate ({ access, guest = false, redirect = null, children }: Props) {
 
-    const user = useUi(( state ) => (state.token ? state.user : null));
-    const held = user?.permissions ?? [];
-    const granted = user !== null && permissions.every(( permission ) => permission === "user" || held.includes(permission));
+    const router = useRouter();
+    const session = useSession();
+    const state = useAccess(access);
+    const allowed = guest ? session.ready && session.user === null : state === "granted";
+    const refused = session.ready && !allowed;
 
-    return granted ? children : null;
+    useEffect(() => {
+
+        if ( refused && redirect ) router.replace(redirect as Route);
+
+    }, [refused, redirect, router]);
+
+    return allowed ? children : null;
 
 }

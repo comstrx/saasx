@@ -1,55 +1,24 @@
-import "@/styles/globals.css";
+import "@/styles/base.css";
 import "@spec/theme.css";
 
-import { headers } from "next/headers";
 import type { ReactNode } from "react";
-import { readContent, readPolicy, siteCurrency, sitePreferences, siteSettings } from "@/api/workflow/server";
 import Document from "@/elements/document";
-import { getLocale, getMessages } from "@/lib/providers/intl-server";
-import { siteMetadata, siteViewport } from "@/lib/seo";
-import { languages } from "@/lib/spec/languages";
-import { Providers } from "../providers";
+import { siteMetadata } from "@/lib/seo/index";
+import { requestLocale, requestTheme, requestTrace } from "@/lib/site/request";
+import { type Locale, languages } from "@/lib/spec/languages";
+import { Providers } from "../providers.tsx";
 
 export const generateMetadata = siteMetadata;
-export const viewport = siteViewport;
 
 export default async function RootLayout ({ children }: { children: ReactNode }) {
 
-    const [locale, messages, request, currency, settings, content, policy, preferences] = await Promise.all([
-        getLocale(),
-        getMessages(),
-        headers(),
-        siteCurrency(),
-        siteSettings(),
-        readContent(),
-        readPolicy(),
-        sitePreferences(),
-    ]);
+    const [locale, trace, theme] = await Promise.all([requestLocale(), requestTrace(), requestTheme()]);
+
     return (
 
-        <Document
-            locale={locale}
-            direction={languages[locale].direction}
-            trace={request.get("x-request-id") ?? undefined}
-            motion={settings.motion}
-        >
+        <Document locale={locale} direction={languages[locale as Locale].direction} theme={theme} trace={trace}>
 
-            <Providers
-                    nonce={request.get("x-nonce") ?? ""}
-                    currency={currency}
-                    direction={languages[locale].direction}
-                    locale={locale}
-                    messages={messages}
-                    timeZone={settings.locale.timeZone}
-                    settings={settings}
-                    content={content}
-                    policy={policy}
-                    preferences={preferences}
-                >
-
-                    {children}
-
-            </Providers>
+            <Providers>{children}</Providers>
 
         </Document>
 

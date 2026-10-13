@@ -1,67 +1,23 @@
-import Link from "@/elements/link";
-import Pagination from "@/elements/pagination";
+import Button from "@/elements/button";
 import Stack from "@/elements/stack";
 import Text from "@/elements/text";
-import Icon from "@/icons/icon";
+import Icon from "@/icons";
 
-type Numbers = {
-    label: string; page: number; pages: number; previous: string; next: string;
-    href: ( page: number ) => string; pageLabel: ( page: number ) => string;
-};
-type Props = {
-    label: string;
-    previous?: { label: string; href: string } | null;
-    next?: { label: string; href: string } | null;
-    numbers?: Numbers | null;
-};
+type Props = { page: number; pages: number; label: string; previous: string; next: string; onPage: ( page: number ) => void };
 
-export default function Pager ({ label, previous, next, numbers }: Props) {
+export default function Pager ({ page, pages, label, previous, next, onPage }: Props) {
 
-    if ( numbers && numbers.pages > 1 ) return (
-
-        <Stack direction="responsive" justify="between" align="center" gap={4}>
-
-            <Text size="small" tone="muted" role="status">{label}</Text>
-
-            <Pagination {...numbers} />
-
-        </Stack>
-
-    );
+    if ( pages <= 1 ) return null;
 
     return (
 
-        <Stack direction="responsive" justify="between" align="center" gap={4}>
+        <Stack direction="row" gap={2} align="between">
 
-            <Text size="small" tone="muted" role="status">{label}</Text>
+            <Button label={previous} tone="ghost" disabled={page <= 1} icon={<Icon name="chevronStart" size="sm" />} onPress={() => onPage(page - 1)} />
 
-            <Stack direction="row" gap={2}>
+            <Text text={label} tone="muted" size="sm" />
 
-                {previous ? (
-
-                    <Link href={previous.href} variant="outlined" size="medium">
-
-                        <Icon name="caret-start" weight="bold" />
-
-                        {previous.label}
-
-                    </Link>
-
-                ) : null}
-
-                {next ? (
-
-                    <Link href={next.href} variant="outlined" size="medium">
-
-                        {next.label}
-
-                        <Icon name="caret-end" weight="bold" />
-
-                    </Link>
-
-                ) : null}
-
-            </Stack>
+            <Button label={next} tone="ghost" disabled={page >= pages} icon={<Icon name="chevronEnd" size="sm" />} onPress={() => onPage(page + 1)} />
 
         </Stack>
 

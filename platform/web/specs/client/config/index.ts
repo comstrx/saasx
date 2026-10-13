@@ -1,4 +1,4 @@
-import { defineConfig } from "../../../src/lib/spec/define.ts";
+import { defineConfig } from "../../../src/lib/spec/surface.ts";
 import contents from "./contents.ts";
 import contracts from "./contracts.ts";
 import features from "./features.ts";

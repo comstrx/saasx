@@ -1,10 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useMounted } from "@/hooks/use-effects";
+import { type ReactNode, useSyncExternalStore } from "react";
+
+const subscribe = (): (() => void) => () => {};
 
 export function ClientOnly ({ children }: { children: ReactNode }) {
 
-    return useMounted() ? children : null;
+    const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+
+    return mounted ? children : null;
 
 }

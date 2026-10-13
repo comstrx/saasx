@@ -1,1 +1,1 @@
-export { robots as default } from "@/lib/seo";
+export { robots as default } from "@/lib/seo/index";

@@ -1,11 +1,39 @@
-import { t } from "../../../src/lib/spec/define.ts";
-import type { SiteScreen } from "../../../src/lib/spec/screens.ts";
+import { block, feature, read, screen, t, write } from "../../../src/lib/spec/surface.ts";
 
-export default {
+const states = { loading: t("state.loading"), failed: t("state.failed"), offline: t("state.offline"), cached: t("state.cached") };
+
+export default screen({
     contents: {
-        name: "account", path: "/account", icon: "gauge",
-        title: t("screens.account.title"), label: t("screens.account.label"), description: t("screens.account.description"),
+        name: "account",
+        path: "/account",
+        title: t("account.title"),
+        description: t("account.description"),
+        icon: "user",
     },
-    options: { index: false, footer: "copyright", sidebar: true },
-    blocks: [{ options: { width: "wide" }, features: [{ name: "hub", heading: true }] }],
-} satisfies SiteScreen;
+    options: { render: "client" },
+    access: "user",
+    redirect: "/login",
+    blocks: [
+        block({ width: "wide", padding: 6, gap: 6, sizes: [1, 1] }, [
+            feature("form", {
+                heading: true,
+                options: { title: t("account.profile"), submit: t("account.save"), saved: t("account.saved"), ...states, empty: t("state.empty"), labels: t("account.fields"), choices: t("account.choices") },
+                ports: { item: read("account.me"), save: write("account.update") },
+            }),
+            block({ gap: 4 }, [
+                feature("avatar", {
+                    options: { title: t("avatar.title"), pick: t("avatar.pick"), camera: t("avatar.camera"), saved: t("avatar.saved"), empty: t("avatar.empty"), ...states },
+                    ports: { me: read("account.me"), save: write("account.avatar") },
+                }),
+                feature("location", {
+                    options: { title: t("location.title"), detail: t("location.detail"), locate: t("location.locate"), saved: t("location.saved"), failed: t("state.failed"), denied: t("location.denied"), unsupported: t("location.unsupported") },
+                    ports: { save: write("account.locate") },
+                }),
+                feature("notifications", {
+                    options: { title: t("notifications.title"), detail: t("notifications.detail"), enable: t("notifications.enable"), saved: t("notifications.saved"), failed: t("state.failed"), denied: t("notifications.denied"), unsupported: t("notifications.unsupported") },
+                    ports: { save: write("account.device") },
+                }),
+            ]),
+        ]),
+    ],
+});

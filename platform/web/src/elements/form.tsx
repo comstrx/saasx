@@ -1,16 +1,16 @@
-import type { FormHTMLAttributes } from "react";
-import { tv, type VariantProps } from "@/lib/providers/variants";
+import type { ReactNode } from "react";
 
-type Props = Omit<FormHTMLAttributes<HTMLFormElement>, "className" | "style"> & VariantProps<typeof form> & { pending?: boolean };
+type Props = { name: string; onSubmit: () => void; children: ReactNode };
 
-const form = tv({
-    base: "flex min-w-0 flex-col [&>button]:self-start",
-    variants: { gap: { tight: "gap-4", normal: "gap-5", loose: "gap-7" } },
-    defaultVariants: { gap: "normal" },
-});
+export default function Form ({ name, onSubmit, children }: Props) {
 
-export default function Form ({ pending, gap, ...props }: Props) {
+    const submit = ( event: { preventDefault: () => void } ): void => {
 
-    return <form className={form({ gap })} aria-busy={pending || undefined} {...props} />;
+        event.preventDefault();
+        onSubmit();
+
+    };
+
+    return <form className="form" data-name={name} onSubmit={submit} noValidate>{children}</form>;
 
 }

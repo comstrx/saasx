@@ -1,12 +1,13 @@
 import "server-only";
 
-import { headers } from "next/headers";
+import { choose, trace } from "@engine/base";
+import { forwardedFor, originOf } from "@engine/net";
+import { cookies, headers } from "next/headers";
 import { cache } from "react";
-import { config } from "@/lib/spec/server";
-import { trace } from "@/lib/std/security";
-import { forwardedFor, originOf } from "@/lib/std/url";
+import { readPreferences } from "@/lib/site/preferences";
+import { config, routing } from "@/lib/spec/server";
 
-const { proxies } = config.api.context;
+const proxies = config.api?.context.proxies ?? 0;
 
 function forwarded ( request: Headers, name: string ): string | undefined {
 
@@ -34,5 +35,14 @@ export const requestOrigin = cache(async () => {
     return origin;
 
 });
+export const requestLocale = cache(async () => choose(routing.locales, (await headers()).get("x-locale"), routing.defaultLocale));
 export const requestTrace = cache(async () => trace((await headers()).get("x-request-id")));
 export const requestClient = cache(async () => forwardedFor((await headers()).get("x-forwarded-for"), proxies));
+export const requestNonce = cache(async () => (await headers()).get("x-nonce") ?? "");
+export const requestTheme = cache(async () => {
+
+    const store = await cookies();
+
+    return readPreferences(( name ) => store.get(name)?.value).theme ?? config.settings.theme.default;
+
+});

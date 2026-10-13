@@ -1,24 +1,27 @@
+import Button from "@/elements/button";
+import Link from "@/elements/link";
 import Stack from "@/elements/stack";
-import EntityActions from "./entity-actions";
-import ProductFavorite from "./product-favorite";
-import ShareButton from "./share-button";
+import Text from "@/elements/text";
+import Icon from "@/icons";
 
-type Props = {
-    favorite: { productId: number; name: string; signIn: string | null };
-    share: { label: string; copied: string; failed: string };
-};
+export type DetailAction = { label: string; icon: string; tone?: "primary" | "ghost" | "danger" | undefined; onPress: () => void };
+type Props = { edit?: { href: string; label: string } | undefined; actions: readonly DetailAction[]; busy: boolean; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined };
 
-export default function DetailActions ({ favorite, share }: Props) {
+export default function DetailActions ({ edit, actions, busy, note }: Props) {
 
     return (
 
-        <Stack direction="row" align="center" gap={2}>
+        <Stack gap={2}>
 
-            <ShareButton title={favorite.name} labels={share} />
+            <Stack direction="row" gap={2}>
 
-            <ProductFavorite {...favorite} compact />
+                {edit ? <Link href={edit.href} label={edit.label} tone="button" icon={<Icon name="pencil" size="sm" />} /> : null}
 
-            <EntityActions feature="products" id={favorite.productId} name={favorite.name} login="/login" verbs={["report"]} compact />
+                {actions.map(( action ) => <Button key={action.label} label={action.label} tone={action.tone} busy={busy} icon={<Icon name={action.icon} size="sm" />} onPress={action.onPress} />)}
+
+            </Stack>
+
+            {note ? <Text text={note.text} tone={note.tone} size="sm" /> : null}
 
         </Stack>
 

@@ -3,19 +3,11 @@ declare module "@spec/theme.css";
 
 declare module "@spec/config" {
 
-    import type { PackedContract } from "@/api/core/pack";
-    import type { CompiledConfig } from "@/lib/spec/contract";
+    import type { CompiledConfig } from "@/lib/spec/surface";
 
-    const config: Omit<CompiledConfig, "contract"> & { contract: PackedContract };
+    const config: CompiledConfig;
 
     export default config;
-
-}
-declare module "@spec/connections" {
-
-    const connections: { origins: string[]; images: string[]; frames: string[] };
-
-    export default connections;
 
 }
 declare module "@spec/routing" {
@@ -27,9 +19,16 @@ declare module "@spec/routing" {
     export default routing;
 
 }
+declare module "@spec/settings" {
+
+    const settings: { language: string; languages: string[]; currency: string; currencies: string[]; theme: string; themes: string[]; maintenance: boolean; maintenance_message: string };
+
+    export default settings;
+
+}
 declare module "@spec/schema" {
 
-    import type { CompiledSchema } from "@/lib/spec/screens";
+    import type { CompiledSchema } from "@/lib/spec/surface";
 
     const schema: CompiledSchema;
 
@@ -47,22 +46,20 @@ declare module "@spec/registry" {
 }
 declare module "@spec/messages" {
 
+    import type { Messages } from "@engine/translate";
     import type { Locale } from "@/lib/spec/languages";
-    import type { Messages } from "@/lib/std/messages";
-    import type messages from "../../messages/en.json";
 
-    const dictionaries: Record<Locale, typeof messages & Messages>;
+    const dictionaries: Record<Locale, Messages>;
 
     export default dictionaries;
 
 }
 declare module "@spec/browser" {
 
-    import type { PackedContract } from "@/api/core/pack";
-    import type { BrowserConfig } from "@/api/core/resolve";
-    import type { EntityRoute } from "@/lib/spec/screens";
+    import type { BrowserConfig } from "@engine/api";
+    import type { CompiledConfig } from "@/lib/spec/surface";
 
-    const browser: Omit<BrowserConfig, "contract"> & { contract: PackedContract; routes: EntityRoute[] };
+    const browser: BrowserConfig & { realtime: CompiledConfig["realtime"] };
 
     export default browser;
 

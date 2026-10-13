@@ -2,10 +2,9 @@ import "server-only";
 
 import registry from "@spec/registry";
 import { type ComponentType, createElement, Fragment, type ReactNode, Suspense } from "react";
-import { permissions } from "@/api/features";
-import Block from "@/elements/block.tsx";
+import Block from "@/elements/block";
 import type { FeatureProps, Route, Screen } from "@/lib/spec/feature";
-import type { CompiledBlock, CompiledFeature } from "@/lib/spec/screens";
+import type { CompiledWebBlock as CompiledBlock, CompiledWebFeature as CompiledFeature } from "@/lib/spec/surface";
 import { Boundary } from "./boundary";
 import { Gate } from "./gate";
 
@@ -22,15 +21,10 @@ export async function feature ( name: string ): Promise<View> {
     return (await entry()).default as View;
 
 }
-function required ( name: string ): readonly string[] {
-
-    return permissions[name as keyof typeof permissions] ?? [];
-
-}
 async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
 
     const Feature = await feature(entry.name);
-    const place = { id: entry.id, heading: entry.heading };
+    const place = { id: entry.id, slug: entry.slug, heading: entry.heading, access: entry.access };
     const held = entry.features.length + entry.blocks.length > 0;
     const children = held ? (
 
@@ -44,27 +38,16 @@ async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) 
 
     ) : undefined;
 
-    return createElement(Feature, { options: entry.options, screen: facts.screen, route: facts.route, feature: place, children });
+    return createElement(Feature, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
 
 }
 function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
 
-    const needed = required(entry.name);
-    const view = (
+    const one = <One entry={entry} facts={facts} />;
+    const blocking = entry.heading && entry.owner === "server";
+    const view = <Boundary name={entry.id}>{blocking ? one : <Suspense fallback={facts.loader}>{one}</Suspense>}</Boundary>;
 
-        <Boundary name={entry.id}>
-
-            <Suspense fallback={facts.loader}>
-
-                <One entry={entry} facts={facts} />
-
-            </Suspense>
-
-        </Boundary>
-
-    );
-
-    return needed.length ? <Gate permissions={needed}>{view}</Gate> : view;
+    return entry.access.length ? <Gate access={entry.access}>{view}</Gate> : view;
 
 }
 function Features ({ entries, facts }: { entries: readonly CompiledFeature[]; facts: Facts }) {

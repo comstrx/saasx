@@ -1,21 +1,25 @@
-import { t } from "../../../src/lib/spec/define.ts";
-import type { SiteScreen } from "../../../src/lib/spec/screens.ts";
+import { block, feature, screen, t, write } from "../../../src/lib/spec/surface.ts";
 
-export default {
+export default screen({
     contents: {
         name: "login",
         path: "/login",
-        title: t("screens.login.title"),
-        description: t("screens.login.description"),
+        title: t("login.title"),
+        description: t("login.description"),
+        icon: "key",
     },
-    options: { index: false, footer: "copyright" },
+    access: "guest",
+    redirect: "/",
     blocks: [
-        {
-            options: { width: "wide" },
-            features: [{
-                name: "auth", heading: true,
-                options: { view: "login", art: "/assets/images/brand/access.webp", country: "SA" },
-            }],
-        },
+        block({ width: "narrow", padding: 6 }, [
+            feature("login", {
+                heading: true,
+                options: {
+                    title: t("login.title"), email: t("login.email"), password: t("login.password"), continue: t("login.continue"),
+                    otp: t("login.otp"), verify: t("login.verify"), sent: t("login.sent"), back: t("login.back"), failed: t("state.failed"),
+                },
+                ports: { login: write("auth.login"), verify: write("auth.verify") },
+            }),
+        ]),
     ],
-} satisfies SiteScreen;
+});

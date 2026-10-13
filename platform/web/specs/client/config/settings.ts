@@ -1,34 +1,29 @@
-import type { SiteConfig } from "../../../src/lib/spec/contract.ts";
+import { type SiteConfig, t } from "../../../src/lib/spec/surface.ts";
 
 export default {
+    delivery: "server",
     motion: "system",
-    density: "comfortable",
     maintenance: false,
     maintenanceMessage: "",
     locale: {
         default: "en",
         enabled: ["en", "ar"],
-        timeZone: "Africa/Cairo",
+        timeZone: "UTC",
     },
     currency: {
         default: "USD",
-        enabled: ["USD", "SAR", "EGP"],
+        enabled: ["USD"],
     },
     theme: {
         default: "light",
         enabled: ["light", "dark", "system"],
     },
-    fonts: {
-        en: [{ file: "latin.ttf", weight: "200 800" }],
-        ar: [{ file: "arabic-regular.ttf", weight: "400" }, { file: "arabic-semibold.ttf", weight: "600" }],
-    },
-    mediaOrigins: ["https://tile.openstreetmap.org"],
+    fonts: {},
+    mediaOrigins: ["http://127.0.0.1:8000"],
     frameOrigins: [],
     screen: {
         render: "server",
         title: true,
-        seo: true,
-        index: true,
         nav: true,
         footer: true,
         sidebar: false,
@@ -47,9 +42,9 @@ export default {
         shadow: "none",
     },
     shell: {
-        nav: "nav",
-        footer: "footer",
-        sidebar: "menu",
-        loader: "loader",
+        nav: { feature: "nav", options: { brand: t("shell.brand"), home: t("nav.home"), login: t("shell.login"), account: t("shell.account") } },
+        footer: null,
+        sidebar: null,
+        loader: null,
     },
 } satisfies SiteConfig["settings"];

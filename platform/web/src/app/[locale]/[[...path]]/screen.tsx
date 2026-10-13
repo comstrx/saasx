@@ -1,13 +1,17 @@
 import "server-only";
 
+import { shellFeature } from "@engine/spec";
 import { createElement, type ReactNode } from "react";
-import Shell from "@/elements/shell.tsx";
-import { getTranslations } from "@/lib/providers/intl-server";
+import Shell from "@/elements/shell";
+import { requestLocale } from "@/lib/site/request";
 import type { Screen as Facing, Route } from "@/lib/spec/feature";
-import type { Shell as ShellParts } from "@/lib/spec/screens";
-import { config, shell } from "@/lib/spec/server";
+import type { Locale } from "@/lib/spec/languages";
+import { config, localize, shell, text } from "@/lib/spec/server";
+import type { Shell as ShellParts } from "@/lib/spec/surface";
+import { SignalsProvider } from "@/stores/signals";
 import { Blocks, type Facts, feature } from "./blocks";
 import { ClientOnly } from "./client-only";
+import { Gate } from "./gate";
 
 type Props = { screen: Facing; route: Route };
 
@@ -19,21 +23,25 @@ async function part ( name: keyof ShellParts, screen: Facing, route: Route ): Pr
 
     if ( !chosen || !screen.options[name] ) return null;
 
-    return createElement(await feature(chosen), { options: shell[name], screen, route });
+    const locale = await requestLocale() as Locale;
+
+    return createElement(await feature(shellFeature(chosen) ?? ""), { options: localize(shell[name], locale), ports: {}, screen, route });
 
 }
 export async function Screen ({ screen, route }: Props) {
 
     const [nav, sidebar, footer, loader] = await Promise.all(parts.map(( name ) => part(name, screen, route)));
-    const t = await getTranslations("nav");
+    const locale = await requestLocale() as Locale;
     const facts: Facts = { screen, route, loader };
-    const blocks = <Blocks blocks={screen.blocks} facts={facts} />;
+    const blocks = <SignalsProvider><Blocks blocks={screen.blocks} facts={facts} /></SignalsProvider>;
+    const body = screen.options.render === "client" ? <ClientOnly>{blocks}</ClientOnly> : blocks;
+    const gated = screen.access === "any" ? body : <Gate access={screen.access === "guest" ? [] : screen.access === "user" ? ["user"] : screen.access} guest={screen.access === "guest"} redirect={screen.redirect}>{body}</Gate>;
 
     return (
 
-        <Shell skip={t("skip")} page={screen.name} nav={nav} sidebar={sidebar} footer={footer}>
+        <Shell skip={text({ key: "nav.skip" }, locale)} page={screen.name} nav={nav} sidebar={sidebar} footer={footer}>
 
-            {screen.options.render === "client" ? <ClientOnly>{blocks}</ClientOnly> : blocks}
+            {gated}
 
         </Shell>
 

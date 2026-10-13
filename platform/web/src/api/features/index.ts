@@ -1,157 +1,120 @@
-import type { z } from "../../lib/providers/schema.ts";
-import { keysOf, mapValues } from "../../lib/std/object.ts";
-import type { ApiClient } from "../core/client.ts";
-import { document, type Endpoint, factsOf } from "../core/dsl.ts";
-import account from "./account.ts";
-import articles from "./articles.ts";
-import auth from "./auth.ts";
-import broadcast from "./broadcast.ts";
-import campaigns from "./campaigns.ts";
-import cart from "./cart.ts";
-import categories from "./categories.ts";
-import chat, { announcementMessages, announcements, messages, observe, supportMessages } from "./chat.ts";
-import coupons from "./coupons.ts";
-import credentials from "./credentials.ts";
-import documents from "./documents.ts";
-import favorites from "./favorites.ts";
-import footer from "./footer.ts";
-import gateways from "./gateways.ts";
-import geos, { cities, countries, districts, regions } from "./geos.ts";
-import header from "./header.ts";
-import home from "./home.ts";
-import hub from "./hub.ts";
-import levels from "./levels.ts";
-import loader from "./loader.ts";
-import locales, { currencies } from "./locales.ts";
-import logs, { reports } from "./logs.ts";
-import menu from "./menu.ts";
-import nav from "./nav.ts";
-import notice from "./notice.ts";
-import notifications from "./notifications.ts";
-import offers from "./offers.ts";
-import orders from "./orders.ts";
-import plans from "./plans.ts";
-import pois from "./pois.ts";
-import policy from "./policy.ts";
-import products from "./products.ts";
-import promo from "./promo.ts";
-import promotions from "./promotions.ts";
-import referrals from "./referrals.ts";
-import reviews, { comments, replies } from "./reviews.ts";
-import rewards from "./rewards.ts";
-import search from "./search.ts";
-import sessions from "./sessions.ts";
-import sitemap, { type sitemapKinds } from "./sitemap.ts";
-import subscriptions from "./subscriptions.ts";
-import tenants from "./tenants.ts";
-import tickets from "./tickets.ts";
-import transactions from "./transactions.ts";
-import vendors from "./vendors.ts";
-import wallet from "./wallet.ts";
-import welcome from "./welcome.ts";
+import { del, document, type Endpoint, factsOf, feature, get, localized, many, password, post, put, z } from "@engine/api";
+import { keysOf, mapValues } from "@engine/base";
+
+const money = z.object({ amount: z.string(), currency: z.string() }).nullish();
+const catalog = z.object({
+    id: z.number(),
+    updated_at: z.string().nullish(),
+    name: z.string(),
+    slug: z.string().nullish(),
+    type: z.string().nullish(),
+    subtype: z.string().nullish(),
+    image: z.string().nullish(),
+    rating: z.coerce.number().nullish(),
+    min_price: money,
+    sale_price: money,
+    featured: z.boolean().nullish(),
+    in_stock: z.boolean().nullish(),
+});
+const managed = catalog.extend({
+    created_at: z.string().nullish(),
+    deleted_at: z.string().nullish(),
+    active: z.boolean().nullish(),
+    stock: z.number().nullish(),
+    capacity: z.number().nullish(),
+    starts_at: z.string().nullish(),
+    ends_at: z.string().nullish(),
+    description: z.string().nullish(),
+});
+const challenge = z.object({ status: z.string(), challenge_token: z.string(), channel: z.string().nullish(), destination: z.string().nullish(), length: z.number().nullish() });
+const user = z.object({
+    id: z.number(),
+    name: z.string(),
+    email: z.string().nullish(),
+    phone: z.string().nullish(),
+    role: z.string().nullish(),
+    slug: z.string().nullish(),
+    image: z.string().nullish(),
+    gender: z.string().nullish(),
+    birth_date: z.string().nullish(),
+    language: z.string().nullish(),
+    currency: z.string().nullish(),
+    theme: z.string().nullish(),
+    permissions: z.array(z.string()).default([]),
+});
+const session = z.object({ token: z.string(), user });
+const credentials = { email: z.email(), password: password };
+const otp = { challenge_token: z.string(), otp: z.string().min(4).max(8) };
+const catalogType = z.enum(["hotel", "room", "property", "tour", "travel", "ticket", "visa", "product", "service", "event", "insurance"]);
+const catalogSubtype = z.enum(["physical", "digital", "online", "offline", "internal", "external", "individual", "collective"]);
+const sorts = z.enum(["newest", "oldest", "lowest_price", "highest_price", "lowest_rated", "highest_rated", "highest_viewed"]);
+const editable = {
+    name: localized(2),
+    subtype: catalogSubtype.optional(),
+    stock: z.coerce.number().int().min(0).optional(),
+    capacity: z.coerce.number().int().min(0).optional(),
+    featured: z.boolean().optional(),
+    starts_at: z.iso.date().optional(),
+    ends_at: z.iso.date().optional(),
+};
+const ack = z.unknown().nullable();
 
 export const endpoints = {
-    auth,
-    account,
-    sessions,
-    credentials,
-    documents,
-    locales,
-    currencies,
-    content: document("content", "/content/site-info", {
-        execution: "hybrid",
-        response: {
-            fields: {
-                address_line1: "address",
-                address_line2: "geo.address_2",
-                city: "geo.city.name",
-                country: "geo.country.name",
-                country_code: "geo.country.code",
-                postal_code: "zip_code",
-            },
-        },
+    site: document("content"),
+    catalogs: feature({ cache: 30 }, {
+        list: get("/catalogs", {
+            page: z.number().int().positive().optional(),
+            limit: z.number().int().positive().max(50).optional(),
+            search: z.string().max(100).optional(),
+            sort: z.string().max(40).optional(),
+            type: z.string().max(40).optional(),
+        }, many(catalog), { request: { fields: { type: "query:filters[type]" } } }),
+        view: get("/catalogs/{id}", { id: z.coerce.number().int().positive() }, catalog),
     }),
-    settings: document("settings", "/content/site-info", { execution: "hybrid", response: { fields: { time_zone: "timezone" } } }),
-    seo: document("seo", "/content/seo/{path}", {
-        response: { fields: { published_at: "created_at", modified_at: "updated_at" } },
+    auth: feature({ execution: "client", cache: 0 }, {
+        login: post("/auth/login", credentials, challenge),
+        verify: post("/auth/verify-otp", otp, session),
     }),
-    sitemap,
-    policy,
-    nav,
-    menu,
-    notice,
-    welcome,
-    footer,
-    loader,
-    header,
-    home,
-    hub,
-    search,
-    articles,
-    offers,
-    campaigns,
-    plans,
-    products,
-    promo,
-    categories,
-    vendors,
-    geos,
-    countries,
-    regions,
-    cities,
-    districts,
-    pois,
-    reviews,
-    comments,
-    replies,
-    reports,
-    logs,
-    orders,
-    cart,
-    gateways,
-    wallet,
-    transactions,
-    subscriptions,
-    tenants,
-    promotions,
-    tickets,
-    broadcast,
-    notifications,
-    favorites,
-    coupons,
-    levels,
-    referrals,
-    rewards,
-    chat,
-    messages,
-    supportMessages,
-    announcements,
-    announcementMessages,
-    observe,
-};
+    account: feature({ execution: "client", cache: 0, permissions: ["user"], touches: ["account"] }, {
+        me: get("/account/me", {}, user, { response: { data: "data.user" } }),
+        logout: post("/account/logout", {}, ack),
+        update: put("/account", { name: z.string().min(2).max(80) }, ack),
+        locate: put("/account/location", { latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), address: z.string().max(255).optional() }, ack),
+        avatar: post("/account/image", { image: z.file() }, z.object({ image: z.string().nullish() }), { encoding: "multipart" }),
+        device: post("/account/devices", { token: z.string().min(8), platform: z.enum(["android", "ios", "web"]), locale: z.string().max(10).optional() }, ack),
+    }),
+    staff: feature({ execution: "client", cache: 0 }, {
+        login: post("/admin/auth/login", credentials, challenge),
+        verify: post("/admin/auth/verify-otp", otp, session),
+    }),
+    manage: feature({ execution: "client", cache: 0, permissions: ["user"], touches: ["manage"] }, {
+        me: get("/admin/account/me", {}, user, { response: { data: "data.user" } }),
+        logout: post("/admin/account/logout", {}, ack),
+        list: get("/admin/catalogs", {
+            page: z.number().int().positive().optional(),
+            limit: z.number().int().positive().max(50).optional(),
+            search: z.string().max(100).optional(),
+            sort: sorts.optional(),
+            type: catalogType.optional(),
+            trashed: z.boolean().optional(),
+        }, many(managed), { request: { fields: { type: "query:filters[type]", trashed: "query:filters[trashed]" } } }),
+        view: get("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, managed),
+        texts: get("/admin/catalogs/{id}/translations", { id: z.coerce.number().int().positive(), limit: z.number().int().positive().max(50).optional() }, many(z.object({ locale: z.string(), name: z.string().nullish(), description: z.string().nullish() }))),
+        create: post("/admin/catalogs", { type: catalogType, ...editable }, managed),
+        update: put("/admin/catalogs/{id}", { id: z.coerce.number().int().positive(), type: catalogType, ...editable }, managed),
+        remove: del("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, ack),
+        restore: post("/admin/catalogs/{id}/restore", { id: z.coerce.number().int().positive() }, managed),
+    }),
+} as const;
 
-export const entities = {
-    product: { parameter: "productId", feed: "catalogs", article: false, view: ( api, id ) => api.products.view({ productId: id }) },
-    article: { parameter: "articleId", feed: "blogs", article: true, view: ( api, id ) => api.articles.view({ articleId: id }) },
-    category: { parameter: "categoryId", feed: "categories", article: false, view: ( api, id ) => api.categories.view({ categoryId: id }) },
-    geo: { parameter: "geoId", feed: "geos", article: false, view: ( api, id ) => api.geos.view({ geoId: id }) },
-    vendor: { parameter: "vendorId", feed: "vendors", article: false, view: ( api, id ) => api.vendors.view({ vendorId: id }) },
-} satisfies Record<string, EntityRow>;
-export const entityKinds = keysOf(entities);
-
-const facts = mapValues(endpoints, ( operations ) => factsOf(operations));
-
-export const permissions: Record<Feature, readonly string[]> = mapValues(facts, ( fact ) => fact.permissions);
-export const touches: Record<Feature, readonly Feature[]> = mapValues(facts, ( fact ) => fact.touches as readonly Feature[]);
-
-type EntityRow = { parameter: string; feed: SitemapKind; article: boolean; view: ( api: ApiClient, id: number ) => Promise<unknown> };
+export const entities = { catalog: { parameter: "id", list: "catalogs.list" } } as const satisfies Record<string, { parameter: string; list?: string }>;
 
 export type Endpoints = typeof endpoints;
-export type Feature = keyof Endpoints;
-export type EndpointOf<F extends Feature, O extends keyof Endpoints[F]> = Endpoints[F][O] extends Endpoint ? Endpoints[F][O] : never;
-export type EntityKind = keyof typeof entities;
-export type Entity<K extends EntityKind> = Awaited<ReturnType<typeof entities[K]["view"]>>["resource"];
-export type SitemapKind = typeof sitemapKinds[number];
-export type Data<F extends Feature, O extends keyof Endpoints[F]> = Endpoints[F][O] extends { output: infer T extends z.ZodType }
-    ? z.output<T>
-    : never;
+export type Feature = keyof Endpoints & string;
+export type OperationOf<F extends Feature> = keyof Endpoints[F] & string;
+export type EndpointOf<F extends Feature, O extends OperationOf<F>> = Endpoints[F][O] extends Endpoint ? Endpoints[F][O] : never;
+export type EntityKind = keyof typeof entities & string;
+
+export const permissions = mapValues(endpoints, ( operations ) => factsOf(operations).permissions);
+export const touches = mapValues(endpoints, ( operations ) => factsOf(operations).touches);
+export const features = keysOf(endpoints);
