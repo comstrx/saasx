@@ -4,13 +4,12 @@
 mod tests {
 
     use std::io::{Error as IoError, Result as IoResult};
-    use std::process::{Command, Output};
+    use std::process::{Command, Output, id};
     use std::fs::{remove_file, write};
     use std::env::{temp_dir, vars_os};
     use std::path::{Path, PathBuf};
     use engine::process::Cargo;
     use std::ffi::OsString;
-    use std::process::id;
 
     fn binary () -> IoResult<PathBuf> {
 

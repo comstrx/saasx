@@ -1,9 +1,9 @@
-use engine::error::{Code, Failure, Result};
+use engine::error::Result;
 use core::fmt::Write as _;
 use engine::process::Env;
 use std::path::Path;
 
-use crate::arch::Skill;
+use crate::arch::{Faults, Skill};
 
 impl Skill {
 
@@ -14,7 +14,7 @@ impl Skill {
             None       => Env::system(),
         };
 
-        Failure::ensure(!self.args.rest().is_empty(), Code::Usage, "at least one NAME is required").map_err(|failure| failure.keyed("no_name"))?;
+        Faults::NO_NAME.ensure(!self.args.rest().is_empty())?;
 
         let mut out = String::new();
 

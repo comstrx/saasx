@@ -1,9 +1,9 @@
-use engine::error::{Failure, Result};
+use engine::error::Result;
 use std::io::{Write as _, stdout};
 use engine::process::{Args, Boot};
-use engine::net::Runtime;
+use engine::thread::Runtime;
 
-use crate::arch::Skill;
+use crate::arch::{Faults, Skill};
 
 impl Skill {
 
@@ -11,10 +11,10 @@ impl Skill {
 
     pub(crate) fn run () -> Result<()> {
 
-        let env  = Runtime::block_on(Boot::env())??;
+        let env   = Runtime::run(Boot::env())?;
         let skill = Self { args: Args::current(), log: Boot::log(&env, "SKILL", "skill")? };
 
-        Runtime::block_on(skill.dispatch())?
+        Runtime::run(skill.dispatch())
 
     }
 
@@ -25,7 +25,7 @@ impl Skill {
             Some("env")    => self.env().await?,
             Some("exec")   => self.exec().await?,
             Some(_)        => return Err(self.args.unknown().context(Self::USAGE)),
-            None           => return Err(Failure::usage("a command is required").keyed("no_command").context(Self::USAGE)),
+            None           => return Err(Faults::NO_COMMAND.fail().context(Self::USAGE)),
         };
 
         stdout().lock().write_all(text.as_bytes())?;

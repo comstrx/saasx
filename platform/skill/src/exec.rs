@@ -1,15 +1,15 @@
 use engine::error::{Code, Failure, Result};
 use std::io::{Write as _, stderr};
 use engine::parse::Parse;
-use engine::process::Run;
+use engine::process::{Faults as Commands, Run};
 
-use crate::arch::Skill;
+use crate::arch::{Faults, Skill};
 
 impl Skill {
 
     fn failed ( program: &str, code: i32, said: &str ) -> Failure {
 
-        let failure = Failure::internal(format!("{program} exited with {code}")).keyed("command_failed");
+        let failure = Commands::COMMAND_FAILED.because(format!("{program} exited with {code}"));
 
         if said.is_empty() { failure } else { failure.context(said.to_owned()) }
 
@@ -17,7 +17,7 @@ impl Skill {
 
     pub(crate) async fn exec ( &self ) -> Result<String> {
 
-        let ( program, args ) = self.args.rest().split_first().ok_or_else(|| Failure::usage("a program is required").keyed("no_program"))?;
+        let ( program, args ) = self.args.rest().split_first().ok_or_else(|| Faults::NO_PROGRAM.fail())?;
         let deadline = self.args.get("deadline").map(Parse::duration).transpose().map_err(|failure| failure.coded(Code::Usage).about("deadline"))?;
 
         let mut run = Run::new(program).args(args);
@@ -34,7 +34,7 @@ impl Skill {
         match out.code() {
             Some(0)    => Ok(out.text()),
             Some(code) => Err(Self::failed(program, code, out.text().trim())),
-            None       => Err(Failure::internal(format!("{program} was ended by a signal")).keyed("command_signaled")),
+            None       => Err(Faults::COMMAND_SIGNALED.because(format!("{program} was ended by a signal"))),
         }
 
     }
