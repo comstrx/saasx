@@ -23,3 +23,18 @@ bun run export      the Android JavaScript bundle of the selected spec
 ## Lab builds
 
 `EXPO_PUBLIC_SPEC=<spec> bun tools/compile/index.ts production`, then `APP_LAB=1 NODE_ENV=production bunx expo prebuild --platform android --clean --no-install` and `./gradlew assembleRelease` in `android/`. With a `google-services.json` beside `app.config.ts`, the lab build takes that project's package name so push tokens can be proven on a device.
+
+Android's cleartext permission follows the spec: `contracts.options.insecure` in the compiled meta becomes `usesCleartextTraffic`, so a production spec with `https` URLs builds without it.
+
+## Device gates
+
+With a lab build installed and a phone over `adb`, Maestro flows under `flows/` drive the real app and `perf` measures what a user feels:
+
+```text
+ADMIN_EMAIL=… ADMIN_PASSWORD=… OTP=… bun run flow admin-login   # credentials, code, dashboard
+ROW_TEXT="…" bun run flow admin-row                              # a row by its text, e.g. after a broadcast
+bun run perf                                                    # cold start to first frame ≤ COLD_MS (1500), janky frames while scrolling ≤ JANK_PERCENT (1)
+```
+
+`MAESTRO` names the Maestro binary when it is not on the path; `APP_ID` names the installed package.
+

@@ -26,7 +26,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
 
-            <View style={[styles.table, { borderColor: palette.line, backgroundColor: palette.panel }]}>
+            <View renderToHardwareTextureAndroid style={[styles.table, { borderColor: palette.line, backgroundColor: palette.panel }]}>
 
                 <View style={[styles.row, { borderBottomColor: palette.line }]}>
 

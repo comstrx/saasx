@@ -16,7 +16,9 @@
         "fmt": "biome check --write .",
         "typecheck": "bun tools/compile/index.ts production && tsc --noEmit -p . && tsc --noEmit -p tsconfig.tools.json",
         "test": "bun test",
-        "compile": "bun tools/compile/index.ts production"
+        "compile": "bun tools/compile/index.ts production",
+        "flow": "bun tools/device/index.ts flow",
+        "perf": "bun tools/device/index.ts perf"
     },
     "dependencies": {
         "@expo/metro-runtime": "57.0.16",

@@ -34,7 +34,7 @@ export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Pro
 
             {errors._form ? <Text text={errors._form} tone="danger" size="sm" /> : null}
 
-            <Button label={labels.submit} busy={busy} onPress={submit} />
+            <Button name="continue" label={labels.submit} busy={busy} onPress={submit} />
 
         </Stack>
 

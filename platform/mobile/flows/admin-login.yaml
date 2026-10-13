@@ -1,0 +1,31 @@
+# Selectors are test ids, never texts: the phone's locale decides the words. Signs the admin in through the credential and code steps and lands on the dashboard.
+appId: ${APP_ID}
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "email"
+    timeout: 20000
+- tapOn:
+    id: "email"
+- inputText: ${ADMIN_EMAIL}
+- tapOn:
+    id: "password"
+- inputText: ${ADMIN_PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "continue"
+- extendedWaitUntil:
+    visible:
+      id: "otp"
+    timeout: 15000
+- tapOn:
+    id: "otp"
+- inputText: ${OTP}
+- hideKeyboard
+- tapOn:
+    id: "verify"
+- extendedWaitUntil:
+    visible:
+      id: "dashboard-table"
+    timeout: 20000

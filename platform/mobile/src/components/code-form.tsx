@@ -27,9 +27,9 @@ export default function CodeForm ({ labels, busy, error, onSubmit, onBack }: Pro
 
             <Stack direction="row" gap={2} align="between">
 
-                <Button label={labels.back} tone="ghost" onPress={onBack} />
+                <Button name="back" label={labels.back} tone="ghost" onPress={onBack} />
 
-                <Button label={labels.submit} busy={busy} onPress={submit} />
+                <Button name="verify" label={labels.submit} busy={busy} onPress={submit} />
 
             </Stack>
 

@@ -1,0 +1,6 @@
+# Asserts a catalog row by its text on the open dashboard; run after a broadcast to prove a live patch.
+appId: ${APP_ID}
+---
+- extendedWaitUntil:
+    visible: ${ROW_TEXT}
+    timeout: 15000
