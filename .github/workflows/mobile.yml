@@ -6,11 +6,13 @@ on:
     paths:
       - 'platform/mobile/**'
       - 'engine/bun/**'
+      - 'engine/bun/**'
       - '.github/workflows/mobile.yml'
 
   pull_request:
     paths:
       - 'platform/mobile/**'
+      - 'engine/bun/**'
       - 'engine/bun/**'
       - '.github/workflows/mobile.yml'
 
@@ -46,6 +48,10 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 26
+
+      - name: Install the engine
+        run: bun install --frozen-lockfile
+        working-directory: engine/bun
 
       - name: Install
         run: bun install --frozen-lockfile
