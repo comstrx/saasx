@@ -1,0 +1,5 @@
+appId: ${APP_ID}
+---
+- extendedWaitUntil:
+    visible: ${ROW_TEXT}
+    timeout: 15000

@@ -1,9 +1,8 @@
-# Scrolls the open dashboard up and down; the performance gate reads the frame statistics around it.
 appId: ${APP_ID}
 ---
 - extendedWaitUntil:
     visible:
-      id: "dashboard-table"
+      id: ${LANDING}
     timeout: 20000
 - swipe:
     direction: UP

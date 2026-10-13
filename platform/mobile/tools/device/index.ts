@@ -4,6 +4,7 @@ import { $ } from "bun";
 
 const app = process.env.APP_ID ?? "com.zainlak.app";
 const activity = process.env.APP_ACTIVITY ?? ".MainActivity";
+const landing = process.env.LANDING ?? "dashboard-table";
 const maestro = process.env.MAESTRO ?? "maestro";
 const coldBudgetMs = parseInteger(process.env.COLD_MS ?? "") ?? 1500;
 const jankBudgetPercent = Number(process.env.JANK_PERCENT ?? "1");
@@ -12,7 +13,7 @@ const jankRuns = parseInteger(process.env.JANK_RUNS ?? "") ?? 3;
 const root = new URL("../..", import.meta.url).pathname;
 
 function environment ( extra: Record<string, string> ): string[] {
-    return Object.entries({ APP_ID: app, ...extra }).flatMap(( [key, value] ) => ["--env", `${key}=${value}`]);
+    return Object.entries({ APP_ID: app, LANDING: landing, ...extra }).flatMap(( [key, value] ) => ["--env", `${key}=${value}`]);
 }
 export async function flow ( name: string, extra: Record<string, string> = {} ): Promise<void> {
     const file = `${root}flows/${name}.yaml`;
@@ -44,7 +45,7 @@ type Frames = { frames: number; janky: number; percent: number };
 
 async function scrolled (): Promise<Frames> {
     await $`adb shell dumpsys gfxinfo ${app} reset`.quiet();
-    await flow("admin-scroll");
+    await flow("scroll");
 
     const output = await $`adb shell dumpsys gfxinfo ${app}`.text();
     const frames = Number(/Total frames rendered:\s*(\d+)/.exec(output)?.[1] ?? "0");
@@ -88,7 +89,7 @@ task(import.meta.url, async () => {
 
     if ( command === "perf" ) return perf();
     if ( command === "flow" ) {
-        for ( const name of names ) await flow(name, Object.fromEntries(Object.entries(process.env).filter(( [key] ) => /^(ADMIN_EMAIL|ADMIN_PASSWORD|OTP|ROW_TEXT)$/.test(key)).map(( [key, value] ) => [key, value ?? ""])));
+        for ( const name of names ) await flow(name, Object.fromEntries(Object.entries(process.env).filter(( [key] ) => /^(ADMIN_EMAIL|ADMIN_PASSWORD|OTP|ROW_TEXT|LANDING)$/.test(key)).map(( [key, value] ) => [key, value ?? ""])));
 
         return;
     }

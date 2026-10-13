@@ -1,4 +1,3 @@
-# Selectors are test ids, never texts: the phone's locale decides the words. Signs the admin in through the credential and code steps and lands on the dashboard.
 appId: ${APP_ID}
 ---
 - launchApp
@@ -27,5 +26,5 @@ appId: ${APP_ID}
     id: "verify"
 - extendedWaitUntil:
     visible:
-      id: "dashboard-table"
+      id: ${LANDING}
     timeout: 20000
