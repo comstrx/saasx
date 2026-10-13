@@ -17,6 +17,7 @@ function compiled (): Meta {
 
 }
 const lab: [string, Record<string, unknown>] = ["expo-build-properties", { android: { usesCleartextTraffic: true } }];
+const push = resolve(root, "google-services.json");
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
 
@@ -35,12 +36,16 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             "expo-router",
             ["expo-location", { locationWhenInUsePermission: "Your location fills your address." }],
             ["expo-image-picker", { photosPermission: "Your photos become your profile picture.", cameraPermission: "The camera takes your profile picture." }],
-            "expo-notifications",
+            ["expo-notifications", { defaultChannel: "default" }],
             "expo-localization",
             ...(app.icon ? [["expo-splash-screen", { backgroundColor: app.background, image: app.icon }] as [string, Record<string, unknown>]] : []),
             ...(process.env.APP_LAB === "1" ? [lab] : []),
         ],
-        android: { package: `com.${app.slug}.lab`, ...config.android },
+        android: {
+            package: process.env.APP_LAB === "1" && existsSync(push) ? "com.zainlak.app" : `com.${app.slug}.lab`,
+            ...(process.env.APP_LAB === "1" && existsSync(push) ? { googleServicesFile: push } : {}),
+            ...config.android,
+        },
         experiments: { typedRoutes: true, tsconfigPaths: true },
         extra: { ...config.extra, spec: identity },
     };
