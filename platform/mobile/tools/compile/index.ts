@@ -38,6 +38,7 @@ export async function compileSpec ( mode: Mode ) {
 
     const meta = {
         identity: spec.identity,
+        insecure: spec.config.insecure,
         assetRoot: `${folder}/assets`,
         assetHash: assetHash(assets),
         paths: specPaths,

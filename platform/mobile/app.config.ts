@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { ConfigContext, ExpoConfig } from "expo/config";
 
-type Meta = { identity: string; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
+type Meta = { identity: string; insecure: boolean; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
 
 const root = import.meta.dirname;
 
@@ -16,13 +16,13 @@ function compiled (): Meta {
     return JSON.parse(readFileSync(path, "utf8")) as Meta;
 
 }
-const lab: [string, Record<string, unknown>] = ["expo-build-properties", { android: { usesCleartextTraffic: true } }];
 const push = resolve(root, "google-services.json");
 const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
 
-    const { identity, app } = compiled();
+    const { identity, insecure, app } = compiled();
+    const transports: [string, Record<string, unknown>] = ["expo-build-properties", { android: { usesCleartextTraffic: insecure } }];
 
     return {
         ...config,
@@ -40,7 +40,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ["expo-notifications", { defaultChannel: "default" }],
             "expo-localization",
             ...(app.icon ? [["expo-splash-screen", { backgroundColor: app.background, image: app.icon }] as [string, Record<string, unknown>]] : []),
-            ...(process.env.APP_LAB === "1" ? [lab] : []),
+            transports,
         ],
         android: {
             package: process.env.APP_LAB === "1" && existsSync(push) ? "com.zainlak.app" : `com.${app.slug}.lab`,
