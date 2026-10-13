@@ -30,7 +30,7 @@ Signals let features talk on one screen: `search` emits `search`, `table` emits 
 - **States contract:** a client feature that reads names `loading`, `failed`, `offline`, `cached` (a list also `empty`); one that writes names `failed` and binds an `errors` dictionary. A spec may not leave one empty.
 - **Permissions:** an operation declared with `need(["delete_x"], …)` carries its permissions into the compiled write port; the feature itself is gated only by what it reads. `usePermission(port)` / `<Permission port>` hide what the session may not run.
 - **Icons:** `contents.icon` must exist in the surface's icon set.
-- SEO is behavioural: `content.seo.robots` and `sitemap` lists drive robots.txt, the sitemap and page metadata; there is no flag.
+- SEO is behavioral: `content.seo.robots` and `sitemap` lists drive robots.txt, the sitemap and page metadata; there is no flag.
 
 ## Runtime pieces
 
