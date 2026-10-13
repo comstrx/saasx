@@ -33,11 +33,6 @@ paths = [
 ]
 
 [[allowlists]]
-description = "Ignore the local, git-ignored secret file (git history is scanned separately in CI)"
-
-paths = ['''(^|/)\.secret$''']
-
-[[allowlists]]
 description = "Ignore obvious placeholders"
 regexTarget = "secret"
 regexes = [
