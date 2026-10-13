@@ -10,6 +10,7 @@ import { config, localize, shell, text } from "@/lib/spec/server";
 import type { Shell as ShellParts } from "@/lib/spec/surface";
 import { SignalsProvider } from "@/stores/signals";
 import { Blocks, type Facts, feature } from "./blocks";
+import { Boundary } from "./boundary";
 import { ClientOnly } from "./client-only";
 import { Gate } from "./gate";
 
@@ -33,7 +34,7 @@ export async function Screen ({ screen, route }: Props) {
     const [nav, sidebar, footer, loader] = await Promise.all(parts.map(( name ) => part(name, screen, route)));
     const locale = await requestLocale() as Locale;
     const facts: Facts = { screen, route, loader };
-    const blocks = <SignalsProvider><Blocks blocks={screen.blocks} facts={facts} /></SignalsProvider>;
+    const blocks = <Boundary name={screen.name} message={text({ key: "state.failed" }, locale)} retry={text({ key: "state.retry" }, locale)}><SignalsProvider><Blocks blocks={screen.blocks} facts={facts} /></SignalsProvider></Boundary>;
     const body = screen.options.render === "client" ? <ClientOnly>{blocks}</ClientOnly> : blocks;
     const gated = screen.access === "any" ? body : <Gate access={screen.access === "guest" ? [] : screen.access === "user" ? ["user"] : screen.access} guest={screen.access === "guest"} redirect={screen.redirect}>{body}</Gate>;
 

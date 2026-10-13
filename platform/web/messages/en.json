@@ -268,5 +268,9 @@
       "tenant": "Unknown workspace",
       "catalog": "The catalog item is not available"
     }
+  },
+  "form": {
+    "leave": "You have unsaved changes. Leave anyway?",
+    "tags": "Separate items with commas"
   }
 }

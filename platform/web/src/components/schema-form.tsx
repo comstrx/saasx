@@ -54,7 +54,7 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
         }
         if ( field.kind === "localized" ) {
 
-            const texts = value && typeof value === "object" && !(value instanceof Blob) && !("uri" in value) ? value : {};
+            const texts: Record<string, string> = value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Blob) && !("uri" in value) ? value : {};
 
             return Object.keys(texts).map(( locale ) => (
 
@@ -74,6 +74,21 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
                 <Field key={field.name} id={key} label={label(field)} error={error}>
 
                     <FileInput id={key} name={field.name} accept="image/*" disabled={busy} invalid={Boolean(error)} onChange={( file ) => form.set(field.name, file)} />
+
+                </Field>
+
+            );
+
+        }
+        if ( field.kind === "list" ) {
+
+            const items = Array.isArray(value) ? value : [];
+
+            return (
+
+                <Field key={field.name} id={key} label={label(field)} error={error}>
+
+                    <Input id={key} name={field.name} value={items.join(", ")} invalid={Boolean(error)} disabled={busy} onChange={( next ) => form.set(field.name, next.split(",").map(( item ) => item.trim()).filter(Boolean))} />
 
                 </Field>
 

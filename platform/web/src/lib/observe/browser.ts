@@ -21,3 +21,15 @@ export const observeCall: Observer = ( outcome ) => {
     navigator.sendBeacon("/api/report", new Blob([body], { type: "application/json" }));
 
 };
+/**
+ * A render failure a boundary caught, reported the same way a failed call is.
+ */
+export function reportError ( name: string, error: unknown ): void {
+
+    if ( typeof navigator === "undefined" || !navigator.sendBeacon ) return;
+
+    const body = JSON.stringify({ call: `render.${name}`, ms: 0, kind: "render", reason: error instanceof Error ? error.name : "unknown", page: location.pathname });
+
+    navigator.sendBeacon("/api/report", new Blob([body], { type: "application/json" }));
+
+}
