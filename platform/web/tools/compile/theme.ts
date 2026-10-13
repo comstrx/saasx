@@ -5,16 +5,21 @@ import { motion as presets, radius, space, type } from "../../src/lib/spec/theme
 type Face = { file: string; weight: string };
 
 function face ( locale: string, font: Face, assets: ReadonlyMap<string, Uint8Array> ): string {
+
     if ( !assets.has(`fonts/${font.file}`) ) throw new Error(`Missing selected font: ${font.file}`);
 
     return fontFace({ family: `Site-${locale}`, src: `/fonts/${font.file}`, weight: font.weight });
+
 }
 function family ( locale: string, locales: string[] ): string {
+
     const stack = [locale, ...locales.filter(( other ) => other !== locale)].map(( name ) => `Site-${name}`);
 
     return `:root[lang="${locale}"] { --font-sans: ${fontStack(stack)}; }`;
+
 }
 export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, Uint8Array> ): string {
+
     const fonts = Object.entries(config.settings.fonts);
     const locales = fonts.map(( [locale] ) => locale);
     const tokens = defineTokens({ colors: config.theme.colors, space, radius, type });
@@ -31,4 +36,5 @@ export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, U
         ...locales.map(( locale ) => family(locale, locales)),
         "",
     ].join("\n");
+
 }

@@ -7,7 +7,6 @@ export type Scope = Readonly<Record<string, unknown>>;
 export function textOf ( value: unknown ): string {
 
     if ( typeof value === "string" ) return value;
-
     if ( typeof value === "number" || typeof value === "boolean" ) return String(value);
 
     return "";

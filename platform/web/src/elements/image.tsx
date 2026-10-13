@@ -1,6 +1,7 @@
 type Props = { src: string | null | undefined; alt: string; ratio?: "square" | "wide" | undefined };
 
 export default function Image ({ src, alt, ratio = "wide" }: Props) {
+
     return (
 
         <span className="image" data-ratio={ratio} data-empty={src ? undefined : ""}>
@@ -10,4 +11,5 @@ export default function Image ({ src, alt, ratio = "wide" }: Props) {
         </span>
 
     );
+
 }

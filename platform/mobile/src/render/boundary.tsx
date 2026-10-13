@@ -8,17 +8,22 @@ type State = { failed: boolean };
 
 export class Boundary extends Component<Props, State> {
     override state: State = { failed: false };
-
     static getDerivedStateFromError (): State {
+
         return { failed: true };
+
     }
     override componentDidCatch ( error: unknown ): void {
+
         reportError(this.props.name, error);
+
     }
     override render (): ReactNode {
+
         if ( !this.state.failed ) return this.props.children;
         if ( !this.props.message || !this.props.palette ) return null;
 
         return <Notice tone="failed" message={this.props.message} action={this.props.retry} palette={this.props.palette} onAction={() => this.setState({ failed: false })} />;
+
     }
 }

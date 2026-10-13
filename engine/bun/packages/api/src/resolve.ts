@@ -45,7 +45,6 @@ const base: Layer = {
 function chosen ( value: Switch | undefined, operation: string ): { enabled: boolean; layer: Layer } {
 
     if ( value === undefined || value === true ) return { enabled: true, layer: {} };
-
     if ( value === false ) return { enabled: false, layer: {} };
 
     const { operations = {}, ...feature } = value;

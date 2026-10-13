@@ -5,12 +5,15 @@ type Entry = { id: string; node: ReactNode };
 type Props = BlockOptions & { entries: readonly Entry[] };
 
 function columns ( grid: BlockOptions["grid"] ): CSSProperties {
+
     const chosen = typeof grid === "number" ? { base: grid } : grid;
     const variables = Object.entries(chosen).map(( [point, count] ) => [`--grid-${point}`, String(count)]);
 
     return Object.fromEntries(variables) as CSSProperties;
+
 }
 export default function Block ({ entries, grid, sizes, gap, padding, align, width, height, tone, radius, shadow }: Props) {
+
     const sized = sizes.length > 0;
 
     return (
@@ -38,4 +41,5 @@ export default function Block ({ entries, grid, sizes, gap, padding, align, widt
         </section>
 
     );
+
 }

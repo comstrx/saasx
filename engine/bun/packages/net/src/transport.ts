@@ -23,7 +23,6 @@ function base ( count: number ): number {
 function failed ( error: unknown, signal: AbortSignal | undefined, timeout: AbortSignal ): Failure {
 
     if ( signal?.aborted ) return new Failure("aborted");
-
     if ( timeout.aborted ) return new Failure("timeout");
 
     return isFailure(error) ? error : new Failure("network", { cause: error });

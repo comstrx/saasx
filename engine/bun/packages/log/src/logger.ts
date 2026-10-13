@@ -30,7 +30,6 @@ function sensitive ( key: string, redact: readonly string[] ): boolean {
 function clean ( value: unknown, redact: readonly string[], depth = 0 ): unknown {
 
     if ( value instanceof Error ) return describe(value);
-
     if ( Array.isArray(value) ) return depth < 4 ? value.map(( item ) => clean(item, redact, depth + 1)) : "[…]";
 
     if ( value && typeof value === "object" ) {

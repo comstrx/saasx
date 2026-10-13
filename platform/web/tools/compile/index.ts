@@ -9,12 +9,17 @@ import { loadSpec, root, type Spec, specFromEnvironment, writeFile, writeJson } 
 import { themeCss } from "./theme.ts";
 
 function forMode ( config: CompiledConfig, mode: Mode ): CompiledConfig {
+
     return config.api ? { ...config, api: { ...config.api, connections: selectConnections(config.api.connections, mode) } } : config;
+
 }
 function owned ( name: string ): boolean {
+
     return specPaths.some(( path ) => name.startsWith(`${path}/`));
+
 }
 export function assemble ( spec: Spec, assets: Files, mode: Mode ) {
+
     const config = forMode(spec.config, mode);
 
     brandImages([config.content.logo, config.content.logo_dark, config.content.icon], assets);
@@ -31,8 +36,10 @@ export function assemble ( spec: Spec, assets: Files, mode: Mode ) {
             browser: config.api ? { ...browserConfig(config.api, config.contract), realtime: config.realtime } : null,
         },
     };
+
 }
 export async function compileSpec ( mode: Mode ) {
+
     const spec = await loadSpec(specFromEnvironment());
     const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
     const folder = `node_modules/.cache/spec/${mode}`;
@@ -47,7 +54,9 @@ export async function compileSpec ( mode: Mode ) {
     writeJson(`${folder}/release.json`, { identity: spec.identity, files: [...files].map(( [path, bytes] ) => ({ path, sha256: sha256(bytes) })) });
 
     if ( mode === "development" ) {
+
         for ( const [name, bytes] of assets ) writeFile(`public${assetRoot}/${name}`, bytes);
+
     }
 
     const { screens, features, operations } = spec.schema;
@@ -59,8 +68,11 @@ export async function compileSpec ( mode: Mode ) {
     writeJson(`${folder}/meta.json`, meta);
 
     return meta;
+
 }
 
 task(import.meta.url, async () => {
+
     await compileSpec(modeOf(process.argv[2]));
+
 });

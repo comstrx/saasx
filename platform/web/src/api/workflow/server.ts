@@ -21,18 +21,21 @@ const connections = config.api?.connections ?? {};
 const currency = config.api?.context.currency ?? config.settings.currency.default;
 
 export const serverContext = cache(async (): Promise<Context> => {
+
     const [host, client, requestId, language, store] = await Promise.all([requestHost(), requestClient(), requestTrace(), requestLocale(), cookies()]);
     const saved = readPreferences(( name ) => store.get(name)?.value);
     const cookie = config.api?.context.sessionCookie;
     const auth = cookie ? store.get(cookie)?.value : undefined;
 
     return requestContext({ currency, tenant: config.api?.context.tenant ?? null }, { language, currency: saved.currency, host, client, auth, requestId });
+
 });
 const caching = ( lifetime: number ): Record<string, unknown> => (lifetime ? { cache: "force-cache", next: { revalidate: lifetime } } : { cache: "no-store" });
 
 export const publicApi: ApiClient<Endpoints> = createApi(endpoints, { connections }, config.contract, serverContext, { execution: "server", observe: observeCall, caching });
 
 export const read = cache(async <F extends Feature, O extends OperationOf<F>> ( feature: F, operation: O, input?: Given<EndpointOf<F, O>> ): Promise<Result<EndpointOf<F, O>>> => {
+
     const context = await serverContext();
     const call = (publicApi[feature] as Record<string, ( value?: unknown ) => Promise<unknown>>)[operation];
 
@@ -42,8 +45,11 @@ export const read = cache(async <F extends Feature, O extends OperationOf<F>> ( 
     const key = JSON.stringify([context.tenant, context.language, context.currency, feature, operation, input ?? {}]);
 
     return kept(key, () => call(input)) as Promise<Result<EndpointOf<F, O>>>;
+
 });
 export const siteContent = cache(async () => {
+
     try { return (await read("site", "read")).resource; }
     catch { return config.content; }
+
 });

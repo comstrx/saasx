@@ -20,6 +20,7 @@ export type Options = {
 };
 
 export default function Grid ({ options, ports, route, feature }: FeatureProps<Options>) {
+
     const locale = useLocale();
     const signals = useSignals();
     const port = usePort(ports.rows, route);
@@ -32,10 +33,13 @@ export default function Grid ({ options, ports, route, feature }: FeatureProps<O
     const seen = useRef(others);
 
     useEffect(() => {
+
         if ( seen.current === others ) return;
 
         seen.current = others;
+
         if ( options.paging ) setPage(1);
+
     }, [others, options.paging, setPage]);
 
     const pagination = port.status === "ready" ? port.meta : undefined;
@@ -60,4 +64,5 @@ export default function Grid ({ options, ports, route, feature }: FeatureProps<O
         </Titled>
 
     );
+
 }

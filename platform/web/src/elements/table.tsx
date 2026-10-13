@@ -5,11 +5,14 @@ export type Row = { key: string; cells: Record<string, ReactNode> };
 type Props = { columns: readonly Column[]; rows: readonly Row[]; caption?: string | undefined; selected?: string | undefined; onSelect?: (( key: string ) => void) | undefined };
 
 export default function Table ({ columns, rows, caption, selected, onSelect }: Props) {
+
     const pick = ( event: KeyboardEvent<HTMLTableRowElement>, key: string ): void => {
+
         if ( event.key !== "Enter" && event.key !== " " ) return;
 
         event.preventDefault();
         onSelect?.(key);
+
     };
 
     return (
@@ -52,4 +55,5 @@ export default function Table ({ columns, rows, caption, selected, onSelect }: P
         </div>
 
     );
+
 }

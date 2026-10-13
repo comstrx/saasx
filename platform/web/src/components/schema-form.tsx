@@ -22,19 +22,25 @@ type Props = { name: string; form: FormState<unknown>; labels: Labels; choices: 
 const kinds = { text: "text", email: "email", phone: "tel", password: "password", number: "number", integer: "number", date: "date", datetime: "datetime-local" } as const;
 
 function text ( value: FormValue ): string {
+
     return typeof value === "string" ? value : "";
+
 }
 export default function SchemaForm ({ name, form, labels, choices, submit, note, actions }: Props) {
+
     const id = useId();
     const busy = form.status === "pending";
     const label = ( field: FieldFact ): string => labels[field.name] ?? (typeof pathGet(labels, field.name) === "string" ? (pathGet(labels, field.name) as string) : field.name);
     const control = ( field: FieldFact ): ReactNode => {
+
         const key = `${id}-${field.name}`;
         const value = form.values[field.name] ?? null;
         const error = form.errors[field.name];
 
         if ( field.kind === "boolean" ) return <Checkbox key={field.name} id={key} name={field.name} label={label(field)} checked={value === true} disabled={busy} onChange={( next ) => form.set(field.name, next)} />;
+
         if ( field.kind === "choice" ) {
+
             const options = (field.choices ?? []).map(( choice ) => ({ value: choice, label: choices[field.name]?.[choice] ?? choice }));
 
             return (
@@ -46,8 +52,11 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
                 </Field>
 
             );
+
         }
+
         if ( field.kind === "localized" ) {
+
             const texts: Record<string, string> = value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Blob) && !("uri" in value) ? value : {};
 
             return Object.keys(texts).map(( locale ) => (
@@ -59,8 +68,11 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
                 </Field>
 
             ));
+
         }
+
         if ( field.kind === "file" ) {
+
             return (
 
                 <Field key={field.name} id={key} label={label(field)} error={error}>
@@ -70,8 +82,11 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
                 </Field>
 
             );
+
         }
+
         if ( field.kind === "list" ) {
+
             const items = Array.isArray(value) ? value : [];
 
             return (
@@ -83,7 +98,9 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
                 </Field>
 
             );
+
         }
+
         if ( !(field.kind in kinds) ) return null;
 
         return (
@@ -95,6 +112,7 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
             </Field>
 
         );
+
     };
 
     return (
@@ -122,4 +140,5 @@ export default function SchemaForm ({ name, form, labels, choices, submit, note,
         </Form>
 
     );
+
 }

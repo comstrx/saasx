@@ -11,7 +11,6 @@ function operationOf<B> ( walk: Walk<B>, name: string, where: string ) {
     const facts = walk.catalogue[feature]?.[operation];
 
     if ( !walk.backend ) walk.issues.push(`${where}: ${name} needs a backend; this spec declares none.`);
-
     if ( !facts ) walk.issues.push(`${where}: no operation named ${name} in the catalogue.`);
 
     return facts ? { feature, operation, facts } : undefined;
@@ -23,7 +22,6 @@ function inputIssues<B> ( walk: Walk<B>, input: Record<string, Value>, facts: Op
     const params = templateKeys(facts.path).filter(( key ) => !(Object.hasOwn(input, key) || walk.params.includes(key)));
 
     if ( strangers.length ) walk.issues.push(`${where}: unknown input ${strangers.join(", ")}.`);
-
     if ( params.length ) walk.issues.push(`${where}: path parameter {${params.join("}, {")}} is not bound.`);
 
     for ( const [key, value] of Object.entries(input) ) {
@@ -76,9 +74,7 @@ function readPort<B> (
     const found = operationOf(walk, binding.read, where);
 
     if ( !found ) return undefined;
-
     if ( port.kind === "write" ) walk.issues.push(`${where}: port ${name} takes a write, not a read.`);
-
     if ( found.facts.method !== "GET" ) walk.issues.push(`${where}: ${binding.read} is not a read.`);
 
     if ( port.kind === "list" && !found.facts.many ) {
@@ -147,9 +143,7 @@ function writePort<B> (
     const found = operationOf(walk, binding.write, where);
 
     if ( !found ) return undefined;
-
     if ( port.kind !== "write" ) walk.issues.push(`${where}: port ${name} takes a ${port.kind}, not a write.`);
-
     if ( found.facts.method === "GET" ) walk.issues.push(`${where}: ${binding.write} is a read, not a write.`);
 
     const input = binding.input ?? {};
@@ -210,9 +204,7 @@ function compilePort<B> (
 ): CompiledPort | undefined {
 
     if ( "read" in binding ) return readPort(walk, name, port, binding, where);
-
     if ( "write" in binding ) return writePort(walk, name, port, binding, where);
-
     if ( "data" in binding ) return dataPort(walk, name, port, binding.data, where);
 
     return sitePort(walk, name, port, binding.site, where);

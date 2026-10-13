@@ -1,6 +1,7 @@
 type Props = { id: string; name: string; label: string; checked: boolean; disabled?: boolean | undefined; onChange: ( value: boolean ) => void };
 
 export default function Checkbox ({ id, name, label, checked, disabled = false, onChange }: Props) {
+
     return (
 
         <label className="checkbox" htmlFor={id}>
@@ -12,4 +13,5 @@ export default function Checkbox ({ id, name, label, checked, disabled = false, 
         </label>
 
     );
+
 }

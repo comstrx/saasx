@@ -45,9 +45,7 @@ export function localizeTree<T> ( value: T, messages: Messages, locale: string )
     const walk = ( item: unknown ): unknown => {
 
         if ( isSpecKey(item) ) return messageTree(messages, item.key) ?? messageText(item, messages, locale);
-
         if ( Array.isArray(item) ) return item.map(walk);
-
         if ( isRecord(item) ) return mapValues(item, walk);
 
         return item;
@@ -94,9 +92,7 @@ export function localPort (
 ): { local: true; value: unknown } | { local: false } {
 
     if ( !port || port.kind === "write" ) return { local: true, value: undefined };
-
     if ( port.kind === "data" ) return { local: true, value: port.value };
-
     if ( port.kind === "site" ) return { local: true, value: port.path === "$" ? site : pathGet(site, port.path) };
 
     return { local: false };

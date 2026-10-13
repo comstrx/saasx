@@ -23,6 +23,7 @@ const metrics = z.object({
 const body = z.union([metrics, report]);
 
 export async function POST ( request: Request ): Promise<Response> {
+
     const refused = guardRequest(request);
 
     if ( refused ) return refused;
@@ -37,4 +38,5 @@ export async function POST ( request: Request ): Promise<Response> {
     else logger.warn("browser.call", { ...parsed.data, served });
 
     return new Response(null, { status: 204 });
+
 }

@@ -12,17 +12,23 @@ const alive = base ? await fetch(`${base}/contract`, { headers: { "X-Tenant-Doma
 const live = alive ? test : test.skip;
 
 describe("the backend behind the spec", () => {
+
     live("its published envelope agrees with the core layer this part speaks", async () => {
+
         const reply = await fetch(`${base}/contract`, { headers: { Accept: "application/json", "X-Tenant-Domain": api?.context.tenant ?? "" } });
         const body = (await reply.json()) as { data: { envelope: Record<string, unknown> } };
         const envelope = body.data.envelope;
         const expected = core.response ?? {};
 
         for ( const key of ["data", "message", "errors", "code", "reason"] as const ) {
+
             expect(Object.keys(envelope)).toContain(expected[key] ?? key);
+
         }
+
     });
     live("a catalogue read decodes rows, pagination and the request id through the compiled contract", async () => {
+
         if ( !api ) return;
 
         const client = createApi(endpoints, api, spec.config.contract, () => requestContext(api.context, { language: "en", requestId: "live-1" }), { execution: "server" });
@@ -32,8 +38,10 @@ describe("the backend behind the spec", () => {
         expect(result.resource[0]?.name).toBeString();
         expect(result.meta.pagination?.total).toBeGreaterThan(0);
         expect(result.meta.requestId).toBeString();
+
     });
     live("a refused sign-in is an input failure with the backend's reason", async () => {
+
         if ( !api ) return;
 
         const client = createApi(endpoints, api, spec.config.contract, () => requestContext(api.context, { language: "en", requestId: "live-2" }), { execution: "client" });
@@ -43,5 +51,7 @@ describe("the backend behind the spec", () => {
         if ( isFailure(refusal) && refusal.status === 429 ) return;
 
         expect(refusal).toMatchObject({ kind: "input", reason: "invalid_credentials" });
+
     });
+
 });

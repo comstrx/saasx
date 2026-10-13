@@ -12,6 +12,7 @@ type Labels = { code: string; submit: string; back: string; sent: string };
 type Props = { labels: Labels; busy: boolean; error?: string | undefined; onSubmit: ( code: string ) => void; onBack: () => void };
 
 export default function CodeForm ({ labels, busy, error, onSubmit, onBack }: Props) {
+
     const id = useId();
     const [code, setCode] = useState("");
 
@@ -42,4 +43,5 @@ export default function CodeForm ({ labels, busy, error, onSubmit, onBack }: Pro
         </Form>
 
     );
+
 }

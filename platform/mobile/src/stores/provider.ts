@@ -6,5 +6,7 @@ import { sessionStore } from "./session.ts";
 export const session = bind(sessionStore);
 
 export function SessionProvider ({ children }: { children: ReactNode }) {
+
     return createElement(PreferencesProvider, null, createElement(session.Provider, null, children));
+
 }

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 type Props = { brand: ReactNode; links: ReactNode; actions: ReactNode };
 
 export default function Bar ({ brand, links, actions }: Props) {
+
     return (
 
         <nav className="bar" aria-label="primary">
@@ -16,4 +17,5 @@ export default function Bar ({ brand, links, actions }: Props) {
         </nav>
 
     );
+
 }

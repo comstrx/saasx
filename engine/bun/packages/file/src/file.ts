@@ -89,7 +89,6 @@ function append ( data: FormData, key: string, item: Part, limits: Limits, count
         count.files += 1;
 
         if ( count.files > limits.maxFiles ) throw new Failure("input", { reason: "too_many_files" });
-
         if ( item instanceof Blob ) checkFile(item, limits, key);
 
         data.append(key, item as Blob);

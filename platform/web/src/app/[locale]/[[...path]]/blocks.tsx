@@ -13,13 +13,16 @@ export type Facts = { screen: Screen; route: Route; loader: ReactNode };
 type View = ComponentType<FeatureProps>;
 
 export async function feature ( name: string ): Promise<View> {
+
     const entry = registry[name];
 
     if ( !entry ) throw new Error(`No feature named ${name} in the registry.`);
 
     return (await entry()).default as View;
+
 }
 async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
+
     const Feature = await feature(entry.name);
     const place = { id: entry.id, slug: entry.slug, heading: entry.heading, access: entry.access };
     const held = entry.features.length + entry.blocks.length > 0;
@@ -36,22 +39,31 @@ async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) 
     ) : undefined;
 
     return createElement(Feature, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
+
 }
 function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
+
     const one = <One entry={entry} facts={facts} />;
     const blocking = entry.heading && entry.owner === "server";
     const view = <Boundary name={entry.id}>{blocking ? one : <Suspense fallback={facts.loader}>{one}</Suspense>}</Boundary>;
 
     return entry.access.length ? <Gate access={entry.access}>{view}</Gate> : view;
+
 }
 function Features ({ entries, facts }: { entries: readonly CompiledFeature[]; facts: Facts }) {
+
     return entries.map(( entry ) => <Placed key={entry.id} entry={entry} facts={facts} />);
+
 }
 export function Blocks ({ blocks, facts }: { blocks: readonly CompiledBlock[]; facts: Facts }) {
+
     return blocks.map(( block ) => {
+
         const features = block.features.map(( entry ) => ({ id: entry.id, node: <Placed entry={entry} facts={facts} /> }));
         const children = block.blocks.map(( child ) => ({ id: child.id, node: <Blocks blocks={[child]} facts={facts} /> }));
 
         return <Block key={block.id} {...block.options} entries={[...features, ...children]} />;
+
     });
+
 }

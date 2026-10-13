@@ -22,6 +22,7 @@ export const preferencesStore = defineStore({
         store,
         keys: ["language", "currency", "theme"],
         parse: ( saved ) => {
+
             const given = saved as Partial<Preferences>;
 
             return {
@@ -29,6 +30,7 @@ export const preferencesStore = defineStore({
                 ...(given.currency && currencies.includes(given.currency) ? { currency: given.currency } : {}),
                 ...(given.theme && themes.includes(given.theme) ? { theme: given.theme } : {}),
             };
+
         },
     },
 });

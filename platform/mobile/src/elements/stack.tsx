@@ -15,5 +15,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Stack ({ gap = 3, direction = "column", align = "stretch", children }: Props) {
+
     return <View style={[styles[direction], styles[align], { gap: gaps[gap] }]}>{children}</View>;
+
 }

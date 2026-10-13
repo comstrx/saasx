@@ -64,9 +64,7 @@ export function applyPatch ( current: unknown, many: boolean, event: string, dat
         const held = list.find(( item ) => item[patch.key] === id);
 
         if ( !held ) return untouched;
-
         if ( gone ) return { value: removeBy(list, patch.key, id), applied: true };
-
         if ( !newer(held, incoming, patch.version) ) return untouched;
 
         return { value: upsertBy(list, { ...held, ...incoming }, patch.key, false).items, applied: true };
@@ -290,7 +288,6 @@ export function usePortResource (
     return useMemo((): Resource<unknown, Pagination> => {
 
         if ( idle ) return { status: "idle" };
-
         if ( resource.status !== "ready" ) return resource;
 
         if ( shown ) {

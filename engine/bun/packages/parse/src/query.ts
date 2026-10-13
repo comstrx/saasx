@@ -9,9 +9,7 @@ const depthLimit = 4;
 function entries ( key: string, value: QueryInput, depth: number ): [string, string][] {
 
     if ( depth > depthLimit ) throw new Failure("input", { message: `Query nests too deeply: ${key}` });
-
     if ( value === null || value === undefined ) return [];
-
     if ( Array.isArray(value) ) return value.flatMap(( item ) => entries(`${key}[]`, item, depth + 1));
 
     if ( typeof value === "object" ) {

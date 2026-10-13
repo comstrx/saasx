@@ -7,6 +7,7 @@ type Props = { label: string; error?: string | undefined; children: ReactNode };
 const styles = StyleSheet.create({ field: { gap: 4 }, label: { fontSize: 13 }, error: { fontSize: 13 } });
 
 export default function Field ({ label, error, children }: Props) {
+
     const palette = usePalette();
 
     return (
@@ -22,4 +23,5 @@ export default function Field ({ label, error, children }: Props) {
         </View>
 
     );
+
 }

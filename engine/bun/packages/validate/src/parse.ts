@@ -36,7 +36,6 @@ function ruleOf ( issue: RawIssue ): Issue {
     const number = ( value: number | bigint | undefined ): number => Number(value ?? 0);
 
     if ( issue.code === "too_small" ) return { rule: "min", params: { minimum: number(issue.minimum) } };
-
     if ( issue.code === "too_big" ) return { rule: "max", params: { maximum: number(issue.maximum) } };
 
     if ( issue.code === "invalid_type" )
@@ -45,9 +44,7 @@ function ruleOf ( issue: RawIssue ): Issue {
             : { rule: "type", params: { expected: issue.expected ?? "value" } };
 
     if ( issue.code === "invalid_format" ) return { rule: "format", params: { format: issue.format ?? "value" } };
-
     if ( issue.code === "invalid_value" ) return { rule: "choice", params: { choices: (issue.values ?? []).join(", ") } };
-
     if ( issue.code === "unrecognized_keys" ) return { rule: "unknown" };
 
     return { rule: "invalid" };

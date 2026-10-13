@@ -10,6 +10,7 @@ const scenes: Record<Scene, { paths: string[]; accent: string[] }> = {
 };
 
 export default function Illustration ({ scene, label }: Props) {
+
     const { paths, accent } = scenes[scene];
 
     return (
@@ -25,4 +26,5 @@ export default function Illustration ({ scene, label }: Props) {
         </svg>
 
     );
+
 }

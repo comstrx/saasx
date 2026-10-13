@@ -134,7 +134,6 @@ export async function attempt<T> ( work: () => Promise<T>, kind: Kind = "unknown
 export function failureOf ( error: unknown ): Failure {
 
     if ( isFailure(error) ) return error;
-
     if ( error instanceof Error ) return new Failure("unknown", { message: error.message, cause: error });
 
     if ( isRecord(error) && typeof error.message === "string" )
@@ -150,9 +149,7 @@ export function describe ( error: unknown, depth = 0 ): Record<string, unknown> 
     const facts: Record<string, unknown> = { name: error.name, message: error.message };
 
     if ( isFailure(error) ) Object.assign(facts, error.facts());
-
     if ( isRecord(error) && typeof error.code === "string" ) facts.code = error.code;
-
     if ( depth < 3 && error.cause !== undefined ) facts.cause = describe(error.cause, depth + 1);
 
     return facts;

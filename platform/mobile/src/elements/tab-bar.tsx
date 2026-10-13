@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
 });
 
 export default function TabBar ({ label, tabs }: Props) {
+
     const palette = usePalette();
 
     return (
@@ -21,7 +22,7 @@ export default function TabBar ({ label, tabs }: Props) {
 
             {tabs.map(( tab ) => (
 
-                <Pressable key={tab.key} testID={`tab-${tab.key}`} accessibilityRole="tab" accessibilityState={{ selected: tab.current }} onPress={tab.onPress} style={( { pressed } ) => [styles.tab, pressed && styles.pressed]}>
+                <Pressable key={tab.key} testID={`tab-${tab.key}`} accessibilityRole="tab" accessibilityState={{ selected: tab.current }} onPress={tab.onPress} style={({ pressed }) => [styles.tab, pressed && styles.pressed]}>
 
                     {tab.icon}
 
@@ -34,4 +35,5 @@ export default function TabBar ({ label, tabs }: Props) {
         </View>
 
     );
+
 }

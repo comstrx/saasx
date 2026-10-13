@@ -21,9 +21,7 @@ export function parseJson ( text: string | null | undefined ): unknown {
 export function parseBoolean ( value: unknown ): boolean | undefined {
 
     if ( typeof value === "boolean" ) return value;
-
     if ( value === "true" || value === "1" || value === 1 ) return true;
-
     if ( value === "false" || value === "0" || value === 0 ) return false;
 
     return undefined;
@@ -32,7 +30,6 @@ export function parseBoolean ( value: unknown ): boolean | undefined {
 export function parseNumber ( value: unknown ): number | undefined {
 
     if ( typeof value === "number" ) return Number.isFinite(value) ? value : undefined;
-
     if ( typeof value !== "string" || !value.trim() ) return undefined;
 
     const parsed = Number(value);

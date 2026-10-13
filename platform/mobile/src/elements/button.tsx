@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Button ({ label, name, tone = "primary", busy = false, disabled = false, icon, onPress }: Props) {
+
     const palette = usePalette();
     const fill = tone === "danger" ? palette.danger : tone === "primary" ? palette.primary : "transparent";
     const ink = tone === "ghost" ? palette.primary : palette.panel;
@@ -26,7 +27,7 @@ export default function Button ({ label, name, tone = "primary", busy = false, d
             accessibilityState={{ disabled: off, busy }}
             disabled={off}
             onPress={onPress}
-            style={( { pressed } ) => [styles.button, { backgroundColor: fill, borderColor: tone === "ghost" ? palette.primary : fill }, pressed && styles.pressed, off && styles.off]}
+            style={({ pressed }) => [styles.button, { backgroundColor: fill, borderColor: tone === "ghost" ? palette.primary : fill }, pressed && styles.pressed, off && styles.off]}
         >
 
             {busy ? <ActivityIndicator color={ink} /> : <View style={styles.inner}>{icon}<Text style={[styles.label, { color: ink }]}>{label}</Text></View>}
@@ -34,4 +35,5 @@ export default function Button ({ label, name, tone = "primary", busy = false, d
         </Pressable>
 
     );
+
 }

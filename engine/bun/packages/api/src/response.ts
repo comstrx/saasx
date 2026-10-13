@@ -76,7 +76,6 @@ function kindOf ( status: number ): Kind {
 function succeeded ( envelope: Envelope, reply: Reply ): boolean {
 
     if ( !reply.ok ) return false;
-
     if ( !envelope.success ) return true;
 
     return pathGet(reply.body, envelope.success.path) === envelope.success.equals;
@@ -117,7 +116,6 @@ function resource ( wire: Wire, endpoint: Endpoint, local: Local, body: unknown 
     const raw = pathGet(body, response.data);
 
     if ( endpoint.local ) return parseResource(endpoint.local, { ...local, ...(isRecord(raw) ? raw : {}) });
-
     if ( raw === undefined && response.empty ) return endpoint.many ? [] : null;
 
     const schema = endpoint.many ? z.array(endpoint.output) : endpoint.output;

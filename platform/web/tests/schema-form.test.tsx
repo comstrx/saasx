@@ -16,12 +16,16 @@ const fields: FieldFact[] = [
 ];
 
 function render ( errors: Record<string, string> = {} ) {
+
     const store = createForm({ fields, locales: ["en", "ar"], submit: async () => null });
 
     return renderToString(<SchemaForm name="t" form={{ ...store.getState(), errors }} labels={{ type: "Type", name: "Name", stock: "Stock", featured: "Featured", starts_at: "Starts", tags: "Tags", image: "Image" }} choices={{ type: { hotel: "Hotel", room: "Room" } }} submit="Save" />);
+
 }
 describe("schema form", () => {
+
     test("draws one control per field kind from the facts alone", () => {
+
         const html = render();
 
         expect(html).toContain('name="type"');
@@ -36,12 +40,16 @@ describe("schema form", () => {
         expect(html).toContain('type="file"');
         expect(html).toContain('name="tags"');
         expect(html).toContain(">Save<");
+
     });
     test("field errors land beside their field and form errors below the fields", () => {
+
         const html = render({ stock: "Too low", _form: "Nope" });
 
         expect(html).toContain('role="alert"');
         expect(html).toContain("Too low");
         expect(html).toContain("Nope");
+
     });
+
 });

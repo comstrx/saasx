@@ -60,17 +60,13 @@ export function serializeCookie ( key: string, value: string, options: CookieOpt
     const parts = [`${key}=${encodeURIComponent(value)}`];
 
     if ( options.maxAge !== undefined ) parts.push(`Max-Age=${Math.floor(options.maxAge)}`);
-
     if ( options.expires ) parts.push(`Expires=${options.expires.toUTCString()}`);
-
     if ( options.domain ) parts.push(`Domain=${options.domain}`);
 
     parts.push(`Path=${options.path ?? "/"}`);
 
     if ( options.httpOnly ) parts.push("HttpOnly");
-
     if ( options.secure ) parts.push("Secure");
-
     if ( options.sameSite ) parts.push(`SameSite=${options.sameSite[0]?.toUpperCase()}${options.sameSite.slice(1)}`);
 
     return parts.join("; ");

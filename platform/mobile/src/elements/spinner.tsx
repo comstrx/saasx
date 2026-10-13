@@ -6,6 +6,7 @@ type Props = { label: string };
 const styles = StyleSheet.create({ spinner: { padding: 12, alignItems: "center" } });
 
 export default function Spinner ({ label }: Props) {
+
     const palette = usePalette();
 
     return (
@@ -17,4 +18,5 @@ export default function Spinner ({ label }: Props) {
         </View>
 
     );
+
 }

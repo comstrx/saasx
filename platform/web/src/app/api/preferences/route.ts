@@ -8,12 +8,15 @@ export const dynamic = "force-dynamic";
 const fresh = { "cache-control": "no-store" };
 
 export async function GET (): Promise<Response> {
+
     const store = await cookies();
     const saved = readPreferences(( name ) => store.get(name)?.value);
 
     return Response.json({ status: true, data: { ...preferences.defaults, ...saved } }, { headers: fresh });
+
 }
 export async function POST ( request: Request ): Promise<Response> {
+
     const refused = guardRequest(request);
 
     if ( refused ) return refused;
@@ -28,4 +31,5 @@ export async function POST ( request: Request ): Promise<Response> {
     for ( const [name, value] of changes ) store.set(name, value, cookieOptions);
 
     return Response.json({ status: true, data: accepted }, { headers: fresh });
+
 }

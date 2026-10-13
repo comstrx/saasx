@@ -6,6 +6,7 @@ import Icon from "@/icons";
 type Props = { page: number; pages: number; label: string; previous: string; next: string; onPage: ( page: number ) => void };
 
 export default function Pager ({ page, pages, label, previous, next, onPage }: Props) {
+
     if ( pages <= 1 ) return null;
 
     return (
@@ -21,4 +22,5 @@ export default function Pager ({ page, pages, label, previous, next, onPage }: P
         </Stack>
 
     );
+
 }

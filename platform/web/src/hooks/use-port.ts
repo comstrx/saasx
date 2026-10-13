@@ -16,9 +16,11 @@ const site = browser.contract.values.content;
 const cache = { store: persistent, ttl: 10 * 60 * 1000, prefix: `${identity}.port` };
 
 export function usePort ( port: CompiledPort | undefined, route: Route ): Resource<unknown, Pagination> {
+
     const locale = useLocale();
     const { token } = useSession();
     const signals = useSignals();
 
     return usePortResource(useApi() as ApiSurface, port, { ...route, signals }, () => site, [locale, token], { cache, live });
+
 }

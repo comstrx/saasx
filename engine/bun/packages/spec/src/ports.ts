@@ -38,9 +38,7 @@ export function fillInput ( input: Input, route: Route ): Record<string, unknown
         Object.entries(input).map(( [name, value] ) => {
 
             if ( isRecord(value) && "param" in value ) return [name, route.parameters[value.param]];
-
             if ( isRecord(value) && "query" in value ) return [name, route.query[value.query]];
-
             if ( isRecord(value) && "signal" in value ) return [name, route.signals?.[value.signal]];
 
             return [name, value];
@@ -67,9 +65,7 @@ export async function portAnswer (
 ): Promise<PortAnswer> {
 
     if ( !port || port.kind === "write" ) return { value: undefined };
-
     if ( port.kind === "data" ) return { value: port.value };
-
     if ( port.kind === "site" ) return { value: await source.site(port.path) };
 
     return source.read(port.feature, port.operation, fillInput(port.input, route), port.many, signal);

@@ -65,9 +65,7 @@ export function sortBy<T> ( items: readonly T[], key: Key<T>, direction: Directi
         .sort(( left, right ) => {
 
             if ( left.value === right.value ) return left.index - right.index;
-
             if ( left.value === undefined || left.value === null ) return 1;
-
             if ( right.value === undefined || right.value === null ) return -1;
 
             return (left.value < right.value ? -1 : 1) * sign;
@@ -104,7 +102,6 @@ export function upsertBy<T> ( items: readonly T[], row: T, key: Key<T>, insert =
     const index = items.findIndex(( item ) => pick(item) === id);
 
     if ( index >= 0 ) return { items: items.map(( item, at ) => (at === index ? row : item)), outcome: "updated" };
-
     if ( !insert ) return { items: [...items], outcome: "unchanged" };
 
     return { items: [...items, row], outcome: "inserted" };

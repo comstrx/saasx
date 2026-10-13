@@ -21,6 +21,7 @@ const shown = ["id", "slug", "type", "subtype", "stock", "rating", "created_at",
 const stamp = /^\d{4}-\d{2}-\d{2}T/;
 
 export default function Pane ({ options, ports, route, feature }: FeatureProps<Options>) {
+
     const locale = useLocale();
     const port = usePort(ports.item, route);
     const remove = useWrite(ports.remove, route);
@@ -29,10 +30,12 @@ export default function Pane ({ options, ports, route, feature }: FeatureProps<O
     const amount = Number(field(item, "sale_price.amount") ?? field(item, "min_price.amount"));
     const currency = field(item, "sale_price.currency") ?? field(item, "min_price.currency");
     const facts = shown.flatMap(( key ) => {
+
         const value = field(item, key);
         const shown = value && stamp.test(value) ? formatDate(locale, value, "full") : value;
 
         return shown ? [{ key, label: options.labels[key] ?? key, value: shown }] : [];
+
     });
     const title = item ? field(item, "name") ?? options.missing : options.title;
     const id = field(item, "id") ?? "";
@@ -65,4 +68,5 @@ export default function Pane ({ options, ports, route, feature }: FeatureProps<O
         </Titled>
 
     );
+
 }

@@ -13,8 +13,12 @@ export const specPaths = folders.map(( folder ) => folder.path);
 export const brandFolders = [...folders.map(( folder ) => folder.brand), "messages"];
 
 export function assetFiles ( folder: string, publicFiles = false ): Files {
+
     return files(folder, skip, publicFiles);
+
 }
 export function composeAssets ( publicFolder: string, brand: string ): Files {
+
     return compose(folders, publicFolder, brand, skip);
+
 }

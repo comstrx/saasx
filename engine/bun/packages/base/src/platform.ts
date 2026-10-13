@@ -10,9 +10,7 @@ const globals = globalThis as Globals;
 const digits = Array.from({ length: 64 }, ( _, index ) => {
 
     if ( index < 26 ) return String.fromCharCode(65 + index);
-
     if ( index < 52 ) return String.fromCharCode(71 + index);
-
     if ( index < 62 ) return String.fromCharCode(index - 4);
 
     return index === 62 ? "+" : "/";

@@ -7,6 +7,7 @@ import Text from "@/elements/text";
 export type CatalogItem = { key: string; name: string; image?: string | null | undefined; type?: string | null | undefined; price?: string | undefined; href?: string | undefined };
 
 export default function CatalogCard ({ item }: { item: CatalogItem }) {
+
     return (
 
         <Card href={item.href}>
@@ -26,4 +27,5 @@ export default function CatalogCard ({ item }: { item: CatalogItem }) {
         </Card>
 
     );
+
 }

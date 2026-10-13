@@ -14,6 +14,7 @@ import type { FeatureProps } from "@/lib/spec/feature";
 export type Options = { title: string; language: string; currency: string; theme: string; themes: { light: string; dark: string; system: string }; saved: string; failed: string };
 
 export default function Panel ({ options, feature }: FeatureProps<Options>) {
+
     const router = useRouter();
     const pathname = usePathname();
     const locale = useLocale();
@@ -28,12 +29,14 @@ export default function Panel ({ options, feature }: FeatureProps<Options>) {
         { name: "theme", label: options.theme, value: current.theme, choices: preferences.choices.themes.map(( name ) => ({ value: name, label: themeLabel(name) })) },
     ];
     const change = async ( name: PreferenceName, value: string ): Promise<void> => {
+
         const saved = await save.run({ [name]: value });
 
         if ( !saved ) return;
         if ( name === "language" ) router.push(localePath(value, splitLocale(pathname, routing).path, routing) as Route);
 
         router.refresh();
+
     };
     const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" ? { text: options.failed, tone: "danger" as const } : undefined;
 
@@ -46,4 +49,5 @@ export default function Panel ({ options, feature }: FeatureProps<Options>) {
         </Titled>
 
     );
+
 }

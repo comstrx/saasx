@@ -15,13 +15,16 @@ const styles = StyleSheet.create({
 });
 
 function tone ( palette: Palette, value: BlockOptions["tone"] ): { backgroundColor?: string | undefined; borderColor?: string | undefined; borderWidth?: number | undefined } {
+
     if ( value === "surface" ) return { backgroundColor: palette.panel, borderColor: palette.line, borderWidth: 1 };
     if ( value === "inverse" ) return { backgroundColor: palette.ink };
     if ( value === "primary" ) return { backgroundColor: palette.panel, borderColor: palette.primary, borderWidth: 1 };
 
     return {};
+
 }
 export default function Block ({ entries, grid, gap, padding, align, width, height, tone: look, radius, palette }: Props) {
+
     const spacing = step(gap);
 
     return (
@@ -41,4 +44,5 @@ export default function Block ({ entries, grid, gap, padding, align, width, heig
         </View>
 
     );
+
 }

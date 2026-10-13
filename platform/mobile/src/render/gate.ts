@@ -6,6 +6,7 @@ import { useSession } from "@/hooks/use-session";
 type Props = { access: readonly string[]; guest?: boolean; redirect?: string | null; children: ReactNode };
 
 export function Gate ({ access, guest = false, redirect = null, children }: Props) {
+
     const router = useRouter();
     const session = useSession();
     const state = useAccess(access);
@@ -13,8 +14,11 @@ export function Gate ({ access, guest = false, redirect = null, children }: Prop
     const refused = session.ready && !allowed;
 
     useEffect(() => {
+
         if ( refused && redirect ) router.replace(redirect as never);
+
     }, [refused, redirect, router]);
 
     return allowed ? children : null;
+
 }

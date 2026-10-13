@@ -6,6 +6,7 @@ type Props = { src: string | null | undefined; alt: string; ratio?: "square" | "
 const styles = StyleSheet.create({ frame: { width: "100%", borderRadius: 8, overflow: "hidden" }, wide: { aspectRatio: 1.6 }, square: { aspectRatio: 1 }, image: { width: "100%", height: "100%" } });
 
 export default function Image ({ src, alt, ratio = "wide" }: Props) {
+
     const palette = usePalette();
 
     return (
@@ -17,4 +18,5 @@ export default function Image ({ src, alt, ratio = "wide" }: Props) {
         </View>
 
     );
+
 }

@@ -17,6 +17,8 @@ export const readPreferences = jar.read;
 export const acceptPreferences = jar.accept;
 
 export function detectPreferences ( headers: Headers, saved: Preferences ): Preferences {
+
     return jar.detect(headers.get("accept-language"), saved);
+
 }
 export const preferenceCookies = jar.changes;

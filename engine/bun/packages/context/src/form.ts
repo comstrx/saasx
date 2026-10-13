@@ -48,13 +48,9 @@ const datetimeLength = 16;
 function blank ( field: FieldFact, locales: readonly string[] ): FormValue {
 
     if ( field.kind === "boolean" ) return false;
-
     if ( field.kind === "choice" ) return field.required ? (field.choices?.[0] ?? "") : "";
-
     if ( field.kind === "localized" ) return Object.fromEntries(locales.map(( locale ) => [locale, ""]));
-
     if ( field.kind === "file" ) return null;
-
     if ( field.kind === "list" ) return [];
 
     return "";
@@ -63,7 +59,6 @@ function blank ( field: FieldFact, locales: readonly string[] ): FormValue {
 function given ( field: FieldFact, value: unknown, locales: readonly string[], locale: string ): FormValue {
 
     if ( value === undefined || value === null ) return blank(field, locales);
-
     if ( field.kind === "boolean" ) return value === true || value === "true" || value === 1;
 
     if ( field.kind === "localized" ) {
@@ -82,13 +77,9 @@ function given ( field: FieldFact, value: unknown, locales: readonly string[], l
     }
 
     if ( field.kind === "file" ) return value instanceof Blob ? value : null;
-
     if ( field.kind === "list" ) return Array.isArray(value) ? value.map(String) : [];
-
     if ( typeof value === "object" ) return "";
-
     if ( field.kind === "date" && typeof value === "string" ) return value.slice(0, dateLength);
-
     if ( field.kind === "datetime" && typeof value === "string" ) return value.slice(0, datetimeLength);
 
     return String(value);
@@ -97,9 +88,7 @@ function given ( field: FieldFact, value: unknown, locales: readonly string[], l
 function coerce ( field: FieldFact, value: FormValue ): unknown {
 
     if ( field.kind === "boolean" ) return value === true;
-
     if ( field.kind === "file" ) return value ?? undefined;
-
     if ( field.kind === "list" ) return Array.isArray(value) && value.length ? value : undefined;
 
     if ( field.kind === "localized" ) {
@@ -111,7 +100,6 @@ function coerce ( field: FieldFact, value: FormValue ): unknown {
     }
 
     if ( typeof value !== "string" || value === "" ) return undefined;
-
     if ( field.kind === "integer" || field.kind === "number" ) return Number(value);
 
     return value;

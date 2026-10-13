@@ -70,6 +70,7 @@ export const validateSpec = surface.validator({
     core,
     walk: ( _screen, options, config ) => ({ client: options.render === "client", session: config.api !== null && config.api.context.sessionCookie !== null }),
     screen: ( screen, options, config, compiled, issues ) => {
+
         const { name, path } = screen.contents;
         const access = screen.access ?? "any";
         const listed = config.content.seo.sitemap.some(( entry ) => entry === "*" || entry === name);
@@ -78,8 +79,9 @@ export const validateSpec = surface.validator({
         if ( config.settings.delivery === "static" && options.render === "server" && reads(compiled.blocks, []) ) issues.push(`${name}: a static delivery renders backend reads in the browser; set render: "client".`);
 
         return { client: options.render === "client" || access !== "any", listed };
+
     },
-    screenIssues: ( screens ) => screens.flatMap(( { contents: { path, article } } ) => (article?.modifiedAt && Date.parse(article.modifiedAt) < Date.parse(article.publishedAt) ? [`${path}: modifiedAt precedes publishedAt.`] : [])),
+    screenIssues: ( screens ) => screens.flatMap(({ contents: { path, article } }) => (article?.modifiedAt && Date.parse(article.modifiedAt) < Date.parse(article.publishedAt) ? [`${path}: modifiedAt precedes publishedAt.`] : [])),
 });
 
 export type SiteConfig = z.input<typeof configInputShape>;

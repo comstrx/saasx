@@ -9,6 +9,7 @@ const shapes = { circle: Circle, ellipse: Ellipse, line: Line, path: Path, polyg
 type Props = { name: string; label?: string | undefined; size?: "sm" | "md" | undefined; tone?: "ink" | "muted" | "primary" | "inverse" | undefined };
 
 export default function Icon ({ name, label, size = "md", tone = "ink" }: Props) {
+
     const palette = usePalette();
     const nodes = icons.get(name);
     const colors = { ink: palette.ink, muted: palette.muted, primary: palette.primary, inverse: palette.panel };
@@ -23,12 +24,15 @@ export default function Icon ({ name, label, size = "md", tone = "ink" }: Props)
         >
 
             {nodes.map(( [tag, attrs] ) => {
+
                 const Shape = shapes[tag as keyof typeof shapes];
 
                 return Shape ? <Shape key={`${tag}:${Object.values(attrs).join(",")}`} {...attrs} /> : null;
+
             })}
 
         </Svg>
 
     );
+
 }

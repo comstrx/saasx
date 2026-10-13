@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Table ({ columns, rows, selected, onSelect }: Props) {
+
     const palette = usePalette();
     const width = ( column: Column ): number => column.width ?? 140;
 
@@ -42,6 +43,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
                 </View>
 
                 {rows.map(( row ) => {
+
                     const chosen = row.key === selected;
                     const cells = columns.map(( column ) => (
 
@@ -63,7 +65,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
                             accessibilityRole="button"
                             accessibilityState={{ selected: chosen }}
                             onPress={() => onSelect(row.key)}
-                            style={( { pressed } ) => [styles.row, { borderBottomColor: palette.line }, chosen && [styles.selected, { borderStartColor: palette.primary, backgroundColor: palette.body }], pressed && styles.pressed]}
+                            style={({ pressed }) => [styles.row, { borderBottomColor: palette.line }, chosen && [styles.selected, { borderStartColor: palette.primary, backgroundColor: palette.body }], pressed && styles.pressed]}
                         >
 
                             {cells}
@@ -71,6 +73,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
                         </Pressable>
 
                     );
+
                 })}
 
             </View>
@@ -78,4 +81,5 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
         </ScrollView>
 
     );
+
 }

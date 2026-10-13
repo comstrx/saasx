@@ -107,7 +107,6 @@ function bounds ( def: Def ): { min?: number; max?: number } {
         const check = _zod.def;
 
         if ( check.check === "min_length" && check.minimum !== undefined ) found.min = check.minimum;
-
         if ( check.check === "max_length" && check.maximum !== undefined ) found.max = check.maximum;
 
         if ( check.check === "greater_than" && check.value !== undefined )
@@ -126,9 +125,7 @@ function kindOf ( schema: Inner, def: Def ): FieldKind {
     const declared = (z.globalRegistry.get(schema as never) as { kind?: unknown } | undefined)?.kind;
 
     if ( typeof declared === "string" && known.includes(declared as FieldKind) ) return declared as FieldKind;
-
     if ( def.type === "string" && def.format && formats[def.format] ) return formats[def.format] as FieldKind;
-
     if ( def.type === "number" && def.checks?.some(({ _zod }) => _zod.def.check === "number_format") ) return "integer";
 
     return kinds[def.type] ?? "unknown";

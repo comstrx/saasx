@@ -5,6 +5,7 @@ import Text from "@/elements/text";
 type Props = { scene: Scene; text: string; tone?: "muted" | "danger" | undefined };
 
 export default function SceneNote ({ scene, text, tone = "muted" }: Props) {
+
     return (
 
         <Stack gap={2} align="center">
@@ -16,4 +17,5 @@ export default function SceneNote ({ scene, text, tone = "muted" }: Props) {
         </Stack>
 
     );
+
 }

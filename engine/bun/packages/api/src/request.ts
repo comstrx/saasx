@@ -62,9 +62,7 @@ export function requestHeaders (
         const value = context[key];
 
         if ( !header || omitted.includes(key) ) continue;
-
         if ( !value && requiredHeaders.includes(key) ) throw new Failure("input", { reason: `missing_${key}` });
-
         if ( value ) guarded(() => headers.set(header.name, `${header.prefix ?? ""}${value}`));
 
     }
@@ -99,9 +97,7 @@ function place ( wire: Wire, parts: Parts, params: readonly string[], key: strin
     const destination = target(wire, key);
 
     if ( destination?.place === "body" ) pathSet(parts.body, destination.name, value);
-
     if ( destination?.place !== "query" ) return;
-
     if ( !isQuery(value) ) throw new Failure("input", { reason: `invalid_${key}` });
 
     parts.query[destination.name] = value;

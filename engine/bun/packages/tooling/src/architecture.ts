@@ -120,9 +120,7 @@ function extensionIssues ( { path, spec }: Scope, jsx: boolean, rules: Rules ): 
     const tsx = /\.tsx$/.test(path);
 
     if ( rules.markupFiles.test(stem) ) return tsx ? [] : ["Markup files end in .tsx."];
-
     if ( rules.hookFiles.test(path) ) return tsx || jsx ? ["Hooks are logic: a .ts file without markup."] : [];
-
     if ( jsx && !tsx ) return ["Markup belongs in a .tsx file."];
 
     return tsx && !jsx ? ["No markup here: a .ts file."] : [];
@@ -133,7 +131,6 @@ function markupIssues ( { element, api }: Scope, code: string, compiled: string,
     const issues: string[] = [];
 
     if ( fetching.test(code) && !api ) issues.push("Backend transport belongs in src/api.");
-
     if ( element ) return issues;
 
     const tags = rules.html ? [...new Set([...compiled.matchAll(tag)].map(( match ) => match[1] ?? ""))] : [];
@@ -142,7 +139,6 @@ function markupIssues ( { element, api }: Scope, code: string, compiled: string,
         : [];
 
     if ( tags.length ) issues.push(`HTML belongs in elements: ${tags.join(", ")}`);
-
     if ( attributes.length ) issues.push(`Styling belongs in elements: ${attributes.join(", ")}`);
 
     return issues;
@@ -176,9 +172,7 @@ function ownershipIssues (
     const server = imports.includes("server-only");
 
     if ( !client && !server ) return ["Feature entries declare client or server ownership."];
-
     if ( owner === "client" && !client ) return ['The manifest says client; the entry must start with "use client".'];
-
     if ( owner === "server" && !server ) return ["The manifest says server; the entry must import server-only."];
 
     return [];

@@ -11,6 +11,7 @@ type Labels = { email: string; password: string; submit: string };
 type Props = { labels: Labels; busy: boolean; errors: Partial<Record<keyof Credentials | "_form", string>>; onSubmit: ( value: Credentials ) => void };
 
 export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Props) {
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const submit = (): void => onSubmit({ email: email.trim(), password });
@@ -38,4 +39,5 @@ export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Pro
         </Stack>
 
     );
+
 }

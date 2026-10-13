@@ -8,6 +8,7 @@ export type DetailAction = { label: string; icon: string; tone?: "primary" | "gh
 type Props = { edit?: { href: string; label: string } | undefined; actions: readonly DetailAction[]; busy: boolean; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined };
 
 export default function DetailActions ({ edit, actions, busy, note }: Props) {
+
     return (
 
         <Stack gap={2}>
@@ -25,4 +26,5 @@ export default function DetailActions ({ edit, actions, busy, note }: Props) {
         </Stack>
 
     );
+
 }

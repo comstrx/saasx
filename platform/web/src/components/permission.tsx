@@ -7,9 +7,11 @@ import { usePermission } from "@/hooks/use-permission";
 type Props = { port: CompiledPort | undefined; fallback?: ReactNode | undefined; children: ReactNode };
 
 export default function Permission ({ port, fallback = null, children }: Props) {
+
     const { ready, allowed } = usePermission(port);
 
     if ( !ready ) return null;
 
     return allowed ? children : fallback;
+
 }

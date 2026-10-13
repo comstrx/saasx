@@ -17,7 +17,6 @@ export function assetFiles ( folder: string, skip: Skip, publicFiles = false ): 
     )) {
 
         if ( entry.isSymbolicLink() ) throw new Error(`Asset symlinks are not supported: ${path}`);
-
         if ( entry.isFile() ) files.set(name, readFileSync(path));
 
     }

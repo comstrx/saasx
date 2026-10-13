@@ -17,7 +17,6 @@ const serverFloor = 500;
 function severity ( error: Failure ): Level | undefined {
 
     if ( error.kind === "aborted" || error.kind === "configuration" ) return undefined;
-
     if ( ["network", "timeout", "input"].includes(error.kind) || error.status === rateLimited ) return "warn";
 
     return error.kind !== "http" || error.status >= serverFloor ? "error" : undefined;

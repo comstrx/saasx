@@ -14,11 +14,14 @@ const grant = ( status: string, canAskAgain = true ): Grant => (status === "gran
 void AccessibilityInfo.isReduceMotionEnabled().then(( value ) => { reduced = value; });
 
 function screen (): Info["screen"] {
+
     const { width, height } = Dimensions.get("window");
 
     return { width, height, scale: PixelRatio.get() };
+
 }
 function info (): Info {
+
     const locales = Localization.getLocales().map(( item ) => item.languageTag);
 
     return {
@@ -34,24 +37,30 @@ function info (): Info {
         colorScheme: scheme(Appearance.getColorScheme()),
         reducedMotion: reduced,
     };
+
 }
 async function state ( permission: Permission ): Promise<Grant> {
+
     if ( permission === "location" ) return grant((await Location.getForegroundPermissionsAsync()).status);
     if ( permission === "camera" ) return grant((await ImagePicker.getCameraPermissionsAsync()).status);
     if ( permission === "photos" ) return grant((await ImagePicker.getMediaLibraryPermissionsAsync()).status);
     if ( permission === "notifications" ) return grant((await Notifications.getPermissionsAsync()).status);
 
     return "unsupported";
+
 }
 async function ask ( permission: Permission ): Promise<Grant> {
+
     if ( permission === "location" ) return grant((await Location.requestForegroundPermissionsAsync()).status);
     if ( permission === "camera" ) return grant((await ImagePicker.requestCameraPermissionsAsync()).status);
     if ( permission === "photos" ) return grant((await ImagePicker.requestMediaLibraryPermissionsAsync()).status);
     if ( permission === "notifications" ) return grant((await Notifications.requestPermissionsAsync()).status);
 
     return "unsupported";
+
 }
 async function pick ( source: "camera" | "library" ): Promise<Picked | null> {
+
     const options: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], quality: 0.85, allowsEditing: false };
     const result = source === "camera" ? await ImagePicker.launchCameraAsync(options) : await ImagePicker.launchImageLibraryAsync(options);
     const asset = result.canceled ? undefined : result.assets[0];
@@ -59,20 +68,27 @@ async function pick ( source: "camera" | "library" ): Promise<Picked | null> {
     if ( !asset ) return null;
 
     return { uri: asset.uri, name: asset.fileName ?? `photo.${(asset.mimeType ?? "image/jpeg").split("/")[1] ?? "jpg"}`, type: asset.mimeType ?? "image/jpeg" };
+
 }
 async function position (): Promise<{ latitude: number; longitude: number; accuracy: number; at: number } | null> {
+
     try {
+
         const found = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
 
         return { latitude: found.coords.latitude, longitude: found.coords.longitude, accuracy: found.coords.accuracy ?? 0, at: found.timestamp };
+
     }
     catch { return null; }
+
 }
 async function pushToken (): Promise<string | null> {
+
     const projectId = (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId;
 
     try { return projectId ? (await Notifications.getExpoPushTokenAsync({ projectId })).data : (await Notifications.getDevicePushTokenAsync()).data as string; }
     catch { return null; }
+
 }
 export const device: Device = createDevice({
     info,
@@ -82,31 +98,40 @@ export const device: Device = createDevice({
     pushToken,
     position,
     watch: ( fact, listener ) => {
+
         const emit = listener as ( value: unknown ) => void;
 
-        if ( fact === "colorScheme" ) return Appearance.addChangeListener(( { colorScheme } ) => emit(scheme(colorScheme))).remove;
+        if ( fact === "colorScheme" ) return Appearance.addChangeListener(({ colorScheme }) => emit(scheme(colorScheme))).remove;
         if ( fact === "screen" ) return Dimensions.addEventListener("change", () => emit(screen())).remove;
         if ( fact === "reducedMotion" ) return AccessibilityInfo.addEventListener("reduceMotionChanged", ( value ) => { reduced = value; emit(value); }).remove;
+
         if ( fact === "location" ) {
+
             let stopped = false;
             let off: (() => void) | undefined;
 
             void Location.watchPositionAsync({ accuracy: Location.Accuracy.Balanced }, ( position ) => emit({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy ?? 0, at: position.timestamp })).then(( subscription ) => {
+
                 if ( stopped ) subscription.remove();
                 else off = () => subscription.remove();
+
             });
 
             return () => { stopped = true; off?.(); };
+
         }
 
         return () => undefined;
+
     },
     open: async ( target ) => {
+
         if ( target === "settings" ) { await Linking.openSettings(); return true; }
         if ( !(await Linking.canOpenURL(target)) ) return false;
 
         await Linking.openURL(target);
 
         return true;
+
     },
 });

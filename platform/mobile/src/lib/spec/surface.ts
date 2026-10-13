@@ -53,9 +53,11 @@ export const validateSpec = surface.validator({
     core,
     walk: () => ({ client: true, session: true }),
     screen: ( screen, options, _config, compiled, issues ) => {
+
         if ( options.presentation === "tab" && compiled.walk.params.length ) issues.push(`${screen.contents.name}: a tab screen has no path parameters.`);
 
         return {};
+
     },
     featureIssues: ( features ) => Object.entries(features).flatMap(( [name, manifest] ) => (manifest.owner === "client" ? [] : [`features/${name}: a mobile feature is client-owned.`])),
     schema: ( screens ) => ({ tabs: screens.filter(( item ) => item.options.presentation === "tab").sort(( a, b ) => a.options.order - b.options.order).map(( item ) => item.name) }),

@@ -11,6 +11,7 @@ type Session = () => string | null;
 type Denied = () => void;
 
 export function browserApi ( locale: string, session: Session, denied?: Denied ): ApiClient<Endpoints> {
+
     const language = choose(routing.locales, locale, routing.defaultLocale);
 
     return createApi(endpoints, browser.api, browser.contract, () => requestContext(browser.api.context, {
@@ -19,4 +20,5 @@ export function browserApi ( locale: string, session: Session, denied?: Denied )
         auth: session() ?? undefined,
         requestId: trace,
     }), { execution: "client", observe: observeCall, onFailure: ( failure ) => { if ( failure.status === 401 && session() ) denied?.(); } });
+
 }

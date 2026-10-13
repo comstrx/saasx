@@ -15,6 +15,7 @@ const scenes: Record<Scene, { paths: string[]; accent: string[] }> = {
 const styles = StyleSheet.create({ frame: { alignItems: "center", paddingVertical: 8 } });
 
 export default function Illustration ({ scene, label }: Props) {
+
     const palette = usePalette();
     const { paths, accent } = scenes[scene];
     const accentColor: string = (scene === "failed" ? palette.danger : scene === "done" ? palette.success : palette.ink) ?? "currentColor";
@@ -36,4 +37,5 @@ export default function Illustration ({ scene, label }: Props) {
         </View>
 
     );
+
 }

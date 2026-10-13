@@ -123,7 +123,6 @@ export function shellIssues ( shell: Record<string, ShellValue>, features: Featu
         const manifest = name === null ? undefined : features[name];
 
         if ( name === null ) return [];
-
         if ( !manifest ) return [`settings.shell.${part}: no feature named ${name}.`];
 
         const given = typeof value === "object" && value ? (value.options ?? {}) : {};
@@ -162,9 +161,7 @@ export function screenIssues ( screens: readonly Declared[], reserved: RegExp ):
     } of screens) {
 
         if ( names.has(name) ) issues.push(`Duplicate screen name: ${name}`);
-
         if ( paths.has(path) ) issues.push(`Duplicate screen path: ${path}`);
-
         if ( reserved.test(path) ) issues.push(`Reserved screen path: ${path}`);
 
         names.add(name);
