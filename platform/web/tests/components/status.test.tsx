@@ -34,7 +34,7 @@ describe("data table", () => {
         expect(html).toContain("Tea");
         expect(html).toContain('class="badge"');
         expect(html).toContain("12.50");
-        expect(html).toContain("2026");
+        expect(html).toContain("Oct");
         expect(html).toContain('aria-label="Featured"');
         expect(renderToString(<DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={[]} />)).toContain("Nothing");
 

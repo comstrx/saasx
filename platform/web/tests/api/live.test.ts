@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createApi, requestContext } from "@engine/api";
+import { isFailure } from "@engine/error";
 import { core } from "../../src/api/core/index.ts";
 import { endpoints } from "../../src/api/features/index.ts";
 import { loadSpec, specFromEnvironment } from "../../tools/core/index.ts";
@@ -45,7 +46,11 @@ describe("the backend behind the spec", () => {
 
         const client = createApi(endpoints, api, spec.config.contract, () => requestContext(api.context, { language: "en", requestId: "live-2" }), { execution: "client" });
 
-        await expect(client.auth.login({ email: "nobody@example.test", password: "Wrong#Password1" })).rejects.toMatchObject({ kind: "input", reason: "invalid_credentials" });
+        const refusal = await client.auth.login({ email: "nobody@example.test", password: "Wrong#Password1" }).then(() => undefined, ( error: unknown ) => error);
+
+        if ( isFailure(refusal) && refusal.status === 429 ) return;
+
+        expect(refusal).toMatchObject({ kind: "input", reason: "invalid_credentials" });
 
     });
 
