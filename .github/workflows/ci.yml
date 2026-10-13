@@ -149,7 +149,7 @@ jobs:
       - name: Prettier
         run: >
           bunx "${PRETTIER}" --config .prettierrc.yml
-          --ignore-path .gitignore --ignore-path .prettierignore
+          --ignore-path .gitignore
           --no-error-on-unmatched-pattern
           --check "**/*.{md,mdx,yml,yaml,json,jsonc}"
 
