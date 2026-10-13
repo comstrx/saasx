@@ -14,12 +14,12 @@ feature  name  ·  heading  ·  options  ·  ports  ·  access
 
 A feature is generic. `src/features/<name>/feature.ts` declares its `owner` (`server` or `client`), the `options` it understands (literal defaults), the `ports` it needs (`list`, `one`, `write`; `required: false` for optional ones) and the `signals` it emits. The spec binds every port:
 
-| Binding | Meaning |
-|---|---|
-| `read("feature.operation", input?, live?)` | a GET from the catalogue; `input` may hold `param("id")`, `query("page")`, `signal("search")`, `signal("selected", { wait: true })` |
-| `write("feature.operation", input?, fields?)` | a mutation; `fields` names and orders what a form edits (bound inputs are never edited) |
-| `data([...])` / `site("links")` | inline rows or the site document; the spec runs without a backend on these alone |
-| `live("channel", ["event"], { path, key, version })` | a realtime subscription; a payload patches the shown rows, every event schedules one reconciling read |
+| Binding                                              | Meaning                                                                                                                             |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `read("feature.operation", input?, live?)`           | a GET from the catalogue; `input` may hold `param("id")`, `query("page")`, `signal("search")`, `signal("selected", { wait: true })` |
+| `write("feature.operation", input?, fields?)`        | a mutation; `fields` names and orders what a form edits (bound inputs are never edited)                                             |
+| `data([...])` / `site("links")`                      | inline rows or the site document; the spec runs without a backend on these alone                                                    |
+| `live("channel", ["event"], { path, key, version })` | a realtime subscription; a payload patches the shown rows, every event schedules one reconciling read                               |
 
 Signals let features talk on one screen: `search` emits `search`, `table` emits `selected`, `sort`, `page`; a port bound to `signal(name)` reloads when it changes and `wait: true` keeps it idle until a value exists. The compiler refuses a consumed signal no feature emits.
 

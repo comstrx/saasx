@@ -3,27 +3,27 @@ appId: ${APP_ID}
 - launchApp
 - extendedWaitUntil:
     visible:
-      id: "email"
+      id: 'email'
     timeout: 20000
 - tapOn:
-    id: "email"
+    id: 'email'
 - inputText: ${ADMIN_EMAIL}
 - tapOn:
-    id: "password"
+    id: 'password'
 - inputText: ${ADMIN_PASSWORD}
 - hideKeyboard
 - tapOn:
-    id: "continue"
+    id: 'continue'
 - extendedWaitUntil:
     visible:
-      id: "otp"
+      id: 'otp'
     timeout: 15000
 - tapOn:
-    id: "otp"
+    id: 'otp'
 - inputText: ${OTP}
 - hideKeyboard
 - tapOn:
-    id: "verify"
+    id: 'verify'
 - extendedWaitUntil:
     visible:
       id: ${LANDING}

@@ -42,4 +42,3 @@ bun run perf                                                    # cold start to 
 ```
 
 `MAESTRO` names the Maestro binary when it is not on the path; `APP_ID` names the installed package.
-

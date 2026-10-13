@@ -1,90 +1,80 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
-    "root": true,
-    "files": {
-        "includes": [
-            "**",
-            "!.expo",
-            "!node_modules",
-            "!expo-env.d.ts",
-            "!android",
-            "!ios",
-            "!specs/**/brand/images",
-            "!specs/**/brand/fonts",
-            "!bun.lock"
-        ]
-    },
-    "formatter": {
-        "enabled": false
-    },
-    "linter": {
-        "domains": {
-            "project": "all",
-            "react": "all",
-            "reactNative": "all"
-        },
-        "rules": {
-            "preset": "recommended",
-            "correctness": {
-                "noUndeclaredVariables": "error",
-                "noUnusedImports": "error",
-                "noUnusedVariables": "error",
-                "useImportExtensions": "off",
-                "noUndeclaredDependencies": "off"
-            },
-            "style": {
-                "useImportType": "error",
-                "noParameterAssign": "error",
-                "useConst": "error",
-                "noNonNullAssertion": "error",
-                "useReactFunctionComponents": "off"
-            },
-            "suspicious": {
-                "noExplicitAny": "error",
-                "noConsole": "off"
-            }
-        }
-    },
-    "assist": {
-        "actions": {
-            "source": {
-                "organizeImports": "on"
-            }
-        }
-    },
-    "javascript": {
-        "globals": [
-            "Bun"
-        ]
-    },
-    "overrides": [
-        {
-            "includes": [
-                "src/lib/spec/config.ts",
-                "src/lib/spec/runtime.ts",
-                "src/types/spec.d.ts",
-                "src/render/blocks.tsx"
-            ],
-            "linter": {
-                "rules": {
-                    "correctness": {
-                        "noUnresolvedImports": "off"
-                    }
-                }
-            }
-        },
-        {
-            "includes": [
-                "src/app/**",
-                "src/render/**"
-            ],
-            "linter": {
-                "rules": {
-                    "style": {
-                        "useComponentExportOnlyModules": "off"
-                    }
-                }
-            }
-        }
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "root": true,
+  "files": {
+    "includes": [
+      "**",
+      "!.expo",
+      "!node_modules",
+      "!expo-env.d.ts",
+      "!android",
+      "!ios",
+      "!specs/**/brand/images",
+      "!specs/**/brand/fonts",
+      "!bun.lock"
     ]
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "linter": {
+    "domains": {
+      "project": "all",
+      "react": "all",
+      "reactNative": "all"
+    },
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "noUndeclaredVariables": "error",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useImportExtensions": "off",
+        "noUndeclaredDependencies": "off"
+      },
+      "style": {
+        "useImportType": "error",
+        "noParameterAssign": "error",
+        "useConst": "error",
+        "noNonNullAssertion": "error",
+        "useReactFunctionComponents": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noConsole": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "javascript": {
+    "globals": ["Bun"]
+  },
+  "overrides": [
+    {
+      "includes": ["src/lib/spec/config.ts", "src/lib/spec/runtime.ts", "src/types/spec.d.ts", "src/render/blocks.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnresolvedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/app/**", "src/render/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
+          }
+        }
+      }
+    }
+  ]
 }

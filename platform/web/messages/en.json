@@ -58,7 +58,8 @@
     "fields": {
       "name": "Full name",
       "gender": "Gender",
-      "birth_date": "Date of birth", "address": { "city": "City", "country": "Country code" }
+      "birth_date": "Date of birth",
+      "address": { "city": "City", "country": "Country code" }
     },
     "choices": {
       "gender": {

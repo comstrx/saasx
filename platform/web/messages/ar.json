@@ -58,7 +58,8 @@
     "fields": {
       "name": "الاسم الكامل",
       "gender": "الجنس",
-      "birth_date": "تاريخ الميلاد", "address": { "city": "المدينة", "country": "رمز الدولة" }
+      "birth_date": "تاريخ الميلاد",
+      "address": { "city": "المدينة", "country": "رمز الدولة" }
     },
     "choices": {
       "gender": {
