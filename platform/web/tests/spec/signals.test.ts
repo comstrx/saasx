@@ -16,7 +16,7 @@ const features: Features = {
     table: { owner: "client", options: { select: false, ...states, empty: "x" }, ports: { rows: { kind: "list", fields: ["title"] } }, access: [], signals: ["selected"] },
     preview: { owner: "client", options: { ...states }, ports: { item: { kind: "one", fields: ["title"] } }, access: [], signals: [] },
 };
-const backend = { urls: { production: "https://api.example.test", local: null, browser: null }, options: {} as Record<string, never>, realtime: { url: "ws://127.0.0.1:8080", key: "k" } };
+const backend = { urls: { production: "https://api.example.test", local: null, browser: null }, options: { insecure: true }, realtime: { url: "ws://127.0.0.1:8080", key: "k" } };
 const contents = { name: "Site", links: [] };
 const panel = ( ...children: Tree ) => screen({ contents: { name: "home", path: "/", title: t("nav.home"), description: t("nav.home") }, options: { render: "client" }, blocks: [block({}, children)] });
 

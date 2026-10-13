@@ -69,6 +69,16 @@ describe("one surface, many modes, by values alone", () => {
         expect(config.api?.context.tenant).toBe("www.zainlak.com");
 
     });
+    test("a cleartext production address compiles only when the contracts say insecure", () => {
+
+        const base = sources.client.default as SiteConfig;
+        const contracts = base.contracts && typeof base.contracts === "object" ? base.contracts : null;
+
+        expect(contracts?.urls.production).toMatch(/^http:/);
+        expect(() => compile("client", { contracts: contracts ? { ...contracts, options: { ...contracts.options, insecure: false } } : null })).toThrow("insecure");
+        expect(() => compile("client", { contracts })).not.toThrow();
+
+    });
     test("multi tenant: no declared tenant lets the request host name the tenant", () => {
 
         const base = sources.client.default as SiteConfig;
