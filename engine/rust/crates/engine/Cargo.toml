@@ -1,0 +1,29 @@
+[package]
+name                   = "engine"
+version.workspace      = true
+edition.workspace      = true
+rust-version.workspace = true
+license.workspace      = true
+authors.workspace      = true
+readme.workspace       = true
+publish.workspace      = true
+description            = "The one door into the foundation: every engine crate as a module, so a consumer declares one dependency and names nothing from the registry."
+categories             = ["rust-patterns"]
+keywords               = ["engine", "foundation", "facade"]
+
+[dependencies]
+log.workspace      = true
+error.workspace    = true
+memory.workspace   = true
+parse.workspace    = true
+validate.workspace = true
+file.workspace     = true
+net.workspace      = true
+http.workspace     = true
+process.workspace  = true
+
+[features]
+alloc = ["memory/alloc"]
+
+[lints]
+workspace = true

@@ -28,6 +28,9 @@ deny = [
     { crate = "git2", reason = "Prefer gix to avoid libgit2/openssl baggage", use-instead = "gix" },
     "libssh2-sys",
 ]
+skip = [
+    { crate = "http@1.5.0", reason = "The engine's own crate is named http; hyper's http is a different package, not a second version of ours" },
+]
 skip-tree = [
     { crate = "windows-sys", reason = "Foundational crate; version churn is expected across the ecosystem" },
 ]
@@ -58,7 +61,7 @@ unused-allowed-source = "deny"
 include-dev = true
 unused-allowed-license = "deny"
 confidence-threshold = 1.0
-allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "NCSA", "Unicode-3.0"]
+allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "NCSA", "Unicode-3.0"]
 
 [licenses.private]
 ignore = true

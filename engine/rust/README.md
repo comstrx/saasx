@@ -24,15 +24,32 @@ The engine grows only by pull: a crate exists because a consumer needed it, and 
 
 ```text
 Cargo.toml · Cargo.lock                         the workspace root
-.clippy.toml · .deny.toml                       governance, applies to every crate
+.clippy.toml · .deny.toml · .config/nextest.toml   governance, applies to every crate
 xtask/             the gate runner
-crates/<name>/     member crates; `base` is the substrate every other one builds on
+crates/<name>/     member crates, one layer each, lowest first: log, error, memory, parse, validate, file, net, http, process; `engine` re-exports them all
 tests/             public-API contract tests, flat files, linked the way a consumer links
 benches/           criterion benchmarks, flat files
 fuzz/              libFuzzer targets, flat files; a workspace member, so every gate compiles them
 ```
 
-Consumers depend on member crates by path. A consumer's own crates never reach the registry directly; when one needs a capability, the engine learns it — by growing a crate or by adding one for that domain, improving on the libraries it wraps or offering a DSL over them.
+Consumers depend on the `engine` facade crate by path and name nothing else. A consumer's own crates never reach the registry directly; when one needs a capability, the engine learns it — by growing a crate or by adding one for that domain, improving on the libraries it wraps or offering a DSL over them.
+
+## Crates
+
+```text
+log        structured events and audit records as values, bound fields, text or JSON, sinks with size rotation; nothing written without a sink
+error      the one failure every crate returns: a stable code with its HTTP status, exit code and level, a key, a detail, frames, a cause, field problems
+memory     bytes without surprises: a stack store, a preallocated buffer, a pool, a bump arena of shared bytes, a zero-copy cursor, byte lanes eight at a time
+parse      text into values: integers, reals, flags, sizes, durations, percent-encoding, query strings, dotenv lines, comma lists, each failure keyed
+validate   forms that collect every failed field into one keyed failure
+file       files, directories and paths, every I/O call asynchronous, atomic writes, paths confined to a root
+net        addresses, tuned sockets, listeners with accept-time hooks, streams, dialing with a deadline, resolution, a thread-per-core runtime, a stop signal
+http       hyper underneath: a router of async handlers behind middleware, requests and responses as values, a client, WebSockets over an upgrade
+process    what a command-line tool stands on: boot, arguments, typed environment with a dotenv file, programs run with a deadline, the machine, its package manager, its service manager, pid files
+engine     the one door: every crate above as a module, so a consumer declares one dependency
+```
+
+The layers depend downward only: `log` ← `error` ← `memory` ← `parse` ← `validate`, and `file`, `net`, `http`, `process` stand on those in that order. A failure is a value that is printed, logged or journaled only when a caller says so; a store fails with `Exhausted` instead of growing; every I/O call is asynchronous; the HTTP server runs one worker per core, each with its own listener and router, and drains on a stop signal. TLS is not served yet.
 
 ## Crate anatomy
 
@@ -59,13 +76,13 @@ Run from the workspace root:
 cargo run -q --manifest-path xtask/Cargo.toml -- setup    # install every missing gate tool and the nightly toolchain; gates runs it first
 cargo run -q --manifest-path xtask/Cargo.toml -- gates    # clippy · test · doc · audit · vet · udeps · hack · semver · fuzz (one minute per target)
 cargo run -q --manifest-path xtask/Cargo.toml -- bloat    # release binary size per crate, every binary
-cargo run -q --manifest-path xtask/Cargo.toml -- fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each
-cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the test suite under Miri on nightly
+cargo run -q --manifest-path xtask/Cargo.toml -- fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each, --run --budget 3600 shares an hour
+cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the pure suites (log error memory parse validate) under Miri on nightly
 cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer tsan   # the test suite under asan (default), tsan, msan or lsan
 cargo run -q --manifest-path xtask/Cargo.toml -- doctor   # toolchains and tools present, then a compile check
 ```
 
-The runner lists every task when called without one. CI runs `gates` and nothing else on every change; the daily workflow runs `sanitizer`, `miri` and an hour of `fuzz --run`.
+The runner lists every task when called without one. CI runs `gates` on Linux, macOS and Windows on every change (fuzzing is skipped on Windows, where libFuzzer does not run); the daily workflow runs `sanitizer`, `miri` and an hour of fuzzing shared by every target (`fuzz --run --budget 3600`). A test running past three minutes is killed (`.config/nextest.toml`).
 
 The minimum supported Rust version is <code>1.99.0</code>. `cargo udeps`, `cargo fuzz`, Miri and the sanitizers use the pinned nightly named in `xtask/src/main.rs`; everything else builds on the current stable toolchain. No formatter governs the code: it is written by hand in the house style.
 

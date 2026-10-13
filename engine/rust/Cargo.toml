@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members  = ["xtask", "crates/base", "tests", "benches", "fuzz"]
+members  = ["benches", "tests", "fuzz", "xtask", "crates/log", "crates/error", "crates/memory", "crates/parse", "crates/validate", "crates/file", "crates/net", "crates/http", "crates/process", "crates/engine"]
 
 [workspace.package]
 version      = "0.1.0"
@@ -12,9 +12,27 @@ readme       = "README.md"
 publish      = false
 
 [workspace.dependencies]
-base          = { path = "crates/base", version = "0.1.0" }
-criterion     = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
-libfuzzer-sys = "=0.4.13"
+log            = { path = "crates/log", version = "0.1.0" }
+error          = { path = "crates/error", version = "0.1.0" }
+memory         = { path = "crates/memory", version = "0.1.0" }
+parse          = { path = "crates/parse", version = "0.1.0" }
+validate       = { path = "crates/validate", version = "0.1.0" }
+file           = { path = "crates/file", version = "0.1.0" }
+net            = { path = "crates/net", version = "0.1.0" }
+http           = { path = "crates/http", version = "0.1.0" }
+process        = { path = "crates/process", version = "0.1.0" }
+engine         = { path = "crates/engine", version = "0.1.0" }
+bytes          = "=1.12.1"
+tokio          = { version = "=1.53.2", default-features = false, features = ["rt", "net", "time", "sync", "signal", "macros", "io-util", "fs", "process"] }
+hyper          = { version = "=1.12.0", default-features = false, features = ["http1", "http2", "server", "client"] }
+hyper-util     = { version = "=0.1.21", default-features = false, features = ["tokio", "server-auto", "http1", "http2"] }
+http-body      = "=1.1.0"
+http-body-util = "=0.1.5"
+socket2        = { version = "=0.6.5", features = ["all"] }
+matchit        = "=0.9.2"
+mimalloc       = { version = "=0.1.52", default-features = false }
+criterion      = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
+libfuzzer-sys  = "=0.4.13"
 
 [workspace.lints.rust]
 deprecated_safe         = { level = "deny", priority = -1 }
@@ -171,6 +189,7 @@ self_named_module_files              = "deny"
 min_ident_chars                      = "deny"
 cognitive_complexity                 = "deny"
 multiple_crate_versions              = "allow"
+redundant_pub_crate                  = "allow"
 doc_paragraphs_missing_punctuation   = "deny"
 
 [profile.release]

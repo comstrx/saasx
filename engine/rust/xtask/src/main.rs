@@ -36,8 +36,8 @@ const TASKS: &[Entry] = &[
     ( "udeps",      "unused dependencies on nightly",                                                 Gate::udeps ),
     ( "hack",       "feature powerset compiles",                                                      Gate::hack ),
     ( "semver",     "public API against a git baseline (--baseline <rev>, default main)",             Gate::semver ),
-    ( "fuzz",       "libFuzzer targets on nightly (--run executes, --time <secs>)",                   Gate::fuzz ),
-    ( "miri",       "the test suite under Miri on nightly",                                           Gate::miri ),
+    ( "fuzz",       "libFuzzer targets on nightly (--run, --time <secs> each or --budget in all)",    Gate::fuzz ),
+    ( "miri",       "the pure suites under Miri on nightly: log error memory parse validate",         Gate::miri ),
     ( "sanitizer",  "the test suite under a sanitizer on nightly (--sanitizer asan|tsan|msan|lsan)",  Gate::sanitizer ),
     ( "doctor",     "which toolchains and tools are present, then a compile check",                   Gate::doctor ),
 ];
@@ -56,6 +56,8 @@ const TOOLS: &[( &str, &str )] = &[
 const BINSTALL: ( &str, &str ) = ( "cargo-binstall", "cargo install cargo-binstall --locked" );
 const MIRI: ( &str, &str )     = ( "cargo-miri", "rustup component add miri --toolchain (see NIGHTLY)" );
 
+const MIRI_SUITES: &[&str] = &["log", "error", "memory", "parse", "validate"];
+
 const SANITIZERS: &[( &str, &str )] = &[
     ( "asan", "address" ),
     ( "tsan", "thread" ),
@@ -65,7 +67,7 @@ const SANITIZERS: &[( &str, &str )] = &[
 
 #[derive(Debug)]
 enum Failure {
-    Missing { tool: &'static str, install: &'static str, root: PathBuf },
+    Missing { tool: &'static str, install: &'static str, root: Box<Path> },
     Command { command: String, code: Option<i32> },
     Spawn { command: String, source: IoError },
     Flag { flag: &'static str, value: String },
@@ -82,6 +84,7 @@ struct Gate {
     execute:   bool,
     baseline:  String,
     time:      String,
+    budget:    Option<String>,
     sanitizer: String,
 }
 
@@ -169,6 +172,7 @@ impl Gate {
             execute: has("--run"),
             baseline: after("--baseline").cloned().unwrap_or_else(|| "main".to_owned()),
             time: after("--time").cloned().unwrap_or_else(|| "60".to_owned()),
+            budget: after("--budget").cloned(),
             sanitizer: after("--sanitizer").cloned().unwrap_or_else(|| "asan".to_owned()),
         })
 
@@ -204,6 +208,7 @@ impl Gate {
             execute: true,
             baseline: self.baseline.clone(),
             time: self.time.clone(),
+            budget: self.budget.clone(),
             sanitizer: self.sanitizer.clone(),
         }
 
@@ -212,11 +217,12 @@ impl Gate {
     fn setup ( &self ) -> Result<(), Failure> {
 
         let nightly = format!("+{NIGHTLY}");
-        let missing: Vec<&str> = TOOLS.iter().map(|( tool, _ )| *tool).filter(|tool| !Self::available(tool)).collect();
+        let wanted  = TOOLS.iter().map(|( tool, _ )| *tool).filter(|tool| !(cfg!(windows) && *tool == "cargo-fuzz"));
+        let missing: Vec<&str> = wanted.filter(|tool| !Self::available(tool)).collect();
 
         if !missing.is_empty() && !Self::available(BINSTALL.0) {
 
-            return Err(Failure::Missing { tool: BINSTALL.0, install: BINSTALL.1, root: self.root.clone() });
+            return Err(Failure::Missing { tool: BINSTALL.0, install: BINSTALL.1, root: self.root.clone().into_boxed_path() });
 
         }
 
@@ -353,6 +359,14 @@ impl Gate {
 
     fn fuzz ( &self ) -> Result<(), Failure> {
 
+        if cfg!(windows) {
+
+            println!("fuzz: libFuzzer has no Windows support; skipped");
+
+            return Ok(());
+
+        }
+
         self.require("cargo-fuzz")?;
 
         let host = self.host()?;
@@ -362,13 +376,16 @@ impl Gate {
 
         if !self.execute { return Ok(()); }
 
-        let budget = format!("-max_total_time={}", self.time);
+        let listed  = self.capture("cargo", &["fuzz", "list"])?;
+        let targets = listed.lines().collect::<Vec<_>>();
+        let seconds = self.seconds(targets.len())?;
+        let limit   = format!("-max_total_time={seconds}");
 
-        for target in self.capture("cargo", &["fuzz", "list"])?.lines() {
+        for target in targets {
 
-            println!("fuzz: `{target}` for {}s", self.time);
+            println!("fuzz: `{target}` for {seconds}s");
 
-            self.nightly(&["fuzz", "run", target, "--target", &host, "--", &budget, "-max_len=4096"], &lto)?;
+            self.nightly(&["fuzz", "run", target, "--target", &host, "--", &limit, "-max_len=4096"], &lto)?;
 
         }
 
@@ -376,10 +393,25 @@ impl Gate {
 
     }
 
+    fn seconds ( &self, targets: usize ) -> Result<u64, Failure> {
+
+        let parse = |flag: &'static str, value: &String| value.parse::<u64>().ok().ok_or_else(|| Failure::Flag { flag, value: value.clone() });
+        let count = u64::try_from(targets.max(1)).unwrap_or(1);
+
+        match &self.budget {
+            Some(total) => Ok((parse("--budget", total)? / count).max(60)),
+            None        => parse("--time", &self.time),
+        }
+
+    }
+
     fn miri ( &self ) -> Result<(), Failure> {
 
         self.component(MIRI)?;
-        self.nightly(&["miri", "test", "--workspace", "--all-features", "--locked"], &[])
+        let suites = MIRI_SUITES.iter().flat_map(|suite| ["--test", suite]);
+        let args   = ["miri", "test", "-p", "tests", "--locked"].into_iter().chain(suites).collect::<Vec<_>>();
+
+        self.nightly(&args, &[( "MIRIFLAGS", "-Zmiri-disable-isolation" )])
 
     }
 
@@ -536,7 +568,7 @@ impl Gate {
         let toolchain = format!("+{NIGHTLY}");
         let plugin = tool.strip_prefix("cargo-").unwrap_or(tool);
 
-        if Self::present(&[&toolchain, plugin]) { Ok(()) } else { Err(Failure::Missing { tool, install, root: self.root.clone() }) }
+        if Self::present(&[&toolchain, plugin]) { Ok(()) } else { Err(Failure::Missing { tool, install, root: self.root.clone().into_boxed_path() }) }
 
     }
 
@@ -551,7 +583,7 @@ impl Gate {
         }
         else {
 
-            Err(Failure::Missing { tool, install, root: self.root.clone() })
+            Err(Failure::Missing { tool, install, root: self.root.clone().into_boxed_path() })
 
         }
 

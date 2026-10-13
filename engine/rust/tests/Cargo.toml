@@ -9,11 +9,52 @@ license.workspace      = true
 description            = "Public-API contract tests for the foundation crates, linked the way a consumer links."
 
 [dependencies]
-base.workspace = true
+log.workspace      = true
+error.workspace    = true
+memory.workspace   = true
+parse.workspace    = true
+validate.workspace = true
+file.workspace     = true
+net.workspace      = true
+http.workspace     = true
+process.workspace  = true
+tokio.workspace    = true
 
 [[test]]
-name = "base"
-path = "base.rs"
+name = "log"
+path = "log.rs"
+
+[[test]]
+name = "error"
+path = "error.rs"
+
+[[test]]
+name = "memory"
+path = "memory.rs"
+
+[[test]]
+name = "parse"
+path = "parse.rs"
+
+[[test]]
+name = "validate"
+path = "validate.rs"
+
+[[test]]
+name = "file"
+path = "file.rs"
+
+[[test]]
+name = "net"
+path = "net.rs"
+
+[[test]]
+name = "http"
+path = "http.rs"
+
+[[test]]
+name = "process"
+path = "process.rs"
 
 [lints]
 workspace = true
