@@ -23,7 +23,7 @@ severity:
 
 vulnerability:
   ignore-status: []
-  ignore-unfixed: false
+  ignore-unfixed: true
   skip-vex-repo-update: false
   severity-source:
     - auto
