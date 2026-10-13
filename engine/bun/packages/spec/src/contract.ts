@@ -85,6 +85,7 @@ export function baseSettings<L extends z.ZodEnum, F extends Shape>(locale: L, fo
  */
 export const backendOptionFields = {
     prefix: prefixShape.default(""),
+    insecure: z.boolean().default(false),
     execution: overridesShape.shape.execution,
     encoding: overridesShape.shape.encoding,
     cache: overridesShape.shape.cache,
@@ -129,6 +130,7 @@ export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I ext
             api: apiShape.nullable(),
             contract: contractShape,
             realtime: realtimeShape.nullable(),
+            insecure: z.boolean(),
         }),
         configInputShape: z.strictObject({
             contents: content

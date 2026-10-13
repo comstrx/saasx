@@ -166,5 +166,6 @@ export {
     surfaceValidator,
     type Theme,
     type ThemeInput,
+    transportIssues,
     type Validator,
 } from "./surface.ts";

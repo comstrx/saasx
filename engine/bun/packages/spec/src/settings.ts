@@ -38,6 +38,8 @@ export type Backend = {
     api: ApiInput;
     overrides: ContractOverrides;
     development: Connection["development"];
+    /** The contracts allow cleartext transports in production; a build passes it to the platform. */
+    insecure: boolean;
 };
 export type ApiPlan = {
     identity: string;

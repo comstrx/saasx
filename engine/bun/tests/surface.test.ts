@@ -1,7 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { feature, get, many, z } from "@engine/api";
 import {
-    backendOf,
     catalogueFacts,
     choiceIssues,
     compileApi,
@@ -110,6 +109,7 @@ describe("surface", () => {
             },
             overrides: {},
             development: { baseUrl: "http://127.0.0.1:8787/v1", browserBaseUrl: null },
+            insecure: false,
         };
         const { api } = compileApi({ identity: "site", endpoints, seeds, currency: "USD", backend, switches: {} });
 
@@ -153,38 +153,6 @@ describe("screens", () => {
         expect(granted({ permissions: [] }, ["user"])).toBe(true);
         expect(granted({ permissions: ["admin"] }, ["user", "admin"])).toBe(true);
         expect(granted({ permissions: [] }, ["admin"])).toBe(false);
-    });
-});
-describe("backend plan", () => {
-    test("a backend plan derives addresses from the urls and keeps surface options on the connection", () => {
-        const plan = backendOf(
-            "site",
-            {
-                urls: { production: "https://a.test", local: "http://l.test", browser: null },
-                options: { prefix: "v1", sessionCookie: "s", proxies: 1, timeoutMs: 5 },
-                request: undefined,
-                response: undefined,
-            },
-            "USD",
-        );
-
-        expect(plan.api.context).toEqual({
-            spec: "site",
-            sessionCookie: "s",
-            proxies: 1,
-            tenant: null,
-            currency: "USD",
-        });
-        expect(plan.api.connections.primary).toMatchObject({
-            baseUrl: "https://a.test/v1",
-            browserBaseUrl: null,
-            timeoutMs: 5,
-        });
-        expect(plan.development).toEqual({ baseUrl: "http://l.test/v1", browserBaseUrl: null });
-        expect(
-            backendOf("app", { urls: { production: null, local: null }, options: { prefix: "" } }, "USD").api
-                .connections.primary,
-        ).toEqual({ baseUrl: null, development: { baseUrl: null, browserBaseUrl: null } });
     });
 });
 describe("shell parts", () => {

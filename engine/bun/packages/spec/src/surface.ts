@@ -63,6 +63,7 @@ export type ContractsInput = {
         sessionCookie?: string | null | undefined;
         proxies?: number | undefined;
         tenant?: string | null | undefined;
+        insecure?: boolean | undefined;
         [extra: string]: unknown;
     };
     request?: unknown;
@@ -134,6 +135,7 @@ export function backendOf(identity: string, contracts: ContractsInput, currency:
         sessionCookie = null,
         proxies = 0,
         tenant = null,
+        insecure = false,
         ...extras
     } = contracts.options;
     const browser = contracts.urls.browser === undefined ? undefined : at(contracts.urls.browser, prefix);
@@ -155,7 +157,25 @@ export function backendOf(identity: string, contracts: ContractsInput, currency:
             response: contracts.response,
         }) as ContractOverrides,
         development,
+        insecure,
     };
+}
+const cleartext = /^(?:http|ws):\/\//i;
+
+/**
+ * The transports a spec may not use in production without saying so: a cleartext backend or
+ * realtime address passes only when the contracts set `options.insecure`. Local addresses are
+ * development's own and always pass.
+ */
+export function transportIssues(contracts: ContractsInput): string[] {
+    if (contracts.options.insecure === true) return [];
+
+    const found = [
+        ...(contracts.urls.production && cleartext.test(contracts.urls.production) ? ["urls.production"] : []),
+        ...(contracts.realtime?.url && cleartext.test(contracts.realtime.url) ? ["realtime.url"] : []),
+    ];
+
+    return found.map((where) => `contracts.${where}: a cleartext address in production needs options.insecure: true.`);
 }
 /**
  * The compiled form every surface's screen shares; a surface spreads its own fields over it.
@@ -208,6 +228,9 @@ function compileConfig<
     const backend = input.contracts
         ? surface.backend(identity, input.contracts as NonNullable<I["contracts"]>, currency)
         : null;
+
+    if (input.contracts) assertClean(transportIssues(input.contracts as ContractsInput));
+
     const { api, contract } = compileApi({
         identity,
         endpoints: surface.endpoints,
@@ -225,6 +248,7 @@ function compileConfig<
         api,
         contract,
         realtime: (input.contracts as ContractsInput | null)?.realtime ?? null,
+        insecure: backend?.insecure ?? false,
     });
 }
 /**
