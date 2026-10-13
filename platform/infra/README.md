@@ -1,6 +1,6 @@
 # ✨ Infra
 
-A self-contained Rust infrastructure engine for defining, provisioning, deploying, operating and rolling back infrastructure.
+A Rust infrastructure engine for defining, provisioning, deploying, operating and rolling back infrastructure.
 
 ## Overview
 
@@ -17,6 +17,6 @@ The engine never says "create this project's cluster"; the manifests do. Separat
 
 Every mutating operation plans before it applies, keeps state with locking, keeps secrets out of state and out of manifests (references only), and leaves a rollback path.
 
-## Independence
+## Engine
 
-The engine depends on the Rust ecosystem directly and on nothing else in this repository. It stays self-contained by design: an infrastructure tool must build and run on a bare machine before anything it manages exists.
+The engine is one crate on the Rust engine, reached by path and never through the registry directly. It is a pure library at heart: it builds and runs on a bare machine before anything it manages exists.
