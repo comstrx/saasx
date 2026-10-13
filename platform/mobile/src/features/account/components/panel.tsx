@@ -7,7 +7,7 @@ import { useSession } from "@/hooks/use-session";
 import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { hello: string; logout: string; loading: string; failed: string };
+export type Options = { hello: string; logout: string; loading: string; failed: string; offline: string; cached: string; errors: Record<string, unknown> };
 
 export default function Panel ({ options, ports, route }: FeatureProps<Options>) {
 

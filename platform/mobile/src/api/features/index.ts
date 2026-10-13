@@ -1,4 +1,4 @@
-import { del, document, type Endpoint, factsOf, feature, get, localized, many, password, post, put, z } from "@engine/api";
+import { del, document, type Endpoint, factsOf, feature, get, localized, many, need, password, post, put, z } from "@engine/api";
 import { keysOf, mapValues } from "@engine/base";
 
 const money = z.object({ amount: z.string(), currency: z.string() }).nullish();
@@ -90,20 +90,20 @@ export const endpoints = {
     manage: feature({ execution: "client", cache: 0, permissions: ["user"], touches: ["manage"] }, {
         me: get("/admin/account/me", {}, user, { response: { data: "data.user" } }),
         logout: post("/admin/account/logout", {}, ack),
-        list: get("/admin/catalogs", {
+        list: need(["view_catalogs"], get("/admin/catalogs", {
             page: z.number().int().positive().optional(),
             limit: z.number().int().positive().max(50).optional(),
             search: z.string().max(100).optional(),
             sort: sorts.optional(),
             type: catalogType.optional(),
             trashed: z.boolean().optional(),
-        }, many(managed), { request: { fields: { type: "query:filters[type]", trashed: "query:filters[trashed]" } } }),
-        view: get("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, managed),
+        }, many(managed), { request: { fields: { type: "query:filters[type]", trashed: "query:filters[trashed]" } } })),
+        view: need(["view_catalogs"], get("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, managed)),
         texts: get("/admin/catalogs/{id}/translations", { id: z.coerce.number().int().positive(), limit: z.number().int().positive().max(50).optional() }, many(z.object({ locale: z.string(), name: z.string().nullish(), description: z.string().nullish() }))),
-        create: post("/admin/catalogs", { type: catalogType, ...editable }, managed),
-        update: put("/admin/catalogs/{id}", { id: z.coerce.number().int().positive(), type: catalogType, ...editable }, managed),
-        remove: del("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, ack),
-        restore: post("/admin/catalogs/{id}/restore", { id: z.coerce.number().int().positive() }, managed),
+        create: need(["add_catalogs"], post("/admin/catalogs", { type: catalogType, ...editable }, managed)),
+        update: need(["edit_catalogs"], put("/admin/catalogs/{id}", { id: z.coerce.number().int().positive(), type: catalogType, ...editable }, managed)),
+        remove: need(["delete_catalogs"], del("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, ack)),
+        restore: need(["delete_catalogs"], post("/admin/catalogs/{id}/restore", { id: z.coerce.number().int().positive() }, managed)),
     }),
 } as const;
 

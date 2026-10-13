@@ -1,5 +1,6 @@
 import { catalogueFacts } from "@engine/spec";
 import { createTools, type Loaded } from "@engine/tooling";
+import { reasons } from "../../src/api/core/index.ts";
 import { endpoints } from "../../src/api/features/index.ts";
 import { type Locale, supportedLocales } from "../../src/lib/spec/languages.ts";
 import { type Compiled, validateSpec } from "../../src/lib/spec/surface.ts";
@@ -13,6 +14,7 @@ export const tools = createTools<Compiled, Locale>({
     locales: supportedLocales,
     brandFolders,
     catalogue: catalogueFacts(endpoints),
+    reasons,
     validate: validateSpec,
 });
 export const { root, writeFile, writeJson, composeMessages } = tools;

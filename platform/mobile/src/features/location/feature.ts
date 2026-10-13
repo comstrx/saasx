@@ -2,6 +2,6 @@ import type { ManifestInput } from "@engine/spec";
 
 export default {
     owner: "client",
-    options: { title: "", detail: "", locate: "", saved: "", failed: "", denied: "", unsupported: "" },
+    options: { title: "", detail: "", locate: "", saved: "", queued: "", failed: "", denied: "", unsupported: "", errors: {} },
     ports: { save: { kind: "write" } },
 } satisfies ManifestInput;

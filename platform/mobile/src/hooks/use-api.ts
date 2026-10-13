@@ -8,8 +8,8 @@ import { useSession } from "@/hooks/use-session";
 export function useApi (): ApiClient<Endpoints> {
 
     const locale = useLocale();
-    const { token } = useSession();
+    const { token, end } = useSession();
 
-    return useMemo(() => appApi(locale, () => token), [locale, token]);
+    return useMemo(() => appApi(locale, () => token, end), [locale, token, end]);
 
 }

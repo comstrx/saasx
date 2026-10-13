@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { I18nManager } from "react-native";
+import Replayer from "@/components/replayer";
 import Status from "@/elements/status";
 import { routing } from "@/lib/spec/config";
 import { languages } from "@/lib/spec/languages";
@@ -16,6 +17,8 @@ export default function RootLayout () {
     return (
 
         <SessionProvider>
+
+            <Replayer />
 
             <Status scheme="auto" />
 

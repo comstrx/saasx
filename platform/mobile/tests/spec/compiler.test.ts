@@ -15,7 +15,7 @@ const catalogue: Catalogue = catalogueFacts({
 const features: Features = {
     cards: { owner: "client", options: { columns: 2, loading: "x", failed: "x", offline: "x", cached: "x", empty: "x" }, ports: { items: { kind: "list", fields: ["title"] } }, access: [], signals: [] },
     hero: { owner: "client", options: {}, ports: {}, access: [], signals: [] },
-    editor: { owner: "client", options: { failed: "x" }, ports: { save: { kind: "write" } }, access: ["user"], signals: [] },
+    editor: { owner: "client", options: { failed: "x", errors: {} }, ports: { save: { kind: "write" } }, access: ["user"], signals: [] },
     table: { owner: "client", options: { select: false, loading: "x", failed: "x", offline: "x", cached: "x", empty: "x" }, ports: { rows: { kind: "list", fields: ["title"] } }, access: [], signals: ["selected"] },
     detail: { owner: "client", options: { loading: "x", failed: "x", offline: "x", cached: "x" }, ports: { item: { kind: "one", fields: ["title"] } }, access: [], signals: [] },
 };
@@ -66,9 +66,9 @@ describe("screens", () => {
     test("ports bind like the web: reads need a backend, writes need an operation that writes", () => {
 
         expect(issues({ screens: [home(feature("hero", { heading: true }), feature("cards", { ports: { items: read("products.list") } }))] }, null)).toContain("declares none");
-        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { ports: { save: write("products.list") } }))] })).toContain("is a read, not a write");
+        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { errors: t("nav") }, ports: { save: write("products.list") } }))] })).toContain("is a read, not a write");
 
-        const { schema } = compile({ screens: [home(feature("hero", { heading: true }), feature("editor", { ports: { save: write("products.save") } }))] });
+        const { schema } = compile({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { errors: t("nav") }, ports: { save: write("products.save") } }))] });
 
         expect(schema.screens[0]?.blocks[0]?.features[1]?.access).toEqual(["user"]);
 

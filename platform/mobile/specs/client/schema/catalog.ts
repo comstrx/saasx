@@ -14,7 +14,7 @@ export default screen({
         block({ width: "boxed", padding: 4 }, [
             feature("detail", {
                 heading: true,
-                options: { from: t("catalogue.from"), missing: t("state.missing"), back: t("catalog.back"), loading: t("state.loading"), failed: t("state.failed"), offline: t("state.offline"), cached: t("state.cached") },
+                options: { from: t("catalogue.from"), missing: t("state.missing"), back: t("catalog.back"), loading: t("state.loading"), failed: t("state.failed"), offline: t("state.offline"), cached: t("state.cached"), errors: t("errors") },
                 ports: { item: read("catalogs.view", { id: param("id") }) },
             }),
         ]),
