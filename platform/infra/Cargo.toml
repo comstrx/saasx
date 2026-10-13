@@ -13,7 +13,7 @@ description = "A self-contained infrastructure engine: define, provision, deploy
 base = { path = "../../engine/rust/crates/base", version = "0.1.0" }
 
 [dev-dependencies]
-criterion = { version = "=0.8.1", default-features = false, features = ["cargo_bench_support"] }
+criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
 
 [[bin]]
 name = "infra"
