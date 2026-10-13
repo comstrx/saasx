@@ -1,12 +1,12 @@
 [package]
-name = "benches"
-publish.workspace = true
-version.workspace = true
-edition.workspace = true
+name                   = "benches"
+publish.workspace      = true
+version.workspace      = true
+edition.workspace      = true
 rust-version.workspace = true
-license.workspace = true
-authors.workspace = true
-description = "Scenario benchmarks of the services, consuming the foundation the way production does."
+license.workspace      = true
+authors.workspace      = true
+description            = "Scenario benchmarks of the services, consuming the foundation the way production does."
 
 [dependencies]
 base.workspace = true
@@ -15,8 +15,8 @@ base.workspace = true
 criterion.workspace = true
 
 [[bench]]
-name = "hello"
-path = "hello.rs"
+name    = "hello"
+path    = "hello.rs"
 harness = false
 
 [lints]
