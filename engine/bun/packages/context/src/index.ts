@@ -18,6 +18,7 @@ export {
     type PortOptions,
     portKey,
     portMemory,
+    type Queued as QueuedWrite,
     useOperation,
     usePortResource,
     type Written,

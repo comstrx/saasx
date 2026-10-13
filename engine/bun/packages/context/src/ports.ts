@@ -1,6 +1,7 @@
 import type { ApiResult, ApiSurface, RequestOptions } from "@engine/api";
 import { removeBy, upsertBy } from "@engine/array";
-import { isRecord, pathGet } from "@engine/base";
+import { isRecord, pathGet, uuid } from "@engine/base";
+import { transient } from "@engine/error";
 import {
     type CompiledPort,
     fillInput,
@@ -16,6 +17,7 @@ import {
 import type { Store } from "@engine/storage";
 import { typed } from "@engine/storage";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Outbox } from "./outbox.ts";
 import { type Resource, type Runner, useAction, useResource } from "./react.ts";
 import { onTouched, touched } from "./touches.ts";
 
@@ -137,29 +139,47 @@ export function portMemory(
     };
 }
 
+export type Queued = { resource: null; message: null; meta: { source: "queued"; requestId?: undefined } };
+
 /**
- * A write port as a runnable action over any api surface; an unbound port fails on run, never on render.
+ * A write port as a runnable action over any api surface; an unbound port fails on run, never on
+ * render. With an outbox, a write the network cannot deliver is queued under its idempotency key
+ * and answers `queued` instead of failing; the outbox replays it later.
  */
-export function useOperation(api: ApiSurface, port: CompiledPort | undefined): Runner<Input, Written, RequestOptions> {
+export function useOperation(
+    api: ApiSurface,
+    port: CompiledPort | undefined,
+    outbox?: Outbox,
+): Runner<Input, Written | Queued, RequestOptions> {
     const feature = port?.kind === "write" ? port.feature : "";
     const operation = port?.kind === "write" ? port.operation : "";
     const touches = port?.kind === "write" ? port.touches.join(",") : "";
     const perform = useCallback(
-        async (input: Input, options?: RequestOptions): Promise<Written> => {
+        async (input: Input, options?: RequestOptions): Promise<Written | Queued> => {
             const call = api[feature]?.[operation];
 
             if (!call) throw new Error(`No write bound for ${feature}.${operation}.`);
 
-            const written = await call(input, options);
+            const idempotencyKey = options?.idempotencyKey ?? uuid();
 
-            if (touches) touched(touches.split(","));
+            try {
+                const written = await call(input, { ...options, idempotencyKey });
 
-            return written;
+                if (touches) touched(touches.split(","));
+
+                return written;
+            } catch (error) {
+                if (!outbox || !transient(error)) throw error;
+
+                await outbox.add({ feature, operation, input, idempotencyKey });
+
+                return { resource: null, message: null, meta: { source: "queued" } };
+            }
         },
-        [api, feature, operation, touches],
+        [api, feature, operation, touches, outbox],
     );
 
-    return useAction<Input, Written, RequestOptions>(perform);
+    return useAction<Input, Written | Queued, RequestOptions>(perform);
 }
 /**
  * A read, data or site port as a resource over any api surface: request-free ports resolve at once,
