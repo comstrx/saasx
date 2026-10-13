@@ -12,6 +12,7 @@
     "@engine/base": "workspace:*",
     "@engine/spec": "workspace:*",
     "@engine/translate": "workspace:*",
-    "@engine/validate": "workspace:*"
+    "@engine/validate": "workspace:*",
+    "mitata": "1.0.34"
   }
 }

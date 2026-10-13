@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { createForm } from "@engine/context";
 import type { FieldFact } from "@engine/validate";
 import { renderToString } from "react-dom/server";
-import SchemaForm from "../../src/components/schema-form";
+import SchemaForm from "../src/components/schema-form";
 
 const fields: FieldFact[] = [
     { name: "type", kind: "choice", required: true, nullable: false, choices: ["hotel", "room"] },

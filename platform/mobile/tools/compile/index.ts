@@ -21,10 +21,10 @@ export function assemble ( spec: Spec, mode: Mode ) {
 export async function compileSpec ( mode: Mode ) {
 
     const spec = await loadSpec(specFromEnvironment());
-    const assets = composeAssets(resolve(root, "assets"), resolve(spec.folder, "brand"));
+    const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
     const folder = `node_modules/.cache/spec/${mode}`;
     const data = assemble(spec, mode);
-    const shared = [...assetFiles(resolve(root, "assets"), true)];
+    const shared = [...assetFiles(resolve(root, "public"), true)];
     const files = new Map([...shared, ...assets]);
     const { content, theme } = spec.config;
 

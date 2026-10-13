@@ -1,3 +1,4 @@
+export { bench, boxplot, group, run, summary } from "mitata";
 export {
     type Analysis,
     analyze,

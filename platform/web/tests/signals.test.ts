@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { get, many, z } from "@engine/api";
 import { type Catalogue, catalogueFacts, type Features } from "@engine/spec";
-import { block, feature, live, read, screen, signal, type Tree, t, validateSpec } from "../../src/lib/spec/surface.ts";
+import { block, feature, live, read, screen, signal, type Tree, t, validateSpec } from "../src/lib/spec/surface.ts";
 
 const messages = { en: { nav: { home: "Home" } }, ar: { nav: { home: "الرئيسية" } } };
 const item = z.object({ id: z.number(), title: z.string(), updated_at: z.string() });

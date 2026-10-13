@@ -14,7 +14,8 @@
     "fmt": "biome check --write .",
     "typecheck": "bun tools/compile/index.ts production && next typegen && tsc --noEmit",
     "test": "bun test",
-    "compile": "bun tools/compile/index.ts production"
+    "compile": "bun tools/compile/index.ts production",
+    "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done"
   },
   "dependencies": {
     "lucide-react": "1.54.0",

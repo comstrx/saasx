@@ -34,7 +34,7 @@ const api = {
     context: { spec: "site", currency: "USD", sessionCookie: null, proxies: 0, tenant: "www.shop.test" },
     connections: { primary: { baseUrl: "https://api.shop.test/v1" } },
 };
-const fixture = `${import.meta.dir}/fixtures/contract.json`;
+const fixture = `${import.meta.dir}/fixtures.json`;
 
 async function frozen(): Promise<unknown> {
     const file = Bun.file(fixture);

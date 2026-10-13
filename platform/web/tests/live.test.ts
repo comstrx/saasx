@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { createApi, requestContext } from "@engine/api";
 import { isFailure } from "@engine/error";
-import { core } from "../../src/api/core/index.ts";
-import { endpoints } from "../../src/api/features/index.ts";
-import { loadSpec, specFromEnvironment } from "../../tools/core/index.ts";
+import { core } from "../src/api/core/index.ts";
+import { endpoints } from "../src/api/features/index.ts";
+import { loadSpec, specFromEnvironment } from "../tools/core/index.ts";
 
 const spec = await loadSpec(specFromEnvironment());
 const api = spec.config.api;

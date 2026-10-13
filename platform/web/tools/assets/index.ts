@@ -1,11 +1,10 @@
 import { type AssetFolder, composeAssets as compose, type Files, assetFiles as files, type Skip } from "@engine/tooling";
 
 const folders: readonly AssetFolder[] = [
-    { path: "assets/images/brand", brand: "images" },
-    { path: "assets/videos/brand", brand: "videos" },
-    { path: "assets/audios/brand", brand: "audios" },
-    { path: "assets/fonts", brand: "fonts" },
-    { path: "assets/licenses", brand: "licenses" },
+    { path: "images/brand", brand: "images" },
+    { path: "fonts", brand: "fonts" },
+    { path: "videos", brand: "videos" },
+    { path: "audios", brand: "audios" },
     { path: ".well-known", brand: "well-known" },
 ];
 const skip: Skip = ( name, base, publicFiles ) => (base.startsWith(".") && !(publicFiles && name === ".well-known")) || base === "_generated";

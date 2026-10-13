@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { del, get, feature as group, many, need, post, z } from "@engine/api";
 import { type Catalogue, catalogueFacts, type Features } from "@engine/spec";
-import { block, feature, param, read, screen, type Tree, t, validateSpec, write } from "../../src/lib/spec/surface.ts";
+import { block, feature, param, read, screen, type Tree, t, validateSpec, write } from "../src/lib/spec/surface.ts";
 
 const messages = { en: { nav: { home: "Home" }, item: { fields: { title: "Title", stock: "Stock" } } }, ar: { nav: { home: "الرئيسية" }, item: { fields: { title: "العنوان", stock: "المخزون" } } } };
 const item = z.object({ id: z.number(), title: z.string(), stock: z.number().nullish() });

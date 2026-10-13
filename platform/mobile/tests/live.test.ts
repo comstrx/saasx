@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { createApi, requestContext } from "@engine/api";
-import { endpoints } from "../../src/api/features/index.ts";
-import { assemble } from "../../tools/compile/index.ts";
-import { loadSpec, specFromEnvironment } from "../../tools/core/index.ts";
+import { endpoints } from "../src/api/features/index.ts";
+import { assemble } from "../tools/compile/index.ts";
+import { loadSpec, specFromEnvironment } from "../tools/core/index.ts";
 
 const spec = await loadSpec(specFromEnvironment());
 const client = assemble(spec, "production").client;

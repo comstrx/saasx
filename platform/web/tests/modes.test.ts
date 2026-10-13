@@ -1,16 +1,16 @@
 import { describe, expect, test } from "bun:test";
 import { catalogueFacts } from "@engine/spec";
 import { featureFacts } from "@engine/tooling";
-import { endpoints } from "../../src/api/features/index.ts";
-import { type SiteConfig, validateSpec } from "../../src/lib/spec/surface.ts";
-import { composeMessages, loadSpec, root } from "../../tools/core/index.ts";
+import { endpoints } from "../src/api/features/index.ts";
+import { type SiteConfig, validateSpec } from "../src/lib/spec/surface.ts";
+import { composeMessages, loadSpec, root } from "../tools/core/index.ts";
 
 const [client, admin] = await Promise.all([loadSpec("client"), loadSpec("admin")]);
 const facts = await featureFacts(`${root}/src/features`);
 const catalogue = catalogueFacts(endpoints);
 const messagesOf = ( folder: string ) => composeMessages(`${folder}/brand/messages`);
-const sources = { client: await import("../../specs/client/config/index.ts"), admin: await import("../../specs/admin/config/index.ts") };
-const schemas = { client: await import("../../specs/client/schema/index.ts"), admin: await import("../../specs/admin/schema/index.ts") };
+const sources = { client: await import("../specs/client/config/index.ts"), admin: await import("../specs/admin/config/index.ts") };
+const schemas = { client: await import("../specs/client/schema/index.ts"), admin: await import("../specs/admin/schema/index.ts") };
 
 type Variant = Partial<SiteConfig>;
 

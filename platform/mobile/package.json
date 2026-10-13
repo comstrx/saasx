@@ -18,7 +18,8 @@
         "test": "bun test",
         "compile": "bun tools/compile/index.ts production",
         "flow": "bun tools/device/index.ts flow",
-        "perf": "bun tools/device/index.ts perf"
+        "perf": "bun tools/device/index.ts perf",
+        "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done"
     },
     "dependencies": {
         "@expo/metro-runtime": "57.0.16",
