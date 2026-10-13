@@ -2,8 +2,8 @@ import { field } from "@engine/spec";
 import { formatDate, formatMoney } from "@engine/translate";
 import Badge from "@/elements/badge";
 import Table, { type Column as Cell, type Row } from "@/elements/table";
-import Text from "@/elements/text";
 import Icon from "@/icons";
+import SceneNote from "./scene";
 
 export type Column = { key: string; label: string; kind?: "text" | "money" | "date" | "badge" | "boolean" | "number" | undefined; align?: "start" | "end" | undefined; width?: number | undefined };
 type Props = { locale: string; columns: readonly Column[]; rows: readonly Record<string, unknown>[]; keyField: string; empty: string; selected?: string | undefined; onSelect?: (( key: string ) => void) | undefined };
@@ -31,7 +31,7 @@ function cell ( locale: string, row: Record<string, unknown>, column: Column ) {
 }
 export default function DataTable ({ locale, columns, rows, keyField, empty, selected, onSelect }: Props) {
 
-    if ( !rows.length ) return <Text text={empty} tone="muted" />;
+    if ( !rows.length ) return <SceneNote scene="empty" text={empty} />;
 
     const cells: Cell[] = columns.map(( column ) => ({ key: column.key, label: column.label, align: column.align ?? (column.kind === "money" || column.kind === "number" ? "end" : "start"), width: column.width ?? widths[column.kind ?? "text"] }));
     const data: Row[] = rows.map(( row, index ) => ({
