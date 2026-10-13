@@ -1,26 +1,12 @@
-import { router } from "expo-router";
-import { useTranslation } from "react-i18next";
-import { AppBar } from "@/elements/app-bar";
-import { Empty } from "@/elements/empty";
-import { Screen } from "@/elements/screen";
-import { retreat } from "@/features/shell/retreat";
+import Notice from "@/elements/notice";
+import { useLocale, useTheme } from "@/hooks/use-locale";
+import { text } from "@/lib/spec/runtime";
+import { palette } from "@/styles/theme";
 
 export default function NotFound () {
 
-    const { t } = useTranslation();
+    const locale = useLocale();
 
-    return (
-        <Screen edges={[ "top" ]} padded={false}>
-            <AppBar title={t("lost.title")} onBack={() => retreat() } />
-
-            <Empty
-                emblem="lost"
-                title={t("lost.emptyTitle")}
-                note={t("lost.emptyBody")}
-                action={t("thanks.home")}
-                onAction={() => router.replace("/") }
-            />
-        </Screen>
-    );
+    return <Notice tone="missing" message={text({ key: "state.missing" }, locale)} palette={palette(useTheme())} />;
 
 }

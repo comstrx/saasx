@@ -1,4 +1,0 @@
-minimumReleaseAgeExclude:
-  - expo-video@57.0.3
-  - expo-constants@57.0.17
-  - expo-notifications@57.0.16

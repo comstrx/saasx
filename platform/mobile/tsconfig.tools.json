@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "types": ["bun"], "jsx": "react-jsx" },
+  "include": [
+    "tools/**/*.ts",
+    "tests/**/*.ts",
+    "app.config.ts",
+    "src/lib/spec/**/*.ts",
+    "src/api/features/*.ts",
+    "src/types/**/*.d.ts"
+  ]
+}
