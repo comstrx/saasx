@@ -9,6 +9,7 @@ import { createStore, type StoreApi } from "zustand/vanilla";
 export type FormValue =
     | string
     | boolean
+    | string[]
     | Record<string, string>
     | Blob
     | { uri: string; name: string; type: string }
@@ -47,6 +48,7 @@ function blank(field: FieldFact, locales: readonly string[]): FormValue {
     if (field.kind === "choice") return field.required ? (field.choices?.[0] ?? "") : "";
     if (field.kind === "localized") return Object.fromEntries(locales.map((locale) => [locale, ""]));
     if (field.kind === "file") return null;
+    if (field.kind === "list") return [];
 
     return "";
 }
@@ -66,6 +68,7 @@ function given(field: FieldFact, value: unknown, locales: readonly string[], loc
         );
     }
     if (field.kind === "file") return value instanceof Blob ? value : null;
+    if (field.kind === "list") return Array.isArray(value) ? value.map(String) : [];
     if (typeof value === "object") return "";
     if (field.kind === "date" && typeof value === "string") return value.slice(0, dateLength);
     if (field.kind === "datetime" && typeof value === "string") return value.slice(0, datetimeLength);
@@ -75,6 +78,7 @@ function given(field: FieldFact, value: unknown, locales: readonly string[], loc
 function coerce(field: FieldFact, value: FormValue): unknown {
     if (field.kind === "boolean") return value === true;
     if (field.kind === "file") return value ?? undefined;
+    if (field.kind === "list") return Array.isArray(value) && value.length ? value : undefined;
     if (field.kind === "localized") {
         const texts = Object.entries((value ?? {}) as Record<string, string>).filter(([, text]) => text !== "");
 

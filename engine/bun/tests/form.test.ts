@@ -112,6 +112,27 @@ describe("form", () => {
         expect(form.getState()).toMatchObject({ status: "idle", errors: {}, dirty: false });
     });
 });
+describe("list fields", () => {
+    test("a list starts empty, loads its items as text and is omitted when empty", async () => {
+        const sent: unknown[] = [];
+        const form = createForm({
+            fields: [{ name: "tags", kind: "list", required: false, nullable: false }],
+            locales: ["en"],
+            submit: async (values) => {
+                sent.push(values);
+                return null;
+            },
+        });
+
+        expect(form.getState().values.tags).toEqual([]);
+        form.getState().load({ tags: ["a", 2] });
+        expect(form.getState().values.tags).toEqual(["a", "2"]);
+        await form.getState().submit();
+        form.getState().set("tags", []);
+        await form.getState().submit();
+        expect(sent).toEqual([{ tags: ["a", "2"] }, {}]);
+    });
+});
 describe("localized fields", () => {
     test("a plain string lands in the current locale's slot", () => {
         const form = createForm({ fields, locales: ["en", "ar"], locale: "ar", submit: async () => null });
