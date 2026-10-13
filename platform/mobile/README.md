@@ -16,6 +16,7 @@ A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaki
 ```text
 bun run check       biome · architecture · messages · specs
 bun run typecheck   app and tools projects
+bun run bench       spec compile and message composition
 bun test            compiler rules · Expo-bundled versions
 bun run export      the Android JavaScript bundle of the selected spec
 ```

@@ -43,7 +43,7 @@ Packages are runtime-agnostic: a lint rejects `Bun`, `process`, `Buffer`, `requi
 bun install --frozen-lockfile
 bun run gates    # check (tsc) · lint (biome) · test (bun test) · audit (bun audit)
 bun run bench    # mitata benchmarks
-bun run fmt      # biome, write mode
+bun run fmt      # biome assists (imports); no formatter runs here
 ```
 
 CI runs `bun run gates` and nothing else. The Bun version is pinned in `package.json` (`packageManager`), and CI installs exactly that.
@@ -53,3 +53,7 @@ CI runs `bun run gates` and nothing else. The Bun version is pinned in `package.
 `bunfig.toml`: exact versions, isolated linker, a three-day minimum release age for every new dependency, randomized test order.
 
 TypeScript `strict` plus the exactness flags (`exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns`, `verbatimModuleSyntax`, `isolatedDeclarations` so every exported signature is explicit). Biome with every rule group at `error` and the `project` and `test` domains fully on; an escape hatch is a `biome-ignore` with a reason, scoped to one line.
+
+## Style
+
+No comments anywhere: a name that needs one is renamed. Functions and control statements space their parens (`function name ( a, b )`, `if ( x )`), bodies open and close on a blank line, declarations group together and a blank line precedes the return. The formatter is off; the linter is the only gate on form.

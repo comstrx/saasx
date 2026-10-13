@@ -46,6 +46,7 @@ Signals let features talk on one screen: `search` emits `search`, `table` emits 
 ```text
 bun run check       biome · architecture layers · messages (every reason and rule speaks) · specs
 bun run typecheck   compile the selected spec · next typegen · tsc
+bun run bench       spec compile and message composition
 bun test            compiler rules · modes · forms · components · live backend (skips when down)
 bun run build       compile · next build
 bun tools/budget    first-load JavaScript of a page under the budget (CI: 320 KB gzip)
