@@ -7,12 +7,19 @@ use engine::log::Log;
 
 pub(crate) type Sessions = HashMap<Box<str>, Session>;
 
+pub(crate) struct Faults;
+
 pub(crate) struct Iam {
     pub(crate) address:  Address,
     pub(crate) workers:  usize,
-    pub(crate) password: Box<str>,
+    pub(crate) operator: Arc<Operator>,
     pub(crate) log:      Log,
     pub(crate) store:    Arc<Store>,
+}
+
+pub(crate) struct Operator {
+    pub(crate) email:    Box<str>,
+    pub(crate) password: Box<str>,
 }
 
 pub(crate) struct Store {
@@ -30,5 +37,5 @@ pub(crate) struct Session {
 pub(crate) struct Service {
     pub(crate) log:      Log,
     pub(crate) store:    Arc<Store>,
-    pub(crate) password: Box<str>,
+    pub(crate) operator: Arc<Operator>,
 }

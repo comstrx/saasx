@@ -4,6 +4,7 @@ extern crate alloc;
 
 mod arch;
 mod base;
+mod faults;
 mod routes;
 mod store;
 

@@ -5,13 +5,15 @@ use std::process::{Child, Command, Stdio};
 use std::io::{BufRead as _, BufReader};
 use engine::http::{Client, Response};
 use std::path::{Path, PathBuf};
-use engine::error::Failure;
+use engine::error::{Code, Failure, Fault};
 use engine::process::Cargo;
 use core::hint::black_box;
 use core::time::Duration;
-use engine::net::Runtime;
+use engine::thread::Runtime;
 use std::thread::spawn;
 use std::env::vars_os;
+
+const BAD_CREDENTIALS: Fault = Fault::new("bad_credentials", Code::Unauthenticated, "the email or the password is wrong");
 
 fn binary () -> Option<PathBuf> {
 
@@ -25,6 +27,8 @@ fn launch () -> Option<( Child, String )> {
         .env_clear()
         .envs(vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("IAM_")))
         .env("IAM_ADDR", "127.0.0.1:0")
+        .env("IAM_USER", "bench@example.com")
+        .env("IAM_PASSWORD", "a-long-bench-secret")
         .env("IAM_LOG", "info")
         .stdin(Stdio::null())
         .stdout(Stdio::null())
@@ -59,7 +63,7 @@ fn measure ( harness: &mut Criterion, base: Option<&str> ) {
     let client    = Client::new().timeout(Duration::from_secs(5));
 
     group.bench_function("health/loopback", |bencher| bencher.iter(|| Runtime::block_on(async { match base { Some(uri) => client.get(uri).await.map(|response| response.code()), None => Err(Failure::internal("no server")) } })));
-    group.bench_function("response/failure-wire", |bencher| bencher.iter(|| Response::from(Failure::unauthenticated(black_box("the password is wrong")).keyed("bad_password")).code()));
+    group.bench_function("response/failure-wire", |bencher| bencher.iter(|| Response::from(black_box(BAD_CREDENTIALS).fail()).code()));
     group.finish();
 
 }

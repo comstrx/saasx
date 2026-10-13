@@ -1,10 +1,12 @@
 use engine::http::{Limit, Response, Router, Server, Timeout, Trace};
 use engine::error::{Code, Failure, Result};
 use engine::process::{Args, Boot, Env};
-use engine::net::{Address, Runtime};
+use engine::thread::Runtime;
+use engine::net::Address;
+use engine::validate::Form;
 use alloc::sync::Arc;
 
-use crate::arch::{Iam, Service, Store};
+use crate::arch::{Iam, Operator, Service, Store};
 
 impl Iam {
 
@@ -12,7 +14,7 @@ impl Iam {
 
         Failure::ensure(Args::current().is_bare(), Code::Usage, "iam takes no arguments; it is configured by IAM_* variables")?;
 
-        let env = Runtime::block_on(Boot::env())??;
+        let env = Runtime::run(Boot::env())?;
         let iam = Self::configure(&env)?;
 
         iam.serve()
@@ -23,11 +25,18 @@ impl Iam {
 
         let address  = env.text("IAM_ADDR").map_or_else(|| Address::parse("127.0.0.1:8080"), |text| Address::parse(&text)).map_err(|failure| failure.coded(Code::Config).about("IAM_ADDR"))?;
         let workers  = env.usize("IAM_WORKERS", Runtime::cores())?.max(1);
-        let password = env.text("IAM_PASSWORD").unwrap_or_else(|| "correct-horse-battery".to_owned());
+        let email    = env.need("IAM_USER")?;
+        let password = env.need("IAM_PASSWORD")?;
 
-        Failure::ensure(password.len() >= 8, Code::Config, "IAM_PASSWORD needs at least 8 characters").map_err(|failure| failure.about("IAM_PASSWORD"))?;
+        let mut form = Form::new();
 
-        Ok(Self { address, workers, password: password.into(), log: Boot::log(env, "IAM", "iam")?, store: Arc::new(Store::new(10_000)) })
+        form.text("IAM_USER", &email).email().max(254);
+        form.text("IAM_PASSWORD", &password).min(12).max(128);
+        form.finish().map_err(|failure| failure.coded(Code::Config))?;
+
+        let operator = Arc::new(Operator { email: email.into(), password: password.into() });
+
+        Ok(Self { address, workers, operator, log: Boot::log(env, "IAM", "iam")?, store: Arc::new(Store::new(10_000)) })
 
     }
 
@@ -38,7 +47,7 @@ impl Iam {
         self.log.info("starting").field("addr", &self.address.to_string()).field("workers", self.workers).emit();
         self.log.audit("start").actor("operator").commit()?;
 
-        let service = Service { log: self.log.clone(), store: Arc::clone(&self.store), password: self.password.clone() };
+        let service = Service { log: self.log.clone(), store: Arc::clone(&self.store), operator: Arc::clone(&self.operator) };
         let outcome = Server::bind(self.address.clone()).workers(self.workers).run(move |worker| service.router(worker), stop.clone(), |local| self.log.info("listening").field("addr", &local.to_string()).emit());
 
         stop.raise();
@@ -78,7 +87,7 @@ impl Clone for Service {
 
     fn clone ( &self ) -> Self {
 
-        Self { log: self.log.clone(), store: Arc::clone(&self.store), password: self.password.clone() }
+        Self { log: self.log.clone(), store: Arc::clone(&self.store), operator: Arc::clone(&self.operator) }
 
     }
 

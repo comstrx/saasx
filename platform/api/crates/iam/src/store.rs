@@ -1,12 +1,12 @@
-use engine::error::{Code, Failure, Result};
+use engine::error::Result;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::sync::{Mutex, PoisonError};
 use std::collections::HashMap;
 use core::fmt::Write as _;
-use engine::http::Token;
+use engine::crypto::Token;
 use engine::log::Json;
 
-use crate::arch::{Session, Store};
+use crate::arch::{Faults, Session, Store};
 
 impl Store {
 
@@ -18,7 +18,7 @@ impl Store {
 
     pub(crate) fn open ( &self, email: &str ) -> Result<Session> {
 
-        let token: Box<str> = Token::fresh().into();
+        let token: Box<str> = Token::fresh()?.into();
         let session = Session { token: token.clone(), email: email.into(), since: SystemTime::now() };
 
         self.insert(token, session.clone())?;
@@ -53,7 +53,7 @@ impl Store {
 
         drop(sessions);
 
-        Failure::ensure(kept.is_some(), Code::Exhausted, "no room for another session").map_err(|failure| failure.keyed("sessions_full"))
+        Faults::SESSIONS_FULL.ensure(kept.is_some())
 
     }
 

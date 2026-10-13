@@ -1,12 +1,12 @@
-use engine::http::{Message, Request, Response, Socket, Token, Upgrade};
-use engine::error::{Code, Failure, Result};
-use engine::http::header::AUTHORIZATION;
+use engine::http::{Header, Message, Request, Response, Socket, Upgrade};
+use engine::crypto::{Secret, Token};
+use engine::error::Result;
 use core::future::{Ready, ready};
 use engine::validate::Form;
 use engine::log::Outcome;
-use engine::net::Runtime;
+use engine::thread::Task;
 
-use crate::arch::Service;
+use crate::arch::{Faults, Operator, Service};
 
 impl Service {
 
@@ -19,14 +19,14 @@ impl Service {
         let mut form = Form::new();
 
         form.text("email", email).required().email().max(254);
-        form.text("password", password).required().min(8).max(128);
+        form.text("password", password).required().max(128);
         form.finish()?;
 
-        if password != &*self.password {
+        if !self.operator.admits(email, password) {
 
             self.log.audit("login").actor(email).outcome(Outcome::Denied).commit()?;
 
-            return Err(Failure::unauthenticated("the password is wrong").keyed("bad_password"));
+            return Err(Faults::BAD_CREDENTIALS.fail());
 
         }
 
@@ -40,7 +40,7 @@ impl Service {
 
     pub(crate) fn show ( self, request: Request ) -> Ready<Result<Response>> {
 
-        let session = Self::bearer(&request).and_then(|token| self.store.find(token).ok_or_else(|| Failure::not_found("no such session").keyed("no_session")));
+        let session = Self::bearer(&request).and_then(|token| self.store.find(token).ok_or_else(|| Faults::NO_SESSION.fail()));
 
         drop(request);
 
@@ -60,9 +60,9 @@ impl Service {
 
     fn bearer ( request: &Request ) -> Result<&str> {
 
-        let token = request.head(AUTHORIZATION).and_then(|value| value.strip_prefix("Bearer ")).map(str::trim).ok_or_else(|| Failure::unauthenticated("a bearer token is required").keyed("no_bearer"))?;
+        let token = request.head(&Header::AUTHORIZATION).and_then(|value| value.strip_prefix("Bearer ")).map(str::trim).ok_or_else(|| Faults::NO_BEARER.fail())?;
 
-        Failure::ensure(Token::looks_like(token), Code::Unauthenticated, "the bearer token is malformed").map_err(|failure| failure.keyed("bad_bearer"))?;
+        Faults::BAD_BEARER.ensure(Token::looks_like(token))?;
 
         Ok(token)
 
@@ -70,7 +70,7 @@ impl Service {
 
     fn closed ( &self, token: &str ) -> Result<Response> {
 
-        let session = self.store.close(token).ok_or_else(|| Failure::not_found("no such session").keyed("no_session"))?;
+        let session = self.store.close(token).ok_or_else(|| Faults::NO_SESSION.fail())?;
 
         self.log.audit("logout").actor(&session.email).outcome(Outcome::Done).commit()?;
 
@@ -80,7 +80,7 @@ impl Service {
 
     pub(crate) fn echo ( mut request: Request ) -> Ready<Result<Response>> {
 
-        ready(Socket::accept(&mut request).map(|( response, upgrade )| { Runtime::spawn(Self::pump(upgrade)); response }))
+        ready(Socket::accept(&mut request).map(|( response, upgrade )| { drop(Task::spawn(Self::pump(upgrade))); response }))
 
     }
 
@@ -105,6 +105,19 @@ impl Service {
         };
 
         socket.send(answer).await.is_ok()
+
+    }
+
+}
+
+impl Operator {
+
+    fn admits ( &self, email: &str, password: &str ) -> bool {
+
+        let person = email.eq_ignore_ascii_case(&self.email);
+        let secret = Secret::equal(password.as_bytes(), self.password.as_bytes());
+
+        person && secret
 
     }
 

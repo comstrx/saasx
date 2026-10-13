@@ -4,23 +4,29 @@
 mod tests {
 
     use std::io::{BufRead as _, BufReader, Error as IoError, Result as IoResult};
-    use engine::http::{Client, Digest, Method, Request, Response};
-    use engine::http::header::{AUTHORIZATION, HeaderName};
+    use engine::http::{Body, Client, Header, Method, Request, Response};
+    use engine::crypto::Digest;
+    use std::process::{Child, Command, Stdio, id};
     use std::fs::{read_to_string, remove_file};
     use engine::error::{Code, Failure, Result};
-    use std::process::{Child, Command, Stdio};
-    use engine::net::{Address, Dial, Runtime};
+    use engine::net::{Address, Dial};
+    use engine::thread::Runtime;
     use std::env::{temp_dir, vars_os};
+    use std::thread::spawn;
     use std::path::{Path, PathBuf};
     use engine::process::Cargo;
     use core::time::Duration;
     use std::ffi::OsString;
-    use std::thread::spawn;
-    use std::process::id;
 
     const PASSWORD: &str = "correct-horse-battery";
 
+    const USER: &str = "ada@example.com";
+
+    const FORM: &str = "application/x-www-form-urlencoded";
+
     type Ended = ( String, String, bool );
+
+    type Refusal = ( Option<i32>, String );
 
     struct Running {
         child: Child,
@@ -65,6 +71,7 @@ mod tests {
             .env("IAM_ADDR", "127.0.0.1:0")
             .env("IAM_WORKERS", "2")
             .env("IAM_LOG", "info")
+            .env("IAM_USER", USER)
             .env("IAM_PASSWORD", PASSWORD)
             .env("IAM_AUDIT", &audit)
             .env("IAM_LOG_FILE", &logs)
@@ -120,51 +127,46 @@ mod tests {
 
     }
 
+    async fn posted ( client: &Client, base: &str, form: impl Into<Body> ) -> Result<( u16, String )> {
+
+        let mut response = client.post(&format!("{base}/sessions"), form, FORM).await?;
+
+        Ok(( response.code(), response.text_body(4096).await? ))
+
+    }
+
+    async fn bearer ( client: &Client, method: Method, uri: &str, token: &str ) -> Result<Response> {
+
+        client.send(Request::build(method, uri)?.header(Header::AUTHORIZATION, &format!("Bearer {token}"))?).await
+
+    }
+
     async fn drive ( base: &str ) -> Result<Vec<( u16, String )>> {
 
-        let client = Client::new().timeout(Duration::from_secs(5));
-        let mut seen = Vec::new();
-
+        let client     = Client::new().timeout(Duration::from_secs(5));
         let mut health = client.get(&format!("{base}/health")).await?;
+        let mut seen   = vec![( health.code(), health.text_body(1024).await? )];
 
-        seen.push(( health.code(), health.text_body(1024).await? ));
+        seen.push(posted(&client, base, "email=nope&password=").await?);
+        seen.push(posted(&client, base, "email=ada%40example.com&password=not-the-one").await?);
+        seen.push(posted(&client, base, format!("email=eve%40example.com&password={PASSWORD}")).await?);
 
-        let mut invalid = client.post(&format!("{base}/sessions"), "email=nope&password=short", "application/x-www-form-urlencoded").await?;
-
-        seen.push(( invalid.code(), invalid.text_body(4096).await? ));
-
-        let mut wrong = client.post(&format!("{base}/sessions"), "email=ada%40example.com&password=not-the-one", "application/x-www-form-urlencoded").await?;
-
-        seen.push(( wrong.code(), wrong.text_body(4096).await? ));
-
-        let mut opened = client.post(&format!("{base}/sessions"), format!("email=ada%40example.com&password={PASSWORD}"), "application/x-www-form-urlencoded").await?;
-        let tagged = opened.head(HeaderName::from_static("x-request-id")).is_some();
+        let mut opened = client.post(&format!("{base}/sessions"), format!("email=ada%40example.com&password={PASSWORD}"), FORM).await?;
+        let tagged = opened.head(&Header::REQUEST_ID).is_some();
         let body   = opened.text_body(4096).await?;
         let token  = body.split("\"token\":\"").nth(1).and_then(|rest| rest.split('"').next()).unwrap_or_default().to_owned();
-
-        let named = body.contains("\"email\":\"ada@example.com\"");
+        let named  = body.contains("\"email\":\"ada@example.com\"");
 
         seen.push(( opened.code(), format!("{tagged}:{named}") ));
 
-        let mut shown = client.send(Request::get(&format!("{base}/session"))?.header(AUTHORIZATION, &format!("Bearer {token}"))?).await?;
+        let session   = format!("{base}/session");
+        let mut shown = bearer(&client, Method::GET, &session, &token).await?;
 
         seen.push(( shown.code(), shown.text_body(4096).await?.contains(&token).to_string() ));
-
-        let closed = client.send(Request::build(Method::DELETE, &format!("{base}/session"))?.header(AUTHORIZATION, &format!("Bearer {token}"))?).await?;
-
-        seen.push(( closed.code(), String::new() ));
-
-        let gone = client.send(Request::get(&format!("{base}/session"))?.header(AUTHORIZATION, &format!("Bearer {token}"))?).await?;
-
-        seen.push(( gone.code(), String::new() ));
-
-        let anonymous = client.get(&format!("{base}/session")).await?;
-
-        seen.push(( anonymous.code(), String::new() ));
-
-        let missing = client.get(&format!("{base}/nowhere")).await?;
-
-        seen.push(( missing.code(), String::new() ));
+        seen.push(( bearer(&client, Method::DELETE, &session, &token).await?.code(), String::new() ));
+        seen.push(( bearer(&client, Method::GET, &session, &token).await?.code(), String::new() ));
+        seen.push(( client.get(&session).await?.code(), String::new() ));
+        seen.push(( client.get(&format!("{base}/nowhere")).await?.code(), String::new() ));
 
         Ok(seen)
 
@@ -179,7 +181,7 @@ mod tests {
         stream.send(format!("GET /echo HTTP/1.1\r\nHost: {local}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: {nonce}\r\n\r\n").as_bytes()).await?;
 
         let mut head = [0u8; 512];
-        let came = stream.recv(&mut head).await?;
+        let came     = stream.recv(&mut head).await?;
 
         Failure::ensure(head.get(..came).unwrap_or_default().starts_with(b"HTTP/1.1 101"), Code::Internal, "no upgrade")?;
 
@@ -195,12 +197,13 @@ mod tests {
 
     fn checked ( seen: &[( u16, String )] ) -> bool {
 
-        seen.iter().map(|( code, _ )| *code).eq([200, 400, 401, 201, 200, 204, 404, 401, 404])
+        seen.iter().map(|( code, _ )| *code).eq([200, 400, 401, 401, 201, 200, 204, 404, 401, 404])
             && seen.first().is_some_and(|( _, text )| text == "ok")
-            && seen.get(1).is_some_and(|( _, text )| text.contains("\"key\":\"invalid_fields\"") && text.contains("\"email\":{\"key\":\"not_email\"") && text.contains("\"password\":{\"key\":\"too_short\""))
-            && seen.get(2).is_some_and(|( _, text )| text.contains("\"key\":\"bad_password\""))
-            && seen.get(3).is_some_and(|( _, text )| text == "true:true")
-            && seen.get(4).is_some_and(|( _, text )| text == "true")
+            && seen.get(1).is_some_and(|( _, text )| text.contains("\"key\":\"invalid_fields\"") && text.contains("\"email\":{\"key\":\"not_email\"") && text.contains("\"password\":{\"key\":\"required\""))
+            && seen.get(2).is_some_and(|( _, text )| text.contains("\"key\":\"bad_credentials\""))
+            && seen.get(3).is_some_and(|( _, text )| text.contains("\"key\":\"bad_credentials\""))
+            && seen.get(4).is_some_and(|( _, text )| text == "true:true")
+            && seen.get(5).is_some_and(|( _, text )| text == "true")
 
     }
 
@@ -208,6 +211,7 @@ mod tests {
 
         audit.contains("\"action\":\"start\",\"actor\":\"operator\",\"outcome\":\"done\"")
             && audit.contains("\"action\":\"login\",\"actor\":\"ada@example.com\",\"outcome\":\"denied\"")
+            && audit.contains("\"action\":\"login\",\"actor\":\"eve@example.com\",\"outcome\":\"denied\"")
             && audit.contains("\"action\":\"login\",\"actor\":\"ada@example.com\",\"outcome\":\"done\",\"fields\":{\"session\":\"")
             && audit.contains("\"action\":\"logout\",\"actor\":\"ada@example.com\",\"outcome\":\"done\"")
 
@@ -227,7 +231,7 @@ mod tests {
         assert!(checked(&seen), "{seen:?}");
         assert!(audited(&audit), "{audit}");
         assert!(logs.contains("\"message\":\"listening\""));
-        assert_eq!(logs.matches("\"message\":\"request\"").count(), 9);
+        assert_eq!(logs.matches("\"message\":\"request\"").count(), 10);
         assert!(!logs.contains("Bearer ") && !audit.contains("\"token\""));
         assert!(logs.contains("\"path\":\"/sessions\",\"status\":401"));
         assert!(!graceful || (audit.contains("\"action\":\"stop\"") && logs.contains("\"message\":\"stopped\"")));
@@ -249,23 +253,30 @@ mod tests {
 
     }
 
+    fn refused ( path: &Path, env: &[( &str, &str )] ) -> Option<Refusal> {
+
+        let output = Command::new(path).env_clear().envs(kept()).envs(env.iter().copied()).output().ok()?;
+
+        Some(( output.status.code(), String::from_utf8_lossy(&output.stderr).into_owned() ))
+
+    }
+
     #[test]
     fn misconfiguration_and_arguments_fail_before_listening () {
 
         let path = binary().ok();
         let Some(path) = path else { return assert!(path.is_some()); };
 
-        let arg  = Command::new(&path).env_clear().envs(kept()).arg("--x").output().ok();
-        let bad  = Command::new(&path).env_clear().envs(kept()).env("IAM_PASSWORD", "short").output().ok();
-        let addr = Command::new(&path).env_clear().envs(kept()).env("IAM_ADDR", "nope").output().ok();
+        let arg = Command::new(&path).env_clear().envs(kept()).arg("--x").output().ok();
+        let ok  = [( "IAM_USER", USER ), ( "IAM_PASSWORD", PASSWORD )];
 
         assert_eq!(arg.as_ref().and_then(|output| output.status.code()), Some(64));
         assert!(arg.is_some_and(|output| String::from_utf8_lossy(&output.stderr).starts_with("usage [usage] http 400 exit 64: iam takes no arguments")));
-        assert_eq!(bad.as_ref().and_then(|output| output.status.code()), Some(78));
-        assert!(bad.is_some_and(|output| String::from_utf8_lossy(&output.stderr).contains("IAM_PASSWORD needs at least 8 characters")));
-        assert_eq!(addr.as_ref().and_then(|output| output.status.code()), Some(78));
-        assert!(addr.is_some_and(|output| { let text = String::from_utf8_lossy(&output.stderr).into_owned(); text.contains("not an address") && text.contains("on: IAM_ADDR") }));
-        drop(Response::ok());
+        assert!(refused(&path, &[( "IAM_USER", USER )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_PASSWORD is not set")));
+        assert!(refused(&path, &[( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_USER is not set")));
+        assert!(refused(&path, &[( "IAM_USER", USER ), ( "IAM_PASSWORD", "too-short" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_PASSWORD [too_short]")));
+        assert!(refused(&path, &[( "IAM_USER", "not-an-email" ), ( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_USER [not_email]")));
+        assert!(refused(&path, &[ok[0], ok[1], ( "IAM_ADDR", "nope" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("not an address") && text.contains("on: IAM_ADDR")));
 
     }
 

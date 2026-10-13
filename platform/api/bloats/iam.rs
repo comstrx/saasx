@@ -3,7 +3,8 @@
 use engine::http::{Response, Router, Server, Settings};
 use engine::memory::{Simd, Space as _, Stack};
 use engine::error::{Code, Failure};
-use engine::net::{Address, Stop};
+use engine::thread::Stop;
+use engine::net::Address;
 use engine::log::{Log, Stderr};
 use core::hint::black_box;
 use std::env::args_os;
