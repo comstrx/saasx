@@ -8,6 +8,8 @@ export {
     failureOf,
     formErrors,
     guarded,
+    type Issue,
+    type Issues,
     isFailure,
     type Kind,
     kinds,

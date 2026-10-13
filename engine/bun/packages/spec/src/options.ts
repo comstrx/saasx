@@ -6,11 +6,12 @@ export type Features = Readonly<Record<string, Manifest>>;
 
 const readStates = ["loading", "failed", "offline", "cached"] as const;
 const listStates = ["empty"] as const;
-const writeStates = ["failed"] as const;
+const writeStates = ["failed", "errors"] as const;
 
 /**
  * The state texts a client-owned feature must name, by the ports it declares: a read reaches
- * loading, failed, offline and cached; a list also empty; a write failed. A server-owned feature
+ * loading, failed, offline and cached; a list also empty; a write failed plus an `errors` map
+ * (the reasons/rules/fields dictionary its failures speak through). A server-owned feature
  * renders synchronously, so the screen boundary owns its failures.
  */
 export function stateNames(manifest: Manifest): string[] {
@@ -25,18 +26,19 @@ export function stateNames(manifest: Manifest): string[] {
 }
 export function stateIssues(features: Features): string[] {
     return Object.entries(features).flatMap(([name, manifest]) => {
-        const missing = stateNames(manifest).filter((state) => typeof manifest.options[state] !== "string");
+        const missing = stateNames(manifest).filter((state) =>
+            state === "errors" ? !isRecord(manifest.options[state]) : typeof manifest.options[state] !== "string",
+        );
 
         if (!missing.length) return [];
 
-        const ports = Object.values(manifest.ports);
-        const reads = ports.some((port) => port.kind !== "write");
+        const reads = missing.some((state) => state !== "failed" && state !== "errors");
 
         return reads
             ? [
                   `features/${name}: a feature that reads names its loading, failed, offline and cached texts in its options; one that lists also names empty.`,
               ]
-            : [`features/${name}: a feature that writes names its failed text in its options.`];
+            : [`features/${name}: a feature that writes names its failed text and an errors map in its options.`];
     });
 }
 

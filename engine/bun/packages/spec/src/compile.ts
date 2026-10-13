@@ -187,6 +187,7 @@ function writePort<B>(
         input,
         fields: editable(found.facts, input, binding.fields),
         touches: found.facts.touches,
+        permissions: found.facts.permissions,
     };
 }
 function shapeIssues(port: Port, name: string, many: boolean, source: string, where: string): string[] {
@@ -262,7 +263,7 @@ function accessOf<B>(
     ports: Record<string, CompiledPort>,
 ): string[] {
     const bound = Object.values(ports).flatMap((port) =>
-        "feature" in port ? (walk.catalogue[port.feature]?.[port.operation]?.permissions ?? []) : [],
+        port.kind === "read" ? (walk.catalogue[port.feature]?.[port.operation]?.permissions ?? []) : [],
     );
 
     return [...new Set([...manifest.access, ...(entry.access ?? []), ...bound])].sort();
@@ -330,7 +331,11 @@ export function compileFeature<B extends object>(
     const options = mergeOptions(manifest.options, entry.options ?? {});
 
     for (const state of stateNames(manifest)) {
-        if (options[state] === "") walk.issues.push(`${where}: ${entry.name} leaves its ${state} text empty.`);
+        const value = options[state];
+
+        if (value === "") walk.issues.push(`${where}: ${entry.name} leaves its ${state} text empty.`);
+        if (isRecord(value) && !Object.keys(value).length)
+            walk.issues.push(`${where}: ${entry.name} leaves its ${state} map empty.`);
     }
 
     if (entry.heading) walk.headings += 1;

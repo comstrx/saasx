@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { Failure } from "@engine/error";
 import {
     directionOf,
+    failureMessages,
     formatDate,
     formatMoney,
     formatNumber,
@@ -78,5 +80,40 @@ describe("language names without Intl.DisplayNames", () => {
         } finally {
             host.DisplayNames = names;
         }
+    });
+});
+describe("failure messages", () => {
+    const dictionary = {
+        reasons: { invalid_input: "Check the form", key_reused: "Already sent" },
+        rules: { min: "At least {minimum} characters", type: "Not a {expected}" },
+        fields: { stock: "Stock must be a whole number" },
+    };
+
+    test("rules win, then the field's own message, then the backend text, then the fallback", () => {
+        const refusal = new Failure("input", {
+            reason: "invalid_input",
+            message: "invalid input",
+            errors: {
+                title: ["The title is too short."],
+                stock: ["The stock field must be an integer."],
+                other: ["Nope"],
+            },
+            issues: { title: [{ rule: "min", params: { minimum: 2 } }] },
+        });
+
+        expect(failureMessages(refusal, dictionary, "Failed")).toEqual({
+            title: "At least 2 characters",
+            stock: "Stock must be a whole number",
+            other: "Nope",
+        });
+    });
+    test("a failure without field errors speaks through its reason, else its code, else its text", () => {
+        expect(failureMessages(new Failure("conflict", { reason: "key_reused" }), dictionary, "Failed")).toEqual({
+            _form: "Already sent",
+        });
+        expect(
+            failureMessages(new Failure("http", { reason: "weird", message: "Backend said so" }), dictionary, "Failed"),
+        ).toEqual({ _form: "Backend said so" });
+        expect(failureMessages(new Error("boom"), dictionary, "Failed")).toEqual({ _form: "Failed" });
     });
 });

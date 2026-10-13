@@ -1,5 +1,6 @@
 import { uuid } from "@engine/base";
 import { formErrors } from "@engine/error";
+import { failureMessages, type Messages } from "@engine/translate";
 import type { FieldFact } from "@engine/validate";
 import { useState } from "react";
 import { useStore } from "zustand";
@@ -18,6 +19,7 @@ export type FormOptions<T> = {
     fields: readonly FieldFact[];
     locales: readonly string[];
     locale?: string | undefined;
+    errors?: Messages | undefined;
     submit: Submit<T>;
     initial?: Record<string, unknown> | undefined;
 };
@@ -114,7 +116,7 @@ function same(a: FormValues, b: FormValues): boolean {
  * coerces them to what the operation takes, one idempotency key covers every retry of the same
  * values and a fresh one follows any change or success, and failures land per field.
  */
-export function createForm<T>({ fields, locales, locale, submit, initial }: FormOptions<T>): FormStore<T> {
+export function createForm<T>({ fields, locales, locale, errors, submit, initial }: FormOptions<T>): FormStore<T> {
     const current = locale ?? locales[0] ?? "";
     const start = fill(fields, initial ?? {}, locales, current);
     let key = uuid();
@@ -173,7 +175,11 @@ export function createForm<T>({ fields, locales, locale, submit, initial }: Form
 
                 return result;
             } catch (error) {
-                set({ status: "failed", error, errors: placed(fields, formErrors(error, "")) });
+                set({
+                    status: "failed",
+                    error,
+                    errors: placed(fields, errors ? failureMessages(error, errors, "") : formErrors(error, "")),
+                });
 
                 return undefined;
             }

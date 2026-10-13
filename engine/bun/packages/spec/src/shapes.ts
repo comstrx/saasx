@@ -87,7 +87,15 @@ export type SiteBlock<B> = {
 };
 export type CompiledPort =
     | { kind: "read"; feature: string; operation: string; input: Input; many: boolean; live?: Live | undefined }
-    | { kind: "write"; feature: string; operation: string; input: Input; fields: FieldFact[]; touches: string[] }
+    | {
+          kind: "write";
+          feature: string;
+          operation: string;
+          input: Input;
+          fields: FieldFact[];
+          touches: string[];
+          permissions: string[];
+      }
     | { kind: "data"; value: unknown }
     | { kind: "site"; path: string };
 export type CompiledFeature<B> = {

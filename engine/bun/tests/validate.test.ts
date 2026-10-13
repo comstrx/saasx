@@ -1,5 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { assert, email, fieldFacts, issuesOf, localized, parse, password, phone, shapeKeys, z } from "@engine/validate";
+import {
+    assert,
+    email,
+    fieldFacts,
+    issuesOf,
+    localized,
+    parse,
+    password,
+    phone,
+    rulesOf,
+    shapeKeys,
+    z,
+} from "@engine/validate";
 
 describe("validate", () => {
     test("parse answers field errors as an input failure", () => {
@@ -86,5 +98,29 @@ describe("fieldFacts", () => {
     });
     test("a non-object schema has no fields", () => {
         expect(fieldFacts(z.string())).toEqual([]);
+    });
+});
+describe("rulesOf", () => {
+    test("zod issues become rule keys with their parameters, never sentences", () => {
+        const result = z
+            .object({
+                title: z.string().min(2),
+                stock: z.number().max(9),
+                kind: z.enum(["a", "b"]),
+                mail: z.email(),
+                flag: z.boolean(),
+            })
+            .safeParse({ title: "x", stock: 10, kind: "c", mail: "nope", flag: "yes" }, { reportInput: true });
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            expect(rulesOf(result.error)).toEqual({
+                title: [{ rule: "min", params: { minimum: 2 } }],
+                stock: [{ rule: "max", params: { maximum: 9 } }],
+                kind: [{ rule: "choice", params: { choices: "a, b" } }],
+                mail: [{ rule: "format", params: { format: "email" } }],
+                flag: [{ rule: "type", params: { expected: "boolean" } }],
+            });
+        }
     });
 });

@@ -22,4 +22,4 @@ export {
     text,
     word,
 } from "./fields.ts";
-export { assert, issuesOf, type Parsed, parse, shapeKeys } from "./parse.ts";
+export { assert, issuesOf, type Parsed, parse, ruleNames, rulesOf, shapeKeys } from "./parse.ts";

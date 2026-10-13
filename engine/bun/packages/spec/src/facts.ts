@@ -29,7 +29,7 @@ export function translationIssues(
 }
 export function catalogueFacts(endpoints: Endpoints): Catalogue {
     return mapValues(endpoints, (operations) => {
-        const { permissions, touches } = factsOf(operations);
+        const { touches } = factsOf(operations);
 
         return mapValues(operations, (endpoint) => {
             return {
@@ -39,7 +39,7 @@ export function catalogueFacts(endpoints: Endpoints): Catalogue {
                 input: shapeKeys(endpoint.input),
                 fields: fieldFacts(endpoint.input),
                 output: shapeKeys(endpoint.output),
-                permissions: [...permissions],
+                permissions: [...endpoint.permissions],
                 touches: [...touches],
             };
         });

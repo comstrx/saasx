@@ -11,6 +11,7 @@
   "dependencies": {
     "@engine/base": "workspace:*",
     "@engine/spec": "workspace:*",
-    "@engine/translate": "workspace:*"
+    "@engine/translate": "workspace:*",
+    "@engine/validate": "workspace:*"
   }
 }

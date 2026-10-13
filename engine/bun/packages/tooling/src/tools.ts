@@ -1,11 +1,15 @@
 import { resolve } from "node:path";
 import process from "node:process";
+import { ruleNames } from "@engine/validate";
 import { inspect, layoutIssues, type Rules, readSources } from "./architecture.ts";
 import { type Core, createCore, report } from "./core.ts";
-import { composeMessages, type Dictionaries } from "./messages.ts";
+import { composeMessages, type Dictionaries, messageIssues } from "./messages.ts";
 import { createLoader, type Loader, type LoaderOptions } from "./specs.ts";
 
-export type ToolsOptions<C, L extends string> = Omit<LoaderOptions<C, L>, "root"> & { root: URL | string };
+export type ToolsOptions<C, L extends string> = Omit<LoaderOptions<C, L>, "root"> & {
+    root: URL | string;
+    reasons?: readonly string[] | undefined;
+};
 export type Tools<C, L extends string> = Core & {
     loader: Loader<C, L>;
     composeMessages: (brand?: string) => Dictionaries<L>;
@@ -32,8 +36,11 @@ export function createTools<
         loader,
         composeMessages: messages,
         checkMessages: () => {
-            messages();
-            report("Messages: every language has the same complete key set.");
+            const problems = messageIssues(messages(), { reasons: options.reasons ?? [], rules: ruleNames });
+
+            if (problems.length) throw new Error(problems.join("\n"));
+
+            report("Messages: every language has the same complete key set and every reason and rule speaks.");
         },
         checkSpecs: async () => {
             const selected = loader.specFromEnvironment();

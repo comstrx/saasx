@@ -2,7 +2,7 @@ import { clone, mapValues, now, uuid } from "@engine/base";
 import { dedupe } from "@engine/cache";
 import { Failure } from "@engine/error";
 import { readJson, retryAfter, send, type Transport } from "@engine/net";
-import { issuesOf, type z } from "@engine/validate";
+import { issuesOf, rulesOf, type z } from "@engine/validate";
 import type { Connection } from "./config.ts";
 import type { Catalogue, Endpoint } from "./dsl.ts";
 import type { Observer, Outcome } from "./observe.ts";
@@ -21,6 +21,7 @@ export type ClientOptions = {
     execution?: Execution;
     transport?: Transport;
     observe?: Observer | undefined;
+    onFailure?: ((failure: Failure) => void) | undefined;
     caching?: Caching | undefined;
     share?: boolean | undefined;
 };
@@ -49,6 +50,7 @@ type Setup = {
     execution: Execution;
     transport: Transport | undefined;
     observe: Observer | undefined;
+    onFailure: ((failure: Failure) => void) | undefined;
     caching: Caching;
     inflight: ReturnType<typeof dedupe<ApiResult<unknown>>> | undefined;
 };
@@ -95,10 +97,15 @@ async function exchange(
     if (wire.execution !== "hybrid" && wire.execution !== setup.execution)
         throw new Failure("execution", { reason: "wrong_side" });
 
-    const input = endpoint.input.safeParse(raw);
+    const input = endpoint.input.safeParse(raw, { reportInput: true });
 
     if (!input.success)
-        throw new Failure("input", { reason: "invalid_input", errors: issuesOf(input.error), cause: input.error });
+        throw new Failure("input", {
+            reason: "invalid_input",
+            errors: issuesOf(input.error),
+            issues: rulesOf(input.error),
+            cause: input.error,
+        });
 
     const current = typeof setup.context === "function" ? await setup.context() : setup.context;
 
@@ -167,8 +174,10 @@ async function request(
 
         return result;
     } catch (error) {
-        if (error instanceof Failure)
+        if (error instanceof Failure) {
             setup.observe?.({ ...outcome, ms: now() - started, request: error.requestId, error });
+            setup.onFailure?.(error);
+        }
 
         throw error;
     }
@@ -181,7 +190,7 @@ export function createSurface(
     settings: Settings,
     contract: Contract,
     context: ContextSource,
-    { execution = "server", transport, observe, caching: cache = caching, share = true }: ClientOptions = {},
+    { execution = "server", transport, observe, onFailure, caching: cache = caching, share = true }: ClientOptions = {},
 ): ApiSurface {
     const setup: Setup = {
         catalogue,
@@ -191,6 +200,7 @@ export function createSurface(
         execution,
         transport,
         observe,
+        onFailure,
         caching: cache,
         inflight: share ? dedupe<ApiResult<unknown>>() : undefined,
     };

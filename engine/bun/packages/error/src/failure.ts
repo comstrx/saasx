@@ -17,9 +17,12 @@ export const kinds = {
 
 export type Kind = keyof typeof kinds;
 export type FieldErrors = Record<string, string[]>;
+export type Issue = { rule: string; params?: Record<string, string | number> | undefined };
+export type Issues = Record<string, Issue[]>;
 export type Detail = {
     status?: number | undefined;
     errors?: FieldErrors | undefined;
+    issues?: Issues | undefined;
     reason?: string | undefined;
     code?: string | undefined;
     message?: string | undefined;
@@ -49,12 +52,13 @@ export class Failure extends Error {
     readonly kind: Kind;
     readonly status: number;
     readonly errors: FieldErrors;
+    readonly issues: Issues;
     readonly reason: string | undefined;
     readonly code: string | undefined;
     readonly retryAfter: number | undefined;
     readonly requestId: string | undefined;
 
-    constructor(kind: Kind, { status = 0, errors = {}, message, ...detail }: Detail = {}) {
+    constructor(kind: Kind, { status = 0, errors = {}, issues = {}, message, ...detail }: Detail = {}) {
         const resolved = status >= lowest && status <= highest ? status : kinds[kind];
 
         super(message ?? `${kind} (${resolved})`, detail.cause === undefined ? undefined : { cause: detail.cause });
@@ -63,6 +67,7 @@ export class Failure extends Error {
         this.kind = kind;
         this.status = resolved;
         this.errors = errors;
+        this.issues = issues;
         this.reason = detail.reason;
         this.code = detail.code;
         this.retryAfter = detail.retryAfter;

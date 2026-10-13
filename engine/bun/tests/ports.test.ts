@@ -33,7 +33,15 @@ describe("ports", () => {
         expect(calls).toEqual([["products", "list", { id: "7" }, true]]);
         expect(
             await portValue(
-                { kind: "write", feature: "products", operation: "save", input: {}, fields: [], touches: [] },
+                {
+                    kind: "write",
+                    feature: "products",
+                    operation: "save",
+                    input: {},
+                    fields: [],
+                    touches: [],
+                    permissions: [],
+                },
                 route,
                 source,
             ),

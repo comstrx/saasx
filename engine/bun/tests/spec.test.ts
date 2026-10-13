@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { get, many, post, feature as spec, z } from "@engine/api";
+import { del, get, many, need, post, feature as spec, z } from "@engine/api";
 import {
     catalogueFacts,
     compileBlock,
@@ -118,13 +118,16 @@ describe("forms and states", () => {
         ...features,
         form: {
             owner: "client",
-            options: { failed: "x" },
+            options: { failed: "x", errors: {} },
             ports: { save: { kind: "write" } },
             access: [],
             signals: [],
         },
     };
-    const withForm = (children: SiteFeature<Block>[]) => {
+    const spoken = (children: SiteFeature<Block>[]): SiteFeature<Block>[] =>
+        children.map((child) => ({ ...child, options: { errors: { key: "errors" }, ...child.options } }));
+    const withForm = (given: SiteFeature<Block>[]) => {
+        const children = spoken(given);
         const walk = createWalk<Block>({
             params: [],
             client: false,
@@ -153,6 +156,7 @@ describe("forms and states", () => {
             input: {},
             fields: [{ name: "title", kind: "text", required: true, nullable: false }],
             touches: [],
+            permissions: [],
         });
         expect(chosen.block.features[0]?.ports.save).toMatchObject({ fields: [{ name: "title" }] });
         expect(bound.block.features[0]?.ports.save).toMatchObject({ fields: [] });
@@ -172,7 +176,14 @@ describe("forms and states", () => {
             catalogue: touching,
         });
         const block = compileBlock<Block>(
-            { features: [feature("form", { ports: { save: write("products.save") } })] },
+            {
+                features: [
+                    feature("form", {
+                        options: { errors: { key: "errors" } },
+                        ports: { save: write("products.save") },
+                    }),
+                ],
+            },
             walk,
             "home.blocks[0]",
         );
@@ -182,7 +193,7 @@ describe("forms and states", () => {
     test("an object option may name a message branch, resolved when the tree localizes", () => {
         const labelled: Features = {
             ...form,
-            form: { ...(form.form as Features[string]), options: { failed: "x", labels: {} } },
+            form: { ...(form.form as Features[string]), options: { failed: "x", labels: {}, errors: {} } },
         };
         const walk = createWalk<Block>({
             params: [],
@@ -199,7 +210,7 @@ describe("forms and states", () => {
             {
                 features: [
                     feature("form", {
-                        options: { labels: { key: "catalog.fields" } },
+                        options: { labels: { key: "catalog.fields" }, errors: { key: "errors" } },
                         ports: { save: write("products.save") },
                     }),
                 ],
@@ -227,6 +238,7 @@ describe("forms and states", () => {
             {
                 features: [
                     feature("form", {
+                        options: { errors: { key: "errors" } },
                         ports: { save: write("products.save", { starts_at: "2026-01-01" }, ["title"]) },
                     }),
                 ],
@@ -250,7 +262,7 @@ describe("forms and states", () => {
         const reader: Features = { ...features, reader: { ...(features.cards as Features[string]), owner: "client" } };
 
         expect(stateIssues(reader)).toEqual([
-            "features/editor: a feature that writes names its failed text in its options.",
+            "features/editor: a feature that writes names its failed text and an errors map in its options.",
             "features/reader: a feature that reads names its loading, failed, offline and cached texts in its options; one that lists also names empty.",
         ]);
         expect(stateIssues(form).filter((issue) => issue.includes("features/form"))).toEqual([]);
@@ -284,5 +296,89 @@ describe("forms and states", () => {
             "home.blocks[0]",
         );
         expect(walk.issues).toEqual(["home.blocks[0].features[0]: cards leaves its empty text empty."]);
+    });
+});
+describe("permissions on ports", () => {
+    const guarded = catalogueFacts({
+        products: spec(
+            { permissions: ["user"] },
+            {
+                list: get("/products", {}, many(item)),
+                remove: need(["delete_products"], del("/products/{id}", { id: z.number() }, z.unknown())),
+            },
+        ),
+    });
+    const pane: Features = {
+        pane: {
+            owner: "client",
+            options: { loading: "x", failed: "x", offline: "x", cached: "x", empty: "x", errors: {} },
+            ports: { items: { kind: "list" }, remove: { kind: "write", required: false } },
+            access: [],
+            signals: [],
+        },
+    };
+
+    test("a write port carries what it needs; the feature is gated only by what it reads", () => {
+        const walk = createWalk<Block>({
+            params: [],
+            client: true,
+            session: true,
+            backend: true,
+            block: { gap: 4 },
+            site: {},
+            features: pane,
+            catalogue: guarded,
+        });
+        const block = compileBlock<Block>(
+            {
+                features: [
+                    feature("pane", {
+                        options: { errors: { key: "errors" } },
+                        ports: { items: read("products.list"), remove: write("products.remove", { id: 1 }) },
+                    }),
+                ],
+            },
+            walk,
+            "home.blocks[0]",
+        );
+        const compiled = block.features[0];
+
+        expect(walk.issues).toEqual([]);
+        expect(compiled?.access).toEqual(["user"]);
+        expect(compiled?.ports.remove).toMatchObject({ permissions: ["user", "delete_products"] });
+    });
+    test("a writing feature binds its errors dictionary", () => {
+        expect(
+            stateIssues({
+                bare: {
+                    ...(pane.pane as Features[string]),
+                    options: { loading: "x", failed: "x", offline: "x", cached: "x", empty: "x" },
+                },
+            }),
+        ).toEqual(["features/bare: a feature that writes names its failed text and an errors map in its options."]);
+
+        const walk = createWalk<Block>({
+            params: [],
+            client: true,
+            session: true,
+            backend: true,
+            block: { gap: 4 },
+            site: {},
+            features: pane,
+            catalogue: guarded,
+        });
+
+        compileBlock<Block>(
+            {
+                features: [
+                    feature("pane", {
+                        ports: { items: read("products.list"), remove: write("products.remove", { id: 1 }) },
+                    }),
+                ],
+            },
+            walk,
+            "home.blocks[0]",
+        );
+        expect(walk.issues).toEqual(["home.blocks[0].features[0]: pane leaves its errors map empty."]);
     });
 });

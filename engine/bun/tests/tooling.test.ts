@@ -9,6 +9,7 @@ import {
     composeMessages,
     createCore,
     guard,
+    messageIssues,
     modeOf,
     type Rules,
     selectConnection,
@@ -145,5 +146,21 @@ describe("spec isolation", () => {
     test("a spec folder escaping the specs root is refused by the loader guard", () => {
         expect(() => guard("/part/specs", "/part/src/secret.ts", "Spec path escapes specs")).toThrow("escapes");
         expect(guard("/tmp", "/tmp/a.ts", "x")).toBe("/tmp/a.ts");
+    });
+});
+describe("message contracts", () => {
+    test("every backend reason and every form rule needs a message in every language", () => {
+        const dictionaries = {
+            en: { errors: { reasons: { not_found: "Gone" }, rules: { min: "Too short" } } },
+            ar: { errors: { reasons: { not_found: "اختفى" }, rules: { min: "قصير" } } },
+        };
+
+        expect(messageIssues(dictionaries, { reasons: ["not_found", "forbidden"], rules: ["min", "max"] })).toEqual([
+            "en: missing errors.reasons.forbidden",
+            "en: missing errors.rules.max",
+            "ar: missing errors.reasons.forbidden",
+            "ar: missing errors.rules.max",
+        ]);
+        expect(messageIssues(dictionaries, { reasons: ["not_found"], rules: ["min"] })).toEqual([]);
     });
 });

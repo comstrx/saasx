@@ -8,6 +8,7 @@ export {
     type Submit,
     useForm,
 } from "./form.ts";
+export { createOutbox, type Outbox, type Pending, type Queued, type Replay } from "./outbox.ts";
 export {
     applyPatch,
     type Input as PortInput,

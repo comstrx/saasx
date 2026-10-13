@@ -1,5 +1,19 @@
 import { describe, expect, test } from "bun:test";
-import { browserConfig, createApi, feature, get, many, post, requestContext, resolveApi, z } from "@engine/api";
+import {
+    allowed,
+    browserConfig,
+    createApi,
+    del,
+    feature,
+    get,
+    many,
+    missing,
+    need,
+    post,
+    requestContext,
+    resolveApi,
+    z,
+} from "@engine/api";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const catalogue = {
@@ -184,6 +198,7 @@ describe("the client over a fake backend", () => {
             kind: "input",
             reason: "invalid_input",
             errors: { title: [expect.any(String)] },
+            issues: { title: [{ rule: "type", params: { expected: "string" } }] },
         });
         expect(sent).toBe(0);
     });
@@ -220,5 +235,53 @@ describe("the client over a fake backend", () => {
 
         expect(result.resource).toEqual({ id: 1, title: "A" });
         expect(calls).toBe(2);
+    });
+});
+describe("permissions", () => {
+    test("an operation names what it needs, the group adds its own, and a holder is checked against both", () => {
+        const group = feature(
+            { permissions: ["user"] },
+            {
+                remove: need(["delete_items"], del("/items/{id}", { id: z.number() }, z.unknown())),
+                list: get("/items", {}, many(z.object({ id: z.number() }))),
+            },
+        );
+
+        expect(group.remove.permissions).toEqual(["user", "delete_items"]);
+        expect(group.list.permissions).toEqual(["user"]);
+        expect(allowed({ permissions: ["delete_items"] }, group.remove.permissions)).toBe(true);
+        expect(allowed({ permissions: [] }, group.remove.permissions)).toBe(false);
+        expect(allowed(null, ["user"])).toBe(false);
+        expect(missing({ permissions: [] }, group.remove.permissions)).toEqual(["delete_items"]);
+    });
+});
+describe("failure hook", () => {
+    test("every failure the client raises also reaches the hook, so a surface can end a session on 401", async () => {
+        const seen: number[] = [];
+        const { api: resolved, contract } = resolveApi(
+            catalogue,
+            { ...api, context: { ...api.context, tenant: "t" } },
+            {},
+            seeds,
+            {},
+        );
+        const client = createApi(
+            catalogue,
+            resolved,
+            contract,
+            () => requestContext(resolved.context, { language: "en", auth: "t" }),
+            {
+                execution: "client",
+                transport: async () =>
+                    new Response(JSON.stringify({ status: false, code: "unauthenticated", message: "sign in" }), {
+                        status: 401,
+                        headers: { "content-type": "application/json" },
+                    }),
+                onFailure: (failure) => seen.push(failure.status),
+            },
+        );
+
+        await expect(client.products.list()).rejects.toMatchObject({ kind: "denied", status: 401 });
+        expect(seen).toEqual([401]);
     });
 });

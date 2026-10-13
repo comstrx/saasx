@@ -16,6 +16,7 @@ export type Endpoint<
     many: M;
     local?: Resource;
     wire: Layer;
+    permissions: readonly string[];
 };
 export type Facts = { permissions: readonly string[]; touches: readonly string[] };
 export type Catalogue = Readonly<Record<string, Readonly<Record<string, Endpoint>>>>;
@@ -49,6 +50,7 @@ function route(method: Method): Define {
             method,
             path,
             wire,
+            permissions: [],
             input: schema,
             output: ("many" in output ? output.many : output) as Item<typeof output>,
             many: ("many" in output) as typeof output extends Many ? true : false,
@@ -70,7 +72,11 @@ export function many<T extends z.ZodType>(item: T): Many<T> {
  */
 export function feature<const T extends Record<string, Endpoint>>(defaults: Layer & Partial<Facts>, endpoints: T): T {
     const { permissions = [], touches = [], ...layer } = defaults;
-    const declared = mapValues(endpoints, (endpoint) => ({ ...endpoint, wire: merge(layer, endpoint.wire) })) as T;
+    const declared = mapValues(endpoints, (endpoint) => ({
+        ...endpoint,
+        wire: merge(layer, endpoint.wire),
+        permissions: [...new Set([...permissions, ...endpoint.permissions])],
+    })) as unknown as T;
 
     facts.set(declared, { permissions, touches });
 
@@ -94,4 +100,11 @@ export function document<R extends Resource>(resource: R, path?: string, wire: L
             local: resource,
         },
     };
+}
+/**
+ * An operation that needs permissions of its own beyond its group's: the holder must carry every
+ * one of them, and a surface hides or disables the action otherwise.
+ */
+export function need<E extends Endpoint>(permissions: readonly string[], endpoint: E): E {
+    return { ...endpoint, permissions: [...new Set([...endpoint.permissions, ...permissions])] };
 }

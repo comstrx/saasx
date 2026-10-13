@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { dictionary, type Messages, mergeMessages, messageKeys } from "@engine/translate";
+import { dictionary, type Messages, mergeMessages, messageAt, messageKeys } from "@engine/translate";
 import { failure } from "./core.ts";
 
 export type Dictionaries<L extends string = string> = Record<L, Messages>;
@@ -58,4 +58,24 @@ export function composeMessages<L extends string>({ core, brand, locales }: Mess
         throw new Error(`${brand ?? core}/${composed}.json: composed message keys must match every language.`);
 
     return result;
+}
+export type MessageContracts = { reasons: readonly string[]; rules: readonly string[] };
+
+/**
+ * The messages every surface owes its users beyond the specs: one per backend reason and one per
+ * form rule, under `errors.reasons` and `errors.rules`, in every language.
+ */
+export function messageIssues(dictionaries: Dictionaries, contracts: MessageContracts): string[] {
+    return Object.entries(dictionaries).flatMap(([locale, messages]) => [
+        ...contracts.reasons.flatMap((reason) =>
+            messageAt(messages, `errors.reasons.${reason}`) === undefined
+                ? [`${locale}: missing errors.reasons.${reason}`]
+                : [],
+        ),
+        ...contracts.rules.flatMap((rule) =>
+            messageAt(messages, `errors.rules.${rule}`) === undefined
+                ? [`${locale}: missing errors.rules.${rule}`]
+                : [],
+        ),
+    ]);
 }
