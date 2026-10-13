@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { browserConfig } from "@engine/api";
 import { settingsResource } from "@engine/spec";
-import { assetHash, brandImages, type Files, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, task } from "@engine/tooling";
+import { assetHash, brandImages, type Files, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, syncEngineAssets, task } from "@engine/tooling";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
 import { countries } from "../../src/lib/spec/theme.ts";
 import { assetFiles, composeAssets, specPaths } from "../assets/index.ts";
@@ -43,10 +43,7 @@ export async function compileSpec ( mode: Mode ) {
 
     const spec = await loadSpec(specFromEnvironment());
     const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
-    const flags = assetFiles(resolve(root, "public/images/flag"), true);
-    const missing = countries.filter(( code ) => !flags.has(`${code.toLowerCase()}.svg`));
-
-    if ( missing.length ) throw new Error(`Missing flags: ${missing.join(", ")}`);
+    syncEngineAssets(root, [{ from: "flag", to: "images/flag", files: countries.map(( code ) => `${code.toLowerCase()}.svg`) }]);
     const folder = `node_modules/.cache/spec/${mode}`;
     const { assetRoot, css, data } = assemble(spec, assets, mode);
     const shared = [...assetFiles(resolve(root, "public"), true)].filter(( [name] ) => !owned(name));

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { existsSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import process from "node:process";
 import { mapValues } from "@engine/base";
@@ -93,13 +93,43 @@ export function registryModule ( root: string, folder: string, features: readonl
     return `export default {\n${lines.join("\n")}\n};\n`;
 
 }
-export function flagsModule ( root: string, folder: string, flags: string, codes: readonly string[], format: string ): string {
+export const engineAssets: string = resolve(import.meta.dir, "../../../assets");
+
+export type AssetSet = { from: string; to: string; files: readonly string[] };
+
+export function syncEngineAssets ( root: string, sets: readonly AssetSet[] ): number {
+
+    let copied = 0;
+
+    for ( const set of sets ) {
+
+        const target = resolve(root, "public", set.to);
+
+        mkdirSync(target, { recursive: true });
+
+        for ( const name of set.files ) {
+
+            const source = resolve(engineAssets, set.from, name);
+
+            if ( !existsSync(source) ) throw new Error(`Missing engine asset: ${set.from}/${name}`);
+
+            copyFileSync(source, resolve(target, name));
+            copied += 1;
+
+        }
+
+    }
+
+    return copied;
+
+}
+export function flagsModule ( root: string, folder: string, codes: readonly string[], format: string ): string {
 
     const lines = codes.map(( code ) => {
 
-        const file = resolve(root, flags, `${code.toLowerCase()}.${format}`);
+        const file = resolve(engineAssets, "flag", `${code.toLowerCase()}.${format}`);
 
-        if ( !existsSync(file) ) throw new Error(`Missing flag: ${relative(root, file)}`);
+        if ( !existsSync(file) ) throw new Error(`Missing engine flag: ${code}`);
 
         const entry = relative(resolve(root, folder), file).replaceAll("\\", "/");
 

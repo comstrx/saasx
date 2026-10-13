@@ -35,7 +35,7 @@ export async function compileSpec ( mode: Mode ) {
     for ( const [name, bytes] of assets ) writeFile(`${folder}/assets/${name}`, bytes);
 
     writeFile(`${folder}/registry.js`, registryModule(root, folder, spec.schema.features));
-    writeFile(`${folder}/flags.js`, flagsModule(root, folder, "public/images/flag", countries, "webp"));
+    writeFile(`${folder}/flags.js`, flagsModule(root, folder, countries, "webp"));
     writeJson(`${folder}/release.json`, { identity: spec.identity, files: [...files].map(( [path, bytes] ) => ({ path, sha256: sha256(bytes) })) });
 
     const meta = {

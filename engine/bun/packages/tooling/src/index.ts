@@ -12,9 +12,11 @@ export {
 } from "./architecture.ts";
 export { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
 export {
+    type AssetSet,
     assetHash,
     brandImages,
     type Connection,
+    engineAssets,
     flagsModule,
     type Mode,
     modeOf,
@@ -24,6 +26,7 @@ export {
     selectConnection,
     selectConnections,
     specAliases,
+    syncEngineAssets,
 } from "./compile.ts";
 export {
     type Core,
