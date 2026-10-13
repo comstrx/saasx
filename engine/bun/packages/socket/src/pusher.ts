@@ -113,10 +113,12 @@ export type LiveSource = {
 };
 
 /**
- * The pusher connection address for an app key.
+ * The pusher connection address for an app key; a trace rides along as a query the server logs.
  */
-export function pusherUrl(base: string, key: string, client = "engine"): string {
-    return `${base.replace(/\/$/, "")}/app/${encodeURIComponent(key)}?protocol=7&client=${client}&version=1&flash=false`;
+export function pusherUrl(base: string, key: string, client = "engine", trace?: string): string {
+    const address = `${base.replace(/\/$/, "")}/app/${encodeURIComponent(key)}?protocol=7&client=${client}&version=1&flash=false`;
+
+    return trace ? `${address}&trace=${encodeURIComponent(trace)}` : address;
 }
 /**
  * A realtime as a live source for ports: connects on the first subscription, filters by event

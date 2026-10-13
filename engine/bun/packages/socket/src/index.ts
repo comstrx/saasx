@@ -4,6 +4,7 @@ export {
     createConnection,
     type Listener,
     type Opener,
+    type Outcome as SocketOutcome,
     type Status,
     type Transport,
 } from "./connection.ts";

@@ -110,3 +110,26 @@ describe("live source", () => {
         );
     });
 });
+describe("observation", () => {
+    test("the address carries the trace and the connection reports open and dropped under it", async () => {
+        const net = fake();
+        const seen: { call: string; trace?: string | undefined; kind?: string | undefined }[] = [];
+        const connection = createConnection({
+            url: pusherUrl("ws://r.test", "k", "engine", "t-1"),
+            open: net.open,
+            backoffMs: 1,
+            retries: 1,
+            trace: "t-1",
+            observe: (outcome) => seen.push({ call: outcome.call, trace: outcome.trace, kind: outcome.error?.kind }),
+        });
+
+        expect(pusherUrl("ws://r.test", "k", "engine", "t-1")).toContain("&trace=t-1");
+        await connection.connect();
+        net.server().drop();
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        connection.close();
+        expect(seen.map((entry) => entry.call)).toEqual(["socket.open", "socket.dropped", "socket.open"]);
+        expect(seen.every((entry) => entry.trace === "t-1")).toBe(true);
+        expect(seen[1]?.kind).toBe("network");
+    });
+});

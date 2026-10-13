@@ -38,7 +38,16 @@ export {
     post,
     put,
 } from "./dsl.ts";
-export { type Level as ReportLevel, type Observer, type Outcome, type Report, reportOf } from "./observe.ts";
+export {
+    createMeter,
+    type Level as ReportLevel,
+    type Meter,
+    type Metric,
+    type Observer,
+    type Outcome,
+    type Report,
+    reportOf,
+} from "./observe.ts";
 export {
     type Context,
     type ContextValues,

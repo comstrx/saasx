@@ -42,3 +42,34 @@ export function reportOf({ call, ms, trace, request, error }: Outcome, slow: num
         facts: { call, ms: time, ...error.facts(), trace, request, cause: describe(error).cause },
     };
 }
+
+export type Metric = { call: string; count: number; failures: number; ms: number; max: number };
+export type Meter = { record: Observer; flush: () => Metric[] };
+
+/**
+ * Counters per operation: calls, failures, time spent and the slowest call, gathered in memory
+ * and handed over on flush so a surface can send them in one beacon.
+ */
+export function createMeter(): Meter {
+    let counters = new Map<string, Metric>();
+
+    return {
+        record: ({ call, ms, error }) => {
+            const time = Math.round(ms);
+            const metric = counters.get(call) ?? { call, count: 0, failures: 0, ms: 0, max: 0 };
+
+            metric.count += 1;
+            metric.failures += error ? 1 : 0;
+            metric.ms += time;
+            metric.max = Math.max(metric.max, time);
+            counters.set(call, metric);
+        },
+        flush: () => {
+            const flushed = [...counters.values()];
+
+            counters = new Map();
+
+            return flushed;
+        },
+    };
+}

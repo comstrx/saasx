@@ -17,8 +17,13 @@ export type Opener = (
         error: (error: unknown) => void;
     },
 ) => Transport;
+export type Outcome = { call: string; ms: number; trace?: string | undefined; error?: Failure | undefined };
 export type ConnectionOptions = {
     url: string;
+    /** The session trace every report of this connection carries. */
+    trace?: string | undefined;
+    /** Told when the socket opens, is dropped, or gives up, the way an api call's outcome is. */
+    observe?: ((outcome: Outcome) => void) | undefined;
     open?: Opener | undefined;
     retries?: number | undefined;
     backoffMs?: number | undefined;
@@ -67,7 +72,7 @@ function websocket(url: string, handlers: Parameters<Opener>[1]): Transport {
  * its listeners. `close()` ends it for good.
  */
 export function createConnection(options: ConnectionOptions): Connection {
-    const { url, open = websocket, logger } = options;
+    const { url, open = websocket, logger, trace, observe } = options;
     const retries = options.retries ?? defaults.retries;
     const backoffMs = options.backoffMs ?? defaults.backoffMs;
     const maxBackoffMs = options.maxBackoffMs ?? defaults.maxBackoffMs;
@@ -79,6 +84,10 @@ export function createConnection(options: ConnectionOptions): Connection {
     let attempts = 0;
     let wanted = false;
     let heartbeat: ReturnType<typeof setInterval> | undefined;
+    let since = 0;
+    const report = (call: string, error?: Failure): void => {
+        observe?.({ call, ms: Date.now() - since, trace, ...(error ? { error } : {}) });
+    };
     const move = (next: Status): void => {
         status = next;
         for (const watcher of watchers) watcher(next);
@@ -95,10 +104,13 @@ export function createConnection(options: ConnectionOptions): Connection {
     const attempt = (): Promise<void> =>
         new Promise((resolve, reject) => {
             move("connecting");
+            since = Date.now();
             transport = open(url, {
                 open: () => {
                     attempts = 0;
                     move("open");
+                    report("socket.open");
+                    since = Date.now();
                     startHeartbeat();
                     resolve();
                 },
@@ -115,6 +127,10 @@ export function createConnection(options: ConnectionOptions): Connection {
                     }
 
                     logger?.warn("socket.dropped", { code, reason, attempts });
+                    report(
+                        "socket.dropped",
+                        new Failure("network", { reason: "socket_dropped", message: `${code} ${reason}` }),
+                    );
                     void again().catch(reject);
                 },
                 error: (error) => {
@@ -124,8 +140,11 @@ export function createConnection(options: ConnectionOptions): Connection {
         });
     const again = async (): Promise<void> => {
         if (attempts >= retries) {
+            const error = new Failure("network", { reason: "socket_unreachable", message: url });
+
             move("failed");
-            throw new Failure("network", { reason: "socket_unreachable", message: url });
+            report("socket.failed", error);
+            throw error;
         }
 
         attempts += 1;
