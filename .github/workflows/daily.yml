@@ -99,4 +99,4 @@ jobs:
         run: cargo run -q --manifest-path xtask/Cargo.toml -- setup
 
       - name: Fuzz
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --time 3600
+        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --budget 3600
