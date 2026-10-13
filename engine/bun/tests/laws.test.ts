@@ -65,6 +65,16 @@ describe("package laws", () => {
         expect(offenders).toEqual([]);
 
     });
+    test("no package carries a style value or a product feature; those are the parts' to give", () => {
+
+        const banned = /#[0-9a-fA-F]{6}\b|\b\d+px\b|cubic-bezier|"(?:USD|EUR|SAR|EGP)"|\b(?:catalogs?|manage|staff|announcements?|hotel|booking)\b/;
+        const offenders = sources.flatMap(( [name, files] ) =>
+            Object.entries(files).flatMap(( [file, code] ) => (banned.test(code) ? [`${name}/${file}`] : [])),
+        );
+
+        expect(offenders).toEqual([]);
+
+    });
     test("every public export comes from the package index, never from a sibling's internals", () => {
 
         const offenders = sources.flatMap(( [name, files] ) =>
