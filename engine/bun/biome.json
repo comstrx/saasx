@@ -111,7 +111,7 @@
       }
     },
     {
-      "includes": ["packages/tooling/**", "tools/**"],
+      "includes": ["packages/tooling/**"],
       "linter": {
         "rules": {
           "correctness": {

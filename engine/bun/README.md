@@ -48,19 +48,6 @@ bun run fmt      # biome, write mode
 
 CI runs `bun run gates` and nothing else. The Bun version is pinned in `package.json` (`packageManager`), and CI installs exactly that.
 
-## Release
-
-The packages version in lockstep; the engine's version lives in the root `package.json` and in every package.
-
-```sh
-bun run release version 0.2.0   # every manifest to one version
-bun run release changelog       # engine commits since the last engine/v* tag, grouped by package
-bun run release tag             # git tag engine/v<version>
-bun run release dry             # changelog preview, pack every package in dependency order into .release/, install the tarballs in a fresh consumer, typecheck and run it
-```
-
-`dry` is the extraction proof: what a consumer outside the workspace can install and run from the tarballs is what ToolX ships.
-
 ## Policy
 
 `bunfig.toml`: exact versions, isolated linker, a three-day minimum release age for every new dependency, randomized test order.

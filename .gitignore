@@ -10,6 +10,7 @@
 **/.agents/
 **/.idea/
 **/.vscode/
+**/.vs/
 **/.fleet/
 **/.zed/
 **/*.swp
@@ -37,7 +38,6 @@
 **/*.pid
 **/*.pid.lock
 **/.cache/
-**/.release/
 **/*lighthouse.*/
 **/.infra*/
 **/CACHEDIR.TAG
@@ -86,6 +86,7 @@
 **/.vite/
 **/.parcel-cache/
 **/.next/
+**/.nuxt/
 **/_generated/
 **/out/
 **/build/
@@ -96,18 +97,8 @@
 **/.expo/
 **/.expo-shared/
 **/web-build/
-**/ios/Pods/
-**/ios/build/
-**/ios/DerivedData/
-**/ios/*.xcworkspace/xcuserdata/
-**/ios/**/xcuserdata/
-**/android/.gradle/
-**/android/build/
-**/android/app/build/
-**/android/.cxx/
-**/android/local.properties
-**/android/app/release/
-**/android/app/debug/
+**/android/
+**/ios/
 **/.metro-health-check*
 **/*.jsbundle
 **/*.hprof
@@ -130,7 +121,3 @@
 **/.pytest_cache/
 **/.mypy_cache/
 **/.ruff_cache/
-
-# expo prebuild output (generated, never committed)
-platform/mobile/android/
-platform/mobile/ios/
