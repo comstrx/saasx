@@ -12,6 +12,7 @@ const maestro = process.env.MAESTRO ?? "maestro";
 const coldBudgetMs = parseInteger(process.env.COLD_MS ?? "") ?? 1500;
 const jankBudgetPercent = Number(process.env.JANK_PERCENT ?? "1");
 const coldRuns = parseInteger(process.env.COLD_RUNS ?? "") ?? 3;
+const jankRuns = parseInteger(process.env.JANK_RUNS ?? "") ?? 3;
 const root = new URL("../..", import.meta.url).pathname;
 
 function environment ( extra: Record<string, string> ): string[] {
@@ -51,7 +52,9 @@ async function coldStart (): Promise<number> {
     return times[Math.floor(times.length / 2)] ?? 0;
 
 }
-async function jank (): Promise<{ frames: number; janky: number; percent: number }> {
+type Frames = { frames: number; janky: number; percent: number };
+
+async function scrolled (): Promise<Frames> {
 
     await $`adb shell dumpsys gfxinfo ${app} reset`.quiet();
     await flow("admin-scroll");
@@ -65,13 +68,30 @@ async function jank (): Promise<{ frames: number; janky: number; percent: number
     return { frames, janky, percent: Math.round((janky / frames) * 10000) / 100 };
 
 }
+/**
+ * One frame is a quarter of a percent over a few hundred frames, so one scroll decides nothing:
+ * the gate takes the median of several.
+ */
+async function jank (): Promise<Frames & { runs: number[] }> {
+
+    const runs: Frames[] = [];
+
+    for ( let run = 0; run < jankRuns; run += 1 ) runs.push(await scrolled());
+
+    runs.sort(( a, b ) => a.percent - b.percent);
+
+    const middle = runs[Math.floor(runs.length / 2)] as Frames;
+
+    return { ...middle, runs: runs.map(( entry ) => entry.percent) };
+
+}
 export async function perf (): Promise<void> {
 
     const cold = await coldStart();
     const frames = await jank();
     const lines = [
         `cold start to first frame, median of ${coldRuns}: ${cold} ms (budget ${coldBudgetMs} ms)`,
-        `janky frames while scrolling: ${frames.janky} of ${frames.frames} (${frames.percent}%, budget ${jankBudgetPercent}%)`,
+        `janky frames while scrolling, median of ${jankRuns} [${frames.runs.join(", ")}]: ${frames.janky} of ${frames.frames} (${frames.percent}%, budget ${jankBudgetPercent}%)`,
     ];
 
     for ( const line of lines ) report(line);
