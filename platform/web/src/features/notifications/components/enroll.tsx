@@ -2,19 +2,20 @@
 
 import { useAction } from "@engine/context";
 import { isFailure } from "@engine/error";
+import { failureMessages, type Messages } from "@engine/translate";
 import ActionCard, { type Note } from "@/components/action-card";
 import { useDevice } from "@/hooks/use-device";
 import { useLocale } from "@/hooks/use-locale";
 import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; detail: string; enable: string; saved: string; failed: string; denied: string; unsupported: string };
+export type Options = { title: string; detail: string; enable: string; saved: string; queued: string; failed: string; denied: string; unsupported: string; errors: Messages };
 
 export default function Enroll ({ options, ports }: FeatureProps<Options>) {
 
     const device = useDevice();
     const locale = useLocale();
-    const save = useWrite(ports.save);
+    const save = useWrite(ports.save, undefined, { queue: true });
     const enroll = useAction(async () => {
 
         await device.require("notifications");
@@ -31,9 +32,10 @@ export default function Enroll ({ options, ports }: FeatureProps<Options>) {
     const noteOf = (): Note | undefined => {
 
         if ( enroll.status === "done" && enroll.result === "unsupported" ) return { text: options.unsupported, tone: "muted" };
-        if ( enroll.status === "done" && save.status === "done" ) return { text: options.saved, tone: "success" };
+        if ( enroll.status === "done" && save.status === "done" ) return { text: save.queued ? options.queued : options.saved, tone: "success" };
         if ( enroll.status === "failed" && isFailure(enroll.error) && enroll.error.kind === "denied" ) return { text: enroll.error.reason?.endsWith("unsupported") ? options.unsupported : options.denied, tone: "danger" };
-        if ( enroll.status === "failed" || save.status === "failed" ) return { text: options.failed, tone: "danger" };
+        if ( save.status === "failed" ) return { text: failureMessages(save.error, options.errors, options.failed)._form ?? options.failed, tone: "danger" };
+        if ( enroll.status === "failed" ) return { text: options.failed, tone: "danger" };
 
         return undefined;
 

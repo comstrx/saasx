@@ -14,7 +14,8 @@
     "retry": "Try again",
     "offline": "You are offline",
     "cached": "Showing saved results",
-    "saved": "Saved"
+    "saved": "Saved",
+    "queued": "Saved on this device; it will be sent when you are back online"
   },
   "access": {
     "signIn": "Sign in to continue",
@@ -136,7 +137,8 @@
     "remove": "Delete",
     "restore": "Restore",
     "removed": "Deleted",
-    "restored": "Restored"
+    "restored": "Restored",
+    "denied": "You cannot perform this action"
   },
   "table": {
     "id": "ID",
@@ -194,5 +196,77 @@
     "saved": "This device will receive notifications",
     "denied": "Notifications were refused",
     "unsupported": "Push notifications are not available on this device"
+  },
+  "errors": {
+    "reasons": {
+      "done": "operation completed",
+      "created": "resource created",
+      "updated": "resource updated",
+      "deleted": "resource deleted",
+      "failed": "operation failed",
+      "not_found": "resource not found",
+      "forbidden": "access denied",
+      "unauthenticated": "authentication required",
+      "verification_required": "verification required",
+      "invalid_input": "invalid input",
+      "not_writable": "not writable",
+      "invalid_credentials": "invalid credentials",
+      "invalid_code": "invalid or expired code",
+      "invalid_token": "invalid or expired token",
+      "invalid_state": "operation not valid in the current state",
+      "invalid_signature": "invalid signature",
+      "expired": "no longer available",
+      "exists": "already exists",
+      "out_of_stock": "out of stock",
+      "insufficient_balance": "insufficient balance",
+      "not_allowed": "action not allowed",
+      "not_available": "not available",
+      "not_started": "not yet available",
+      "limit_exceeded": "limit exceeded",
+      "below_minimum": "below the required minimum",
+      "payment_failed": "payment failed",
+      "price_changed": "the price changed, request a new quote",
+      "requote_required": "the offer changed, request a new quote",
+      "currency_unavailable": "the currency is unavailable right now",
+      "subscription_expired": "subscription expired",
+      "in_flight": "a matching request is already in flight",
+      "key_reused": "this idempotency key was already used with a different request",
+      "server_error": "server error"
+    },
+    "rules": {
+      "required": "This field is required",
+      "min": "At least {minimum}",
+      "max": "At most {maximum}",
+      "type": "Expected a {expected}",
+      "format": "Not a valid {format}",
+      "choice": "Choose one of: {choices}",
+      "unknown": "This field is not accepted",
+      "invalid": "This value is not accepted"
+    },
+    "fields": {
+      "type": "The type is not accepted",
+      "subtype": "This subtype does not fit the type",
+      "name": "The name is not accepted",
+      "stock": "Stock must be a whole number",
+      "capacity": "Capacity must be a whole number",
+      "featured": "Featured must be yes or no",
+      "starts_at": "The start date is not accepted",
+      "ends_at": "The end date is not accepted",
+      "email": "The email address is not accepted",
+      "password": "The password is not accepted",
+      "otp": "The verification code is not accepted",
+      "challenge_token": "Start the sign-in again",
+      "latitude": "The latitude is not accepted",
+      "longitude": "The longitude is not accepted",
+      "image": "The image is not accepted",
+      "file": "The file is not accepted",
+      "token": "The device token is not accepted",
+      "platform": "The platform is not accepted",
+      "idempotency": "This request was already sent",
+      "account": "Nothing to update",
+      "panel": "This account cannot enter this panel",
+      "tenant": "Unknown workspace",
+      "catalog": "The catalog item is not available"
+    }
   }
 }

@@ -2,6 +2,7 @@
 
 import { useAction } from "@engine/context";
 import { field, row } from "@engine/spec";
+import { failureMessages, type Messages } from "@engine/translate";
 import { useState } from "react";
 import AvatarCard from "@/components/avatar-card";
 import Status from "@/components/status";
@@ -10,7 +11,7 @@ import { usePort } from "@/hooks/use-port";
 import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; pick: string; camera: string; saved: string; failed: string; loading: string; offline: string; cached: string; empty: string };
+export type Options = { title: string; pick: string; camera: string; saved: string; failed: string; loading: string; offline: string; cached: string; empty: string; errors: Messages };
 
 export default function Picker ({ options, ports, route, feature }: FeatureProps<Options>) {
 
@@ -32,7 +33,7 @@ export default function Picker ({ options, ports, route, feature }: FeatureProps
 
     });
     const image = uploaded ?? (me.status === "ready" ? field(row(me.value), "image") : undefined);
-    const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" || pick.status === "failed" ? { text: options.failed, tone: "danger" as const } : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const } : undefined;
+    const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" ? { text: failureMessages(save.error, options.errors, options.failed)._form ?? failureMessages(save.error, options.errors, options.failed).image ?? options.failed, tone: "danger" as const } : pick.status === "failed" ? { text: options.failed, tone: "danger" as const } : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const } : undefined;
     const status = me.status === "ready" ? undefined : <Status status={me.status} loading={options.loading} failed={options.failed} offline={options.offline} error={me.status === "failed" ? me.error : undefined} />;
 
     return (

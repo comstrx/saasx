@@ -16,7 +16,7 @@ export default screen({
                 heading: true,
                 options: {
                     title: t("admin.editCatalog"), submit: t("admin.save"), saved: t("admin.saved"), failed: t("state.failed"),
-                    loading: t("state.loading"), offline: t("state.offline"), cached: t("state.cached"), empty: t("state.empty"),
+                    loading: t("state.loading"), offline: t("state.offline"), cached: t("state.cached"), empty: t("state.empty"), queued: t("state.queued"), errors: t("errors"),
                     labels: t("catalog.fields"), choices: t("catalog.choices"),
                 },
                 ports: {

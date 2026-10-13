@@ -3,7 +3,7 @@
 import { useAction } from "@engine/context";
 import { isFailure } from "@engine/error";
 import { interpolate } from "@engine/parse";
-import { formatNumber } from "@engine/translate";
+import { failureMessages, formatNumber, type Messages } from "@engine/translate";
 import { useState } from "react";
 import ActionCard, { type Note } from "@/components/action-card";
 import { useDevice } from "@/hooks/use-device";
@@ -11,13 +11,13 @@ import { useLocale } from "@/hooks/use-locale";
 import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; detail: string; locate: string; saved: string; failed: string; denied: string; unsupported: string };
+export type Options = { title: string; detail: string; locate: string; saved: string; queued: string; failed: string; denied: string; unsupported: string; errors: Messages };
 
 export default function Locator ({ options, ports }: FeatureProps<Options>) {
 
     const device = useDevice();
     const locale = useLocale();
-    const save = useWrite(ports.save);
+    const save = useWrite(ports.save, undefined, { queue: true });
     const [position, setPosition] = useState<{ latitude: number; longitude: number } | null>(null);
     const locate = useAction(async () => {
 
@@ -32,9 +32,10 @@ export default function Locator ({ options, ports }: FeatureProps<Options>) {
     });
     const noteOf = (): Note | undefined => {
 
-        if ( locate.status === "done" && save.status === "done" ) return { text: options.saved, tone: "success" };
+        if ( locate.status === "done" && save.status === "done" ) return { text: save.queued ? options.queued : options.saved, tone: "success" };
         if ( locate.status === "failed" && isFailure(locate.error) && locate.error.kind === "denied" ) return { text: locate.error.reason?.endsWith("unsupported") ? options.unsupported : options.denied, tone: "danger" };
-        if ( locate.status === "failed" || save.status === "failed" ) return { text: options.failed, tone: "danger" };
+        if ( save.status === "failed" ) return { text: failureMessages(save.error, options.errors, options.failed)._form ?? options.failed, tone: "danger" };
+        if ( locate.status === "failed" ) return { text: options.failed, tone: "danger" };
 
         return undefined;
 

@@ -3,7 +3,7 @@
 import { isFailure } from "@engine/error";
 import { interpolate } from "@engine/parse";
 import { field, row } from "@engine/spec";
-import { formatDate, formatMoney, localePath } from "@engine/translate";
+import { failureMessages, formatDate, formatMoney, localePath, type Messages } from "@engine/translate";
 import DetailActions, { type DetailAction } from "@/components/detail-actions";
 import DetailCard from "@/components/detail-card";
 import Note from "@/components/note";
@@ -15,7 +15,7 @@ import { useWrite } from "@/hooks/use-write";
 import { routing } from "@/lib/spec/config";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; pick: string; from: string; missing: string; loading: string; failed: string; offline: string; cached: string; edit: string; editLabel: string; remove: string; restore: string; removed: string; restored: string; labels: Record<string, string> };
+export type Options = { title: string; pick: string; from: string; missing: string; loading: string; failed: string; offline: string; cached: string; edit: string; editLabel: string; remove: string; restore: string; removed: string; restored: string; denied: string; labels: Record<string, string>; errors: Messages };
 
 const shown = ["id", "slug", "type", "subtype", "stock", "rating", "created_at", "deleted_at"];
 const stamp = /^\d{4}-\d{2}-\d{2}T/;
@@ -42,11 +42,12 @@ export default function Pane ({ options, ports, route, feature }: FeatureProps<O
     const missing = port.status === "ready" && isFailure(port.error) && port.error.kind === "missing";
     const gone = Boolean(field(item, "deleted_at")) || (remove.status === "done" && restore.status !== "done") || (missing && restore.status !== "done");
     const busy = remove.status === "pending" || restore.status === "pending";
-    const note = remove.status === "done" ? { text: options.removed, tone: "success" as const } : restore.status === "done" ? { text: options.restored, tone: "success" as const } : remove.status === "failed" || restore.status === "failed" ? { text: options.failed, tone: "danger" as const } : undefined;
+    const spoken = ( error: unknown ): string => failureMessages(error, options.errors, options.failed)._form ?? options.failed;
+    const note = remove.status === "done" ? { text: options.removed, tone: "success" as const } : restore.status === "done" ? { text: options.restored, tone: "success" as const } : remove.status === "failed" ? { text: spoken(remove.error), tone: "danger" as const } : restore.status === "failed" ? { text: spoken(restore.error), tone: "danger" as const } : !remove.allowed && !restore.allowed && remove.ready && (ports.remove || ports.restore) ? { text: options.denied, tone: "muted" as const } : undefined;
     const edit = item && options.edit ? { href: localePath(locale, interpolate(options.edit, { id }), routing), label: options.editLabel } : undefined;
     const actions: DetailAction[] = [
-        ...(item && ports.remove && !gone ? [{ label: options.remove, icon: "trash", tone: "danger" as const, onPress: () => { restore.reset(); void remove.run({}); } }] : []),
-        ...(item && ports.restore && gone ? [{ label: options.restore, icon: "undo", tone: "ghost" as const, onPress: () => { remove.reset(); void restore.run({}); } }] : []),
+        ...(item && ports.remove && remove.allowed && !gone ? [{ label: options.remove, icon: "trash", tone: "danger" as const, onPress: () => { restore.reset(); void remove.run({}); } }] : []),
+        ...(item && ports.restore && restore.allowed && gone ? [{ label: options.restore, icon: "undo", tone: "ghost" as const, onPress: () => { remove.reset(); void restore.run({}); } }] : []),
     ];
     const pane = item ? <DetailActions edit={edit} actions={actions} busy={busy} note={note} /> : null;
 

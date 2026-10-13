@@ -14,7 +14,7 @@ const catalogue: Catalogue = catalogueFacts({
 });
 const features: Features = {
     cards: { owner: "server", options: { columns: 3, title: "" }, ports: { items: { kind: "list", fields: ["title"] } }, access: [], signals: [] },
-    editor: { owner: "client", options: { failed: "" }, ports: { save: { kind: "write" } }, access: [], signals: [] },
+    editor: { owner: "client", options: { failed: "", errors: {} }, ports: { save: { kind: "write" } }, access: [], signals: [] },
     hero: { owner: "server", options: { prominent: false }, ports: { brand: { kind: "one", fields: ["name"], required: false } }, access: [], signals: [] },
 };
 const backend = { urls: { production: "https://api.example.test", local: null, browser: null }, options: {} as Record<string, never> };
@@ -68,8 +68,8 @@ describe("ports", () => {
     });
     test("a write belongs to a client-owned feature and a GET cannot be written", () => {
 
-        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { failed: "x" }, ports: { save: write("products.list") } }))] })).toContain("is a read, not a write");
-        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { failed: "x" }, ports: { save: write("products.save") } }))] })).toBe("");
+        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { failed: "x", errors: t("nav") }, ports: { save: write("products.list") } }))] })).toContain("is a read, not a write");
+        expect(issues({ screens: [home(feature("hero", { heading: true }), feature("editor", { options: { failed: "x", errors: t("nav") }, ports: { save: write("products.save") } }))] })).toBe("");
 
     });
     test("unknown inputs and unbound path parameters are refused", () => {

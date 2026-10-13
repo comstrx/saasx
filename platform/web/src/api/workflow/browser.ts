@@ -8,8 +8,9 @@ import { routing } from "../../lib/spec/config.ts";
 import { type Endpoints, endpoints } from "../features/index.ts";
 
 type Session = () => string | null;
+type Denied = () => void;
 
-export function browserApi ( locale: string, session: Session ): ApiClient<Endpoints> {
+export function browserApi ( locale: string, session: Session, denied?: Denied ): ApiClient<Endpoints> {
 
     const language = choose(routing.locales, locale, routing.defaultLocale);
 
@@ -18,6 +19,6 @@ export function browserApi ( locale: string, session: Session ): ApiClient<Endpo
         host: window.location.host,
         auth: session() ?? undefined,
         requestId: uuid(),
-    }), { execution: "client", observe: observeCall });
+    }), { execution: "client", observe: observeCall, onFailure: ( failure ) => { if ( failure.status === 401 && session() ) denied?.(); } });
 
 }

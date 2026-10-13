@@ -10,8 +10,8 @@ import { useSession } from "@/hooks/use-session";
 export function useApi (): ApiClient<Endpoints> {
 
     const locale = useLocale();
-    const { token } = useSession();
+    const { token, end } = useSession();
 
-    return useMemo(() => browserApi(locale, () => token), [locale, token]);
+    return useMemo(() => browserApi(locale, () => token, end), [locale, token, end]);
 
 }
