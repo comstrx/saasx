@@ -8,6 +8,7 @@ import Note from "@/components/note";
 import SchemaForm, { type Choices, type Labels } from "@/components/schema-form";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { useDirtyGuard } from "@/hooks/use-dirty-guard";
 import { isQueued, useForm } from "@/hooks/use-form";
 import { usePort } from "@/hooks/use-port";
 import type { FeatureProps } from "@/lib/spec/feature";
@@ -28,7 +29,7 @@ function withTexts ( record: Record<string, unknown> | undefined, translations: 
     return merged;
 
 }
-export type Options = { title: string; submit: string; saved: string; queued: string; failed: string; loading: string; offline: string; cached: string; empty: string; next: string; labels: Labels; choices: Choices; errors: Messages };
+export type Options = { title: string; submit: string; saved: string; queued: string; failed: string; loading: string; offline: string; cached: string; empty: string; leave: string; next: string; labels: Labels; choices: Choices; errors: Messages };
 
 export default function Editor ({ options, ports, route, feature }: FeatureProps<Options>) {
 
@@ -37,6 +38,8 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
     const texts = usePort(ports.texts, route);
     const form = useForm(ports.save, route, { errors: options.errors, queue: true });
     const loaded = useRef<string>("");
+
+    useDirtyGuard(form.dirty && form.status !== "done", options.leave);
     const settled = (!ports.item || item.status === "ready") && (!ports.texts || texts.status === "ready");
     const record = settled ? withTexts(row(item.status === "ready" ? item.value : undefined), rows(texts.status === "ready" ? texts.value : undefined), form.fields) : undefined;
     const stamp = settled ? JSON.stringify(record ?? null) : "";

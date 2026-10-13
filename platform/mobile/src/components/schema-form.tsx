@@ -48,7 +48,7 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
         }
         if ( field.kind === "localized" ) {
 
-            const texts = value && typeof value === "object" && !("uri" in value) && !(value instanceof Blob) ? (value as Record<string, string>) : {};
+            const texts: Record<string, string> = value && typeof value === "object" && !Array.isArray(value) && !("uri" in value) && !(value instanceof Blob) ? (value as Record<string, string>) : {};
 
             return Object.keys(texts).map(( locale ) => (
 
@@ -59,6 +59,21 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
                 </Field>
 
             ));
+
+        }
+        if ( field.kind === "list" ) {
+
+            const items = Array.isArray(value) ? value : [];
+
+            return (
+
+                <Field key={field.name} label={label(field)} error={error}>
+
+                    <Input name={field.name} value={items.join(", ")} invalid={Boolean(error)} disabled={busy} onChange={( next ) => form.set(field.name, next.split(",").map(( item ) => item.trim()).filter(Boolean))} />
+
+                </Field>
+
+            );
 
         }
         if ( !(field.kind in kinds) ) return null;

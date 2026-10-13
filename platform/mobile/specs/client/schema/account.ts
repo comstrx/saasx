@@ -17,7 +17,7 @@ export default screen({
         block({ width: "boxed", padding: 4, gap: 4 }, [
             feature("form", {
                 heading: true,
-                options: { title: t("account.profile"), submit: t("account.save"), saved: t("account.saved"), ...states, empty: t("state.empty"), queued: t("state.queued"), errors: t("errors"), labels: t("account.fields"), choices: t("account.choices") },
+                options: { title: t("account.profile"), submit: t("account.save"), saved: t("account.saved"), ...states, empty: t("state.empty"), leave: t("form.leave"), queued: t("state.queued"), errors: t("errors"), labels: t("account.fields"), choices: t("account.choices") },
                 ports: { item: read("account.me"), save: write("account.update") },
             }),
             feature("avatar", {
