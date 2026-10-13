@@ -37,6 +37,7 @@
 **/*.pid
 **/*.pid.lock
 **/.cache/
+**/*lighthouse.*/
 **/.infra*/
 **/CACHEDIR.TAG
 
