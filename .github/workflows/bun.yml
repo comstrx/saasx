@@ -41,8 +41,5 @@ jobs:
         with:
           bun-version-file: engine/bun/package.json
 
-      - name: Install
-        run: bun install --frozen-lockfile
-
       - name: Gates
         run: bun run gates

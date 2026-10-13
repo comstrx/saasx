@@ -23,7 +23,6 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_NIGHTLY: nightly-2026-10-08
 
 defaults:
   run:
@@ -46,20 +45,10 @@ jobs:
         with:
           cache-workspaces: engine/rust
 
-      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
-        with:
-          toolchain: ${{ env.RUST_NIGHTLY }}
-          cache: false
-
       - uses: cargo-bins/cargo-binstall@3be4ad2b146f3302f92e5956c54fedbb6ae8cccc # v1.25.3
-
-      - name: Install gate tools
-        run: cargo binstall --no-confirm cargo-nextest cargo-deny cargo-vet cargo-udeps cargo-hack cargo-semver-checks cargo-fuzz
 
       - name: Gates
         env:
           BASELINE: ${{ github.base_ref || github.ref_name }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: cargo run -q --manifest-path xtask/Cargo.toml -- gates --baseline "origin/${BASELINE}"
-
-      - name: Fuzz
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --time 60

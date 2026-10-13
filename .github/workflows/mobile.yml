@@ -6,13 +6,11 @@ on:
     paths:
       - 'platform/mobile/**'
       - 'engine/bun/**'
-      - 'engine/bun/**'
       - '.github/workflows/mobile.yml'
 
   pull_request:
     paths:
       - 'platform/mobile/**'
-      - 'engine/bun/**'
       - 'engine/bun/**'
       - '.github/workflows/mobile.yml'
 

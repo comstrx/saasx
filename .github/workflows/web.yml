@@ -6,13 +6,11 @@ on:
     paths:
       - 'platform/web/**'
       - 'engine/bun/**'
-      - 'engine/bun/**'
       - '.github/workflows/web.yml'
 
   pull_request:
     paths:
       - 'platform/web/**'
-      - 'engine/bun/**'
       - 'engine/bun/**'
       - '.github/workflows/web.yml'
 
