@@ -5,7 +5,7 @@ type Asset = { url: string; bytes: number };
 
 const base = process.env.BUDGET_URL ?? "http://127.0.0.1:3001";
 const path = process.env.BUDGET_PATH ?? "/login";
-const limit = parseInteger(process.env.BUDGET_KB ?? "") ?? 320;
+const limit = parseInteger(process.env.BUDGET_KB ?? "") ?? 310;
 
 async function size ( url: string ): Promise<number> {
 
