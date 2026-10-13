@@ -23,6 +23,10 @@ extend-exclude = [
     "**/.gradle/**",
     "**/vendor/**",
     "**/*.lock",
+    "**/public/images/flag/**",
+    "engine/bun/packages/world/src/countries.ts",
+    "engine/bun/packages/world/src/currencies.ts",
+    "engine/bun/packages/world/src/languages.ts",
 ]
 
 ignore-files = true
