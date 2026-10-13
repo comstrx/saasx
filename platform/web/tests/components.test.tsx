@@ -3,6 +3,7 @@ import { Failure } from "@engine/error";
 import { renderToString } from "react-dom/server";
 import DataTable from "../src/components/data-table";
 import Status from "../src/components/status";
+import Flag from "../src/elements/flag";
 
 describe("status", () => {
 
@@ -44,6 +45,17 @@ describe("data table", () => {
         const html = renderToString(<DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={[{ id: 7, name: "Tea" }]} selected="7" onSelect={() => undefined} />);
 
         expect(html).toContain('aria-selected="true"');
+
+    });
+
+});
+describe("flag", () => {
+
+    test("a known country draws its file from public, an unknown code falls back to its emoji", () => {
+
+        expect(renderToString(<Flag code="eg" />)).toContain('src="/images/flag/eg.svg"');
+        expect(renderToString(<Flag code="EG" size="sm" />)).toContain('data-size="sm"');
+        expect(renderToString(<Flag code="FR" />)).toContain("🇫🇷");
 
     });
 

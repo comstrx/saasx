@@ -29,3 +29,4 @@ export const motion = {
     },
 };
 export const currency = { default: "USD", enabled: ["USD"] };
+export const countries = ["EG", "SA", "AE"];
