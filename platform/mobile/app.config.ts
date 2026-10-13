@@ -22,7 +22,9 @@ const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 export default ( { config }: ConfigContext ): ExpoConfig => {
 
     const { identity, insecure, app } = compiled();
-    const transports: [string, Record<string, unknown>] = ["expo-build-properties", { android: { usesCleartextTraffic: insecure } }];
+    const build: [string, Record<string, unknown>] = ["expo-build-properties", {
+        android: { usesCleartextTraffic: insecure, enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true, enableBundleCompression: false },
+    }];
 
     return {
         ...config,
@@ -40,7 +42,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ["expo-notifications", { defaultChannel: "default" }],
             "expo-localization",
             ...(app.icon ? [["expo-splash-screen", { backgroundColor: app.background, image: app.icon }] as [string, Record<string, unknown>]] : []),
-            transports,
+            build,
         ],
         android: {
             package: process.env.APP_LAB === "1" && existsSync(push) ? "com.zainlak.app" : `com.${app.slug}.lab`,

@@ -18,11 +18,16 @@ const aliases = {
 const config = getDefaultConfig(root);
 
 config.watchFolders = [...(config.watchFolders ?? []), engine];
+// Metro bundles whatever a module reaches and zod/mini's entry reaches every locale and the JSON
+// Schema writers, none of which the engine calls; they resolve to nothing here.
+const unreached = [/\/zod\/v4\/locales\/index\.c?js$/, /\/zod\/v4\/core\/json-schema-processors\.c?js$/];
+
 config.resolver.resolveRequest = ( context, moduleName, platform ) => {
 
     const aliased = aliases[moduleName];
 
     if ( aliased ) return { type: "sourceFile", filePath: aliased };
+    if ( context.originModulePath.includes("/zod/") && unreached.some(( file ) => file.test(resolve(context.originModulePath, "..", moduleName))) ) return { type: "empty" };
 
     const bare = !moduleName.startsWith(".") && !moduleName.startsWith("/");
     const fromEngine = context.originModulePath.startsWith(engine);

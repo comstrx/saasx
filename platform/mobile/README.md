@@ -26,6 +26,10 @@ bun run export      the Android JavaScript bundle of the selected spec
 
 Android's cleartext permission follows the spec: `contracts.options.insecure` in the compiled meta becomes `usesCleartextTraffic`, so a production spec with `https` URLs builds without it.
 
+## Release weight
+
+Metro bundles whatever a module reaches, so the app imports one file per icon (`lucide-react-native/icons/<name>`) and `metro.config.cjs` resolves zod's locale table and JSON Schema writers to nothing: the Android bytecode bundle went from 6.3 MB to 3.9 MB. Release builds run R8 with resource shrinking and keep the bundle uncompressed for a faster start (`expo-build-properties` in `app.config.ts`). Measure with `bun run export` (bundle size) and `bun run perf` (cold start, jank).
+
 ## Device gates
 
 With a lab build installed and a phone over `adb`, Maestro flows under `flows/` drive the real app and `perf` measures what a user feels:
