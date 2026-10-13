@@ -1,54 +1,25 @@
-# ✨ Mobile
+# Mobile
 
-A spec-driven React Native engine for building multi-role or role-specific enterprise mobile applications. The core (`src/`, `assets/`, `messages/`, `tools/`, `tests/`) holds no product; an app is a spec under `specs/<name>`.
+A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaking the same language as the web engine: screens → blocks → features, manifests with options, ports, signals and access, the same bindings (`read`, `write`, `data`, `site`, `live`, `param`, `query`, `signal`) and the same compiler rules (states contract, permissions on write ports, icon set, translations in every language).
 
-## Overview
+## What differs
 
-The same language as the web engine, on the shared `@engine/*` packages: a screen is blocks of features, each feature tuned by `options`, fed through `ports` and gated by `access`, declared once in `src/features/<name>/feature.ts` and checked by the compiler at build time. From the same engine and the same specs the build produces either one application that switches role after sign-in, or one build per role.
+- Every feature is client-owned; a screen carries `presentation: stack | modal | tab`, `tabs`, `header`, `order`.
+- Shell parts are `header`, `tabs` (a tab bar derived from the screens that opt in with `options.tabs: true`) and `loader`.
+- Storage is a platform door: AsyncStorage for ports and the outbox, SecureStore for the session (`lib/providers/secure.native.ts`).
+- The device adapter (`lib/providers/device.native.ts`) doors expo-location, expo-image-picker, expo-notifications and expo-localization behind the engine's Device DSL.
+- Preferences (language, currency, theme) live in a persisted store; the first language is negotiated from the device locales.
+- Failures are spoken through the same `errors` dictionaries; undeliverable writes wait in the outbox and replay when the device is online again.
 
-```text
-screen   contents (name, path, title, icon, entity)  ·  options (presentation, title, header, tabs, loader, order)  ·  access
-block    options (width, height, grid, gap, padding, align, tone, radius)  ·  features  ·  blocks
-feature  name  ·  heading  ·  options  ·  ports  ·  access  ·  features  ·  blocks
-```
-
-`presentation: tab` screens form the tab list in `order`; every feature is client-owned. A spec declares `contracts: null` to run without a backend; every port is then data or site.
-
-## Workspace
-
-Bun drives install, scripts and tests. Expo's own tooling (Metro, the native builds) calls Node on its own.
+## Gates
 
 ```text
-package.json · bun.lock · bunfig.toml · biome.json · tsconfig.json · app.config.ts · metro.config.cjs · babel.config.cjs · index.ts
-messages/          core messages, one file per language; a spec overrides them
-specs/<name>/      config/ (contents, settings, themes, contracts, features) · schema/ (screens) · brand/ (assets, messages)
-src/               the engine
-tools/             plain Bun scripts: architecture, specs, messages, compile, assets, features
-tests/             bun test
+bun run check       biome · architecture · messages · specs
+bun run typecheck   app and tools projects
+bun test            compiler rules · Expo-bundled versions
+bun run export      the Android JavaScript bundle of the selected spec
 ```
 
-The spec is compiled before Expo runs (`bun tools/compile/index.ts <mode>`): `app.config.ts` and `metro.config.cjs` read the compiled `meta.json`, never the TypeScript sources, so Node needs no path aliases.
+## Lab builds
 
-## Layers
-
-`tools/architecture` enforces this order, forbids cycles, third-party imports outside `lib/providers`, `fetch` outside `src/api`, native primitives (`react-native`) and `style` props outside `elements`/`icons`, and spec imports outside `lib/spec`.
-
-1. `lib/providers`, `types`, the specs, `lib/spec/define`.
-2. `api/features` (the catalogue).
-3. `lib/spec` (shapes, compiler, authoring helpers, the compiled spec behind `@spec/*`).
-4. `lib/site`, `lib/observe`.
-5. `api/workflow` (the client door).
-6. `stores`, then `hooks`, then `elements`/`icons`/`styles`, then `components`, then `features`, then `render`, then `app` (the Expo Router routes).
-
-Files: markup ends in `.tsx` (`elements/*`, `icons/*`, `components/*`, `features/*/components/*`, `features/*/index`); logic ends in `.ts`. `src/features/<name>/` holds exactly `feature.ts`, `index.tsx`, `components/` and `hooks/`.
-
-## Commands
-
-```bash
-bun install --frozen-lockfile
-bun run start        # compile the selected spec, then Expo
-bun run check        # biome · architecture · messages · specs
-bun run typecheck    # compile · tsc
-bun test
-bun run export       # compile · expo export (the JS bundle, no native toolchain needed)
-```
+`EXPO_PUBLIC_SPEC=<spec> bun tools/compile/index.ts production`, then `APP_LAB=1 NODE_ENV=production bunx expo prebuild --platform android --clean --no-install` and `./gradlew assembleRelease` in `android/`. With a `google-services.json` beside `app.config.ts`, the lab build takes that project's package name so push tokens can be proven on a device.

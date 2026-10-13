@@ -1,79 +1,57 @@
-# ✨ Web
+# Web
 
-A spec-driven Next.js engine for building SEO sites, client surfaces and admin panels. The core (`src/`, `public/`, `messages/`, `tools/`, `tests/`) holds no product; a site or a panel is a spec under `specs/<name>`.
+A spec-driven Next.js engine (→ WebX) over `engine/bun`. The engine (`src/`, `tools/`, `messages/`, `tests/`) holds no product; a site or a panel is a spec under `specs/<name>` and the build selects it with `NEXT_PUBLIC_SPEC`.
 
-## Overview
-
-The engine separates what a surface is from how it is built. A spec declares screens as blocks of features, each feature tuned by `options`, fed through `ports` and gated by `access`; the compiler checks every declaration against the features and the API catalogue at build time and the renderer walks the compiled tree.
+## The language
 
 One system at every depth — `{ options, children }`:
 
 ```text
-screen   contents (name, path, title, description, icon, entity)  ·  options (render, title, seo, index, nav, footer, sidebar, loader)  ·  access
+screen   contents (name, path, title, description, icon, entity)  ·  options (render, title, seo, nav, footer, sidebar, loader)  ·  access  ·  redirect  ·  blocks
 block    options (width, height, grid, sizes, gap, padding, align, tone, radius, shadow)  ·  features  ·  blocks
-feature  name  ·  heading  ·  options  ·  ports  ·  access  ·  features  ·  blocks
+feature  name  ·  heading  ·  options  ·  ports  ·  access
 ```
 
-A feature is generic: `src/features/<name>/feature.ts` declares its `owner`, the `options` it understands (literal defaults), the `ports` it needs (`list`, `one` or `write`, with the fields it reads) and the `access` it demands. The spec binds each port to a catalogue operation (`read("products.list", { limit: 8 })`, `write("orders.create")`), to inline data (`data([...])`) or to the site document (`site("links")`). The compiler refuses a port whose source lacks a field, a read bound to a write, a write on a server-owned feature, a gated feature the server cannot gate, and an operation the catalogue does not know; permissions of the bound operations become the feature's gate.
+A feature is generic. `src/features/<name>/feature.ts` declares its `owner` (`server` or `client`), the `options` it understands (literal defaults), the `ports` it needs (`list`, `one`, `write`; `required: false` for optional ones) and the `signals` it emits. The spec binds every port:
 
-The engine is SEO-aware, not SEO-bound: every screen carries `render: server | client`, `seo`, `index` and `title`; a panel spec sets `settings.screen` once and every screen inherits it. A spec declares `contracts: null` to run without a backend — every port is then data or site — and `settings.delivery: static` to ship as a static export.
+| Binding | Meaning |
+|---|---|
+| `read("feature.operation", input?, live?)` | a GET from the catalogue; `input` may hold `param("id")`, `query("page")`, `signal("search")`, `signal("selected", { wait: true })` |
+| `write("feature.operation", input?, fields?)` | a mutation; `fields` names and orders what a form edits (bound inputs are never edited) |
+| `data([...])` / `site("links")` | inline rows or the site document; the spec runs without a backend on these alone |
+| `live("channel", ["event"], { path, key, version })` | a realtime subscription; a payload patches the shown rows, every event schedules one reconciling read |
 
-## Workspace
+Signals let features talk on one screen: `search` emits `search`, `table` emits `selected`, `sort`, `page`; a port bound to `signal(name)` reloads when it changes and `wait: true` keeps it idle until a value exists. The compiler refuses a consumed signal no feature emits.
 
-Bun is the only tool we drive: install, scripts, tests. Next's own build tooling calls Node on its own.
+## What the compiler enforces
+
+- Every `t("key")` exists in every enabled language; `t("catalog.fields")` may name a whole dictionary branch (labels, choices, errors).
+- Ports match their operation (list/one/write), inputs are known, path parameters are bound, patch keys exist in the output.
+- **States contract:** a client feature that reads names `loading`, `failed`, `offline`, `cached` (a list also `empty`); one that writes names `failed` and binds an `errors` dictionary. A spec may not leave one empty.
+- **Permissions:** an operation declared with `need(["delete_x"], …)` carries its permissions into the compiled write port; the feature itself is gated only by what it reads. `usePermission(port)` / `<Permission port>` hide what the session may not run.
+- **Icons:** `contents.icon` must exist in the surface's icon set.
+- SEO is behavioural: `content.seo.robots` and `sitemap` lists drive robots.txt, the sitemap and page metadata; there is no flag.
+
+## Runtime pieces
+
+- `hooks/use-port` — any port as a resource (idle · loading · ready · failed) with a persistent cache, stale answers kept offline, live patches, and `meta.pagination`.
+- `hooks/use-write` — a write port as an action; bound inputs ride along; `{ queue: true }` parks an undeliverable write in the outbox and replays it when the device is back online (same idempotency key).
+- `hooks/use-form` — a form over a write port: fields from the catalogue, one idempotency key per unchanged values, failures spoken through `errors` (`reasons`, `rules`, `fields`), never a backend sentence as a key.
+- `components/schema-form` — one control per field kind: text/email/phone/password/number/date, choice, boolean, localized (one input per language), list, file.
+- Device DSL (`@engine/device`): `require(permission)`, `locate()`, `pick(source)`, `pushToken()`; `location`, `avatar`, `notifications` features are the reference consumers.
+- Boundaries: every feature and every screen is wrapped; a screen failure shows a retry and is reported through `/api/report` (same beacon failed and slow calls use).
+
+## Gates
 
 ```text
-package.json · bun.lock · bunfig.toml · biome.json · tsconfig.json · next.config.ts
-messages/          core messages, one file per language; a spec overrides them
-specs/<name>/      config/ (contents, settings, themes, contracts, features) · schema/ (screens) · brand/ (assets, messages)
-src/               the engine
-tools/             plain Bun scripts: architecture, specs, messages, compile, assets, features
-tests/             bun test
+bun run check       biome · architecture layers · messages (every reason and rule speaks) · specs
+bun run typecheck   compile the selected spec · next typegen · tsc
+bun test            compiler rules · modes · forms · components · live backend (skips when down)
+bun run build       compile · next build
+bun tools/budget    first-load JavaScript of a page under the budget (CI: 320 KB gzip)
+bun tools/lighthouse <report.json> [seo=50]   category floors
 ```
 
-## Layers
+## Modes, by values alone
 
-`tools/architecture` enforces this order over value and type imports, forbids cycles, third-party imports outside `lib/providers`, `fetch` outside `src/api`, HTML and styling outside `elements`/`icons`, and spec imports outside `lib/spec`.
-
-1. `lib/std` (framework-free), `lib/providers` (the only doors to third-party packages and the shared engine), `types`, the specs, `lib/spec/define`.
-2. `api/core` (endpoint DSL, wire, client) and `api/features` (the catalogue, one file per feature).
-3. `lib/spec` (shapes, compiler, authoring helpers, the compiled spec behind `@spec/*`).
-4. `lib/site`, `lib/observe`.
-5. `api/workflow` (`server`, `browser` — the doors the app reads and writes through).
-6. `lib/seo`.
-7. `stores`, then `hooks`, then `elements`/`icons`, then `components`, then `features`, then `app` with `proxy.ts`.
-
-Files: markup ends in `.tsx` (`elements/*`, `icons/*`, `components/*`, `features/*/components/*`, `features/*/index`); logic ends in `.ts`. `src/features/<name>/` holds exactly `feature.ts` (the manifest), `index.tsx` (the entry), `components/` and `hooks/`.
-
-## Specs
-
-`NEXT_PUBLIC_SPEC` selects the spec folder; empty selects the first installed one. A spec is data: no branching, no calls beyond the typed helpers of `lib/spec/define` (`defineConfig`, `defineSchema`, `screen`, `block`, `feature`, `t`, `read`, `write`, `data`, `site`, `param`, `query`).
-
-```ts
-export default screen({
-    contents: { name: "home", path: "/", title: t("home.title"), description: t("home.description"), icon: "house" },
-    options: { render: "server", seo: true },
-    blocks: [
-        block({ width: "wide", gap: 12 }, [
-            feature("header", { heading: true, options: { prominent: true } }),
-            feature("cards", { options: { columns: 4 }, ports: { items: read("products.list", { limit: 8 }) } }),
-            feature("links", { ports: { items: site("links") } }),
-        ]),
-    ],
-});
-```
-
-Every switch is a key with its default written out, so a change is one value and the machine never guesses.
-
-## Commands
-
-```bash
-bun install --frozen-lockfile
-bun run dev          # dev server on 3001 after compiling the selected spec
-bun run build        # next build (standalone, or a static export when the spec says so)
-bun run check        # biome · architecture · messages · specs
-bun run typecheck    # next typegen · tsc
-bun test
-```
-
-CI runs these commands and nothing else.
+The same engine answers six shapes from one spec folder: SEO site (robots allow + sitemap), non-SEO panel (empty lists), with backend (`contracts.urls`), without backend (`contracts: null`, data/site ports only), single tenant (`contracts.options.tenant`) and multi tenant (tenant from the request host). `tests/spec/modes.test.ts` proves each from the real specs.
