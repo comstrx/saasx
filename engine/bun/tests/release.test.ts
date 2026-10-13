@@ -39,8 +39,9 @@ describe("release", () => {
         const text = changelog("0.2.0", "2026-10-13", lines);
 
         expect(text).toContain("## 0.2.0 (2026-10-13)");
-        expect(text).toContain("### validate\n- zod/mini behind the classic chain (a1)");
-        expect(text).toContain("### form\n- object fields under dotted names, and autosave (c3)");
+        expect(text).toContain("### validate\n- zod/mini behind the classic chain");
+        expect(text).toContain("### form\n- object fields under dotted names, and autosave");
+        expect(text).not.toContain("(c3)");
         expect(text).toContain("### xtask");
         expect(text).not.toContain("web(form)");
         expect(text).not.toContain("gitleaks");

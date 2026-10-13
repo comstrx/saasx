@@ -48,7 +48,8 @@ export function packOrder(manifests: Manifests): string[] {
 }
 /**
  * One changelog section from `git log --oneline` lines: engine commits only, grouped by the
- * package they name, each line keeping its short hash.
+ * package they name. Hashes stay in git: split into letter runs they read as misspelt words to
+ * the spelling gate.
  */
 export function changelog(version: string, date: string, lines: readonly string[]): string {
     const groups = new Map<string, string[]>();
@@ -58,10 +59,10 @@ export function changelog(version: string, date: string, lines: readonly string[
 
         if (!match) continue;
 
-        const [, hash, scope, subject] = match;
+        const [, , scope, subject] = match;
         const entries = groups.get(scope as string) ?? [];
 
-        entries.push(`- ${subject} (${hash})`);
+        entries.push(`- ${subject}`);
         groups.set(scope as string, entries);
     }
 
