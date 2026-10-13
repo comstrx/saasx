@@ -1,4 +1,4 @@
-import { uuid } from "@engine/base";
+import { pathGet, pathSet, uuid } from "@engine/base";
 import { formErrors } from "@engine/error";
 import { failureMessages, type Messages } from "@engine/translate";
 import type { FieldFact } from "@engine/validate";
@@ -23,6 +23,8 @@ export type FormOptions<T> = {
     errors?: Messages | undefined;
     submit: Submit<T>;
     initial?: Record<string, unknown> | undefined;
+    /** Milliseconds of quiet after the last change before a dirty form submits itself. */
+    autosave?: number | undefined;
 };
 export type FormState<T> = {
     fields: readonly FieldFact[];
@@ -95,7 +97,9 @@ function fill(
     locales: readonly string[],
     locale: string,
 ): FormValues {
-    return Object.fromEntries(fields.map((field) => [field.name, given(field, record[field.name], locales, locale)]));
+    return Object.fromEntries(
+        fields.map((field) => [field.name, given(field, pathGet(record, field.name), locales, locale)]),
+    );
 }
 /**
  * Field errors under the fields the form shows; anything else is the form's own message.
@@ -105,7 +109,8 @@ function placed(fields: readonly FieldFact[], errors: Record<string, string>): R
     const result: Record<string, string> = {};
 
     for (const [name, message] of Object.entries(errors)) {
-        const target = known.has(name.split(".")[0] ?? name) ? (name.split(".")[0] as string) : "_form";
+        const root = name.split(".")[0] ?? name;
+        const target = known.has(name) ? name : known.has(root) ? root : "_form";
 
         result[target] = result[target] ?? message;
     }
@@ -120,87 +125,119 @@ function same(a: FormValues, b: FormValues): boolean {
  * coerces them to what the operation takes, one idempotency key covers every retry of the same
  * values and a fresh one follows any change or success, and failures land per field.
  */
-export function createForm<T>({ fields, locales, locale, errors, submit, initial }: FormOptions<T>): FormStore<T> {
+export function createForm<T>({
+    fields,
+    locales,
+    locale,
+    errors,
+    submit,
+    initial,
+    autosave,
+}: FormOptions<T>): FormStore<T> {
     const current = locale ?? locales[0] ?? "";
     const start = fill(fields, initial ?? {}, locales, current);
     let key = uuid();
     let keyed: FormValues | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const quiet = () => {
+        clearTimeout(timer);
+        timer = undefined;
+    };
 
-    return createStore<FormState<T>>((set, get) => ({
-        fields,
-        values: start,
-        saved: start,
-        errors: {},
-        status: "idle",
-        result: undefined,
-        error: undefined,
-        dirty: false,
-        set: (name, value) =>
-            set((state) => {
-                const { [name]: _gone, ...errors } = state.errors;
-                const values = { ...state.values, [name]: value };
+    return createStore<FormState<T>>((set, get) => {
+        const later = () => {
+            if (!autosave) return;
 
-                return {
-                    values,
-                    errors,
-                    dirty: !same(values, state.saved),
-                    status: state.status === "pending" ? "pending" : "idle",
-                };
-            }),
-        load: (record) => {
-            const values = fill(fields, record ?? {}, locales, current);
+            quiet();
+            timer = setTimeout(() => {
+                timer = undefined;
+                if (get().status !== "pending" && get().dirty) void get().submit();
+            }, autosave);
+        };
 
-            set({ values, saved: values, dirty: false, errors: {}, status: "idle", error: undefined });
-        },
-        submit: async () => {
-            const { values } = get();
+        return {
+            fields,
+            values: start,
+            saved: start,
+            errors: {},
+            status: "idle",
+            result: undefined,
+            error: undefined,
+            dirty: false,
+            set: (name, value) =>
+                set((state) => {
+                    const { [name]: _gone, ...errors } = state.errors;
+                    const values = { ...state.values, [name]: value };
+                    const dirty = !same(values, state.saved);
 
-            if (!keyed || !same(keyed, values)) {
-                key = uuid();
-                keyed = values;
-            }
+                    if (dirty) later();
 
-            set({ status: "pending", errors: {}, error: undefined });
+                    return {
+                        values,
+                        errors,
+                        dirty,
+                        status: state.status === "pending" ? "pending" : "idle",
+                    };
+                }),
+            load: (record) => {
+                const values = fill(fields, record ?? {}, locales, current);
 
-            try {
-                const result = await submit(
-                    Object.fromEntries(
-                        fields.flatMap((field) => {
-                            const value = coerce(field, values[field.name] ?? null);
+                quiet();
+                set({ values, saved: values, dirty: false, errors: {}, status: "idle", error: undefined });
+            },
+            submit: async () => {
+                const { values } = get();
 
-                            return value === undefined ? [] : [[field.name, value]];
-                        }),
-                    ),
-                    { idempotencyKey: key },
-                );
+                if (!keyed || !same(keyed, values)) {
+                    key = uuid();
+                    keyed = values;
+                }
 
+                quiet();
+                set({ status: "pending", errors: {}, error: undefined });
+
+                const payload: Record<string, unknown> = {};
+
+                for (const field of fields) {
+                    const value = coerce(field, values[field.name] ?? null);
+
+                    if (value !== undefined) pathSet(payload, field.name, value);
+                }
+
+                try {
+                    const result = await submit(payload, { idempotencyKey: key });
+                    const dirty = !same(values, get().values);
+
+                    keyed = undefined;
+                    set({ status: "done", result, saved: values, dirty });
+                    if (dirty) later();
+
+                    return result;
+                } catch (error) {
+                    set({
+                        status: "failed",
+                        error,
+                        errors: placed(fields, errors ? failureMessages(error, errors, "") : formErrors(error, "")),
+                    });
+
+                    return undefined;
+                }
+            },
+            reset: () => {
                 keyed = undefined;
-                set({ status: "done", result, saved: get().values, dirty: false });
-
-                return result;
-            } catch (error) {
+                quiet();
                 set({
-                    status: "failed",
-                    error,
-                    errors: placed(fields, errors ? failureMessages(error, errors, "") : formErrors(error, "")),
+                    values: start,
+                    saved: start,
+                    errors: {},
+                    status: "idle",
+                    result: undefined,
+                    error: undefined,
+                    dirty: false,
                 });
-
-                return undefined;
-            }
-        },
-        reset: () => {
-            keyed = undefined;
-            set({
-                values: start,
-                saved: start,
-                errors: {},
-                status: "idle",
-                result: undefined,
-                error: undefined,
-                dirty: false,
-            });
-        },
-    }));
+            },
+        };
+    });
 }
 export function useForm<T>(options: FormOptions<T>): FormState<T> {
     const [store] = useState(() => createForm(options));

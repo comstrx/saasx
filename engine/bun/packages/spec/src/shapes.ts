@@ -9,6 +9,7 @@ const reference = z.union([
 ]);
 const value = z.union([scalar, reference]);
 const column = z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/);
+const leaf = z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*$/);
 const input = z.record(column, value);
 const channel = z
     .string()
@@ -30,7 +31,7 @@ export const liveShape = z.strictObject({
 });
 export const bindingShape = z.union([
     z.strictObject({ read: operation, input: input.optional(), live: liveShape.optional() }),
-    z.strictObject({ write: operation, input: input.optional(), fields: z.array(column).max(50).optional() }),
+    z.strictObject({ write: operation, input: input.optional(), fields: z.array(leaf).max(50).optional() }),
     z.strictObject({
         data: z.union([z.array(z.record(z.string(), z.unknown())).max(500), z.record(z.string(), z.unknown())]),
     }),

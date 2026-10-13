@@ -39,6 +39,7 @@ type Def = {
     format?: string;
     checks?: { _zod: { def: Check } }[];
     entries?: Record<string, unknown>;
+    shape?: Record<string, unknown>;
     innerType?: Inner;
     in?: Inner;
 };
@@ -118,31 +119,40 @@ function kindOf(schema: Inner, def: Def): FieldKind {
 
     return kinds[def.type] ?? "unknown";
 }
-/**
- * What a form needs to know about every field of an object schema: its kind, whether it must be
- * given, whether null is accepted, its choices and its bounds. A `meta({ kind })` on a schema
- * names its kind outright (password, phone, localized).
- */
-export function fieldFacts(schema: z.ZodType): FieldFact[] {
-    const shape = (schema as z.ZodType & { shape?: Record<string, z.ZodType> }).shape;
-
-    if (!shape) return [];
-
-    return Object.entries(shape).map(([name, field]) => {
+function facts(shape: Record<string, unknown>, prefix: string, within: boolean): FieldFact[] {
+    return Object.entries(shape).flatMap(([key, field]) => {
+        const name = `${prefix}${key}`;
         const { inner, required, nullable } = unwrap(field as unknown as Inner);
         const def = inner._zod.def;
         const kind = kindOf(inner, def);
+
+        if (kind === "object" && def.type === "object" && def.shape)
+            return facts(def.shape, `${name}.`, within && required);
+
         const choices = def.type === "enum" && def.entries ? Object.keys(def.entries) : undefined;
         const { min, max } = bounds(def);
 
-        return {
-            name,
-            kind,
-            required,
-            nullable,
-            ...(choices ? { choices } : {}),
-            ...(min === undefined ? {} : { min }),
-            ...(max === undefined ? {} : { max }),
-        };
+        return [
+            {
+                name,
+                kind,
+                required: within && required,
+                nullable,
+                ...(choices ? { choices } : {}),
+                ...(min === undefined ? {} : { min }),
+                ...(max === undefined ? {} : { max }),
+            },
+        ];
     });
+}
+/**
+ * What a form needs to know about every field of an object schema: its kind, whether it must be
+ * given, whether null is accepted, its choices and its bounds. A `meta({ kind })` on a schema
+ * names its kind outright (password, phone, localized). A nested object schema flattens to its
+ * leaves under dotted names (`address.city`), each required only while its parent is.
+ */
+export function fieldFacts(schema: z.ZodType): FieldFact[] {
+    const shape = (schema as z.ZodType & { shape?: Record<string, unknown> }).shape;
+
+    return shape ? facts(shape, "", true) : [];
 }

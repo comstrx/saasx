@@ -32,12 +32,14 @@ export function catalogueFacts(endpoints: Endpoints): Catalogue {
         const { touches } = factsOf(operations);
 
         return mapValues(operations, (endpoint) => {
+            const fields = fieldFacts(endpoint.input);
+
             return {
                 method: endpoint.method,
                 path: endpoint.path,
                 many: endpoint.many,
-                input: shapeKeys(endpoint.input),
-                fields: fieldFacts(endpoint.input),
+                input: [...new Set([...shapeKeys(endpoint.input), ...fields.map((field) => field.name)])],
+                fields,
                 output: shapeKeys(endpoint.output),
                 permissions: [...endpoint.permissions],
                 touches: [...touches],

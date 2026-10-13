@@ -70,7 +70,7 @@ describe("fieldFacts", () => {
             "title",
             "image",
             "tags",
-            "extra",
+            "extra.a",
             "id",
             "page",
         ]);
@@ -92,7 +92,7 @@ describe("fieldFacts", () => {
         expect(byName.title?.kind).toBe("localized");
         expect(byName.image?.kind).toBe("file");
         expect(byName.tags?.kind).toBe("list");
-        expect(byName.extra?.kind).toBe("object");
+        expect(byName["extra.a"]).toEqual({ name: "extra.a", kind: "text", required: false, nullable: false });
         expect(byName.id).toEqual({ name: "id", kind: "integer", required: true, nullable: false, min: 1 });
         expect(byName.page).toEqual({ name: "page", kind: "number", required: false, nullable: false });
     });
@@ -157,5 +157,24 @@ describe("z, the classic chain over zod/mini", () => {
 
         expectTypeOf<z.output<typeof wrapped>>().toEqualTypeOf<{ id: number } | null>();
         expect(z.safeParse(wrapped, undefined)).toEqual({ success: true, data: null });
+    });
+});
+
+describe("fieldFacts over nested objects", () => {
+    test("an object input flattens to dotted leaves whose requirement follows the parent", () => {
+        const facts = fieldFacts(
+            z.object({
+                name: z.string(),
+                address: z.object({ city: z.string().min(2), zip: z.string().optional() }).optional(),
+                tags: z.record(z.string(), z.string()),
+            }),
+        );
+
+        expect(facts.map((field) => [field.name, field.kind, field.required, field.min])).toEqual([
+            ["name", "text", true, undefined],
+            ["address.city", "text", false, 2],
+            ["address.zip", "text", false, undefined],
+            ["tags", "object", true, undefined],
+        ]);
     });
 });
