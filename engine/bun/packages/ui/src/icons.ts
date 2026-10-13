@@ -69,16 +69,18 @@ export const glyphs: Record<IconName, IconNode> = {
 };
 export type Icons<I> = {
     readonly names: readonly string[];
-    has: (name: string) => boolean;
-    get: (name: string) => I;
+    has: ( name: string ) => boolean;
+    get: ( name: string ) => I;
 };
 
-export function createIcons<I>(set: Readonly<Record<string, I>>, fallback: I): Icons<I> {
+export function createIcons<I> ( set: Readonly<Record<string, I>>, fallback: I ): Icons<I> {
+
     const names = Object.keys(set).sort();
 
     return {
         names,
-        has: (name) => Object.hasOwn(set, name),
-        get: (name) => (Object.hasOwn(set, name) ? (set[name] as I) : fallback),
+        has: ( name ) => Object.hasOwn(set, name),
+        get: ( name ) => (Object.hasOwn(set, name) ? (set[name] as I) : fallback),
     };
+
 }

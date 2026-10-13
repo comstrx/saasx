@@ -73,60 +73,77 @@ const known: readonly FieldKind[] = [
     "object",
 ];
 
-function unwrap(schema: Inner): { inner: Inner; required: boolean; nullable: boolean } {
+function unwrap ( schema: Inner ): { inner: Inner; required: boolean; nullable: boolean } {
+
     let inner = schema;
     let required = true;
     let nullable = false;
 
-    for (let depth = 0; depth < 10; depth += 1) {
+    for ( let depth = 0; depth < 10; depth += 1 ) {
+
         const def = inner._zod.def;
 
-        if (def.type === "optional" || def.type === "default") required = false;
-        else if (def.type === "nullable") nullable = true;
-        else if (def.type !== "pipe") break;
+        if ( def.type === "optional" || def.type === "default" ) required = false;
+        else if ( def.type === "nullable" ) nullable = true;
+        else if ( def.type !== "pipe" ) break;
 
         const next = def.innerType ?? def.in;
 
-        if (!next) break;
+        if ( !next ) break;
 
         inner = next;
+
     }
 
     return { inner, required, nullable };
+
 }
-function bounds(def: Def): { min?: number; max?: number } {
+function bounds ( def: Def ): { min?: number; max?: number } {
+
     const found: { min?: number; max?: number } = {};
 
-    for (const { _zod } of def.checks ?? []) {
+    for ( const { _zod } of def.checks ?? [] ) {
+
         const check = _zod.def;
 
-        if (check.check === "min_length" && check.minimum !== undefined) found.min = check.minimum;
-        if (check.check === "max_length" && check.maximum !== undefined) found.max = check.maximum;
-        if (check.check === "greater_than" && check.value !== undefined)
+        if ( check.check === "min_length" && check.minimum !== undefined ) found.min = check.minimum;
+
+        if ( check.check === "max_length" && check.maximum !== undefined ) found.max = check.maximum;
+
+        if ( check.check === "greater_than" && check.value !== undefined )
             found.min = check.inclusive ? check.value : check.value + 1;
-        if (check.check === "less_than" && check.value !== undefined)
+
+        if ( check.check === "less_than" && check.value !== undefined )
             found.max = check.inclusive ? check.value : check.value - 1;
+
     }
 
     return found;
+
 }
-function kindOf(schema: Inner, def: Def): FieldKind {
+function kindOf ( schema: Inner, def: Def ): FieldKind {
+
     const declared = (z.globalRegistry.get(schema as never) as { kind?: unknown } | undefined)?.kind;
 
-    if (typeof declared === "string" && known.includes(declared as FieldKind)) return declared as FieldKind;
-    if (def.type === "string" && def.format && formats[def.format]) return formats[def.format] as FieldKind;
-    if (def.type === "number" && def.checks?.some(({ _zod }) => _zod.def.check === "number_format")) return "integer";
+    if ( typeof declared === "string" && known.includes(declared as FieldKind) ) return declared as FieldKind;
+
+    if ( def.type === "string" && def.format && formats[def.format] ) return formats[def.format] as FieldKind;
+
+    if ( def.type === "number" && def.checks?.some(( { _zod } ) => _zod.def.check === "number_format") ) return "integer";
 
     return kinds[def.type] ?? "unknown";
+
 }
-function facts(shape: Record<string, unknown>, prefix: string, within: boolean): FieldFact[] {
-    return Object.entries(shape).flatMap(([key, field]) => {
+function facts ( shape: Record<string, unknown>, prefix: string, within: boolean ): FieldFact[] {
+
+    return Object.entries(shape).flatMap(( [key, field] ) => {
+
         const name = `${prefix}${key}`;
         const { inner, required, nullable } = unwrap(field as unknown as Inner);
         const def = inner._zod.def;
         const kind = kindOf(inner, def);
 
-        if (kind === "object" && def.type === "object" && def.shape)
+        if ( kind === "object" && def.type === "object" && def.shape )
             return facts(def.shape, `${name}.`, within && required);
 
         const choices = def.type === "enum" && def.entries ? Object.keys(def.entries) : undefined;
@@ -143,16 +160,15 @@ function facts(shape: Record<string, unknown>, prefix: string, within: boolean):
                 ...(max === undefined ? {} : { max }),
             },
         ];
+
     });
+
 }
-/**
- * What a form needs to know about every field of an object schema: its kind, whether it must be
- * given, whether null is accepted, its choices and its bounds. A `meta({ kind })` on a schema
- * names its kind outright (password, phone, localized). A nested object schema flattens to its
- * leaves under dotted names (`address.city`), each required only while its parent is.
- */
-export function fieldFacts(schema: z.ZodType): FieldFact[] {
+
+export function fieldFacts ( schema: z.ZodType ): FieldFact[] {
+
     const shape = (schema as z.ZodType & { shape?: Record<string, unknown> }).shape;
 
     return shape ? facts(shape, "", true) : [];
+
 }

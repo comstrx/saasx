@@ -36,28 +36,36 @@ const api = {
 };
 const fixture = `${import.meta.dir}/fixtures.json`;
 
-async function frozen(): Promise<unknown> {
+async function frozen (): Promise<unknown> {
+
     const file = Bun.file(fixture);
 
     return (await file.exists()) ? file.json() : undefined;
+
 }
 describe("the frozen wire contract", () => {
+
     test("resolving the sample catalogue yields exactly the frozen contract; a change is a deliberate act", async () => {
+
         const resolved = resolveApi(endpoints, api, { request: { headers: { language: "Locale" } } }, seeds, core);
         const browser = browserConfig(resolved.api, resolved.contract);
         const facts = catalogueFacts(endpoints);
         const plain = JSON.parse(JSON.stringify({ resolved, browser, facts }));
         const saved = await frozen();
 
-        if (saved === undefined || process.env.FREEZE_CONTRACT) {
+        if ( saved === undefined || process.env.FREEZE_CONTRACT ) {
+
             await Bun.write(fixture, `${JSON.stringify(plain, null, 2)}\n`);
 
             return;
+
         }
 
         expect(plain).toEqual(saved);
+
     });
     test("a spec without contracts compiles every operation off, with the same values", () => {
+
         const { api: none, contract } = compileApi({
             identity: "site",
             endpoints,
@@ -69,7 +77,9 @@ describe("the frozen wire contract", () => {
         });
 
         expect(none).toBeNull();
-        expect(Object.values(contract.features.products ?? {}).every((wire) => wire.enabled === false)).toBe(true);
+        expect(Object.values(contract.features.products ?? {}).every(( wire ) => wire.enabled === false)).toBe(true);
         expect(contract.values.settings).toMatchObject({ currency: "USD" });
+
     });
+
 });

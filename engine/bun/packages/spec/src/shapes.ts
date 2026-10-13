@@ -113,12 +113,10 @@ export type CompiledFeature<B> = {
 };
 export type CompiledBlock<B> = { id: string; options: B; features: CompiledFeature<B>[]; blocks: CompiledBlock<B>[] };
 
-/**
- * The schema shapes of a surface's features and blocks, given that surface's block option shape.
- */
-export function treeShapes<S extends z.ZodObject>(
+export function treeShapes<S extends z.ZodObject> (
     blockOptions: S,
 ): { feature: z.ZodType<SiteFeature<z.output<S>>>; block: z.ZodType<SiteBlock<z.output<S>>> } {
+
     type B = z.output<S>;
 
     const feature: z.ZodType<SiteFeature<B>> = z.lazy(() =>
@@ -143,4 +141,5 @@ export function treeShapes<S extends z.ZodObject>(
     ) as z.ZodType<SiteBlock<B>>;
 
     return { feature, block };
+
 }

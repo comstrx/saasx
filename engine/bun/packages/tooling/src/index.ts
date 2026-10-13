@@ -2,7 +2,6 @@ export { bench, boxplot, group, run, summary } from "mitata";
 export {
     type Analysis,
     analyze,
-    defineRules,
     inspect,
     type Layer,
     layoutIssues,
@@ -50,5 +49,6 @@ export {
     type MessageSources,
     messageIssues,
 } from "./messages.ts";
+export { defineRules } from "./rules.ts";
 export { createLoader, type Loaded, type Loader, type LoaderOptions, type Validate } from "./specs.ts";
 export { createTools, type Tools, type ToolsOptions } from "./tools.ts";

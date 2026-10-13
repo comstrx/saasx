@@ -25,60 +25,70 @@ export type LoaderOptions<C, L extends string> = {
 };
 export type Loaded<C, L extends string> = C & { messages: Dictionaries<L>; identity: string; folder: string };
 export type Loader<C, L extends string> = {
-    installedSpecs: (directory?: string) => string[];
-    selectSpec: (value?: string, directory?: string) => string;
+    installedSpecs: ( directory?: string ) => string[];
+    selectSpec: ( value?: string, directory?: string ) => string;
     specFromEnvironment: () => string;
-    loadSpec: (identity: string, directory?: string) => Promise<Loaded<C, L>>;
+    loadSpec: ( identity: string, directory?: string ) => Promise<Loaded<C, L>>;
 };
 
 const name = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-function entry(folder: string, part: string, directory: string): string {
+function entry ( folder: string, part: string, directory: string ): string {
+
     const path = resolve(folder, part, "index.ts");
 
-    if (!existsSync(path)) throw new Error(`${folder}/${part} must have an index.ts entry.`);
+    if ( !existsSync(path) ) throw new Error(`${folder}/${part} must have an index.ts entry.`);
 
     return guard(directory, path, "Spec path escapes specs");
+
 }
-async function definition(folder: string, part: string, directory: string): Promise<unknown> {
+async function definition ( folder: string, part: string, directory: string ): Promise<unknown> {
+
     return ((await import(pathToFileURL(entry(folder, part, directory)).href)) as { default: unknown }).default;
+
 }
-function brandIssues(folder: string, brandFolders: readonly string[]): void {
+function brandIssues ( folder: string, brandFolders: readonly string[] ): void {
+
     const path = resolve(folder, "brand");
     const unknown = (existsSync(path) ? entries(path) : [])
-        .filter((item) => !item.name.startsWith(".") && !(item.isDirectory() && brandFolders.includes(item.name)))
-        .map((item) => item.name);
+        .filter(( item ) => !item.name.startsWith(".") && !(item.isDirectory() && brandFolders.includes(item.name)))
+        .map(( item ) => item.name);
 
-    if (unknown.length) throw new Error(`brand/ holds only ${brandFolders.join(", ")}; found ${unknown.join(", ")}.`);
+    if ( unknown.length ) throw new Error(`brand/ holds only ${brandFolders.join(", ")}; found ${unknown.join(", ")}.`);
+
 }
-/**
- * The spec loader of one part: which specs are installed, which one the environment selects, and
- * a loaded spec validated by the part's own compiler.
- */
-export function createLoader<C, L extends string>(options: LoaderOptions<C, L>): Loader<C, L> {
+
+export function createLoader<C, L extends string> ( options: LoaderOptions<C, L> ): Loader<C, L> {
+
     const { root, variable, locales, brandFolders, catalogue, validate } = options;
     const specs = resolve(root, "specs");
     const features = resolve(root, "src", "features");
     const messages = resolve(root, "messages");
-    const installedSpecs = (directory = specs): string[] =>
-        directories(directory).filter((folder) =>
-            ["config", "schema"].some((part) => existsSync(resolve(directory, folder, part))),
+    const installedSpecs = ( directory = specs ): string[] =>
+        directories(directory).filter(( folder ) =>
+            ["config", "schema"].some(( part ) => existsSync(resolve(directory, folder, part))),
         );
-    const selectSpec = (value = "", directory = specs): string => {
+    const selectSpec = ( value = "", directory = specs ): string => {
+
         const asked = value.trim();
         const installed = installedSpecs(directory);
         const chosen = asked || installed[0];
 
-        if (asked && !name.test(asked)) throw new Error(`${variable} must use lowercase letters, numbers and hyphens.`);
-        if (!chosen || !installed.includes(chosen)) {
+        if ( asked && !name.test(asked) ) throw new Error(`${variable} must use lowercase letters, numbers and hyphens.`);
+
+        if ( !chosen || !installed.includes(chosen) ) {
+
             throw new Error(
                 `Unknown or missing spec "${chosen ?? ""}" in ${directory}. Installed: ${installed.join(", ") || "(none)"}.`,
             );
+
         }
 
         return chosen;
+
     };
-    const load = async (identity: string, folder: string, directory: string): Promise<Loaded<C, L>> => {
+    const load = async ( identity: string, folder: string, directory: string ): Promise<Loaded<C, L>> => {
+
         const [config, schema, facts] = await Promise.all([
             definition(folder, "config", directory),
             definition(folder, "schema", directory),
@@ -95,12 +105,14 @@ export function createLoader<C, L extends string>(options: LoaderOptions<C, L>):
             identity,
             folder,
         };
+
     };
 
     return {
         installedSpecs,
         selectSpec,
         specFromEnvironment: () => {
+
             const mode = process.env.NODE_ENV ?? "development";
             const candidates = [
                 `.env.${mode}.local`,
@@ -109,18 +121,28 @@ export function createLoader<C, L extends string>(options: LoaderOptions<C, L>):
                 ".env",
             ];
 
-            for (const candidate of candidates.map((file) => resolve(root, file))) {
-                if (existsSync(candidate)) process.loadEnvFile(candidate);
+            for ( const candidate of candidates.map(( file ) => resolve(root, file)) ) {
+
+                if ( existsSync(candidate) ) process.loadEnvFile(candidate);
+
             }
 
             return selectSpec(process.env[variable]);
+
         },
-        loadSpec: async (identity, directory = specs) => {
+        loadSpec: async ( identity, directory = specs ) => {
+
             try {
+
                 return await load(selectSpec(identity, directory), resolve(directory, identity), directory);
-            } catch (error) {
+
+            } catch ( error ) {
+
                 throw new Error(`Invalid spec ${identity}: ${failure(error)}`);
+
             }
+
         },
     };
+
 }

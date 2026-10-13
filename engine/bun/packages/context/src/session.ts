@@ -8,27 +8,25 @@ const savedShape = z.object({ token: z.string(), user: userShape });
 export type SessionUser = z.infer<typeof userShape>;
 export type Session = { token: string | null; user: SessionUser | null };
 export type SessionActions = {
-    start: (token: string, user: SessionUser) => void;
+    start: ( token: string, user: SessionUser ) => void;
     end: () => void;
 };
 export type SessionOptions = { name: string; store: Store };
 
-/**
- * The one session store web and mobile share: a token and its holder, persisted through any
- * storage and restored only when the saved value still has the expected shape.
- */
-export function defineSession({ name, store }: SessionOptions): Defined<Session, SessionActions> {
+export function defineSession ( { name, store }: SessionOptions ): Defined<Session, SessionActions> {
+
     return defineStore<Session, SessionActions>({
         name,
         initial: { token: null, user: null },
-        actions: (set) => ({
-            start: (token, user) => set({ token, user }),
+        actions: ( set ) => ({
+            start: ( token, user ) => set({ token, user }),
             end: () => set({ token: null, user: null }),
         }),
         persist: {
             store,
             keys: ["token", "user"],
-            parse: (value) => savedShape.safeParse(value).data,
+            parse: ( value ) => savedShape.safeParse(value).data,
         },
     });
+
 }

@@ -3,36 +3,38 @@ export type Taken = { allowed: boolean; remaining: number; retryAfterMs?: number
 
 type Bucket = { count: number; resetAt: number };
 
-/**
- * A fixed-window counter per key, in memory: `limit` takes per window, then refused with the
- * delay until the window turns; keys are forgotten once their window has passed.
- */
-export function rateLimiter(
+export function rateLimiter (
     { limit, windowMs }: Limit,
     clock: () => number = Date.now,
-): { take: (key: string) => Taken } {
+): { take: ( key: string ) => Taken } {
+
     const buckets = new Map<string, Bucket>();
     let sweep = 0;
 
     return {
-        take: (key) => {
+        take: ( key ) => {
+
             const now = clock();
 
-            if (now >= sweep) {
-                for (const [name, bucket] of buckets) if (bucket.resetAt <= now) buckets.delete(name);
+            if ( now >= sweep ) {
+
+                for ( const [name, bucket] of buckets ) if ( bucket.resetAt <= now ) buckets.delete(name);
 
                 sweep = now + windowMs;
+
             }
 
             const bucket = buckets.get(key);
             const current = bucket && bucket.resetAt > now ? bucket : { count: 0, resetAt: now + windowMs };
 
-            if (current.count >= limit) return { allowed: false, remaining: 0, retryAfterMs: current.resetAt - now };
+            if ( current.count >= limit ) return { allowed: false, remaining: 0, retryAfterMs: current.resetAt - now };
 
             current.count += 1;
             buckets.set(key, current);
 
             return { allowed: true, remaining: limit - current.count };
+
         },
     };
+
 }

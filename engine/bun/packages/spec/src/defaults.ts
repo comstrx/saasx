@@ -1,10 +1,6 @@
 export type ThemeName = "light" | "dark" | "system";
 export type Motion = "system" | "full" | "reduced";
 
-/**
- * The defaults every surface starts from; a surface adds its locale table and its own options, a
- * spec overrides any of them.
- */
 export const sharedSettingsDefaults: {
     motion: Motion;
     maintenance: boolean;

@@ -28,22 +28,22 @@ export type Watched = {
     screen: Screen;
     location: Position;
 };
-export type Watcher = <K extends keyof Watched>(fact: K, listener: (value: Watched[K]) => void) => () => void;
+export type Watcher = <K extends keyof Watched>( fact: K, listener: ( value: Watched[K] ) => void ) => () => void;
 export type Source = "camera" | "library";
 export type Picked = Blob | FileRef;
 export type Adapter = {
     info: () => Info;
-    state: (permission: Permission) => Promise<Grant> | Grant;
-    ask: (permission: Permission) => Promise<Grant>;
+    state: ( permission: Permission ) => Promise<Grant> | Grant;
+    ask: ( permission: Permission ) => Promise<Grant>;
     watch: Watcher;
-    open: (target: "settings" | `${string}:${string}`) => Promise<boolean>;
-    pick: (source: Source) => Promise<Picked | null>;
+    open: ( target: "settings" | `${string}:${string}` ) => Promise<boolean>;
+    pick: ( source: Source ) => Promise<Picked | null>;
     pushToken: () => Promise<string | null>;
     position: () => Promise<Position | null>;
 };
 export type Device = Adapter & {
-    require: (permission: Permission) => Promise<void>;
-    locate: (timeoutMs?: number) => Promise<Position>;
+    require: ( permission: Permission ) => Promise<void>;
+    locate: ( timeoutMs?: number ) => Promise<Position>;
 };
 
 const locateTimeout = 15000;
@@ -64,17 +64,11 @@ export const unknownInfo: Info = {
     reducedMotion: false,
 };
 
-/**
- * A device over an adapter; whatever the adapter leaves out answers honestly: unknown facts,
- * unsupported permissions, watchers that never fire, nothing picked, no push token. `require`
- * turns a refusal into a denied failure so a workflow can stop on it; `locate` is the adapter's
- * one-shot position when it answers, else the first position the watcher reports, and a timeout
- * failure when neither speaks in time.
- */
-export function createDevice(adapter: Partial<Adapter>): Device {
+export function createDevice ( adapter: Partial<Adapter> ): Device {
+
     const info = adapter.info ?? (() => unknownInfo);
     const state = adapter.state ?? (() => "unsupported" as const);
-    const ask = adapter.ask ?? (async (permission) => state(permission));
+    const ask = adapter.ask ?? (async ( permission ) => state(permission));
     const watch: Watcher = adapter.watch ?? (() => () => undefined);
     const open = adapter.open ?? (async () => false);
     const pick = adapter.pick ?? (async () => null);
@@ -90,35 +84,46 @@ export function createDevice(adapter: Partial<Adapter>): Device {
         pick,
         pushToken,
         position,
-        require: async (permission) => {
+        require: async ( permission ) => {
+
             const grant = await ask(permission);
 
-            if (grant !== "granted") throw new Failure("denied", { reason: `${permission}_${grant}` });
+            if ( grant !== "granted" ) throw new Failure("denied", { reason: `${permission}_${grant}` });
+
         },
-        locate: (timeoutMs = locateTimeout) =>
-            new Promise<Position>((resolve, reject) => {
+        locate: ( timeoutMs = locateTimeout ) =>
+            new Promise<Position>(( resolve, reject ) => {
+
                 let off: () => void = () => undefined;
                 let done = false;
-                const settle = (found: Position) => {
-                    if (done) return;
+                const settle = ( found: Position ) => {
+
+                    if ( done ) return;
 
                     done = true;
                     clearTimeout(timer);
                     off();
                     resolve(found);
+
                 };
                 const timer = setTimeout(() => {
-                    if (done) return;
+
+                    if ( done ) return;
 
                     done = true;
                     off();
                     reject(new Failure("timeout", { reason: "location_timeout" }));
+
                 }, timeoutMs);
 
-                void position().then((known) => {
-                    if (known) settle(known);
-                    else if (!done) off = watch("location", settle);
+                void position().then(( known ) => {
+
+                    if ( known ) settle(known);
+                    else if ( !done ) off = watch("location", settle);
+
                 });
+
             }),
     };
+
 }

@@ -7,7 +7,9 @@ const options = z.strictObject({ title: z.boolean() });
 const block = z.strictObject({ gap: z.number() });
 
 describe("schema shapes", () => {
+
     test("entities are known kinds and routes pick the right parameter", () => {
+
         expect(entityShape(entities).safeParse("product").success).toBe(true);
         expect(entityShape(entities).safeParse("order").success).toBe(false);
         expect(entityRoute(entities, { entity: "product", path: "/p/:productId" })).toEqual({
@@ -19,8 +21,10 @@ describe("schema shapes", () => {
             "slug",
         );
         expect(entityRoute(entities, { path: "/" })).toBeNull();
+
     });
     test("a surface's screen shape carries shared contents plus its extras", () => {
+
         const { schema } = screenShapes(options, block, entities, { description: z.string() });
         const parsed = schema.safeParse({
             screens: [
@@ -37,5 +41,7 @@ describe("schema shapes", () => {
             schema.safeParse({ screens: [{ contents: { name: "home", path: "/", title: "Home" }, blocks: [] }] })
                 .success,
         ).toBe(false);
+
     });
+
 });

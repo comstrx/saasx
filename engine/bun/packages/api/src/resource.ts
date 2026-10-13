@@ -45,6 +45,8 @@ export const resourceShapes = {
 export type Resource = keyof typeof resourceShapes;
 export type Resources = { [R in Resource]: z.output<(typeof resourceShapes)[R]> };
 
-export function parseResource(resource: Resource, value: unknown): Resources[Resource] {
+export function parseResource ( resource: Resource, value: unknown ): Resources[Resource] {
+
     return resourceShapes[resource].parse(value);
+
 }

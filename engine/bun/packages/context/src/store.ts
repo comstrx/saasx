@@ -2,14 +2,14 @@ import type { Store as Persistence } from "@engine/storage";
 import { typed } from "@engine/storage";
 import { createStore as createZustand, type StoreApi } from "zustand/vanilla";
 
-export type Setter<S> = (patch: Partial<S> | ((state: S) => Partial<S>)) => void;
+export type Setter<S> = ( patch: Partial<S> | (( state: S ) => Partial<S>) ) => void;
 export type Getter<S> = () => S;
-export type Actions<S, A> = (set: Setter<S>, get: Getter<S>) => A;
+export type Actions<S, A> = ( set: Setter<S>, get: Getter<S> ) => A;
 export type Persist<S> = {
     store: Persistence;
     keys?: readonly (keyof S & string)[] | undefined;
     version?: number | undefined;
-    parse?: ((saved: unknown) => Partial<S> | undefined) | undefined;
+    parse?: (( saved: unknown ) => Partial<S> | undefined) | undefined;
 };
 export type Definition<S extends object, A extends object> = {
     name: string;
@@ -30,35 +30,40 @@ export type Defined<S extends object, A extends object> = {
 
 type Saved<S> = { version: number; state: Partial<S> };
 
-function pick<S extends object>(state: S, keys: readonly string[]): Partial<S> {
-    return Object.fromEntries(keys.map((key) => [key, state[key as keyof S]])) as Partial<S>;
+function pick<S extends object> ( state: S, keys: readonly string[] ): Partial<S> {
+
+    return Object.fromEntries(keys.map(( key ) => [key, state[key as keyof S]])) as Partial<S>;
+
 }
-/**
- * A store defined once and instantiated per host: plain state, actions over `set/get`, optional
- * persistence of chosen keys through any storage (checked by `parse` on the way back in), and a
- * `ready` flag that turns on after hydration.
- */
-export function defineStore<S extends object, A extends object>(definition: Definition<S, A>): Defined<S, A> {
+
+export function defineStore<S extends object, A extends object> ( definition: Definition<S, A> ): Defined<S, A> {
+
     const { name, initial, actions, persist } = definition;
     const version = persist?.version ?? 1;
 
     return {
         name,
         create: () => {
-            const store = createZustand<State<S, A>>((set, get) => {
-                const setter: Setter<S> = (patch) => {
-                    set((state) => (typeof patch === "function" ? patch(state) : patch) as Partial<State<S, A>>);
+
+            const store = createZustand<State<S, A>>(( set, get ) => {
+
+                const setter: Setter<S> = ( patch ) => {
+
+                    set(( state ) => (typeof patch === "function" ? patch(state) : patch) as Partial<State<S, A>>);
+
                 };
                 const getter: Getter<S> = () => get();
 
                 return { ...initial, ready: !persist, ...actions(setter, getter) };
+
             });
             const saved = persist ? typed<Saved<S>>(persist.store) : undefined;
             const keys = persist?.keys ?? Object.keys(initial);
             let writing = false;
             let queued: Saved<S> | undefined;
             const flush = (): void => {
-                if (writing || !queued || !saved) return;
+
+                if ( writing || !queued || !saved ) return;
 
                 const next = queued;
 
@@ -68,37 +73,52 @@ export function defineStore<S extends object, A extends object>(definition: Defi
                     .write(name, next)
                     .catch(() => undefined)
                     .finally(() => {
+
                         writing = false;
                         flush();
+
                     });
+
             };
 
-            if (saved) {
-                store.subscribe((state) => {
-                    if (!state.ready) return;
+            if ( saved ) {
+
+                store.subscribe(( state ) => {
+
+                    if ( !state.ready ) return;
 
                     queued = { version, state: pick(state, keys) };
                     flush();
+
                 });
+
             }
 
             return Object.assign(store, {
                 hydrate: async () => {
-                    if (persist && saved) {
+
+                    if ( persist && saved ) {
+
                         const found = await saved.read(name).catch(() => undefined);
 
                         const state = found && found.version === version ? found.state : undefined;
                         const accepted = state && persist.parse ? persist.parse(state) : state;
 
-                        if (accepted) store.setState(accepted as Partial<State<S, A>>);
+                        if ( accepted ) store.setState(accepted as Partial<State<S, A>>);
+
                     }
 
                     store.setState({ ready: true } as Partial<State<S, A>>);
+
                 },
                 reset: () => {
+
                     store.setState({ ...initial, ready: true } as Partial<State<S, A>>);
+
                 },
             });
+
         },
     };
+
 }

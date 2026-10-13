@@ -31,7 +31,7 @@ const core = {
     response: { success: { path: "status", equals: true } },
 };
 const { api, contract } = resolveApi(endpoints, input, {}, seeds, core);
-const rows = Array.from({ length: 50 }, (_, index) => ({ id: index, title: `Item ${index}`, price: "10.00" }));
+const rows = Array.from({ length: 50 }, ( _, index ) => ({ id: index, title: `Item ${index}`, price: "10.00" }));
 const body = JSON.stringify({
     status: true,
     code: "ok",

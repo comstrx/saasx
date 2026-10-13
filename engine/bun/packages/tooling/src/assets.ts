@@ -4,37 +4,41 @@ import { compare, walk } from "./core.ts";
 
 export type Files = Map<string, Uint8Array>;
 export type AssetFolder = { path: string; brand: string };
-export type Skip = (name: string, base: string, publicFiles: boolean) => boolean;
+export type Skip = ( name: string, base: string, publicFiles: boolean ) => boolean;
 
-/**
- * Every file under a folder (symlinks refused), minus what `skip` hides.
- */
-export function assetFiles(folder: string, skip: Skip, publicFiles = false): Files {
+export function assetFiles ( folder: string, skip: Skip, publicFiles = false ): Files {
+
     const files: Files = new Map();
 
-    if (!existsSync(folder)) return files;
+    if ( !existsSync(folder) ) return files;
 
-    for (const { entry, path, name } of walk(folder, (_, item) =>
+    for (const { entry, path, name } of walk(folder, ( _, item ) =>
         skip(item, item.slice(item.lastIndexOf("/") + 1), publicFiles),
     )) {
-        if (entry.isSymbolicLink()) throw new Error(`Asset symlinks are not supported: ${path}`);
-        if (entry.isFile()) files.set(name, readFileSync(path));
+
+        if ( entry.isSymbolicLink() ) throw new Error(`Asset symlinks are not supported: ${path}`);
+
+        if ( entry.isFile() ) files.set(name, readFileSync(path));
+
     }
 
     return files;
+
 }
-/**
- * The part's shared assets overlaid by a brand's own, folder by folder, in a stable order.
- */
-export function composeAssets(folders: readonly AssetFolder[], shared: string, brand: string, skip: Skip): Files {
-    const assets = folders.flatMap((folder) => {
+
+export function composeAssets ( folders: readonly AssetFolder[], shared: string, brand: string, skip: Skip ): Files {
+
+    const assets = folders.flatMap(( folder ) => {
+
         const files = new Map([
             ...assetFiles(resolve(shared, folder.path), skip),
             ...assetFiles(resolve(brand, folder.brand), skip),
         ]);
 
-        return [...files].map(([name, bytes]): [string, Uint8Array] => [`${folder.path}/${name}`, bytes]);
+        return [...files].map(( [name, bytes] ): [string, Uint8Array] => [`${folder.path}/${name}`, bytes]);
+
     });
 
-    return new Map(assets.sort(([a], [b]) => compare(a, b)));
+    return new Map(assets.sort(( [a], [b] ) => compare(a, b)));
+
 }

@@ -39,12 +39,14 @@ type Define = <const S extends Shape, const O extends z.ZodType | Many>(
 
 const facts = new WeakMap<object, Facts>();
 
-function route(method: Method): Define {
-    return (path, input, output, wire = {}) => {
-        const schema = (input instanceof z.ZodObject ? input : z.strictObject(input)) as Strict<typeof input>;
-        const missing = templateKeys(path).filter((key) => !Object.hasOwn(schema.shape, key));
+function route ( method: Method ): Define {
 
-        if (missing.length) throw new Error(`${method} ${path}: path parameters need inputs: ${missing.join(", ")}`);
+    return ( path, input, output, wire = {} ) => {
+
+        const schema = (input instanceof z.ZodObject ? input : z.strictObject(input)) as Strict<typeof input>;
+        const missing = templateKeys(path).filter(( key ) => !Object.hasOwn(schema.shape, key));
+
+        if ( missing.length ) throw new Error(`${method} ${path}: path parameters need inputs: ${missing.join(", ")}`);
 
         return {
             method,
@@ -55,7 +57,9 @@ function route(method: Method): Define {
             output: ("many" in output ? output.many : output) as Item<typeof output>,
             many: ("many" in output) as typeof output extends Many ? true : false,
         };
+
     };
+
 }
 export const get: Define = route("GET");
 export const post: Define = route("POST");
@@ -63,16 +67,16 @@ export const put: Define = route("PUT");
 export const patch: Define = route("PATCH");
 export const del: Define = route("DELETE");
 
-export function many<T extends z.ZodType>(item: T): Many<T> {
+export function many<T extends z.ZodType> ( item: T ): Many<T> {
+
     return { many: item };
+
 }
-/**
- * A group of operations sharing one wire layer and the facts the compiler reads: the permissions a
- * caller needs and the features whose rows its writes touch.
- */
-export function feature<const T extends Record<string, Endpoint>>(defaults: Layer & Partial<Facts>, endpoints: T): T {
+
+export function feature<const T extends Record<string, Endpoint>> ( defaults: Layer & Partial<Facts>, endpoints: T ): T {
+
     const { permissions = [], touches = [], ...layer } = defaults;
-    const declared = mapValues(endpoints, (endpoint) => ({
+    const declared = mapValues(endpoints, ( endpoint ) => ({
         ...endpoint,
         wire: merge(layer, endpoint.wire),
         permissions: [...new Set([...permissions, ...endpoint.permissions])],
@@ -81,14 +85,16 @@ export function feature<const T extends Record<string, Endpoint>>(defaults: Laye
     facts.set(declared, { permissions, touches });
 
     return declared;
+
 }
-export function factsOf(endpoints: object): Facts {
+export function factsOf ( endpoints: object ): Facts {
+
     return facts.get(endpoints) ?? { permissions: [], touches: [] };
+
 }
-/**
- * A site document read: a GET whose answer falls back to the spec's own value when the backend is off or silent.
- */
-export function document<R extends Resource>(resource: R, path?: string, wire: Layer = {}) {
+
+export function document<R extends Resource> ( resource: R, path?: string, wire: Layer = {} ) {
+
     return {
         read: {
             ...get(path ?? "/", {}, resourceShapes[resource], {
@@ -100,11 +106,11 @@ export function document<R extends Resource>(resource: R, path?: string, wire: L
             local: resource,
         },
     };
+
 }
-/**
- * An operation that needs permissions of its own beyond its group's: the holder must carry every
- * one of them, and a surface hides or disables the action otherwise.
- */
-export function need<E extends Endpoint>(permissions: readonly string[], endpoint: E): E {
+
+export function need<E extends Endpoint> ( permissions: readonly string[], endpoint: E ): E {
+
     return { ...endpoint, permissions: [...new Set([...endpoint.permissions, ...permissions])] };
+
 }

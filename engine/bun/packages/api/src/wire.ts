@@ -36,12 +36,12 @@ export const personalHeaders: readonly HeaderKey[] = ["client", "auth", "request
 export const name = z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]*$/);
 export const url = z
     .string()
-    .refine((value) => isEndpoint(value))
+    .refine(( value ) => isEndpoint(value))
     .nullable();
 const field = z
     .string()
     .regex(/^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/)
-    .refine((value) => value.split(".").every(safeKey));
+    .refine(( value ) => value.split(".").every(safeKey));
 const path = z.string().regex(new RegExp(`^/${segment}(?:/${segment})*/?$|^/$`));
 const scalar = z.union([z.string().max(2048), z.number().finite(), z.boolean()]);
 const source = field.or(z.literal("$"));
@@ -49,11 +49,11 @@ const wireName = field.or(z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*(?:\[[a-zA-Z0
 const target = z
     .string()
     .regex(/^(?:query:|body:)?[^:]+$/)
-    .refine((value) => wireName.safeParse(value.replace(/^(?:query|body):/, "")).success);
+    .refine(( value ) => wireName.safeParse(value.replace(/^(?:query|body):/, "")).success);
 const headerName = z
     .string()
     .regex(/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/)
-    .refine((value) => !forbidden.includes(value.toLowerCase()));
+    .refine(( value ) => !forbidden.includes(value.toLowerCase()));
 const header = z.strictObject({
     name: headerName,
     prefix: z
@@ -137,28 +137,37 @@ export type Contract = z.output<typeof contractShape>;
 
 export { methods };
 
-function nested<T extends object>(base: T | null | undefined, patch: T | null | undefined): T | null | undefined {
+function nested<T extends object> ( base: T | null | undefined, patch: T | null | undefined ): T | null | undefined {
+
     return patch === undefined ? base : patch === null ? null : ({ ...base, ...compact(patch) } as T);
+
 }
-export function merge(base: Layer, patch: Layer): Layer {
+export function merge ( base: Layer, patch: Layer ): Layer {
+
     const layer: Layer = { ...base, ...compact(patch) };
 
-    if (base.request || patch.request) {
+    if ( base.request || patch.request ) {
+
         layer.request = {
             ...base.request,
             ...compact(patch.request),
             headers: { ...base.request?.headers, ...patch.request?.headers },
             fields: { ...base.request?.fields, ...patch.request?.fields },
         };
+
     }
-    if (base.response || patch.response) {
+
+    if ( base.response || patch.response ) {
+
         layer.response = {
             ...base.response,
             ...compact(patch.response),
             fields: { ...base.response?.fields, ...patch.response?.fields },
             pagination: nested(base.response?.pagination, patch.response?.pagination),
         };
+
     }
 
     return layer;
+
 }

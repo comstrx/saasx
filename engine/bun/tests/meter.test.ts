@@ -3,7 +3,9 @@ import { createMeter } from "@engine/api";
 import { Failure } from "@engine/error";
 
 describe("meter", () => {
+
     test("counts calls, failures and time per operation and empties on flush", () => {
+
         const meter = createMeter();
 
         meter.record({ call: "products.list", ms: 120 });
@@ -14,5 +16,7 @@ describe("meter", () => {
             { call: "products.save", count: 1, failures: 1, ms: 300, max: 300 },
         ]);
         expect(meter.flush()).toEqual([]);
+
     });
+
 });

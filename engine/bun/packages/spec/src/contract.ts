@@ -40,35 +40,41 @@ export const themeInputShape = z
     .default({});
 export const contractOverrides = { request: overridesShape.shape.request, response: overridesShape.shape.response };
 
-/**
- * A brand image path under one root with the surface's accepted formats.
- */
-export function brandImage(root: string, formats: readonly string[]): z.ZodString {
+export function brandImage ( root: string, formats: readonly string[] ): z.ZodString {
+
     return z.string().regex(new RegExp(`^${root}/[a-zA-Z0-9/_-]+\\.(?:${formats.join("|")})$`));
+
 }
-export function fontFace(formats: readonly string[], weight: RegExp) {
+export function fontFace ( formats: readonly string[], weight: RegExp ) {
+
     const file = z.string().regex(new RegExp(`^[a-zA-Z0-9_-]+\\.(?:${formats.join("|")})$`));
 
     return z.strictObject({ file, weight: z.string().regex(weight) });
+
 }
-export function fontsShape<L extends z.ZodEnum>(locale: L, face: ReturnType<typeof fontFace>) {
+export function fontsShape<L extends z.ZodEnum> ( locale: L, face: ReturnType<typeof fontFace> ) {
+
     return z.partialRecord(locale, z.array(face).min(1).max(10));
+
 }
-export function contentShape(image: z.ZodString) {
+export function contentShape ( image: z.ZodString ) {
+
     return resourceShapes.content.extend({
         url: siteUrl.nullable().default(null),
         logo: image.nullable().default(null),
         logo_dark: image.nullable().default(null),
         icon: image.nullable().default(null),
     });
+
 }
-export function choice<T extends Shape>(value: T) {
+export function choice<T extends Shape> ( value: T ) {
+
     return z.strictObject({ default: value, enabled: z.array(value).min(1) });
+
 }
-/**
- * The settings every surface shares; a surface spreads these into its own strict settings object.
- */
-export function baseSettings<L extends z.ZodEnum, F extends Shape>(locale: L, fonts: F) {
+
+export function baseSettings<L extends z.ZodEnum, F extends Shape> ( locale: L, fonts: F ) {
+
     return {
         locale: choice(locale).extend({ timeZone: text.refine(isTimeZone, "Unknown time zone.") }),
         currency: choice(currency),
@@ -79,10 +85,9 @@ export function baseSettings<L extends z.ZodEnum, F extends Shape>(locale: L, fo
         fonts,
         mediaOrigins: z.array(siteUrl).max(20),
     };
+
 }
-/**
- * The connection options a spec may set beside the trimmed connection shape of its surface.
- */
+
 export const backendOptionFields = {
     prefix: prefixShape.default(""),
     insecure: z.boolean().default(false),
@@ -90,32 +95,32 @@ export const backendOptionFields = {
     encoding: overridesShape.shape.encoding,
     cache: overridesShape.shape.cache,
 };
-/**
- * The input form of a settings object: every record one level partial, everything optional except
- * the names a surface requires.
- */
-export function settingsInput<S extends z.ZodObject>(settings: S, required: readonly string[] = []) {
+
+export function settingsInput<S extends z.ZodObject> ( settings: S, required: readonly string[] = [] ) {
+
     const shape = settings.shape as Shapes;
     const loosened = Object.fromEntries(
-        Object.entries(shape).map(([name, value]) => {
-            if (required.includes(name)) return [name, value];
+        Object.entries(shape).map(( [name, value] ) => {
+
+            if ( required.includes(name) ) return [name, value];
 
             return [name, fluent(value instanceof z.ZodObject ? fluent(value).partial() : value).optional()];
+
         }),
     );
     const input = z.strictObject(loosened);
 
     return required.length ? input : input.default({});
+
 }
-/**
- * The compiled config and its input form, assembled from a surface's content, settings and contracts.
- */
-export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I extends Shape, B extends z.ZodObject>(
+
+export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I extends Shape, B extends z.ZodObject> (
     content: C,
     settings: S,
     settingsIn: I,
     contracts: B,
 ) {
+
     const seo = (content.shape as Shapes).seo;
     const seoIn =
         seo instanceof z.ZodDefault
@@ -142,4 +147,5 @@ export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I ext
             features: overridesShape.shape.features,
         }),
     };
+
 }

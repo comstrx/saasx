@@ -2,7 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { backendOf, transportIssues } from "@engine/spec";
 
 describe("backend plan", () => {
+
     test("a backend plan derives addresses from the urls and keeps surface options on the connection", () => {
+
         const plan = backendOf(
             "site",
             {
@@ -31,12 +33,16 @@ describe("backend plan", () => {
             backendOf("app", { urls: { production: null, local: null }, options: { prefix: "" } }, "USD").api
                 .connections.primary,
         ).toEqual({ baseUrl: null, development: { baseUrl: null, browserBaseUrl: null } });
+
     });
+
 });
 describe("insecure transports", () => {
+
     const plain = { urls: { production: "http://a.test", local: "http://l.test" }, options: { prefix: "" } };
 
     test("a cleartext production or realtime address is refused unless the contracts say insecure", () => {
+
         expect(transportIssues(plain).join("\n")).toContain("insecure");
         expect(transportIssues({ ...plain, options: { prefix: "", insecure: true } })).toEqual([]);
         expect(transportIssues({ ...plain, urls: { production: "https://a.test", local: "http://l.test" } })).toEqual(
@@ -57,12 +63,16 @@ describe("insecure transports", () => {
                 options: { prefix: "" },
             }),
         ).toEqual([]);
+
     });
     test("the backend plan carries insecure apart from the connection", () => {
+
         const plan = backendOf("app", { ...plain, options: { prefix: "", insecure: true } }, "USD");
 
         expect(plan.insecure).toBe(true);
         expect(plan.api.connections.primary).not.toHaveProperty("insecure");
         expect(backendOf("app", plain, "USD").insecure).toBe(false);
+
     });
+
 });

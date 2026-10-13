@@ -14,42 +14,43 @@ export type NativeTokens = {
     type: Record<string, Face>;
 };
 
-const rem = (px: number): string => (px === 0 ? "0" : `${px / 16}rem`);
+const rem = ( px: number ): string => (px === 0 ? "0" : `${px / 16}rem`);
 
-export function defineTokens(input: Tokens): Tokens {
+export function defineTokens ( input: Tokens ): Tokens {
+
     return {
         colors: { light: { ...input.colors.light }, dark: { ...input.colors.dark } },
         space: { ...input.space },
         radius: { ...input.radius },
         type: { ...input.type },
     };
+
 }
-/**
- * One scheme's tokens as CSS custom properties under a selector: colors by name, space as
- * `--gap-*` in rem, radius as `--radius-*`, type as `--type-*-size|line|weight`.
- */
-export function cssVariables(tokens: Tokens, scheme: Scheme, selector: string): string {
+
+export function cssVariables ( tokens: Tokens, scheme: Scheme, selector: string ): string {
+
     const lines = [
-        ...Object.entries(tokens.colors[scheme]).map(([name, value]) => `--${name}: ${value};`),
-        ...Object.entries(tokens.space).map(([step, px]) => `--gap-${step}: ${rem(px)};`),
-        ...Object.entries(tokens.radius).map(([name, px]) => `--radius-${name}: ${px >= 9999 ? "999rem" : rem(px)};`),
-        ...Object.entries(tokens.type).flatMap(([name, face]) => [
+        ...Object.entries(tokens.colors[scheme]).map(( [name, value] ) => `--${name}: ${value};`),
+        ...Object.entries(tokens.space).map(( [step, px] ) => `--gap-${step}: ${rem(px)};`),
+        ...Object.entries(tokens.radius).map(( [name, px] ) => `--radius-${name}: ${px >= 9999 ? "999rem" : rem(px)};`),
+        ...Object.entries(tokens.type).flatMap(( [name, face] ) => [
             `--type-${name}-size: ${rem(face.size)};`,
             `--type-${name}-line: ${rem(face.line)};`,
             `--type-${name}-weight: ${face.weight};`,
         ]),
     ];
 
-    return `${selector} {\n${lines.map((line) => `    ${line}`).join("\n")}\n}`;
+    return `${selector} {\n${lines.map(( line ) => `    ${line}`).join("\n")}\n}`;
+
 }
-/**
- * One scheme's tokens as the plain numbers a native style sheet takes.
- */
-export function nativeTokens(tokens: Tokens, scheme: Scheme): NativeTokens {
+
+export function nativeTokens ( tokens: Tokens, scheme: Scheme ): NativeTokens {
+
     return {
         colors: tokens.colors[scheme],
         space: { ...tokens.space },
         radius: tokens.radius,
         type: tokens.type,
     };
+
 }

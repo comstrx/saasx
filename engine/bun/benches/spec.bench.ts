@@ -17,7 +17,7 @@ const features = {
 };
 const block = {
     options: {},
-    features: Array.from({ length: 20 }, (_, index) => ({
+    features: Array.from({ length: 20 }, ( _, index ) => ({
         name: "cards",
         heading: index === 0,
         options: { title: { key: "nav.home" } },
@@ -25,7 +25,7 @@ const block = {
     })),
     blocks: [],
 };
-const screens = Array.from({ length: 200 }, (_, index) => ({
+const screens = Array.from({ length: 200 }, ( _, index ) => ({
     name: `s${index}`,
     path: index % 2 ? `/items/${index}/:id` : `/items/${index}`,
 }));
@@ -39,6 +39,7 @@ const tree = {
 const messages = { nav: { home: "Home" } };
 
 bench("compileBlock: 20 features with read ports", () => {
+
     const walk = createWalk({
         params: [],
         client: true,
@@ -51,6 +52,7 @@ bench("compileBlock: 20 features with read ports", () => {
     });
 
     do_not_optimize(compileBlock(block, walk, "home.blocks[0]"));
+
 });
 bench("matchScreen over 200 screens (last, parameterised)", () =>
     do_not_optimize(matchScreen(screens, ["items", "199", "7"])),

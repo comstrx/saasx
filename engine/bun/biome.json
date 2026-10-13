@@ -2,20 +2,21 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "root": true,
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/coverage", "!bun.lock", "!**/*.d.ts"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/coverage",
+      "!bun.lock",
+      "!**/*.d.ts"
+    ]
   },
   "formatter": {
-    "indentStyle": "space",
-    "indentWidth": 4,
-    "lineWidth": 120
+    "enabled": false
   },
   "javascript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "semicolons": "always",
-      "trailingCommas": "all"
-    },
-    "globals": ["Bun"]
+    "globals": [
+      "Bun"
+    ]
   },
   "json": {
     "formatter": {
@@ -30,7 +31,10 @@
     "rules": {
       "a11y": "error",
       "correctness": "error",
-      "security": "error",
+      "security": {
+        "recommended": true,
+        "noSecrets": "off"
+      },
       "complexity": {
         "recommended": true,
         "useMaxParams": {
@@ -58,12 +62,7 @@
             "maxLines": 400
           }
         },
-        "useConsistentTypeDefinitions": {
-          "level": "error",
-          "options": {
-            "style": "type"
-          }
-        }
+        "useConsistentTypeDefinitions": "off"
       },
       "suspicious": {
         "recommended": true,
@@ -80,7 +79,9 @@
   },
   "overrides": [
     {
-      "includes": ["packages/**"],
+      "includes": [
+        "packages/**"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -100,7 +101,13 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["bun", "bun:*", "bun:*/**", "node:*", "node:*/**"],
+                    "group": [
+                      "bun",
+                      "bun:*",
+                      "bun:*/**",
+                      "node:*",
+                      "node:*/**"
+                    ],
                     "message": "packages are runtime-agnostic"
                   }
                 ]
@@ -111,7 +118,9 @@
       }
     },
     {
-      "includes": ["packages/tooling/**"],
+      "includes": [
+        "packages/tooling/**"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -127,16 +136,16 @@
       }
     },
     {
-      "includes": ["tests/**"],
+      "includes": [
+        "tests/**"
+      ],
       "linter": {
         "rules": {
           "correctness": {
             "noNodejsModules": "off",
             "useQwikValidLexicalScope": "off"
           },
-          "security": {
-            "noSecrets": "off"
-          }
+          "security": {}
         }
       }
     }

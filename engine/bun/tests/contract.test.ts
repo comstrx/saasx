@@ -21,19 +21,25 @@ const settings = z.strictObject({
 });
 
 describe("contract", () => {
+
     test("brand images and fonts follow the surface's roots and formats", () => {
+
         expect(image.safeParse("/assets/images/brand/logo.webp").success).toBe(true);
         expect(image.safeParse("/images/logo.webp").success).toBe(false);
         expect(fontFace(["ttf"], /^[1-9]00$/).safeParse({ file: "a.woff2", weight: "400" }).success).toBe(false);
+
     });
     test("settings input loosens records one level and keeps required names", () => {
+
         const loose = settingsInput(settings, ["app"]);
 
         expect(loose.safeParse({ app: { slug: "x" }, locale: { default: "ar" } }).success).toBe(true);
         expect(loose.safeParse({ locale: { default: "ar" } }).success).toBe(false);
         expect(settingsInput(z.strictObject({ ...baseSettings(locale, z.object({})) })).parse(undefined)).toEqual({});
+
     });
     test("config shapes assemble and the backend options drop derived addresses", () => {
+
         const { configInputShape } = configShapes(
             contentShape(image),
             settings,
@@ -44,10 +50,13 @@ describe("contract", () => {
 
         expect(parsed.contracts).toBeNull();
         expect(parsed.themes).toEqual({});
+
         const options = connectionShape.omit({ baseUrl: true, development: true }).extend(backendOptionFields);
 
         expect(Object.keys(options.shape)).toContain("prefix");
         expect(Object.keys(options.shape)).not.toContain("baseUrl");
         expect(sharedSettingsDefaults.theme.default).toBe("system");
+
     });
+
 });

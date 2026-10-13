@@ -22,7 +22,7 @@ const input = {
     connections: { primary: { baseUrl: "https://api.shop.test/v1" } },
 };
 const { api, contract } = resolveApi(endpoints, input, {}, seeds);
-const rows = Array.from({ length: 50 }, (_, index) => ({ id: index, title: `Item ${index}` }));
+const rows = Array.from({ length: 50 }, ( _, index ) => ({ id: index, title: `Item ${index}` }));
 const body = JSON.stringify({
     status: true,
     data: rows,
@@ -47,14 +47,14 @@ const features = {
 };
 const block = {
     options: {},
-    features: Array.from({ length: 20 }, (_, index) => ({
+    features: Array.from({ length: 20 }, ( _, index ) => ({
         name: "cards",
         heading: index === 0,
         ports: { items: { read: "products.list", input: { limit: 12 } } },
     })),
     blocks: [],
 };
-const screens = Array.from({ length: 200 }, (_, index) => ({
+const screens = Array.from({ length: 200 }, ( _, index ) => ({
     name: `s${index}`,
     path: index % 2 ? `/items/${index}/:id` : `/items/${index}`,
 }));
@@ -65,26 +65,36 @@ const tree = {
     })),
 };
 
-async function median(work: () => unknown | Promise<unknown>, rounds = 40): Promise<number> {
+async function median ( work: () => unknown | Promise<unknown>, rounds = 40 ): Promise<number> {
+
     const samples: number[] = [];
 
-    for (let index = 0; index < rounds; index += 1) {
+    for ( let index = 0; index < rounds; index += 1 ) {
+
         const started = performance.now();
 
         await work();
         samples.push(performance.now() - started);
+
     }
 
-    return samples.sort((a, b) => a - b)[Math.floor(rounds / 2)] ?? 0;
+    return samples.sort(( a, b ) => a - b)[Math.floor(rounds / 2)] ?? 0;
+
 }
 describe("performance budgets (median of 40, generous ceilings so only a regression trips them)", () => {
+
     test("resolving a catalogue stays under 2 ms", async () => {
+
         expect(await median(() => resolveApi(endpoints, input, {}, seeds))).toBeLessThan(2);
+
     });
     test("a client round trip decoding 50 rows stays under 2 ms", async () => {
+
         expect(await median(() => client.products.list({ limit: 50 }))).toBeLessThan(2);
+
     });
     test("compiling a block of 20 bound features stays under 2 ms", async () => {
+
         expect(
             await median(() =>
                 compileBlock(
@@ -103,9 +113,13 @@ describe("performance budgets (median of 40, generous ceilings so only a regress
                 ),
             ),
         ).toBeLessThan(2);
+
     });
     test("matching the last of 200 screens stays under 1 ms and localizing 50 blocks under 3 ms", async () => {
+
         expect(await median(() => matchScreen(screens, ["items", "199", "7"]))).toBeLessThan(1);
         expect(await median(() => localizeTree(tree, { nav: { home: "Home" } }, "en"))).toBeLessThan(3);
+
     });
+
 });

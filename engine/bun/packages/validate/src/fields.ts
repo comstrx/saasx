@@ -6,7 +6,7 @@ export const id: z.ZodNumber = z.number().int().positive();
 export const key: z.ZodString = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 export const word: z.ZodString = z.string().regex(/^[a-z][a-zA-Z0-9]*$/);
 export const slug: z.ZodString = z.string().regex(/^[a-z0-9][a-z0-9-]*$/);
-export const text: z.ZodString = z.string().refine((value) => value.trim().length > 0, "Expected non-empty text.");
+export const text: z.ZodString = z.string().refine(( value ) => value.trim().length > 0, "Expected non-empty text.");
 export const optionalText = z.string().nullish();
 export const flag = z.boolean().nullish();
 export const count = z.number().int().nonnegative().nullish();
@@ -23,11 +23,11 @@ export const path: z.ZodString = z.string().regex(/^\/(?:[\p{L}\p{N}_:-]+(?:\/[\
 export const isoDate: z.ZodISODateTime = z.iso.datetime({ offset: true });
 export const money: z.ZodString = z.string().regex(/^-?\d+(?:\.\d{1,6})?$/);
 export const ack = z.object({}).passthrough();
-/**
- * A text given once per language: `{ en: "...", ar: "..." }`, each at least `min` characters.
- */
-export function localized(min = 1) {
+
+export function localized ( min = 1 ) {
+
     return z.record(language, z.string().min(min)).meta({ kind: "localized" });
+
 }
 export const list = {
     page: z.number().int().positive().optional(),

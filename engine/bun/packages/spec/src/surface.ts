@@ -95,8 +95,8 @@ export type Surface<
     schemaShape: z.ZodType<{ screens: S[] }>;
     settingsDefaults: Patch;
     themeDefaults: Theme;
-    backend: (identity: string, contracts: NonNullable<I["contracts"]>, currency: string) => Backend;
-    walk: (screen: S, options: Record<string, unknown>, config: C) => { client: boolean; session: boolean };
+    backend: ( identity: string, contracts: NonNullable<I["contracts"]>, currency: string ) => Backend;
+    walk: ( screen: S, options: Record<string, unknown>, config: C ) => { client: boolean; session: boolean };
     screen: (
         screen: S,
         options: Record<string, unknown>,
@@ -104,8 +104,8 @@ export type Surface<
         compiled: Compiledscreen<B>,
         issues: string[],
     ) => O;
-    screenIssues?: ((screens: readonly S[]) => string[]) | undefined;
-    featureIssues?: ((features: Features) => string[]) | undefined;
+    screenIssues?: (( screens: readonly S[] ) => string[]) | undefined;
+    featureIssues?: (( features: Features ) => string[]) | undefined;
     schema: (
         screens: O[],
         facts: { features: string[]; operations: string[] },
@@ -121,12 +121,8 @@ export type SurfaceInput = {
     catalogue: Catalogue;
 };
 
-/**
- * The backend plan of a spec's contracts: the request context, the primary connection with its
- * development addresses, and the wire overrides. Options the surface adds beyond the shared ones
- * ride along as connection fields.
- */
-export function backendOf(identity: string, contracts: ContractsInput, currency: string): Backend {
+export function backendOf ( identity: string, contracts: ContractsInput, currency: string ): Backend {
+
     const {
         prefix,
         execution,
@@ -159,27 +155,23 @@ export function backendOf(identity: string, contracts: ContractsInput, currency:
         development,
         insecure,
     };
+
 }
 const cleartext = /^(?:http|ws):\/\//i;
 
-/**
- * The transports a spec may not use in production without saying so: a cleartext backend or
- * realtime address passes only when the contracts set `options.insecure`. Local addresses are
- * development's own and always pass.
- */
-export function transportIssues(contracts: ContractsInput): string[] {
-    if (contracts.options.insecure === true) return [];
+export function transportIssues ( contracts: ContractsInput ): string[] {
+
+    if ( contracts.options.insecure === true ) return [];
 
     const found = [
         ...(contracts.urls.production && cleartext.test(contracts.urls.production) ? ["urls.production"] : []),
         ...(contracts.realtime?.url && cleartext.test(contracts.realtime.url) ? ["realtime.url"] : []),
     ];
 
-    return found.map((where) => `contracts.${where}: a cleartext address in production needs options.insecure: true.`);
+    return found.map(( where ) => `contracts.${where}: a cleartext address in production needs options.insecure: true.`);
+
 }
-/**
- * The compiled form every surface's screen shares; a surface spreads its own fields over it.
- */
+
 export type CompiledShape<S extends ScreenInputBase<object>, O, B extends object> = S["contents"] & {
     options: O;
     access: Access;
@@ -189,11 +181,12 @@ export type CompiledShape<S extends ScreenInputBase<object>, O, B extends object
     operations: string[];
 };
 
-export function compiledScreen<S extends ScreenInputBase<B>, O, B extends object>(
+export function compiledScreen<S extends ScreenInputBase<B>, O, B extends object> (
     screen: S,
     options: O,
     compiled: Compiledscreen<B>,
 ): CompiledShape<S, O, B> {
+
     return {
         ...(screen.contents as S["contents"]),
         options,
@@ -203,14 +196,17 @@ export function compiledScreen<S extends ScreenInputBase<B>, O, B extends object
         features: [...compiled.walk.used].sort(),
         operations: [...compiled.walk.operations].sort(),
     };
+
 }
-export function mergeTheme(defaults: Theme, input: ThemeInput): Theme {
+export function mergeTheme ( defaults: Theme, input: ThemeInput ): Theme {
+
     return {
         colors: {
             light: { ...defaults.colors.light, ...input.colors?.light },
             dark: { ...defaults.colors.dark, ...input.colors?.dark },
         },
     };
+
 }
 function compileConfig<
     C extends SurfaceConfig,
@@ -219,7 +215,8 @@ function compileConfig<
     O extends { features: string[]; operations: string[] },
     M,
     B extends object,
->(surface: Surface<C, I, S, O, M, B>, identity: string, raw: unknown): C {
+> ( surface: Surface<C, I, S, O, M, B>, identity: string, raw: unknown ): C {
+
     const input = surface.configInputShape.parse(raw);
     const { seo = {}, ...contents } = input.contents;
     const settings = mergeSettings(surface.settingsDefaults as Settings & Patch, input.settings);
@@ -229,7 +226,7 @@ function compileConfig<
         ? surface.backend(identity, input.contracts as NonNullable<I["contracts"]>, currency)
         : null;
 
-    if (input.contracts) assertClean(transportIssues(input.contracts as ContractsInput));
+    if ( input.contracts ) assertClean(transportIssues(input.contracts as ContractsInput));
 
     const { api, contract } = compileApi({
         identity,
@@ -250,11 +247,9 @@ function compileConfig<
         realtime: (input.contracts as ContractsInput | null)?.realtime ?? null,
         insecure: backend?.insecure ?? false,
     });
+
 }
-/**
- * One surface's whole compile: config, screens through the shared walk and the surface's own
- * rules, the schema facts, every translation present, and a single failure listing every issue.
- */
+
 export function compileSurface<
     C extends SurfaceConfig,
     I extends ConfigInputBase,
@@ -262,7 +257,8 @@ export function compileSurface<
     O extends { features: string[]; operations: string[] },
     M,
     B extends object,
->(surface: Surface<C, I, S, O, M, B>, input: SurfaceInput): { config: C; schema: M } {
+> ( surface: Surface<C, I, S, O, M, B>, input: SurfaceInput ): { config: C; schema: M } {
+
     const { identity, messages, features, catalogue } = input;
     const config = compileConfig(surface, identity, input.config);
     const declared = surface.schemaShape.parse(input.schema);
@@ -275,7 +271,8 @@ export function compileSurface<
         ...iconIssues(declared.screens as { contents: { name: string; icon?: string | null } }[], surface.icons),
         ...(surface.screenIssues?.(declared.screens) ?? []),
     ];
-    const screens = declared.screens.map((screen) => {
+    const screens = declared.screens.map(( screen ) => {
+
         const options = { ...config.settings.screen, ...compact(screen.options ?? {}) };
         const { client, session } = surface.walk(screen, options, config);
         const compiled = compileScreen<B>({
@@ -299,13 +296,16 @@ export function compileSurface<
             ? entityRoute(surface.entities, screen.contents as { entity?: EntityRef | undefined; path: string })
             : null;
 
-        if (route && !compiled.walk.params.includes(route.parameter)) {
+        if ( route && !compiled.walk.params.includes(route.parameter) ) {
+
             issues.push(`${screen.contents.path}: the ${route.kind} screen needs :${route.parameter} in its path.`);
+
         }
 
         claimShell(compiled.walk, options, config.settings.shell);
 
         return surface.screen(screen, options, config, compiled, issues);
+
     });
     const shell = shellOptions(config.settings.shell, features);
     const schema = surface.schema(screens, schemaFacts(screens), shell);
@@ -315,10 +315,9 @@ export function compileSurface<
     assertClean(issues);
 
     return { config, schema };
+
 }
-/**
- * A surface's `validateSpec`: the same signature every tool and test calls.
- */
+
 export function surfaceValidator<
     C extends SurfaceConfig,
     I extends ConfigInputBase,
@@ -326,7 +325,9 @@ export function surfaceValidator<
     O extends { features: string[]; operations: string[] },
     M,
     B extends object,
->(surface: Surface<C, I, S, O, M, B>): Validator<C, M> {
-    return (identity, config, schema, messages, features, catalogue) =>
+> ( surface: Surface<C, I, S, O, M, B> ): Validator<C, M> {
+
+    return ( identity, config, schema, messages, features, catalogue ) =>
         compileSurface(surface, { identity, config, schema, messages, features, catalogue });
+
 }

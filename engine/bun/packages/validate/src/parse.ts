@@ -3,19 +3,20 @@ import type * as z from "./z.ts";
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; failure: Failure };
 
-/**
- * Zod issues as field errors keyed by their dotted path; issues without a path land under `_form`.
- */
-export function issuesOf(error: z.ZodError): FieldErrors {
+export function issuesOf ( error: z.ZodError ): FieldErrors {
+
     const errors: FieldErrors = {};
 
-    for (const issue of error.issues) {
+    for ( const issue of error.issues ) {
+
         const field = issue.path.length ? issue.path.map(String).join(".") : "_form";
 
         errors[field] = [...(errors[field] ?? []), issue.message];
+
     }
 
     return errors;
+
 }
 export const ruleNames = ["required", "min", "max", "type", "format", "choice", "unknown", "invalid"] as const;
 
@@ -30,45 +31,50 @@ type RawIssue = {
     input?: unknown;
 };
 
-function ruleOf(issue: RawIssue): Issue {
-    const number = (value: number | bigint | undefined): number => Number(value ?? 0);
+function ruleOf ( issue: RawIssue ): Issue {
 
-    if (issue.code === "too_small") return { rule: "min", params: { minimum: number(issue.minimum) } };
-    if (issue.code === "too_big") return { rule: "max", params: { maximum: number(issue.maximum) } };
-    if (issue.code === "invalid_type")
+    const number = ( value: number | bigint | undefined ): number => Number(value ?? 0);
+
+    if ( issue.code === "too_small" ) return { rule: "min", params: { minimum: number(issue.minimum) } };
+
+    if ( issue.code === "too_big" ) return { rule: "max", params: { maximum: number(issue.maximum) } };
+
+    if ( issue.code === "invalid_type" )
         return issue.input === undefined
             ? { rule: "required" }
             : { rule: "type", params: { expected: issue.expected ?? "value" } };
-    if (issue.code === "invalid_format") return { rule: "format", params: { format: issue.format ?? "value" } };
-    if (issue.code === "invalid_value") return { rule: "choice", params: { choices: (issue.values ?? []).join(", ") } };
-    if (issue.code === "unrecognized_keys") return { rule: "unknown" };
+
+    if ( issue.code === "invalid_format" ) return { rule: "format", params: { format: issue.format ?? "value" } };
+
+    if ( issue.code === "invalid_value" ) return { rule: "choice", params: { choices: (issue.values ?? []).join(", ") } };
+
+    if ( issue.code === "unrecognized_keys" ) return { rule: "unknown" };
 
     return { rule: "invalid" };
+
 }
-/**
- * Zod issues as rule keys with their parameters (min 2, type string…) keyed by field, so a surface
- * can speak them in any language instead of showing zod's sentences.
- */
-export function rulesOf(error: z.ZodError): Issues {
+
+export function rulesOf ( error: z.ZodError ): Issues {
+
     const issues: Issues = {};
 
-    for (const issue of error.issues as unknown as RawIssue[]) {
+    for ( const issue of error.issues as unknown as RawIssue[] ) {
+
         const field = issue.path.length ? issue.path.map(String).join(".") : "_form";
 
         issues[field] = [...(issues[field] ?? []), ruleOf(issue)];
+
     }
 
     return issues;
+
 }
-/**
- * Parses without throwing; a rejection is an `input` failure carrying the field errors and rule
- * issues, never the zod error itself: with inputs reported, that error holds the raw values
- * (passwords included), and a failure travels into logs and beacons.
- */
-export function parse<T extends z.ZodType>(schema: T, value: unknown, reason = "invalid_input"): Parsed<z.output<T>> {
+
+export function parse<T extends z.ZodType> ( schema: T, value: unknown, reason = "invalid_input" ): Parsed<z.output<T>> {
+
     const result = schema.safeParse(value, { reportInput: true });
 
-    if (result.success) return { ok: true, value: result.data };
+    if ( result.success ) return { ok: true, value: result.data };
 
     return {
         ok: false,
@@ -78,19 +84,22 @@ export function parse<T extends z.ZodType>(schema: T, value: unknown, reason = "
             reason,
         }),
     };
+
 }
-export function assert<T extends z.ZodType>(schema: T, value: unknown, reason = "invalid_input"): z.output<T> {
+export function assert<T extends z.ZodType> ( schema: T, value: unknown, reason = "invalid_input" ): z.output<T> {
+
     const result = parse(schema, value, reason);
 
-    if (!result.ok) throw result.failure;
+    if ( !result.ok ) throw result.failure;
 
     return result.value;
+
 }
-/**
- * The top-level keys of an object schema, or none when the schema is not an object.
- */
-export function shapeKeys(schema: z.ZodType): string[] {
+
+export function shapeKeys ( schema: z.ZodType ): string[] {
+
     const shape = (schema as z.ZodType & { shape?: Record<string, unknown> }).shape;
 
     return shape ? Object.keys(shape) : [];
+
 }

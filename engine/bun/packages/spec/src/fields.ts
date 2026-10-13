@@ -17,6 +17,8 @@ export const operation: z.ZodString = z.string().regex(/^[a-z][a-zA-Z0-9]*\.[a-z
 const specKey = z.strictObject({ key: z.string().regex(/^[^.\s]+(?:\.[^.\s]+)*$/) });
 export const specText: z.ZodUnion<readonly [z.ZodString, typeof specKey]> = z.union([text, specKey]);
 
-export function isSpecKey(value: unknown): value is z.infer<typeof specKey> {
+export function isSpecKey ( value: unknown ): value is z.infer<typeof specKey> {
+
     return specKey.safeParse(value).success;
+
 }

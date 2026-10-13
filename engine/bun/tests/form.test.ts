@@ -14,14 +14,19 @@ const fields: FieldFact[] = [
 ];
 
 describe("form", () => {
+
     test("starts from the field facts, loads a record and coerces values on submit", async () => {
+
         const sent: unknown[] = [];
         const form = createForm({
             fields,
             locales: ["en", "ar"],
-            submit: async (values) => {
+            submit: async ( values ) => {
+
                 sent.push(values);
+
                 return { id: 1 };
+
             },
         });
 
@@ -69,17 +74,23 @@ describe("form", () => {
         expect(form.getState().status).toBe("done");
         expect(form.getState().result).toEqual({ id: 1 });
         expect(form.getState().dirty).toBe(false);
+
     });
     test("keeps one idempotency key across retries of the same values and renews it after a change", async () => {
+
         const keys: string[] = [];
         let fail = true;
         const form = createForm({
             fields,
             locales: ["en"],
-            submit: async (_values, { idempotencyKey }) => {
+            submit: async ( _values, { idempotencyKey } ) => {
+
                 keys.push(idempotencyKey);
-                if (fail) throw new Failure("network");
+
+                if ( fail ) throw new Failure("network");
+
                 return null;
+
             },
         });
 
@@ -94,13 +105,17 @@ describe("form", () => {
         expect(keys[2]).not.toBe(keys[1]);
         await form.getState().submit();
         expect(keys[3]).not.toBe(keys[2]);
+
     });
     test("field errors come from the failure, strangers under the form, and clear on edit", async () => {
+
         const form = createForm({
             fields,
             locales: ["en"],
             submit: async () => {
+
                 throw new Failure("input", { errors: { name: ["too short"], stranger: ["x"] } });
+
             },
         });
 
@@ -110,17 +125,24 @@ describe("form", () => {
         expect(form.getState().errors).toEqual({ _form: "x" });
         form.getState().reset();
         expect(form.getState()).toMatchObject({ status: "idle", errors: {}, dirty: false });
+
     });
+
 });
 describe("list fields", () => {
+
     test("a list starts empty, loads its items as text and is omitted when empty", async () => {
+
         const sent: unknown[] = [];
         const form = createForm({
             fields: [{ name: "tags", kind: "list", required: false, nullable: false }],
             locales: ["en"],
-            submit: async (values) => {
+            submit: async ( values ) => {
+
                 sent.push(values);
+
                 return null;
+
             },
         });
 
@@ -131,18 +153,25 @@ describe("list fields", () => {
         form.getState().set("tags", []);
         await form.getState().submit();
         expect(sent).toEqual([{ tags: ["a", "2"] }, {}]);
+
     });
+
 });
 describe("localized fields", () => {
+
     test("a plain string lands in the current locale's slot", () => {
+
         const form = createForm({ fields, locales: ["en", "ar"], locale: "ar", submit: async () => null });
 
         form.getState().load({ title: "عنوان" });
         expect(form.getState().values.title).toEqual({ en: "", ar: "عنوان" });
+
     });
+
 });
 
 describe("dotted fields", () => {
+
     const nested: FieldFact[] = [
         { name: "name", kind: "text", required: true, nullable: false },
         { name: "address.city", kind: "text", required: false, nullable: false },
@@ -150,13 +179,17 @@ describe("dotted fields", () => {
     ];
 
     test("values load from the nested record and submit builds it back", async () => {
+
         const sent: unknown[] = [];
         const form = createForm({
             fields: nested,
             locales: ["en"],
-            submit: async (values) => {
+            submit: async ( values ) => {
+
                 sent.push(values);
+
                 return 1;
+
             },
         });
 
@@ -165,30 +198,41 @@ describe("dotted fields", () => {
         form.getState().set("address.zip", "11511");
         await form.getState().submit();
         expect(sent[0]).toEqual({ name: "Walk", address: { city: "Cairo", zip: "11511" } });
+
     });
     test("a failure keyed by the dotted path lands on that field", async () => {
+
         const form = createForm({
             fields: nested,
             locales: ["en"],
             submit: async () => {
+
                 throw new Failure("input", { errors: { "address.city": ["too short"] } });
+
             },
         });
 
         await form.getState().submit();
         expect(Object.keys(form.getState().errors)).toEqual(["address.city"]);
+
     });
+
 });
 describe("autosave", () => {
+
     test("a dirty form submits itself once after the quiet delay and not when clean", async () => {
+
         const sent: unknown[] = [];
         const form = createForm({
             fields: [{ name: "name", kind: "text", required: true, nullable: false }],
             locales: ["en"],
             autosave: 30,
-            submit: async (values) => {
+            submit: async ( values ) => {
+
                 sent.push(values);
+
                 return 1;
+
             },
         });
 
@@ -202,5 +246,7 @@ describe("autosave", () => {
         expect(form.getState().dirty).toBe(false);
         await Bun.sleep(40);
         expect(sent).toHaveLength(1);
+
     });
+
 });

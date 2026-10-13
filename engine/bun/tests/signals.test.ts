@@ -3,26 +3,32 @@ import { applyPatch, createSignals, onTouched, portKey, portMemory, touched } fr
 import { memoryStore, typed } from "@engine/storage";
 
 describe("signals and port memory", () => {
+
     test("signals emit by name and clear together", () => {
+
         const store = createSignals();
 
         store.getState().emit("search", "tea");
         expect(store.getState().values).toEqual({ search: "tea" });
         store.getState().clear();
         expect(store.getState().values).toEqual({});
+
     });
     test("a remembered port answer seeds the next read while fresh and vanishes past its ttl", async () => {
+
         const store = memoryStore();
         const box = portMemory({ store, ttl: 50 }, "k");
 
         expect(await box.seed()).toBeUndefined();
         box.keep([1]);
         expect(box.seed()).toEqual([1]);
-        await new Promise((resolve) => setTimeout(resolve, 60));
+        await new Promise(( resolve ) => setTimeout(resolve, 60));
         expect(box.seed()).toBeUndefined();
         expect(portMemory(undefined, "k").seed()).toBeUndefined();
+
     });
     test("a cold start seeds from the store asynchronously, then from memory at once", async () => {
+
         const store = memoryStore();
 
         await typed<{ at: number; value: unknown }>(store).write("port:cold", { at: Date.now(), value: [7] });
@@ -33,9 +39,12 @@ describe("signals and port memory", () => {
         expect(first).toBeInstanceOf(Promise);
         expect(await first).toEqual([7]);
         expect(box.seed()).toEqual([7]);
+
     });
+
 });
 describe("patch by payload", () => {
+
     const patch = { path: "catalog", key: "id", version: "updated_at" };
     const list = [
         { id: 1, name: "a", updated_at: "2026-10-12T05:00:00Z" },
@@ -43,6 +52,7 @@ describe("patch by payload", () => {
     ];
 
     test("a held row is replaced in place and the list identity changes", () => {
+
         const result = applyPatch(
             list,
             true,
@@ -54,8 +64,10 @@ describe("patch by payload", () => {
         expect(result.applied).toBe(true);
         expect(result.value).toEqual([list[0], { id: 2, name: "B", updated_at: "2026-10-12T06:00:00Z" }]);
         expect(list[1]?.name).toBe("b");
+
     });
     test("a stranger is never inserted, an older row never wins, a malformed payload is ignored", () => {
+
         expect(applyPatch(list, true, "catalog.event", { catalog: { id: 9, name: "z" } }, patch).applied).toBe(false);
         expect(
             applyPatch(
@@ -69,8 +81,10 @@ describe("patch by payload", () => {
         expect(applyPatch(list, true, "catalog.event", { catalog: { name: "no id" } }, patch).applied).toBe(false);
         expect(applyPatch(list, true, "catalog.event", "text", patch).applied).toBe(false);
         expect(applyPatch(undefined, true, "catalog.event", { catalog: { id: 1 } }, patch).applied).toBe(false);
+
     });
     test("deletions remove by key and a one-row port patches only its own row", () => {
+
         expect(applyPatch(list, true, "catalog.deleted", { catalog: { id: 1 } }, patch)).toEqual({
             value: [list[1]],
             applied: true,
@@ -86,10 +100,14 @@ describe("patch by payload", () => {
             false,
         );
         expect(applyPatch(list[0], false, "catalog.deleted", { catalog: { id: 1 } }, patch).applied).toBe(false);
+
     });
+
 });
 describe("touches", () => {
+
     test("a write that touches a feature wakes every listener of that feature once", () => {
+
         const seen: string[] = [];
         const off = onTouched("products", () => seen.push("a"));
         const other = onTouched("orders", () => seen.push("b"));
@@ -99,10 +117,14 @@ describe("touches", () => {
         touched(["products", "orders"]);
         other();
         expect(seen).toEqual(["a", "b"]);
+
     });
+
 });
 describe("port keys", () => {
+
     test("a read port's key follows only the route values its inputs reference", () => {
+
         const port = {
             kind: "read" as const,
             feature: "p",
@@ -115,5 +137,7 @@ describe("port keys", () => {
         expect(portKey(port, base, [])).toBe(portKey(port, { ...base, signals: { search: "tea", selected: 2 } }, []));
         expect(portKey(port, base, [])).not.toBe(portKey(port, { ...base, signals: { search: "milk" } }, []));
         expect(portKey(port, base, ["en"])).not.toBe(portKey(port, base, ["ar"]));
+
     });
+
 });

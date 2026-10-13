@@ -41,7 +41,9 @@ const settings = {
 const features = { menu: { owner: "server" as const, options: { compact: true }, ports: {}, access: [], signals: [] } };
 
 describe("surface", () => {
+
     test("settings merge one record deep and seed the settings resource", () => {
+
         const merged = mergeSettings(
             { a: 1, locale: { default: "en", enabled: ["en"] } },
             { a: undefined, locale: { default: "ar" } },
@@ -49,8 +51,10 @@ describe("surface", () => {
 
         expect(merged).toEqual({ a: 1, locale: { default: "ar", enabled: ["en"] } });
         expect(settingsResource(settings).languages).toEqual(["en", "ar"]);
+
     });
     test("choice, shell and screen rules name their defects", () => {
+
         expect(choiceIssues({ ...settings, theme: { default: "dark", enabled: ["light", "light"] } })).toHaveLength(2);
         expect(shellIssues({ nav: "missing" }, features)).toEqual(["settings.shell.nav: no feature named missing."]);
         expect(shellOptions(settings.shell, features)).toEqual({ nav: { compact: true }, footer: {} });
@@ -66,8 +70,10 @@ describe("surface", () => {
             "Reserved screen path: /api/x",
             "schema.screens must declare the home path /.",
         ]);
+
     });
     test("a screen compiles its blocks and enforces the shared rules", () => {
+
         const issues: string[] = [];
         const { blocks } = compileScreen({
             name: "home",
@@ -90,8 +96,10 @@ describe("surface", () => {
             "home: exactly one feature owns the screen heading.",
             "home: a gated screen names its redirect.",
         ]);
+
     });
     test("without a backend every operation is off and switches are refused", () => {
+
         const plan = { identity: "site", endpoints, seeds, currency: "USD", backend: null, switches: {} };
         const { api, contract } = compileApi(plan);
 
@@ -100,8 +108,10 @@ describe("surface", () => {
         expect(() => compileApi({ ...plan, switches: { products: { operations: { list: true } } } })).toThrow(
             "contracts",
         );
+
     });
     test("with a backend the development addresses follow every connection", () => {
+
         const backend = {
             api: {
                 context: { spec: "site", currency: "USD", sessionCookie: null, proxies: 0, tenant: null },
@@ -114,15 +124,19 @@ describe("surface", () => {
         const { api } = compileApi({ identity: "site", endpoints, seeds, currency: "USD", backend, switches: {} });
 
         expect(api?.connections.primary?.development?.baseUrl).toBe("http://127.0.0.1:8787/v1");
+
     });
+
 });
 describe("screens", () => {
+
     const screens = [
         { path: "/", name: "home" },
         { path: "/items/:id", name: "item" },
     ];
 
     test("paths match exactly first, then by pattern", () => {
+
         expect(matchScreen(screens, [])?.name).toBe("home");
         expect(matchScreen(screens, ["items", "7"])).toMatchObject({
             name: "item",
@@ -131,8 +145,10 @@ describe("screens", () => {
             parameters: { id: "7" },
         });
         expect(matchScreen(screens, ["nope"])).toBeUndefined();
+
     });
     test("trees localize and missing keys fail loudly", () => {
+
         expect(
             localizeTree(
                 { title: { key: "nav.home" }, list: [{ key: "nav.home" }], n: 1 },
@@ -147,26 +163,36 @@ describe("screens", () => {
             one: "Name",
         } as unknown as { labels: string; one: string });
         expect(() => localizeTree({ key: "nav.nope" }, {}, "en")).toThrow("nav.nope");
+
     });
     test("access is granted by session or held permission", () => {
+
         expect(granted(null, ["user"])).toBe(false);
         expect(granted({ permissions: [] }, ["user"])).toBe(true);
         expect(granted({ permissions: ["admin"] }, ["user", "admin"])).toBe(true);
         expect(granted({ permissions: [] }, ["admin"])).toBe(false);
+
     });
+
 });
 describe("shell parts", () => {
+
     test("a shell part may carry options for its feature, checked against the manifest", () => {
+
         const shell = { nav: { feature: "menu", options: { compact: false } }, footer: null };
 
         expect(shellIssues(shell, features)).toEqual([]);
         expect(shellOptions(shell, features)).toEqual({ nav: { compact: false }, footer: {} });
         expect(shellIssues({ nav: { feature: "menu", options: { compact: "x" } } }, features)).toHaveLength(1);
         expect(shellIssues({ nav: { feature: "menu", options: { nope: true } } }, features)).toHaveLength(1);
+
     });
+
 });
 describe("feature slugs", () => {
+
     test("every compiled feature carries a stable DOM-safe slug, unique per screen", () => {
+
         const issues: string[] = [];
         const { blocks } = compileScreen({
             name: "home",
@@ -184,10 +210,13 @@ describe("feature slugs", () => {
             catalogue: catalogueFacts(endpoints),
         });
 
-        expect(blocks[0]?.features.map((entry) => entry.slug)).toEqual(["home-menu", "home-menu-2"]);
+        expect(blocks[0]?.features.map(( entry ) => entry.slug)).toEqual(["home-menu", "home-menu-2"]);
+
     });
+
 });
 describe("signals in the compiler", () => {
+
     const facts = catalogueFacts({
         products: feature({}, { list: get("/products", { search: z.string().optional() }, many(item)) }),
     });
@@ -208,7 +237,7 @@ describe("signals in the compiler", () => {
             signals: [],
         },
     };
-    const plan = (features: unknown[]) => ({
+    const plan = ( features: unknown[] ) => ({
         name: "home",
         path: "/",
         blocks: [{ options: {}, features: features as never, blocks: [] }],
@@ -225,6 +254,7 @@ describe("signals in the compiler", () => {
     });
 
     test("a signal read must be emitted by a feature on the same screen and consumed by a client feature", () => {
+
         const good = plan([
             { name: "box", heading: true },
             { name: "list", ports: { items: { read: "products.list", input: { search: { signal: "search" } } } } },
@@ -247,10 +277,12 @@ describe("signals in the compiler", () => {
         expect(good.issues).toEqual([]);
         expect(orphan.issues).toEqual(["home: signal search is read but no feature on the screen emits it."]);
         expect(
-            server.issues.some((issue) => issue.includes("signal-driven or live port needs a client-owned feature")),
+            server.issues.some(( issue ) => issue.includes("signal-driven or live port needs a client-owned feature")),
         ).toBe(true);
+
     });
     test("a live port needs a realtime contract and a client-owned feature, and compiles its channel", () => {
+
         const binding = { read: "products.list", live: { channel: "catalog.1", events: ["catalog.event"] } };
         const dark = plan([{ name: "list", heading: true, ports: { items: binding } }]);
         const lit = { ...plan([{ name: "list", heading: true, ports: { items: binding } }]), realtime: true };
@@ -273,9 +305,11 @@ describe("signals in the compiler", () => {
             live: { channel: "catalog.1", events: ["catalog.event"] },
         });
         compileScreen(server);
-        expect(server.issues.some((issue) => issue.includes("live port needs a client-owned feature"))).toBe(true);
+        expect(server.issues.some(( issue ) => issue.includes("live port needs a client-owned feature"))).toBe(true);
+
     });
     test("a menu lists the screens that show a shell part, reachable without parameters and not guest-only", () => {
+
         const screens = [
             {
                 name: "home",
@@ -323,10 +357,14 @@ describe("signals in the compiler", () => {
             { name: "settings", path: "/settings", title: { key: "nav.settings" }, icon: null, access: "user" },
         ]);
         expect(menuOf(screens, "footer")).toEqual([]);
+
     });
+
 });
 describe("icons", () => {
+
     test("a screen icon must belong to the surface's icon set", () => {
+
         const screens = [
             { contents: { name: "a", path: "/", icon: "grid" } },
             { contents: { name: "b", path: "/b", icon: "nope" } },
@@ -334,5 +372,7 @@ describe("icons", () => {
 
         expect(iconIssues(screens, ["grid"])).toEqual(["b: no icon named nope; the surface knows grid."]);
         expect(iconIssues(screens, undefined)).toEqual([]);
+
     });
+
 });

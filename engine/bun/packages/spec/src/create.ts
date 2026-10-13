@@ -79,10 +79,6 @@ export type Vocabulary<
     contracts: Contracts<CX>;
 };
 
-/**
- * One surface from its vocabulary alone: every shape, its defaults, the define helpers and the
- * validator factory, so a part declares what differs and inherits everything else.
- */
 export function createSpecSurface<
     L extends string,
     SO extends z.ZodObject,
@@ -91,7 +87,8 @@ export function createSpecSurface<
     X extends z.ZodRawShape,
     SX extends z.ZodRawShape,
     CX extends z.ZodRawShape,
->(vocabulary: Vocabulary<L, SO, BO, SH, X, SX, CX>) {
+> ( vocabulary: Vocabulary<L, SO, BO, SH, X, SX, CX> ) {
+
     const {
         kind,
         locales,
@@ -111,7 +108,7 @@ export function createSpecSurface<
     const fonts = fontsShape(locale, fontFace(brand.fontFormats, brand.fontWeight));
     const shellValue = z.union([key, z.strictObject({ feature: key, options: optionsShape.optional() })]).nullable();
     const shellShape = z.strictObject(
-        Object.fromEntries(shell.map((part) => [part, shellValue])) as Record<SH, typeof shellValue>,
+        Object.fromEntries(shell.map(( part ) => [part, shellValue])) as Record<SH, typeof shellValue>,
     );
     const content = contentShape(image);
     const settingsShape = z.strictObject({
@@ -126,7 +123,7 @@ export function createSpecSurface<
         local: siteUrl.nullable(),
         ...(contracts.browser ? { browser: siteUrl.nullable().default(null) } : {}),
     });
-    const mask = Object.fromEntries(contracts.dropped.map((name) => [name, true])) as Record<string, true>;
+    const mask = Object.fromEntries(contracts.dropped.map(( name ) => [name, true])) as Record<string, true>;
     const contractsShape = z.strictObject({
         urls,
         options: connectionShape
@@ -159,7 +156,7 @@ export function createSpecSurface<
         reserved: RegExp;
         endpoints: Readonly<Record<string, Readonly<Record<string, Endpoint>>>>;
         core?: Layer | undefined;
-        walk: (screen: Screen, options: ScreenOptions, config: Config) => { client: boolean; session: boolean };
+        walk: ( screen: Screen, options: ScreenOptions, config: Config ) => { client: boolean; session: boolean };
         screen?:
             | ((
                   screen: Screen,
@@ -169,9 +166,9 @@ export function createSpecSurface<
                   issues: string[],
               ) => R)
             | undefined;
-        screenIssues?: ((screens: readonly Screen[]) => string[]) | undefined;
-        featureIssues?: ((features: Features) => string[]) | undefined;
-        schema?: ((screens: (CompiledShape<Screen, ScreenOptions, Block> & R)[]) => E) | undefined;
+        screenIssues?: (( screens: readonly Screen[] ) => string[]) | undefined;
+        featureIssues?: (( features: Features ) => string[]) | undefined;
+        schema?: (( screens: (CompiledShape<Screen, ScreenOptions, Block> & R)[] ) => E) | undefined;
     };
 
     return {
@@ -189,12 +186,13 @@ export function createSpecSurface<
         schemaShape: shapes.schema,
         settingsDefaults,
         themeDefaults,
-        entityRoute: (screen: { entity?: Parameters<typeof entityRoute>[1]["entity"]; path: string }) =>
+        entityRoute: ( screen: { entity?: Parameters<typeof entityRoute>[1]["entity"]; path: string } ) =>
             entityRoute(entities, screen),
         define: defineSurface<z.input<typeof configInputShape>, z.input<typeof shapes.schema>, Block>(),
         validator: <R extends object = Record<never, never>, E extends object = Record<never, never>>(
             hooks: Hooks<R, E>,
         ): Validator<Config, CompiledSchemaBase<CompiledShape<Screen, ScreenOptions, Block> & R, SH> & E> => {
+
             const surface = {
                 reserved: hooks.reserved,
                 endpoints: hooks.endpoints,
@@ -206,9 +204,9 @@ export function createSpecSurface<
                 schemaShape: shapes.schema as z.ZodType<{ screens: Screen[] }>,
                 settingsDefaults: settingsDefaults as Patch,
                 themeDefaults,
-                backend: (identity: string, given: ConfigInput["contracts"], currency: string): Backend =>
+                backend: ( identity: string, given: ConfigInput["contracts"], currency: string ): Backend =>
                     backendOf(identity, given as ContractsInput, currency),
-                walk: (screen: Screen, options: Record<string, unknown>, config: Config & SurfaceConfig) =>
+                walk: ( screen: Screen, options: Record<string, unknown>, config: Config & SurfaceConfig ) =>
                     hooks.walk(screen, options as ScreenOptions, config),
                 screen: (
                     screen: Screen,
@@ -238,6 +236,8 @@ export function createSpecSurface<
                 Config,
                 CompiledSchemaBase<CompiledShape<Screen, ScreenOptions, Block> & R, SH> & E
             >;
+
         },
     };
+
 }
