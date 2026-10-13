@@ -32,7 +32,7 @@ export default function Picker ({ options, ports, route, feature }: FeatureProps
 
     });
     const image = uploaded ?? (me.status === "ready" ? field(row(me.value), "image") : undefined);
-    const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" ? { text: failureMessages(save.error, options.errors, options.failed)._form ?? failureMessages(save.error, options.errors, options.failed).image ?? options.failed, tone: "danger" as const } : pick.status === "failed" ? { text: options.failed, tone: "danger" as const } : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const } : undefined;
+    const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" ? { text: Object.values(failureMessages(save.error, options.errors, options.failed))[0] ?? options.failed, tone: "danger" as const } : pick.status === "failed" ? { text: options.failed, tone: "danger" as const } : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const } : undefined;
     const status = me.status === "ready" ? undefined : <Status status={me.status} loading={options.loading} failed={options.failed} offline={options.offline} error={me.status === "failed" ? me.error : undefined} />;
 
     return (

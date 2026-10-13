@@ -42,7 +42,7 @@ export default function Pane ({ options, ports, route, feature }: FeatureProps<O
     const missing = port.status === "ready" && isFailure(port.error) && port.error.kind === "missing";
     const gone = Boolean(field(item, "deleted_at")) || (remove.status === "done" && restore.status !== "done") || (missing && restore.status !== "done");
     const busy = remove.status === "pending" || restore.status === "pending";
-    const spoken = ( error: unknown ): string => failureMessages(error, options.errors, options.failed)._form ?? options.failed;
+    const spoken = ( error: unknown ): string => Object.values(failureMessages(error, options.errors, options.failed))[0] ?? options.failed;
     const note = remove.status === "done" ? { text: options.removed, tone: "success" as const } : restore.status === "done" ? { text: options.restored, tone: "success" as const } : remove.status === "failed" ? { text: spoken(remove.error), tone: "danger" as const } : restore.status === "failed" ? { text: spoken(restore.error), tone: "danger" as const } : !remove.allowed && !restore.allowed && remove.ready && (ports.remove || ports.restore) ? { text: options.denied, tone: "muted" as const } : undefined;
     const edit = item && options.edit ? { href: localePath(locale, interpolate(options.edit, { id }), routing), label: options.editLabel } : undefined;
     const actions: DetailAction[] = [

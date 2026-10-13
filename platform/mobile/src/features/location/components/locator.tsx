@@ -33,7 +33,7 @@ export default function Locator ({ options, ports }: FeatureProps<Options>) {
 
         if ( locate.status === "done" && save.status === "done" ) return { text: save.queued ? options.queued : options.saved, tone: "success" };
         if ( locate.status === "failed" && isFailure(locate.error) && locate.error.kind === "denied" ) return { text: locate.error.reason?.endsWith("unsupported") ? options.unsupported : options.denied, tone: "danger" };
-        if ( save.status === "failed" ) return { text: failureMessages(save.error, options.errors, options.failed)._form ?? options.failed, tone: "danger" };
+        if ( save.status === "failed" ) return { text: Object.values(failureMessages(save.error, options.errors, options.failed))[0] ?? options.failed, tone: "danger" };
         if ( locate.status === "failed" ) return { text: options.failed, tone: "danger" };
 
         return undefined;

@@ -1,10 +1,10 @@
 telemetry = false
 
 [install]
-exact             = true
-linker            = "hoisted"
+exact = true
+linker = "hoisted"
 minimumReleaseAge = 259200
 
 [test]
 randomize = true
-root      = "tests"
+root = "tests"

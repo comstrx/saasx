@@ -18,6 +18,7 @@ function compiled (): Meta {
 }
 const lab: [string, Record<string, unknown>] = ["expo-build-properties", { android: { usesCleartextTraffic: true } }];
 const push = resolve(root, "google-services.json");
+const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
 
@@ -47,7 +48,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ...config.android,
         },
         experiments: { typedRoutes: true, tsconfigPaths: true },
-        extra: { ...config.extra, spec: identity },
+        extra: { ...config.extra, spec: identity, ...(process.env.APP_LAB === "1" && existsSync(push) ? { eas: { projectId: labProject } } : {}) },
     };
 
 };

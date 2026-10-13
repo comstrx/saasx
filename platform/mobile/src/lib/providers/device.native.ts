@@ -1,4 +1,5 @@
 import { createDevice, type Device, type Grant, type Info, type Permission, type Picked, unknownInfo } from "@engine/device";
+import Constants from "expo-constants";
 import * as ImagePicker from "expo-image-picker";
 import * as Localization from "expo-localization";
 import * as Location from "expo-location";
@@ -83,7 +84,9 @@ async function position (): Promise<{ latitude: number; longitude: number; accur
 }
 async function pushToken (): Promise<string | null> {
 
-    try { return (await Notifications.getDevicePushTokenAsync()).data as string; }
+    const projectId = (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId;
+
+    try { return projectId ? (await Notifications.getExpoPushTokenAsync({ projectId })).data : (await Notifications.getDevicePushTokenAsync()).data as string; }
     catch { return null; }
 
 }
