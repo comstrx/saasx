@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, expectTypeOf, test } from "bun:test";
 import {
     assert,
     email,
@@ -122,5 +122,40 @@ describe("rulesOf", () => {
                 flag: [{ rule: "type", params: { expected: "boolean" } }],
             });
         }
+    });
+});
+
+describe("z, the classic chain over zod/mini", () => {
+    test("strict objects refuse unknown keys, loose ones keep them, and both are mini objects", () => {
+        const strict = z.strictObject({ id: z.number() });
+        const loose = strict.passthrough();
+
+        expect(z.safeParse(strict, { id: 1, extra: true }).success).toBe(false);
+        expect(z.safeParse(loose, { id: 1, extra: true })).toEqual({ success: true, data: { id: 1, extra: true } });
+        expect(strict instanceof z.ZodObject).toBe(true);
+        expect(loose instanceof z.ZodObject).toBe(true);
+        expect(strict.partial().extend({ name: z.string() }).shape).toHaveProperty("name");
+    });
+    test("min and max read lengths on strings and arrays and bounds on numbers", () => {
+        expect(z.safeParse(z.string().min(2), "a").success).toBe(false);
+        expect(z.safeParse(z.array(z.string()).max(1), ["a", "b"]).success).toBe(false);
+        expect(z.safeParse(z.number().min(2).max(3), 2.5).success).toBe(true);
+        expect(z.safeParse(z.number().int().positive(), -1).success).toBe(false);
+    });
+    test("meta lands in the global registry and wrappers unwrap to the schema they hold", () => {
+        const phone = z.string().meta({ kind: "phone" });
+        const held = phone.default("+1").unwrap();
+
+        expect(z.globalRegistry.get(phone)).toEqual({ kind: "phone" });
+        expect(z.globalRegistry.get(held)).toEqual({ kind: "phone" });
+        expect(z.record(z.string(), z.number()).valueType instanceof z.ZodObject).toBe(false);
+        expect(z.safeParse(z.record(z.string(), z.number()).valueType, 1).success).toBe(true);
+    });
+    test("a schema behind a type parameter keeps its own shape through the chain", () => {
+        const wrap = <S extends z.ZodObject>(schema: S) => schema.nullable().default(null);
+        const wrapped = wrap(z.object({ id: z.number() }));
+
+        expectTypeOf<z.output<typeof wrapped>>().toEqualTypeOf<{ id: number } | null>();
+        expect(z.safeParse(wrapped, undefined)).toEqual({ success: true, data: null });
     });
 });

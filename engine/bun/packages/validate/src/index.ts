@@ -1,4 +1,3 @@
-export { z } from "zod";
 export { type FieldFact, type FieldKind, fieldFacts } from "./facts.ts";
 export {
     ack,
@@ -23,3 +22,5 @@ export {
     word,
 } from "./fields.ts";
 export { assert, issuesOf, type Parsed, parse, ruleNames, rulesOf, shapeKeys } from "./parse.ts";
+export * as z from "./z.ts";
+export { type Fluent, fluent } from "./z.ts";

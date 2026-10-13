@@ -1,7 +1,7 @@
 import { apiInputShape, apiShape, contractShape, overridesShape, resourceShapes } from "@engine/api";
 import { isOrigin } from "@engine/net";
 import { isTimeZone } from "@engine/translate";
-import { currency, z } from "@engine/validate";
+import { currency, fluent, z } from "@engine/validate";
 import { text, word } from "./fields.ts";
 
 export type Shape = z.ZodType;
@@ -99,7 +99,7 @@ export function settingsInput<S extends z.ZodObject>(settings: S, required: read
         Object.entries(shape).map(([name, value]) => {
             if (required.includes(name)) return [name, value];
 
-            return [name, (value instanceof z.ZodObject ? value.partial() : value).optional()];
+            return [name, fluent(value instanceof z.ZodObject ? fluent(value).partial() : value).optional()];
         }),
     );
     const input = z.strictObject(loosened);
@@ -109,14 +109,17 @@ export function settingsInput<S extends z.ZodObject>(settings: S, required: read
 /**
  * The compiled config and its input form, assembled from a surface's content, settings and contracts.
  */
-export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I extends Shape, B extends Shape>(
+export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I extends Shape, B extends z.ZodObject>(
     content: C,
     settings: S,
     settingsIn: I,
     contracts: B,
 ) {
     const seo = (content.shape as Shapes).seo;
-    const seoIn = seo instanceof z.ZodDefault ? (seo.unwrap() as z.ZodObject).partial().optional() : seo;
+    const seoIn =
+        seo instanceof z.ZodDefault
+            ? (fluent(seo).unwrap() as z.ZodObject).partial().optional()
+            : (seo ?? z.never().optional());
 
     return {
         configShape: z.strictObject({
@@ -128,7 +131,9 @@ export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I ext
             realtime: realtimeShape.nullable(),
         }),
         configInputShape: z.strictObject({
-            contents: content.partial().extend({ name: (content.shape as Shapes).name as z.ZodString, seo: seoIn }),
+            contents: content
+                .partial()
+                .extend({ name: (content.shape as Shapes).name as z.ZodString, seo: seoIn as z.ZodOptional }),
             settings: settingsIn,
             themes: themeInputShape,
             contracts: contracts.nullable().default(null),

@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import * as z from "./z.ts";
 
 export type FieldKind =
     | "text"
@@ -42,7 +42,7 @@ type Def = {
     innerType?: Inner;
     in?: Inner;
 };
-type Inner = { _zod: { def: Def }; meta?: () => { kind?: unknown } | undefined };
+type Inner = { _zod: { def: Def } };
 
 const formats: Record<string, FieldKind> = { email: "email", date: "date", datetime: "datetime" };
 const kinds: Record<string, FieldKind> = {
@@ -110,7 +110,7 @@ function bounds(def: Def): { min?: number; max?: number } {
     return found;
 }
 function kindOf(schema: Inner, def: Def): FieldKind {
-    const declared = schema.meta?.()?.kind;
+    const declared = (z.globalRegistry.get(schema as never) as { kind?: unknown } | undefined)?.kind;
 
     if (typeof declared === "string" && known.includes(declared as FieldKind)) return declared as FieldKind;
     if (def.type === "string" && def.format && formats[def.format]) return formats[def.format] as FieldKind;

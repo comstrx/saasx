@@ -1,5 +1,5 @@
 import { Failure, type FieldErrors, type Issue, type Issues } from "@engine/error";
-import type { z } from "zod";
+import type * as z from "./z.ts";
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; failure: Failure };
 
