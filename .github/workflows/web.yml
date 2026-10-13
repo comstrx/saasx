@@ -65,3 +65,49 @@ jobs:
 
       - name: Build
         run: bun run build
+
+  budget:
+    name: budget
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: verify
+
+    env:
+      NEXT_PUBLIC_SPEC: admin
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: platform/web/package.json
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 26
+
+      - name: Install the engine
+        run: bun install --frozen-lockfile
+        working-directory: engine/bun
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+      - name: Serve
+        run: |
+          bun run start > server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:3001/login && break; sleep 1; done
+
+      - name: First-load budget
+        run: bun tools/budget/index.ts
+
+      - name: Lighthouse
+        run: npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path=lighthouse.json --only-categories=performance,accessibility,best-practices,seo --preset=desktop
+
+      - name: Lighthouse floors
+        run: bun tools/lighthouse/index.ts lighthouse.json seo=50
