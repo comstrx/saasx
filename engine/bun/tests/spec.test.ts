@@ -191,7 +191,7 @@ describe("forms and states", () => {
         expect(block.features[0]?.ports.save).toMatchObject({ touches: ["products"] });
     });
     test("an object option may name a message branch, resolved when the tree localizes", () => {
-        const labelled: Features = {
+        const labeled: Features = {
             ...form,
             form: { ...(form.form as Features[string]), options: { failed: "x", labels: {}, errors: {} } },
         };
@@ -202,7 +202,7 @@ describe("forms and states", () => {
             backend: true,
             block: { gap: 4 },
             site: {},
-            features: labelled,
+            features: labeled,
             catalogue,
         });
 

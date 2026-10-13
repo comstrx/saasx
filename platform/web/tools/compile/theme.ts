@@ -1,4 +1,4 @@
-import { cssVariables, defineTokens, fontFace, fontStack } from "@engine/ui";
+import { cssVariables, defineMotion, defineTokens, fontFace, fontStack } from "@engine/ui";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
 
 type Face = { file: string; weight: string };
@@ -22,8 +22,12 @@ export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, U
     const fonts = Object.entries(config.settings.fonts);
     const locales = fonts.map(( [locale] ) => locale);
     const tokens = defineTokens({ colors: config.theme.colors });
+    const motion = defineMotion(false);
+    const motionCss = `:root { ${Object.entries(motion.durations).map(( [name, ms] ) => `--motion-${name}: ${ms}ms;`).join(" ")} ${Object.entries(motion.easings).map(( [name, curve] ) => `--ease-${name}: ${curve};`).join(" ")} }`;
 
     return [
+        motionCss,
+        "@media (prefers-reduced-motion: reduce) { :root { --motion-fast: 0ms; --motion-base: 0ms; --motion-slow: 0ms; --motion-expressive: 0ms; } }",
         ...fonts.flatMap(( [locale, faces] ) => faces.map(( font ) => face(locale, font, assets))),
         cssVariables(tokens, "light", ":root"),
         cssVariables(tokens, "dark", '[data-theme="dark"]'),

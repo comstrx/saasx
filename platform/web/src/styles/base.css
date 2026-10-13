@@ -225,3 +225,23 @@ body {
 .file::file-selector-button { margin-inline-end: var(--gap-3); padding: var(--gap-2) var(--gap-4); border: 1px solid var(--line); border-radius: 0.5rem; background: var(--panel); color: var(--ink); font: inherit; cursor: pointer; }
 .input:disabled, .file:disabled { opacity: 0.6; cursor: progress; }
 .input[type="date"], .input[type="number"] { max-width: 16rem; }
+
+/* Typography scale and motion from the engine tokens */
+body { font-size: var(--type-md-size); line-height: var(--type-md-line); }
+.heading[data-level="1"] { font-size: var(--type-xl-size); line-height: var(--type-xl-line); font-weight: var(--type-xl-weight); letter-spacing: -0.01em; }
+.heading[data-level="2"] { font-size: var(--type-lg-size); line-height: var(--type-lg-line); font-weight: var(--type-lg-weight); }
+.heading[data-level="3"] { font-size: var(--type-md-size); line-height: var(--type-md-line); font-weight: 600; }
+.text[data-size="sm"] { font-size: var(--type-sm-size); line-height: var(--type-sm-line); }
+.text[data-size="lg"] { font-size: var(--type-lg-size); line-height: var(--type-lg-line); }
+.field-label, .table-head, .fact-label { font-size: var(--type-xs-size); line-height: var(--type-xs-line); letter-spacing: 0.02em; }
+.button, .link[data-tone="button"], .menu-link, .table-row, .input, .select, .card { transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard); }
+.button:not(:disabled):active { transform: translateY(1px); }
+.button:not(:disabled):hover { filter: brightness(1.05); }
+.input:focus-visible, .select:focus-visible, .button:focus-visible, .link:focus-visible, .menu-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.card { box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent); }
+.illustration { width: 6rem; height: 6rem; }
+.illustration-body { fill: color-mix(in srgb, var(--primary) 12%, var(--panel)); stroke: var(--primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.illustration-accent { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.illustration[data-scene="failed"] .illustration-accent, .illustration[data-scene="denied"] .illustration-body { stroke: var(--danger); }
+.illustration[data-scene="done"] .illustration-accent { stroke: var(--success); }
+.stack[data-align="center"] { align-items: center; text-align: center; }
