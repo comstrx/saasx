@@ -1,5 +1,5 @@
-import { space } from "@engine/ui";
 import { config } from "@/lib/spec/runtime";
+import { space } from "@/lib/spec/theme";
 
 export type Palette = Record<string, string>;
 export type Scheme = "light" | "dark";

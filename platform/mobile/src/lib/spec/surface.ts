@@ -1,9 +1,10 @@
 import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, key, specText, stepShape } from "@engine/spec";
+import { iconNames } from "@engine/ui";
 import { z } from "@engine/validate";
 import { core } from "../../api/core/index.ts";
 import { endpoints, entities } from "../../api/features/index.ts";
-import { iconNames } from "../providers/icon-names.ts";
 import { supportedLocales } from "./languages.ts";
+import { currency, themeDefaults } from "./theme.ts";
 
 export const surface = createSpecSurface({
     kind: "native",
@@ -33,7 +34,9 @@ export const surface = createSpecSurface({
     contents: { description: specText.optional() },
     settings: { app: z.strictObject({ slug: key, scheme: z.string().regex(/^[a-z][a-z0-9+.-]*$/) }) },
     required: ["app"],
+    themeDefaults,
     settingsDefaults: {
+        currency,
         screen: { presentation: "stack", title: true, header: true, tabs: false, loader: true, order: 50 },
         block: { width: "full", height: "auto", grid: 1, gap: 4, padding: 4, align: "stretch", tone: "default", radius: "none" },
         shell: { header: null, tabs: null, loader: null },

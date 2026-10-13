@@ -15,7 +15,7 @@ import {
     settingsInput,
     siteUrl,
 } from "./contract.ts";
-import { sharedSettingsDefaults, themeDefaults as sharedTheme } from "./defaults.ts";
+import { sharedSettingsDefaults } from "./defaults.ts";
 import { defineSurface } from "./define.ts";
 import { key } from "./fields.ts";
 
@@ -75,7 +75,7 @@ export type Vocabulary<
     required?: readonly string[] | undefined;
     icons?: readonly string[] | undefined;
     settingsDefaults: Patch;
-    themeDefaults?: Theme | undefined;
+    themeDefaults: Theme;
     contracts: Contracts<CX>;
 };
 
@@ -148,7 +148,7 @@ export function createSpecSurface<
         theme: { ...sharedSettingsDefaults.theme, default: kind === "web" ? "light" : "system" },
         ...vocabulary.settingsDefaults,
     };
-    const themeDefaults = vocabulary.themeDefaults ?? sharedTheme;
+    const themeDefaults = vocabulary.themeDefaults;
 
     type Config = z.output<typeof configShape>;
     type ConfigInput = z.output<typeof configInputShape>;

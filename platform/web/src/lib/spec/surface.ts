@@ -1,10 +1,11 @@
 import { apiInputShape } from "@engine/api";
 import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, reads, siteUrl, specText, stepShape } from "@engine/spec";
+import { iconNames } from "@engine/ui";
 import { z } from "@engine/validate";
 import { core } from "../../api/core/index.ts";
 import { endpoints, entities } from "../../api/features/index.ts";
-import { iconNames } from "../providers/icons.ts";
 import { supportedLocales } from "./languages.ts";
+import { currency, themeDefaults } from "./theme.ts";
 
 const count = countShape(6);
 
@@ -13,7 +14,7 @@ export const surface = createSpecSurface({
     locales: supportedLocales,
     entities,
     icons: iconNames,
-    brand: { images: "/assets/images/brand", imageFormats: ["png", "webp", "jpg", "jpeg", "svg", "avif"], fontFormats: ["woff2", "woff", "ttf", "otf"], fontWeight: /^[1-9]00(?: [1-9]00)?$/ },
+    brand: { images: "/images/brand", imageFormats: ["png", "webp", "jpg", "jpeg", "svg", "avif"], fontFormats: ["woff2", "woff", "ttf", "otf"], fontWeight: /^[1-9]00(?: [1-9]00)?$/ },
     screenOptions: z.strictObject({
         render: z.enum(["server", "client"]),
         title: z.boolean(),
@@ -44,7 +45,9 @@ export const surface = createSpecSurface({
         }).optional(),
     },
     settings: { delivery: z.enum(["server", "static"]), frameOrigins: z.array(siteUrl).max(20) },
+    themeDefaults,
     settingsDefaults: {
+        currency,
         delivery: "server",
         frameOrigins: [],
         screen: { render: "server", title: true, nav: true, footer: true, sidebar: false, loader: true },

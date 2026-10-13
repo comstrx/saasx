@@ -37,7 +37,7 @@ export {
     themeShape,
 } from "./contract.ts";
 export { type Brand, type Contracts, createSpecSurface, type Vocabulary } from "./create.ts";
-export { type Motion, sharedSettingsDefaults, type ThemeName, themeDefaults } from "./defaults.ts";
+export { type Motion, sharedSettingsDefaults, type ThemeName } from "./defaults.ts";
 export {
     block,
     type Children,

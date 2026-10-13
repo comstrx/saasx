@@ -8,5 +8,7 @@
     ".": "./src/index.ts"
   },
   "sideEffects": false,
-  "dependencies": {}
+  "dependencies": {
+    "lucide": "1.52.0"
+  }
 }

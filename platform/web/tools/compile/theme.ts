@@ -1,13 +1,14 @@
 import { cssVariables, defineMotion, defineTokens, fontFace, fontStack } from "@engine/ui";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
+import { motion as presets, radius, space, type } from "../../src/lib/spec/theme.ts";
 
 type Face = { file: string; weight: string };
 
 function face ( locale: string, font: Face, assets: ReadonlyMap<string, Uint8Array> ): string {
 
-    if ( !assets.has(`assets/fonts/${font.file}`) ) throw new Error(`Missing selected font: ${font.file}`);
+    if ( !assets.has(`fonts/${font.file}`) ) throw new Error(`Missing selected font: ${font.file}`);
 
-    return fontFace({ family: `Site-${locale}`, src: `/assets/fonts/${font.file}`, weight: font.weight });
+    return fontFace({ family: `Site-${locale}`, src: `/fonts/${font.file}`, weight: font.weight });
 
 }
 function family ( locale: string, locales: string[] ): string {
@@ -21,8 +22,8 @@ export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, U
 
     const fonts = Object.entries(config.settings.fonts);
     const locales = fonts.map(( [locale] ) => locale);
-    const tokens = defineTokens({ colors: config.theme.colors });
-    const motion = defineMotion(false);
+    const tokens = defineTokens({ colors: config.theme.colors, space, radius, type });
+    const motion = defineMotion(presets, false);
     const motionCss = `:root { ${Object.entries(motion.durations).map(( [name, ms] ) => `--motion-${name}: ${ms}ms;`).join(" ")} ${Object.entries(motion.easings).map(( [name, curve] ) => `--ease-${name}: ${curve};`).join(" ")} }`;
 
     return [

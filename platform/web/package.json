@@ -18,12 +18,10 @@
     "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done"
   },
   "dependencies": {
-    "lucide-react": "1.54.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "server-only": "0.0.1",
-    "zod": "4.6.5"
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

@@ -10,8 +10,8 @@ export {
     type Tone,
 } from "./adapter.ts";
 export { type FontFace, fontFace, fontStack } from "./fonts.ts";
-export { createIcons, type Icons } from "./icons.ts";
-export { type Duration, defineMotion, durations, type Easing, easings, type Motion, transition } from "./motion.ts";
+export { createIcons, glyphs, type IconName, type IconNode, type Icons, iconNames } from "./icons.ts";
+export { defineMotion, type Motion, type Presets, transition } from "./motion.ts";
 export {
     cssVariables,
     defineTokens,
@@ -19,10 +19,6 @@ export {
     type NativeTokens,
     nativeTokens,
     type Palette,
-    radius,
     type Scheme,
-    space,
     type Tokens,
-    type TokensInput,
-    type,
 } from "./tokens.ts";

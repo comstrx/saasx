@@ -6,15 +6,22 @@ import {
     defineTokens,
     fontFace,
     fontStack,
+    glyphs,
+    iconNames,
     nativeTokens,
     transition,
 } from "@engine/ui";
 
-describe("tokens", () => {
-    const tokens = defineTokens({ colors: { light: { ink: "#111" }, dark: { ink: "#eee" } }, space: { 5: 20 } });
+const scales = {
+    space: { 0: 0, 4: 16 },
+    radius: { full: 9999 },
+    type: { lg: { size: 20, line: 28, weight: 600 as const }, md: { size: 16, line: 24, weight: 400 as const } },
+};
 
-    test("scales are the engine's unless patched, and each scheme keeps its own palette", () => {
-        expect(tokens.space[5]).toBe(20);
+describe("tokens", () => {
+    const tokens = defineTokens({ colors: { light: { ink: "#111" }, dark: { ink: "#eee" } }, ...scales });
+
+    test("every scale comes from the surface, and each scheme keeps its own palette", () => {
         expect(tokens.space[4]).toBe(16);
         expect(tokens.colors.dark.ink).toBe("#eee");
         expect(tokens.radius.full).toBe(9999);
@@ -38,23 +45,33 @@ describe("tokens", () => {
     });
 });
 describe("motion", () => {
+    const presets = { durations: { fast: 120, base: 200 }, easings: { standard: "ease", enter: "ease-out" } };
+
     test("reduced motion collapses every duration and transitions follow", () => {
-        const full = defineMotion(false);
-        const reduced = defineMotion(true);
+        const full = defineMotion(presets, false);
+        const reduced = defineMotion(presets, true);
 
         expect(transition(full, ["opacity", "transform"], "fast", "enter")).toBe(
-            "opacity 120ms cubic-bezier(0, 0, 0, 1), transform 120ms cubic-bezier(0, 0, 0, 1)",
+            "opacity 120ms ease-out, transform 120ms ease-out",
         );
-        expect(transition(reduced, ["opacity"])).toBe("opacity 0ms cubic-bezier(0.2, 0, 0, 1)");
-        expect(reduced.reduced).toBe(true);
+        expect(transition(reduced, ["opacity"], "base", "standard")).toBe("opacity 0ms ease");
+        expect(() => transition(full, ["opacity"], "slow", "standard")).toThrow("Unknown motion");
     });
 });
 describe("fonts and icons", () => {
     test("font faces and stacks render as css", () => {
-        expect(fontFace({ family: "Site-ar", src: "/assets/fonts/ar.woff2", weight: 400 })).toBe(
-            '@font-face { font-family: "Site-ar"; src: url("/assets/fonts/ar.woff2"); font-weight: 400; font-style: normal; font-display: swap; }',
+        expect(fontFace({ family: "Site-ar", src: "/fonts/ar.woff2", weight: 400 })).toBe(
+            '@font-face { font-family: "Site-ar"; src: url("/fonts/ar.woff2"); font-weight: 400; font-style: normal; font-display: swap; }',
         );
         expect(fontStack(["Site-ar", "Site-en"])).toBe('"Site-ar", "Site-en", sans-serif');
+    });
+    test("every named glyph is a list of svg nodes", () => {
+        for (const name of iconNames) {
+            const nodes = glyphs[name];
+
+            expect(nodes.length).toBeGreaterThan(0);
+            expect(nodes.every(([tag, attrs]) => typeof tag === "string" && typeof attrs === "object")).toBe(true);
+        }
     });
     test("unknown icons resolve to the fallback", () => {
         const icons = createIcons({ house: "H", tag: "T" }, "?");

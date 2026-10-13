@@ -67,8 +67,10 @@
         "@engine/api": "workspace:*",
         "@engine/array": "workspace:*",
         "@engine/base": "workspace:*",
+        "@engine/error": "workspace:*",
         "@engine/spec": "workspace:*",
         "@engine/storage": "workspace:*",
+        "@engine/translate": "workspace:*",
         "@engine/validate": "workspace:*",
         "react": "19.3.0",
         "zustand": "5.0.15",
@@ -78,6 +80,7 @@
       "name": "@engine/cookie",
       "version": "0.1.0",
       "dependencies": {
+        "@engine/base": "workspace:*",
         "@engine/storage": "workspace:*",
         "@engine/translate": "workspace:*",
         "@engine/validate": "workspace:*",
@@ -88,6 +91,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@engine/error": "workspace:*",
+        "@engine/file": "workspace:*",
       },
     },
     "packages/error": {
@@ -169,6 +173,8 @@
         "@engine/base": "workspace:*",
         "@engine/spec": "workspace:*",
         "@engine/translate": "workspace:*",
+        "@engine/validate": "workspace:*",
+        "mitata": "1.0.34",
       },
     },
     "packages/translate": {
@@ -176,12 +182,16 @@
       "version": "0.1.0",
       "dependencies": {
         "@engine/base": "workspace:*",
+        "@engine/error": "workspace:*",
         "@engine/parse": "workspace:*",
       },
     },
     "packages/ui": {
       "name": "@engine/ui",
       "version": "0.1.0",
+      "dependencies": {
+        "lucide": "1.52.0",
+      },
     },
     "packages/validate": {
       "name": "@engine/validate",
@@ -300,6 +310,8 @@
     "bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
 
     "csstype": ["csstype@3.2.3", "", {}, "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ=="],
+
+    "lucide": ["lucide@1.52.0", "", {}, "sha512-XlP0U+m3seobjTPfT0Ybg9YqJeTwSxx1I6R2Ty7vwpA/4HtibMbV28p9tW7AnIwb77YkTboK9x/OPBEqGAzCFg=="],
 
     "mitata": ["mitata@1.0.34", "", {}, "sha512-Mc3zrtNBKIMeHSCQ0XqRLo1vbdIx1wvFV9c8NJAiyho6AjNfMY8bVhbS12bwciUdd1t4rj8099CH3N3NFahaUA=="],
 
