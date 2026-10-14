@@ -33,7 +33,7 @@ export default function nextConfig ( phase: string ): NextConfig {
         output: spec.delivery === "static" ? "export" : "standalone",
         productionBrowserSourceMaps: false,
         reactCompiler: true,
-        experimental: { staleTimes: { dynamic: 30, static: 180 }, inlineCss: true },
+        experimental: { staleTimes: { dynamic: 30, static: 180 } },
         typedRoutes: true,
         poweredByHeader: false,
         agentRules: false,
