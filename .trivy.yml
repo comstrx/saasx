@@ -79,6 +79,10 @@ scan:
 
 license:
   full: true
+  ignored:
+    - MIT
+    - Apache-2.0
+    - OFL-1.1
 
   ignored:
     - AGPL-3.0

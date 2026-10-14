@@ -13,6 +13,7 @@ extend-exclude = [
     "**/coverage/**",
     "**/storage/**",
     "**/generated/**",
+    "engine/bun/packages/world/data/**",
     "**/Pods/**",
     "**/android/**",
     "**/ios/**",
@@ -86,4 +87,5 @@ check-file = false
 "INVAILD" = "INVALID"
 
 [default.extend-words]
+"JOD" = "JOD"
 "widnows" = "windows"
