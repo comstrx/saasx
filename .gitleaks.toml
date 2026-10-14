@@ -5,29 +5,40 @@ useDefault = true
 
 [[allowlists]]
 description = "Ignore tool, build and dependency directories"
+
 paths = [
     '''(^|/)\.git/''',
-    '''(^|/)\.idea/''',
-    '''(^|/)\.vscode/''',
-    '''(^|/)\.fleet/''',
-    '''(^|/)\.zed/''',
     '''(^|/)\.claude/''',
     '''(^|/)\.codex/''',
     '''(^|/)\.agents/''',
     '''(^|/)node_modules/''',
+    '''(^|/)vendor/''',
     '''(^|/)target/''',
     '''(^|/)dist/''',
     '''(^|/)build/''',
     '''(^|/)out/''',
+    '''(^|/)coverage/''',
+    '''(^|/)storage/''',
+    '''(^|/)generated/''',
+    '''(^|/)Pods/''',
+    '''(^|/)android/''',
+    '''(^|/)ios/''',
+    '''(^|/)\.fleet/''',
+    '''(^|/)\.zed/''',
+    '''(^|/)\.vs/''',
+    '''(^|/)\.vscode/''',
+    '''(^|/)\.idea/''',
     '''(^|/)\.next/''',
+    '''(^|/)\.nuxt/''',
     '''(^|/)\.expo/''',
     '''(^|/)\.turbo/''',
     '''(^|/)\.cache/''',
     '''(^|/)\.vite/''',
-    '''(^|/)coverage/''',
-    '''(^|/)Pods/''',
     '''(^|/)\.gradle/''',
-    '''(^|/)vendor/''',
+    '''(^|/)\.infra/''',
+    '''(^|/)\.terraform/''',
+    '''(^|/)fuzz/corpus/''',
+    '''(^|/)fuzz/artifacts/''',
     '''(?i)\.(?:zip|tar|tgz|gz|7z|rar|jar|war)$''',
     '''(?i)\.(?:png|jpe?g|gif|webp|bmp|ico|pdf|exe|dll|so|dylib|bin|woff2?|ttf|eot)$''',
 ]
@@ -35,6 +46,7 @@ paths = [
 [[allowlists]]
 description = "Ignore obvious placeholders"
 regexTarget = "secret"
+
 regexes = [
     '''(?i)\b(?:fake|dummy|example|sample|placeholder|redacted)\b''',
     '''(?i)\b(?:xxxx+|yyyy+|zzzz+|0000+|1111+)\b''',

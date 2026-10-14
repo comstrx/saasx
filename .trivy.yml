@@ -1,5 +1,6 @@
 debug: false
 quiet: false
+
 insecure: false
 timeout: 10m0s
 
@@ -25,6 +26,7 @@ vulnerability:
   ignore-status: []
   ignore-unfixed: true
   skip-vex-repo-update: false
+
   severity-source:
     - auto
 
@@ -43,32 +45,40 @@ scan:
 
   skip-dirs:
     - '**/.git'
-    - '**/.idea'
-    - '**/.vscode'
-    - '**/.fleet'
-    - '**/.zed'
     - '**/.claude'
     - '**/.codex'
     - '**/.agents'
     - '**/node_modules'
+    - '**/vendor'
     - '**/target'
     - '**/dist'
     - '**/build'
     - '**/out'
+    - '**/coverage'
+    - '**/storage'
+    - '**/generated'
+    - '**/Pods'
+    - '**/android'
+    - '**/ios'
+    - '**/.fleet'
+    - '**/.zed'
+    - '**/.vs'
+    - '**/.vscode'
+    - '**/.idea'
     - '**/.next'
+    - '**/.nuxt'
     - '**/.expo'
     - '**/.turbo'
     - '**/.cache'
     - '**/.vite'
-    - '**/coverage'
-    - '**/Pods'
     - '**/.gradle'
-    - '**/vendor'
+    - '**/.infra'
+    - '**/.terraform'
+    - '**/fuzz/corpus'
+    - '**/fuzz/artifacts'
 
 license:
   full: true
 
-  # SaasX itself is AGPL-3.0;
-  # dependency licenses are policed by cargo-deny in every Rust workspace.
   ignored:
     - AGPL-3.0

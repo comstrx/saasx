@@ -1,36 +1,38 @@
 [files]
 extend-exclude = [
     "**/.git/**",
-    "**/.idea/**",
-    "**/.vscode/**",
-    "**/.fleet/**",
-    "**/.zed/**",
     "**/.claude/**",
     "**/.codex/**",
     "**/.agents/**",
     "**/node_modules/**",
+    "**/vendor/**",
     "**/target/**",
     "**/dist/**",
     "**/build/**",
     "**/out/**",
+    "**/coverage/**",
+    "**/storage/**",
+    "**/generated/**",
+    "**/Pods/**",
+    "**/android/**",
+    "**/ios/**",
+    "**/.fleet/**",
+    "**/.zed/**",
+    "**/.vs/**",
+    "**/.vscode/**",
+    "**/.idea/**",
     "**/.next/**",
+    "**/.nuxt/**",
     "**/.expo/**",
     "**/.turbo/**",
     "**/.cache/**",
     "**/.vite/**",
-    "**/coverage/**",
-    "**/Pods/**",
     "**/.gradle/**",
-    "**/vendor/**",
-    "**/*.lock",
-    "**/public/images/flag/**",
-    "engine/bun/packages/world/src/countries.ts",
-    "engine/bun/packages/world/src/currencies.ts",
-    "engine/bun/packages/world/src/languages.ts",
-    "engine/bun/assets/**",
-    "engine/bun/packages/emoji/src/catalog.ts",
+    "**/.infra/**",
+    "**/.terraform/**",
+    "**/fuzz/corpus/**",
+    "**/fuzz/artifacts/**",
 ]
-
 ignore-files = true
 ignore-dot = true
 ignore-vcs = true
@@ -44,16 +46,28 @@ check-filename = true
 check-file = true
 unicode = true
 locale = "en-us"
-
+extend-ignore-words-re = ["(?i)^fpr$"]
 extend-ignore-re = [
     "(?s)-----BEGIN PGP SIGNATURE-----.*?-----END PGP SIGNATURE-----",
     "\\bnl -ba\\b",
 ]
 
-extend-ignore-words-re = ["(?i)^fpr$"]
-
 [type.lock]
 extend-glob = ["**/*.lock"]
+check-file = false
+check-filename = false
+
+[type.media]
+extend-glob = [
+    "**/*.svg",
+    "**/*.webp",
+    "**/*.png",
+    "**/*.jpg",
+    "**/*.gif",
+    "**/*.ico",
+    "**/*.woff2",
+    "**/*.ttf",
+]
 check-file = false
 check-filename = false
 
