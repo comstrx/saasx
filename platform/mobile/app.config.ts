@@ -22,13 +22,21 @@ const bareWindow: ConfigPlugin = ( config ) => withAndroidStyles(config, ( style
 
     return styles;
 });
-const staticViews: ConfigPlugin = ( config ) => withMainApplication(config, ( app ) => {
+const nativeFlags: Readonly<Record<string, boolean>> = {
+    useNativeViewConfigsInBridgelessMode: false,
+    enablePreparedTextLayout: true,
+    enableAndroidTextMeasurementOptimizations: true,
+    useOptimizedViewRegistryOnAndroid: true,
+    enableDifferentiatorMutationVectorPreallocation: true,
+};
+const featureFlags: ConfigPlugin = ( config ) => withMainApplication(config, ( app ) => {
     const flags = "com.facebook.react.internal.featureflags";
     const entry = "loadReactNative(this)\n";
+    const overrides = Object.entries(nativeFlags).map(( [name, value] ) => `override fun ${name}(): Boolean = ${value}`).join("; ");
 
-    if ( !app.modResults.contents.includes(entry) ) throw new Error("MainApplication no longer calls loadReactNative(this): move the view config override.");
+    if ( !app.modResults.contents.includes(entry) ) throw new Error("MainApplication no longer calls loadReactNative(this): move the feature flag override.");
 
-    app.modResults.contents = app.modResults.contents.replace(entry, `${entry}    if (DefaultNewArchitectureEntryPoint.releaseLevel == ReleaseLevel.STABLE) ${flags}.ReactNativeFeatureFlags.dangerouslyForceOverride(object : ${flags}.ReactNativeNewArchitectureFeatureFlagsDefaults() { override fun useNativeViewConfigsInBridgelessMode(): Boolean = false })\n`);
+    app.modResults.contents = app.modResults.contents.replace(entry, `${entry}    if (DefaultNewArchitectureEntryPoint.releaseLevel == ReleaseLevel.STABLE) ${flags}.ReactNativeFeatureFlags.dangerouslyForceOverride(object : ${flags}.ReactNativeNewArchitectureFeatureFlagsDefaults() { ${overrides} })\n`);
 
     return app;
 });
@@ -41,7 +49,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
         android: { usesCleartextTraffic: insecure, enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true, enableBundleCompression: false },
     }];
 
-    return staticViews(bareWindow({
+    return featureFlags(bareWindow({
         ...config,
         name: app.name,
         slug: app.slug,
