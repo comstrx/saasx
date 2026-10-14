@@ -18,7 +18,7 @@ export default function TabMenu ({ label, entries }: Props) {
             label: entry.label,
             icon: entry.icon ? <Icon name={entry.icon} size="md" tone={entry.current ? "primary" : "muted"} /> : undefined,
             current: entry.current,
-            onPress: () => router.navigate(entry.path),
+            onPress: () => router.tab(entry.path),
         }));
 
     if ( tabs.length < 2 ) return null;

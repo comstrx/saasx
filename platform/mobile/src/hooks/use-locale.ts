@@ -4,13 +4,13 @@ import { preferences } from "@/stores/preferences";
 
 export function useLocale (): Locale {
 
-    return preferences.use(( state ) => state.language);
+    return preferences.useSelect(( state ) => state.language);
 
 }
 export function useTheme (): "light" | "dark" {
 
     const system = useDeviceFact("colorScheme");
-    const chosen = preferences.use(( state ) => state.theme);
+    const chosen = preferences.useSelect(( state ) => state.theme);
 
     if ( chosen === "system" ) return system === "dark" ? "dark" : "light";
 
@@ -19,6 +19,6 @@ export function useTheme (): "light" | "dark" {
 }
 export function usePreferences () {
 
-    return preferences.use(( state ) => state);
+    return preferences.useSelect(( state ) => state);
 
 }

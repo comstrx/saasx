@@ -64,7 +64,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ...(process.env.APP_LAB === "1" && existsSync(push) ? { googleServicesFile: push } : {}),
             ...config.android,
         },
-        experiments: { tsconfigPaths: true },
+        experiments: { tsconfigPaths: true, reactCompiler: true },
         extra: { ...config.extra, spec: identity, ...(process.env.APP_LAB === "1" && existsSync(push) ? { eas: { projectId: labProject } } : {}) },
     }));
 };

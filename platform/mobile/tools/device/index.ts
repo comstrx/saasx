@@ -97,7 +97,12 @@ export async function perf (): Promise<void> {
     if ( failures.length ) throw new Error(failures.join("; "));
 
 }
-type Measure = { app: string; cold: number; percent: number; frames: number };
+type Point = readonly [number, number];
+type Plan = { app: string; tabs?: readonly [Point, Point] | undefined };
+type Graphics = Frames & { p50: number; p90: number; p99: number };
+type Measure = { app: string; cold: number; scroll: Graphics; nav: Graphics | null; pss: number[] };
+
+const loops = parseInteger(process.env.NAV_LOOPS ?? "") ?? 20;
 
 async function launcherOf ( pkg: string ): Promise<string> {
 
@@ -132,10 +137,27 @@ async function coldOf ( component: string, pkg: string, runs: number ): Promise<
     return times[Math.floor(times.length / 2)] ?? 0;
 
 }
-async function swipedFrames ( pkg: string ): Promise<Frames> {
+async function graphics ( pkg: string, act: () => Promise<void> ): Promise<Graphics> {
 
-    await Bun.sleep(3000);
     await $`adb shell dumpsys gfxinfo ${pkg} reset`.quiet();
+    await act();
+
+    const output = await $`adb shell dumpsys gfxinfo ${pkg}`.text();
+    const number = ( pattern: RegExp ): number => Number(pattern.exec(output)?.[1] ?? "0");
+    const frames = number(/Total frames rendered:\s*(\d+)/);
+    const janky = number(/Janky frames:\s*(\d+)/);
+
+    return {
+        frames,
+        janky,
+        percent: frames ? Math.round((janky / frames) * 10000) / 100 : 0,
+        p50: number(/50th percentile:\s*(\d+)ms/),
+        p90: number(/90th percentile:\s*(\d+)ms/),
+        p99: number(/99th percentile:\s*(\d+)ms/),
+    };
+
+}
+async function swipes (): Promise<void> {
 
     for ( const [from, to] of [[1800, 600], [1800, 600], [1800, 600], [600, 1800], [600, 1800], [600, 1800]] ) {
 
@@ -144,32 +166,88 @@ async function swipedFrames ( pkg: string ): Promise<Frames> {
 
     }
 
-    const output = await $`adb shell dumpsys gfxinfo ${pkg}`.text();
-    const frames = Number(/Total frames rendered:\s*(\d+)/.exec(output)?.[1] ?? "0");
-    const janky = Number(/Janky frames:\s*(\d+)/.exec(output)?.[1] ?? "0");
+}
+function switches ( tabs: readonly [Point, Point], count: number ): () => Promise<void> {
 
-    return { frames, janky, percent: frames ? Math.round((janky / frames) * 10000) / 100 : 0 };
+    return async () => {
+
+        for ( let run = 0; run < count; run += 1 ) {
+
+            for ( const [x, y] of tabs ) {
+
+                await $`adb shell input tap ${x} ${y}`.quiet();
+                await Bun.sleep(700);
+
+            }
+
+        }
+
+    };
 
 }
-export async function compare (): Promise<void> {
+async function pssOf ( pkg: string ): Promise<number> {
 
-    const apps = (process.env.COMPARE ?? "com.whatsapp,org.telegram.messenger,com.airbnb.android,com.booking").split(",").map(( name ) => name.trim()).filter(Boolean);
-    const rows: Measure[] = [];
+    await Bun.sleep(3000);
 
-    for ( const pkg of [app, ...apps] ) {
+    const output = await $`adb shell dumpsys meminfo ${pkg}`.text();
 
-        const component = await launcherOf(pkg);
-        const cold = await coldOf(component, pkg, coldRuns);
-        const frames = await swipedFrames(pkg);
+    return Math.round(Number(/TOTAL PSS:\s*(\d+)/.exec(output)?.[1] ?? /TOTAL\s+(\d+)/.exec(output)?.[1] ?? "0") / 1024);
 
-        rows.push({ app: pkg, cold, percent: frames.percent, frames: frames.frames });
-        await $`adb shell am force-stop ${pkg}`.quiet();
+}
+async function measure ( plan: Plan ): Promise<Measure> {
+
+    const component = await launcherOf(plan.app);
+    const cold = await coldOf(component, plan.app, coldRuns);
+
+    await Bun.sleep(3000);
+
+    const scroll = await graphics(plan.app, swipes);
+    const pss = [await pssOf(plan.app)];
+    const nav = plan.tabs ? await graphics(plan.app, switches(plan.tabs, loops)) : null;
+
+    if ( plan.tabs ) {
+
+        pss.push(await pssOf(plan.app));
+        await switches(plan.tabs, loops)();
+        await swipes();
+        pss.push(await pssOf(plan.app));
+        await $`adb shell am send-trim-memory ${plan.app} RUNNING_CRITICAL`.quiet().nothrow();
+        pss.push(await pssOf(plan.app));
 
     }
 
-    report("app                              cold start (ms)   janky frames while scrolling");
+    await $`adb shell am force-stop ${plan.app}`.quiet();
 
-    for ( const row of rows ) report(`${row.app.padEnd(32)} ${String(row.cold).padStart(8)}          ${row.percent}% of ${row.frames}`);
+    return { app: plan.app, cold, scroll, nav, pss };
+
+}
+function row ( value: Graphics | null ): string {
+
+    return value ? `${value.percent}% of ${value.frames} · p50 ${value.p50} p90 ${value.p90} p99 ${value.p99} ms` : "—";
+
+}
+export async function compare (): Promise<Measure[]> {
+
+    const plans: Plan[] = process.env.PLAN
+        ? (JSON.parse(await Bun.file(process.env.PLAN).text()) as Plan[])
+        : [app, ...(process.env.COMPARE ?? "com.whatsapp,org.telegram.messenger,com.airbnb.android,com.booking").split(",")].map(( name ) => ({ app: name.trim() })).filter(( plan ) => plan.app);
+    const rows: Measure[] = [];
+
+    for ( const plan of plans ) rows.push(await measure(plan));
+
+    for ( const entry of rows ) {
+
+        report(`${entry.app}`);
+        report(`  cold start ${entry.cold} ms (median of ${coldRuns})`);
+        report(`  scroll ${row(entry.scroll)}`);
+        report(`  tabs   ${row(entry.nav)}`);
+        report(`  PSS    ${entry.pss.join(" → ")} MB (warm, after tabs, after tabs and scroll, after a memory trim)`);
+
+    }
+
+    if ( process.env.OUT ) await Bun.write(process.env.OUT, JSON.stringify(rows, null, 2));
+
+    return rows;
 
 }
 task(import.meta.url, async () => {
@@ -177,7 +255,13 @@ task(import.meta.url, async () => {
     const [command = "perf", ...names] = process.argv.slice(2);
 
     if ( command === "perf" ) return perf();
-    if ( command === "compare" ) return compare();
+    if ( command === "compare" ) {
+
+        await compare();
+
+        return;
+
+    }
 
     if ( command === "flow" ) {
 

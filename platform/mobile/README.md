@@ -5,7 +5,8 @@ A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaki
 ## What differs
 
 - Every feature is client-owned; a screen carries `presentation: stack | modal | tab`, `tabs`, `header`, `order` and `scroll` (`false` hands the scrolling to a feature that owns a virtualized list, with a `height: "screen"` block filling the frame).
-- Navigation needs no router package: the engine's `@engine/history` keeps the stack as data (push, replace, navigate, back, leave guards, native dismissal), `render/navigator.tsx` draws it as a native stack on `react-native-screens`, and the hardware back button and deep links (`settings.app.scheme`) feed it.
+- Navigation needs no router package: the engine's `@engine/history` keeps the stack as data (push, replace, navigate, back, leave guards, native dismissal), `render/navigator.tsx` draws it as a native stack on `react-native-screens`, and the hardware back button and deep links (`settings.app.scheme`) feed it. A tab press is `history.tab`: the root swaps in place under the same native screen, and every tab already opened stays mounted inside React's `<Activity>`, so switching back neither remounts nor refetches.
+- The React Compiler is on (`experiments.reactCompiler`). Every hook the engine hands out is named `use<Name>`; a hook named plain `use` is read by the compiler as React's `use()` and memoized away, which once emptied the release login form.
 - Shell parts are `header`, `tabs` (a tab bar derived from the screens that opt in with `options.tabs: true`) and `loader`.
 - Storage is a platform door: AsyncStorage for ports and the outbox, SecureStore for the session (`lib/providers/secure.native.ts`).
 - The device adapter (`lib/providers/device.native.ts`) doors expo-location, expo-image-picker, expo-notifications and expo-localization behind the engine's Device DSL.

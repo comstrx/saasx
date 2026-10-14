@@ -8,6 +8,7 @@ export type Router = {
     push: ( href: string ) => void;
     replace: ( href: string ) => void;
     navigate: ( href: string ) => void;
+    tab: ( href: string ) => void;
     back: () => void;
     canGoBack: () => boolean;
     setParams: ( params: Record<string, string | undefined> ) => void;
@@ -17,6 +18,7 @@ const router: Router = {
     push: history.push,
     replace: history.replace,
     navigate: history.navigate,
+    tab: history.tab,
     back: () => {
 
         history.back();
