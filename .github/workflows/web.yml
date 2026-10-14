@@ -107,7 +107,10 @@ jobs:
         run: bun tools/budget/index.ts
 
       - name: Lighthouse
-        run: npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path=lighthouse.json --only-categories=performance,accessibility,best-practices,seo --preset=desktop
+        run: |
+          for run in 1 2 3; do
+            npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="lighthouse-${run}.json" --only-categories=performance,accessibility,best-practices,seo --preset=desktop
+          done
 
       - name: Lighthouse floors
-        run: bun tools/lighthouse/index.ts lighthouse.json seo=50
+        run: bun tools/lighthouse/index.ts lighthouse-1.json lighthouse-2.json lighthouse-3.json seo=50
