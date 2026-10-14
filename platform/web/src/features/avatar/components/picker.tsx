@@ -6,9 +6,8 @@ import { failureMessages, type Messages } from "@engine/translate";
 import { useState } from "react";
 import AvatarCard from "@/components/avatar-card";
 import Status from "@/components/status";
+import { usePort, useWrite } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
-import { usePort } from "@/hooks/use-port";
-import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { title: string; pick: string; camera: string; saved: string; failed: string; loading: string; offline: string; cached: string; empty: string; errors: Messages };

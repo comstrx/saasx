@@ -1,14 +1,9 @@
 "use client";
 
-import { createMeter, type Observer, reportOf } from "@engine/api";
+import { createObserver, type Signal } from "@engine/api";
 import { uuid } from "@engine/base";
 
-const slow = 3000;
 const every = 60_000;
-const meter = createMeter();
-let watching = false;
-
-export const trace: string = uuid();
 
 function beacon ( body: Record<string, unknown> ): void {
 
@@ -17,42 +12,25 @@ function beacon ( body: Record<string, unknown> ): void {
     navigator.sendBeacon("/api/report", new Blob([JSON.stringify(body)], { type: "application/json" }));
 
 }
-export function flushMetrics (): void {
+function body ( signal: Signal, page: string ): Record<string, unknown> {
 
-    const metrics = meter.flush();
+    if ( signal.kind === "metrics" ) return { trace: signal.trace, metrics: signal.metrics, page };
+    if ( signal.kind === "error" ) return { call: `render.${signal.name}`, ms: 0, trace: signal.trace, kind: "render", reason: signal.reason, page };
 
-    if ( metrics.length ) beacon({ trace, metrics, page: location.pathname });
+    const { call, ms, request } = signal.outcome;
+    const facts = signal.report.facts as { kind?: string; status?: number; reason?: string };
 
-}
-function watch (): void {
-
-    if ( watching || typeof window === "undefined" ) return;
-
-    watching = true;
-    window.addEventListener("pagehide", flushMetrics);
-    document.addEventListener("visibilitychange", () => { if ( document.visibilityState === "hidden" ) flushMetrics(); });
-    window.setInterval(flushMetrics, every);
+    return { call, ms: Math.round(ms), trace: signal.trace, request, kind: facts.kind, status: facts.status, reason: facts.reason, page };
 
 }
+function watch ( flush: () => void ): void {
 
-export const observeCall: Observer = ( outcome ) => {
+    if ( typeof window === "undefined" ) return;
 
-    meter.record(outcome);
-    watch();
-
-    const report = reportOf(outcome, slow);
-
-    if ( !report ) return;
-
-    const { call, ms, request } = outcome;
-    const facts = report.facts as { kind?: string; status?: number; reason?: string };
-
-    beacon({ call, ms: Math.round(ms), trace, request, kind: facts.kind, status: facts.status, reason: facts.reason, page: location.pathname });
-
-};
-
-export function reportError ( name: string, error: unknown ): void {
-
-    beacon({ call: `render.${name}`, ms: 0, trace, kind: "render", reason: error instanceof Error ? error.name : "unknown", page: location.pathname });
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", () => { if ( document.visibilityState === "hidden" ) flush(); });
+    window.setInterval(flush, every);
 
 }
+
+export const { trace, observeCall, flushMetrics, reportError } = createObserver({ trace: uuid(), slow: 3000, send: ( signal ) => beacon(body(signal, location.pathname)), watch });

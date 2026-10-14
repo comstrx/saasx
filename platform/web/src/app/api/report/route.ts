@@ -1,3 +1,4 @@
+import { readJson } from "@engine/net";
 import { z } from "@engine/validate";
 import { logger } from "@/lib/observe/server";
 import { guardRequest } from "@/lib/site/guard";
@@ -28,7 +29,7 @@ export async function POST ( request: Request ): Promise<Response> {
 
     if ( refused ) return refused;
 
-    const parsed = body.safeParse(await request.json().catch(() => null));
+    const parsed = body.safeParse(await readJson(request, 64 * 1024).catch(() => null));
 
     if ( !parsed.success ) return Response.json({ status: false }, { status: 400 });
 

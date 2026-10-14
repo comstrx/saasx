@@ -15,7 +15,7 @@ const policy = contentSecurityPolicy({
     "script-src": ["'self'", "'nonce-{nonce}'", "'strict-dynamic'", development && "'unsafe-eval'"],
     "style-src": ["'self'", "'unsafe-inline'"],
     "img-src": ["'self'", "data:", "blob:", ...backends, ...media],
-    "font-src": ["'self'"],
+    "font-src": ["'self'", "data:"],
     "connect-src": ["'self'", ...backends, ...sockets, development && "ws:", development && "wss:"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],

@@ -1,26 +1,14 @@
-import { createIcons, glyphs, type IconNode } from "@engine/ui";
-import { createElement } from "react";
-
-const icons = createIcons<IconNode>(glyphs, glyphs.circle);
+import { iconGlyph, iconMirrored } from "@engine/ui";
 
 type Props = { name: string; label?: string | undefined; size?: "sm" | "md" | undefined };
 
 export default function Icon ({ name, label, size = "md" }: Props) {
 
-    const nodes = icons.get(name);
+    const glyph = iconGlyph(name);
+    const mirror = iconMirrored(name) ? "" : undefined;
 
-    return (
+    if ( label ) return <span className="icon" data-size={size} data-mirror={mirror} role="img" aria-label={label}>{glyph}</span>;
 
-        <svg
-            className="icon" data-size={size} viewBox="0 0 24 24" width={24} height={24}
-            fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-            aria-hidden={label ? undefined : true} aria-label={label} role={label ? "img" : undefined} focusable={false}
-        >
-
-            {nodes.map(( [tag, attrs] ) => createElement(tag, { key: `${tag}:${Object.values(attrs).join(",")}`, ...attrs }))}
-
-        </svg>
-
-    );
+    return <span className="icon" data-size={size} data-mirror={mirror} aria-hidden>{glyph}</span>;
 
 }

@@ -33,6 +33,13 @@ declare module "@spec/registry" {
 
     export default registry;
 }
+declare module "@spec/mount" {
+    import type { ComponentType } from "react";
+
+    const views: Readonly<Record<string, ComponentType<never>>>;
+
+    export default views;
+}
 declare module "@spec/messages" {
     import type { Messages } from "@engine/translate";
     import type { Locale } from "@/lib/spec/languages";
@@ -40,6 +47,11 @@ declare module "@spec/messages" {
     const dictionaries: Record<Locale, Messages>;
 
     export default dictionaries;
+}
+declare module "@spec/well-known" {
+    const files: Readonly<Record<string, { type: string; body: string }>>;
+
+    export default files;
 }
 declare module "@spec/browser" {
     import type { BrowserConfig } from "@engine/api";

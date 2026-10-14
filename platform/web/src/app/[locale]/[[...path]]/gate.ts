@@ -3,8 +3,7 @@
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect } from "react";
-import { useAccess } from "@/hooks/use-access";
-import { useSession } from "@/hooks/use-session";
+import { useAccess, useSession } from "@/hooks/use-client";
 
 type Props = { access: readonly string[]; guest?: boolean; redirect?: string | null; children: ReactNode };
 
@@ -13,7 +12,7 @@ export function Gate ({ access, guest = false, redirect = null, children }: Prop
     const router = useRouter();
     const session = useSession();
     const state = useAccess(access);
-    const allowed = guest ? session.ready && session.user === null : state === "granted";
+    const allowed = guest ? !session.ready || session.user === null : state === "granted";
     const refused = session.ready && !allowed;
 
     useEffect(() => {

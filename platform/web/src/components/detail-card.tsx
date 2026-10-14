@@ -18,7 +18,7 @@ export default function DetailCard ({ item, back, actions }: Props) {
 
             <Stack gap={3}>
 
-                <Image src={item.image} alt={item.name} />
+                <Image src={item.image} alt={item.name} sizes="(max-width: 640px) 100vw, 640px" />
 
                 {item.type ? <Badge label={item.type} /> : null}
 

@@ -12,10 +12,10 @@ import Note from "@/components/note";
 import SchemaForm, { type Choices, type Labels } from "@/components/schema-form";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { usePort } from "@/hooks/use-client";
 import { useDirtyGuard } from "@/hooks/use-dirty-guard";
-import { isQueued, useForm } from "@/hooks/use-form";
+import { isDeferred, useForm } from "@/hooks/use-form";
 import { useLocale } from "@/hooks/use-locale";
-import { usePort } from "@/hooks/use-port";
 import { routing } from "@/lib/spec/config";
 import type { FeatureProps } from "@/lib/spec/feature";
 
@@ -63,7 +63,7 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
 
     useEffect(() => {
 
-        if ( form.status !== "done" || !options.next || isQueued(form.result) ) return;
+        if ( form.status !== "done" || !options.next || isDeferred(form.result) ) return;
 
         const saved = row(form.result);
         const path = interpolate(options.next, Object.fromEntries(Object.entries(saved ?? {}).map(( [key, value] ) => [key, String(value ?? "")])));
@@ -72,7 +72,7 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
 
     }, [form.status, form.result, options.next, locale, router]);
 
-    const note = form.status === "done" ? { text: isQueued(form.result) ? options.queued : options.saved, tone: "success" as const } : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const } : undefined;
+    const note = form.status === "done" ? { text: isDeferred(form.result) ? options.queued : options.saved, tone: "success" as const } : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const } : undefined;
     const waiting = !settled;
     const failing = item.status === "failed" || texts.status === "failed";
     const nothing = Boolean(ports.item) && settled && record === undefined;

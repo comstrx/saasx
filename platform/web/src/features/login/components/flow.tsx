@@ -10,9 +10,8 @@ import { useState } from "react";
 import CodeForm from "@/components/code-form";
 import CredentialsForm, { type Credentials } from "@/components/credentials-form";
 import Titled from "@/components/titled";
+import { useSession, useWrite } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
-import { useSession } from "@/hooks/use-session";
-import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { title: string; email: string; password: string; continue: string; otp: string; verify: string; sent: string; back: string; failed: string; errors: Messages };

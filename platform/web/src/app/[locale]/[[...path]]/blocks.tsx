@@ -7,23 +7,23 @@ import type { FeatureProps, Route, Screen } from "@/lib/spec/feature";
 import type { CompiledWebBlock as CompiledBlock, CompiledWebFeature as CompiledFeature } from "@/lib/spec/surface";
 import { Boundary } from "./boundary";
 import { Gate } from "./gate";
+import { Mount } from "./mount";
 
 export type Facts = { screen: Screen; route: Route; loader: ReactNode };
 
 type View = ComponentType<FeatureProps>;
 
-export async function feature ( name: string ): Promise<View> {
+export async function placed ( name: string, props: FeatureProps ): Promise<ReactNode> {
 
     const entry = registry[name];
 
-    if ( !entry ) throw new Error(`No feature named ${name} in the registry.`);
+    if ( !entry ) return <Mount name={name} {...props} />;
 
-    return (await entry()).default as View;
+    return createElement((await entry()).default as View, props);
 
 }
 async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
 
-    const Feature = await feature(entry.name);
     const place = { id: entry.id, slug: entry.slug, heading: entry.heading, access: entry.access };
     const held = entry.features.length + entry.blocks.length > 0;
     const children = held ? (
@@ -38,7 +38,7 @@ async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) 
 
     ) : undefined;
 
-    return createElement(Feature, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
+    return placed(entry.name, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
 
 }
 function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {

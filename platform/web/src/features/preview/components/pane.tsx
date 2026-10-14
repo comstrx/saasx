@@ -9,9 +9,8 @@ import DetailCard from "@/components/detail-card";
 import Note from "@/components/note";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { usePort, useWrite } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
-import { usePort } from "@/hooks/use-port";
-import { useWrite } from "@/hooks/use-write";
 import { routing } from "@/lib/spec/config";
 import type { FeatureProps } from "@/lib/spec/feature";
 

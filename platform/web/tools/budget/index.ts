@@ -5,7 +5,7 @@ type Asset = { url: string; bytes: number };
 
 const base = process.env.BUDGET_URL ?? "http://127.0.0.1:3001";
 const path = process.env.BUDGET_PATH ?? "/login";
-const limit = parseInteger(process.env.BUDGET_KB ?? "") ?? 310;
+const limit = parseInteger(process.env.BUDGET_KB ?? "") ?? 200;
 
 async function size ( url: string ): Promise<number> {
 
@@ -17,7 +17,8 @@ async function size ( url: string ): Promise<number> {
 export async function measure (): Promise<{ assets: Asset[]; total: number }> {
 
     const html = await (await fetch(`${base}${path}`)).text();
-    const scripts = [...new Set([...html.matchAll(/src="(\/_next\/static\/[^"]+\.js)"/g)].map(( match ) => match[1] ?? ""))];
+    const tags = [...html.matchAll(/<script\b[^>]*>/g)].map(( match ) => match[0]).filter(( tag ) => !/\bnoModule\b/i.test(tag));
+    const scripts = [...new Set(tags.flatMap(( tag ) => /src="(\/_next\/static\/[^"]+\.js)"/.exec(tag)?.[1] ?? []))];
     const assets = await Promise.all(scripts.map(async ( url ) => ({ url, bytes: await size(`${base}${url}`) })));
 
     return { assets: assets.sort(( a, b ) => b.bytes - a.bytes), total: assets.reduce(( sum, asset ) => sum + asset.bytes, 0) };

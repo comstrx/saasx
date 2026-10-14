@@ -2,7 +2,7 @@
 
 import { granted } from "@engine/spec";
 import Menu, { type MenuEntry } from "@/elements/menu";
-import { useSession } from "@/hooks/use-session";
+import { useSession } from "@/hooks/use-client";
 import Icon from "@/icons";
 
 export type SideEntry = Omit<MenuEntry, "icon"> & { icon?: string | null | undefined; access: readonly string[] };

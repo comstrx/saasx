@@ -1,3 +1,4 @@
+import { publishedUrls } from "@engine/tooling";
 import { cssVariables, defineMotion, defineTokens, fontFace, fontStack } from "@engine/ui";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
 import { motion as presets, radius, space, type } from "../../src/lib/spec/theme.ts";
@@ -8,7 +9,7 @@ function face ( locale: string, font: Face, assets: ReadonlyMap<string, Uint8Arr
 
     if ( !assets.has(`fonts/${font.file}`) ) throw new Error(`Missing selected font: ${font.file}`);
 
-    return fontFace({ family: `Site-${locale}`, src: `/fonts/${font.file}`, weight: font.weight });
+    return fontFace({ family: `Site-${locale}`, src: publishedUrls(`/fonts/${font.file}`, assets), weight: font.weight });
 
 }
 function family ( locale: string, locales: string[] ): string {
@@ -18,7 +19,7 @@ function family ( locale: string, locales: string[] ): string {
     return `:root[lang="${locale}"] { --font-sans: ${fontStack(stack)}; }`;
 
 }
-export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, Uint8Array> ): string {
+export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, Uint8Array>, icons: Uint8Array ): string {
 
     const fonts = Object.entries(config.settings.fonts);
     const locales = fonts.map(( [locale] ) => locale);
@@ -29,6 +30,7 @@ export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, U
     return [
         motionCss,
         "@media (prefers-reduced-motion: reduce) { :root { --motion-fast: 0ms; --motion-base: 0ms; --motion-slow: 0ms; --motion-expressive: 0ms; } }",
+        `@font-face { font-family: "icons"; src: url("data:font/woff2;base64,${Buffer.from(icons).toString("base64")}") format("woff2"); font-display: block; }`,
         ...fonts.flatMap(( [locale, faces] ) => faces.map(( font ) => face(locale, font, assets))),
         cssVariables(tokens, "light", ":root"),
         cssVariables(tokens, "dark", '[data-theme="dark"]'),

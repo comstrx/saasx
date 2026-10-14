@@ -1,12 +1,14 @@
-type Props = { src: string | null | undefined; alt: string; ratio?: "square" | "wide" | undefined };
+import NextImage from "next/image";
 
-export default function Image ({ src, alt, ratio = "wide" }: Props) {
+type Props = { src: string | null | undefined; alt: string; ratio?: "square" | "wide" | undefined; sizes?: string | undefined };
+
+export default function Image ({ src, alt, ratio = "wide", sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" }: Props) {
 
     return (
 
         <span className="image" data-ratio={ratio} data-empty={src ? undefined : ""}>
 
-            {src ? <img src={src} alt={alt} loading="lazy" decoding="async" /> : null}
+            {src ? <NextImage src={src} alt={alt} fill sizes={sizes} /> : null}
 
         </span>
 

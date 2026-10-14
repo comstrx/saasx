@@ -3,6 +3,7 @@ import { Failure } from "@engine/error";
 import { renderToString } from "react-dom/server";
 import DataTable from "../src/components/data-table";
 import Status from "../src/components/status";
+import Button from "../src/elements/button";
 import Emoji from "../src/elements/emoji";
 import Flag from "../src/elements/flag";
 
@@ -54,7 +55,7 @@ describe("flag", () => {
 
     test("a known country draws its file from public, an unknown code falls back to its emoji", () => {
 
-        expect(renderToString(<Flag code="eg" />)).toContain('src="/images/flag/eg.svg"');
+        expect(renderToString(<Flag code="eg" />)).toContain('src="/_generated/images/flag/eg.svg"');
         expect(renderToString(<Flag code="EG" size="sm" />)).toContain('data-size="sm"');
         expect(renderToString(<Flag code="FR" />)).toContain("🇫🇷");
 
@@ -66,10 +67,21 @@ describe("emoji", () => {
     test("inline stays text, a still draws from public, a live reaction offers motion only to those who welcome it", () => {
 
         expect(renderToString(<Emoji glyph="👍" context="inline" />)).toContain('aria-label="thumbs up">👍<');
-        expect(renderToString(<Emoji glyph="👍" context="picker" />)).toContain('src="/images/emoji/static/1f44d.webp"');
-        expect(renderToString(<Emoji glyph="👍🏿" context="picker" size="sm" />)).toContain('src="/images/emoji/static/1f44d-1f3ff.webp"');
-        expect(renderToString(<Emoji glyph="👍" context="reaction" active />)).toContain('media="(prefers-reduced-motion: no-preference)" srcSet="/images/emoji/animated/1f44d.webp"');
-        expect(renderToString(<Emoji glyph="🇪🇬" context="reaction" active />)).toContain("🇪🇬");
+        expect(renderToString(<Emoji glyph="👍" context="picker" />)).toContain('src="/_generated/images/emoji/static/1f44d.webp"');
+        expect(renderToString(<Emoji glyph="👍🏿" context="picker" size="sm" />)).toContain('src="/_generated/images/emoji/static/1f44d-1f3ff.webp"');
+        expect(renderToString(<Emoji glyph="👍" context="reaction" active />)).toContain("background-image:url(/_generated/images/emoji/motion/1f44d.webp)");
+        expect(renderToString(<Emoji glyph="🇪🇬" context="reaction" active />)).toContain('src="/_generated/images/emoji/static/1f1ea-1f1ec.webp"');
+        expect(renderToString(<Emoji glyph="🫩" context="reaction" active />)).toContain("🫩");
+
+    });
+
+});
+describe("button", () => {
+
+    test("a submit button is inert in server html, so a form can never submit natively before it hydrates", () => {
+
+        expect(renderToString(<Button type="submit" label="Continue" />)).toContain("disabled");
+        expect(renderToString(<Button label="Back" />)).not.toContain("disabled");
 
     });
 

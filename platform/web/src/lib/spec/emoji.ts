@@ -1,3 +1,3 @@
-import { defineEmoji } from "@engine/emoji";
+import { defineEmoji } from "@engine/world";
 
-export const emoji = defineEmoji({ folder: "/images/emoji" });
+export const emoji = defineEmoji();

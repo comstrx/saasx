@@ -1,3 +1,4 @@
+import { readJson } from "@engine/net";
 import { cookies } from "next/headers";
 import { guardRequest } from "@/lib/site/guard";
 import { acceptPreferences, cookieOptions, preferenceCookies, readPreferences } from "@/lib/site/preferences";
@@ -21,7 +22,7 @@ export async function POST ( request: Request ): Promise<Response> {
 
     if ( refused ) return refused;
 
-    const accepted = acceptPreferences(await request.json().catch(() => null));
+    const accepted = acceptPreferences(await readJson(request, 4 * 1024).catch(() => null));
     const changes = preferenceCookies(accepted);
 
     if ( !changes.length ) return Response.json({ status: false, message: "No valid preference given." }, { status: 400 });

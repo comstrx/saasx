@@ -3,7 +3,7 @@
 import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
 import SearchBar from "@/components/search-bar";
-import { useSignal } from "@/hooks/use-signal";
+import { useSignal } from "@/hooks/use-client";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { placeholder: string; go: string; mode: string };

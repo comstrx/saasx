@@ -1,87 +1,65 @@
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { browserConfig } from "@engine/api";
-import { defineEmoji } from "@engine/emoji";
+import { base64 } from "@engine/base";
+import { mimeOf } from "@engine/file";
 import { settingsResource } from "@engine/spec";
-import { assetHash, brandImages, type Files, type Mode, modeOf, registryModule, report, routingOf, selectConnections, sha256, specAliases, syncEngineAssets, task } from "@engine/tooling";
-import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
+import { type Files, featureFacts, iconFont } from "@engine/tooling";
+import { iconAliases, iconNames } from "@engine/ui";
+import { defineEmoji } from "@engine/world";
 import { countries } from "../../src/lib/spec/theme.ts";
-import { assetFiles, composeAssets, specPaths } from "../assets/index.ts";
-import { loadSpec, root, type Spec, specFromEnvironment, writeFile, writeJson } from "../core/index.ts";
+import { root, tools } from "../core/index.ts";
 
 import { themeCss } from "./theme.ts";
 
-function forMode ( config: CompiledConfig, mode: Mode ): CompiledConfig {
+function wellKnown ( assets: Files ): Record<string, { type: string; body: string }> {
 
-    return config.api ? { ...config, api: { ...config.api, connections: selectConnections(config.api.connections, mode) } } : config;
+    const prefix = ".well-known/";
+    const entries = [...assets].filter(( [name] ) => name.startsWith(prefix));
 
-}
-function owned ( name: string ): boolean {
-
-    return specPaths.some(( path ) => name.startsWith(`${path}/`));
+    return Object.fromEntries(entries.map(( [name, bytes] ) => [name.slice(prefix.length), { type: mimeOf(name), body: base64(bytes) }]));
 
 }
-export function assemble ( spec: Spec, assets: Files, mode: Mode ) {
+function mountModule ( folder: string, features: readonly string[] ): string {
 
-    const config = forMode(spec.config, mode);
+    const lines = features.map(( name ) => {
 
-    brandImages([config.content.logo, config.content.logo_dark, config.content.icon], assets);
+        const entry = relative(resolve(root, folder), resolve(root, "src", "features", name, "index.tsx")).replaceAll("\\", "/");
 
-    return {
-        assetRoot: `/_generated/${mode}/${assetHash(assets)}`,
-        css: themeCss(config, assets),
-        data: {
-            config,
-            schema: spec.schema,
-            messages: spec.messages,
-            routing: routingOf(config.settings),
-            settings: settingsResource(config.settings),
-            browser: config.api ? { ...browserConfig(config.api, config.contract), realtime: config.realtime } : null,
-        },
-    };
+        return `    ${JSON.stringify(name)}: dynamic(() => import(${JSON.stringify(entry)})),`;
 
-}
-export async function compileSpec ( mode: Mode ) {
+    });
 
-    const spec = await loadSpec(specFromEnvironment());
-    const assets = composeAssets(resolve(root, "public"), resolve(spec.folder, "brand"));
-    const emoji = defineEmoji().files({ tones: true });
-
-    syncEngineAssets(root, [
-        { from: "flag", to: "images/flag", files: countries.map(( code ) => `${code.toLowerCase()}.svg`) },
-        { from: "emoji/static", to: "images/emoji/static", files: emoji.static },
-        { from: "emoji/animated", to: "images/emoji/animated", files: emoji.animated },
-    ]);
-    const folder = `node_modules/.cache/spec/${mode}`;
-    const { assetRoot, css, data } = assemble(spec, assets, mode);
-    const shared = [...assetFiles(resolve(root, "public"), true)].filter(( [name] ) => !owned(name));
-    const files = new Map([...shared, ...assets]);
-
-    for ( const [name, value] of Object.entries(data) ) writeJson(`${folder}/${name}.json`, value);
-
-    writeFile(`${folder}/registry.js`, registryModule(root, folder, spec.schema.features));
-    writeFile(`${folder}/theme.css`, css);
-    writeJson(`${folder}/release.json`, { identity: spec.identity, files: [...files].map(( [path, bytes] ) => ({ path, sha256: sha256(bytes) })) });
-
-    if ( mode === "development" ) {
-
-        for ( const [name, bytes] of assets ) writeFile(`public${assetRoot}/${name}`, bytes);
-
-    }
-
-    const { screens, features, operations } = spec.schema;
-
-    report(`Compiled ${spec.identity}: ${screens.length} screen(s), ${features.length} feature(s), ${operations.length} operation(s), ${assets.size} spec assets.`);
-
-    const meta = { identity: spec.identity, delivery: spec.config.settings.delivery, assetRoot, paths: specPaths, aliases: specAliases(root, folder, Object.keys(data), { "@spec/theme.css": "theme.css" }) };
-
-    writeJson(`${folder}/meta.json`, meta);
-
-    return meta;
+    return `import dynamic from "next/dynamic";\n\nexport default {\n${lines.join("\n")}\n};\n`;
 
 }
 
-task(import.meta.url, async () => {
+export const compileSpec = tools.build(import.meta.url, {
+    brand: ( config ) => [config.content.logo, config.content.logo_dark, config.content.icon],
+    engine: { flags: countries, emoji: defineEmoji().files({ tones: true }) },
+    keep: [".well-known"],
+    emit: async ({ spec, config, assets, folder }) => {
 
-    await compileSpec(modeOf(process.argv[2]));
+        const icons = await iconFont(iconNames, iconAliases, "woff2");
+        const facts = await featureFacts(resolve(root, "src", "features"));
+        const ownedBy = ( owner: string ) => spec.schema.features.filter(( name ) => facts[name]?.owner === owner);
+        const site = spec.config.content.url;
+        const origins = Object.values(spec.config.api?.connections ?? {}).flatMap(( connection ) => (connection.baseUrl ? [new URL(connection.baseUrl).origin] : []));
 
+        return {
+            data: {
+                settings: settingsResource(config.settings),
+                browser: config.api ? { ...browserConfig(config.api, config.contract), realtime: config.realtime } : null,
+                "well-known": wellKnown(assets),
+            },
+            registry: ownedBy("server"),
+            modules: { "mount.js": mountModule(folder, ownedBy("client")), "theme.css": themeCss(config, assets, icons.bytes) },
+            meta: {
+                delivery: spec.config.settings.delivery,
+                secure: typeof site === "string" && site.startsWith("https://"),
+                insecure: spec.config.insecure,
+                media: [...new Set([...origins, ...spec.config.settings.mediaOrigins])],
+            },
+        };
+
+    },
 });
