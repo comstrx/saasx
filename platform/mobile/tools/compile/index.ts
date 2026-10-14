@@ -1,38 +1,23 @@
 import { browserConfig } from "@engine/api";
-import { assetBudget, flagsModule, generatedRoot, iconFont, type Required, requireModule } from "@engine/tooling";
-import { iconAliases, iconNames } from "@engine/ui";
-import { defineEmoji } from "@engine/world";
-import { countries, emoji } from "../../src/lib/spec/theme.ts";
+import { flagFiles, generatedRoot, iconFont, requireModule } from "@engine/tooling";
+import { emojis, iconAliases, iconNames } from "@engine/world";
 import { root, tools } from "../core/index.ts";
 
-const emojiBudget = Number(process.env.EMOJI_BUDGET ?? 256 * 1024);
-
-export function emojiEntries (): Required[] {
-
-    const catalog = defineEmoji();
-    const files = new Set(emoji.bundled.flatMap(( glyph ) => {
-
-        const still = catalog.staticOf(glyph);
-
-        return still ? [still.slice(still.lastIndexOf("/") + 1)] : [];
-
-    }));
-
-    return [...files].map(( file ) => ({ name: `static/${file}`, from: "emoji/static", file }));
-
-}
+const stem = ( file: string ): string => file.slice(0, file.lastIndexOf("."));
 
 export const compileSpec = tools.build(import.meta.url, {
     brand: ( config ) => [config.content.logo, config.content.icon],
     emit: async ({ spec, config, folder }) => {
 
-        const bundled = emojiEntries();
-        const bytes = assetBudget(bundled, emojiBudget, "emoji");
         const icons = await iconFont(iconNames, iconAliases, "truetype");
+        const flags = flagFiles("webp");
 
         return {
             data: { client: config.api ? browserConfig(config.api, config.contract) : null },
-            modules: { "flags.js": flagsModule(root, folder, countries, "webp"), "emoji.js": requireModule(root, folder, bundled) },
+            modules: {
+                "flags.js": requireModule(root, folder, flags.map(( file ) => ({ name: stem(file), from: "flag", file }))),
+                "emoji.js": requireModule(root, folder, emojis.files.map(( file ) => ({ name: stem(file), from: "emoji", file }))),
+            },
             publish: new Map([["fonts/lucide.ttf", icons.bytes]]),
             meta: {
                 insecure: spec.config.insecure,
@@ -45,7 +30,7 @@ export const compileSpec = tools.build(import.meta.url, {
                     background: config.theme.colors.light.body ?? "#ffffff",
                 },
             },
-            note: `${bundled.length} emoji (${(bytes / 1048576).toFixed(2)} MB)`,
+            note: `${emojis.files.length} emoji and ${flags.length} flags bundled`,
         };
 
     },

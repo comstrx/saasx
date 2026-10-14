@@ -1,4 +1,4 @@
-import { iconGlyph, iconMirrored } from "@engine/ui";
+import { iconGlyph, iconMirrored } from "@engine/world";
 import { I18nManager, StyleSheet, Text } from "react-native";
 import { usePalette } from "@/styles/palette";
 

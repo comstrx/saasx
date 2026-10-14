@@ -1,17 +1,16 @@
-import { defineEmoji, emojiFolder } from "@engine/world";
+import { defineEmoji, flagCode } from "@engine/world";
 import bundled from "@spec/emoji";
-import { config } from "./runtime.ts";
-
-export type EmojiSource = number | { uri: string };
+import { flagSource } from "./world.ts";
 
 export const emoji = defineEmoji();
 
-export function emojiSource ( src: string ): EmojiSource | undefined {
+export function emojiSource ( glyph: string ): number | undefined {
 
-    const local = bundled[src.slice(emojiFolder.length + 1)];
+    const found = emoji.get(glyph);
+    const code = found ? flagCode(found.glyph) : undefined;
 
-    if ( local !== undefined ) return local;
+    if ( !found ) return undefined;
 
-    return config.assets ? { uri: `${config.assets}${src}` } : undefined;
+    return code ? flagSource(code) : bundled[found.code];
 
 }
