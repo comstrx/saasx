@@ -15,7 +15,7 @@ import type { Defined, Instance, State } from "./store.ts";
 export type Binding<S extends object, A extends object> = {
     Provider: ( props: { children: ReactNode } ) => ReactNode;
     useInstance: () => Instance<S, A>;
-    use: <T>( selector: ( state: State<S, A> ) => T ) => T;
+    useSelect: <T>( selector: ( state: State<S, A> ) => T ) => T;
 };
 
 export function bind<S extends object, A extends object> ( defined: Defined<S, A> ): Binding<S, A> {
@@ -46,7 +46,7 @@ export function bind<S extends object, A extends object> ( defined: Defined<S, A
 
         },
         useInstance,
-        use: ( selector ) => useStore(useInstance(), selector),
+        useSelect: ( selector ) => useStore(useInstance(), selector),
     };
 
 }

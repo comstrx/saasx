@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { bindDevice, defineClient, defineSession, defineStore } from "@engine/context";
+import { bind, bindDevice, defineClient, defineSession, defineStore } from "@engine/context";
 import { createDevice } from "@engine/device";
 import { memoryStore } from "@engine/storage";
 
@@ -207,6 +207,30 @@ describe("device binding", () => {
         const device = createDevice({});
 
         expect(bindDevice(device).useDevice()).toBe(device);
+
+    });
+
+});
+describe("hook names", () => {
+
+    test("every hook a binding or a client hands out is named use<Name>, so a compiler never mistakes it for React's use()", () => {
+
+        const named = ( value: object ) => Object.keys(value).filter(( key ) => key.startsWith("use"));
+        const binding = bind(session());
+        const client = defineClient({
+            identity: "shop",
+            endpoints: {},
+            api: { api: null, contract: { values: {}, features: {} } },
+            locales: ["en"],
+            useLocale: () => "en",
+            stores: { session: memoryStore(), persistent: memoryStore() },
+            answers: 1,
+            site: () => ({}),
+            trace: "t",
+        } as unknown as Parameters<typeof defineClient>[0]);
+
+        expect(named(binding)).toContain("useSelect");
+        expect([...named(binding), ...named(client), ...named(client.signals)].every(( key ) => /^use[A-Z]/.test(key))).toBe(true);
 
     });
 

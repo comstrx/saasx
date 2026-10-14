@@ -11,6 +11,7 @@ export type History = {
     push: ( href: string ) => void;
     replace: ( href: string ) => void;
     navigate: ( href: string ) => void;
+    tab: ( href: string ) => void;
     back: () => boolean;
     reset: ( href: string ) => void;
     setQuery: ( query: Query ) => void;
@@ -96,6 +97,16 @@ export function createHistory ( initial: string, { limit = defaultLimit, scheme 
             }
 
             go(stack.slice(0, at + 1));
+
+        },
+        tab: ( href ) => {
+
+            const target = parseHref(href, scheme);
+            const root = stack[0] as Entry;
+
+            if ( stack.length === 1 && root.path === target.path && JSON.stringify(root.query) === JSON.stringify(target.query) ) return;
+
+            go([{ ...target, key: root.key }]);
 
         },
         back: () => {

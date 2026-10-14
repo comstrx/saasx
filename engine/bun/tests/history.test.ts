@@ -63,6 +63,25 @@ describe("history", () => {
         expect(history.entries().map(( entry ) => entry.path)).toEqual(["/settings"]);
 
     });
+    test("a tab switch swaps the root in place under the same key and drops what was stacked above it", () => {
+
+        const history = createHistory("/");
+        const root = history.current().key;
+        let heard = 0;
+
+        history.subscribe(() => { heard += 1; });
+        history.push("/catalog/7");
+        history.tab("/account?from=tab");
+
+        expect(history.entries().map(( entry ) => entry.path)).toEqual(["/account"]);
+        expect(history.current().key).toBe(root);
+        expect(history.current().query).toEqual({ from: "tab" });
+
+        history.tab("/account?from=tab");
+
+        expect(heard).toBe(2);
+
+    });
     test("listeners hear each change once and an unchanged navigation stays silent", () => {
 
         const history = createHistory("/");

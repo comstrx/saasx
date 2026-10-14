@@ -113,7 +113,7 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
 
     function useSession (): Session & SessionActions & { ready: boolean } {
 
-        return session.use(( state ) => state);
+        return session.useSelect(( state ) => state);
 
     }
     function useApi (): ApiClient<C> {
