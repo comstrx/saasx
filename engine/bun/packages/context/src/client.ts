@@ -95,7 +95,7 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
     const boxes = new Map<string, Outbox>();
     const outboxOf = ( owner: string | number | null | undefined ): Outbox => {
 
-        const name = owner === null || owner === undefined ? "guest" : String(owner);
+        const name = owner === null || owner === undefined ? "guest" : `user:${owner}`;
         const box = boxes.get(name) ?? createOutbox({ store: stores.persistent, key: `${identity}.outbox.${name}` });
 
         boxes.set(name, box);

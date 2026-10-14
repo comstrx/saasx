@@ -146,7 +146,8 @@ describe("client", () => {
         expect(client.live).toBeUndefined();
 
         await client.outboxOf(7).add({ feature: "f", operation: "o", input: {}, idempotencyKey: "k" });
-        expect(await persistent.get("shop.outbox.7")).toContain("\"k\"");
+        expect(await persistent.get("shop.outbox.user:7")).toContain("\"k\"");
+        expect(client.outboxOf("guest")).not.toBe(client.outboxOf(null));
         expect(await client.outboxOf(8).list()).toEqual([]);
         expect(await client.outboxOf(null).list()).toEqual([]);
         expect(client.outboxOf(7)).toBe(client.outboxOf("7"));
