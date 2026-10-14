@@ -55,7 +55,7 @@ describe("flag", () => {
 
     test("a known country draws its file from public, an unknown code falls back to its emoji", () => {
 
-        expect(renderToString(<Flag code="eg" />)).toContain('src="/_generated/images/flag/eg.svg"');
+        expect(renderToString(<Flag code="eg" />)).toContain('src="/_generated/world/flag/eg.svg"');
         expect(renderToString(<Flag code="EG" size="sm" />)).toContain('data-size="sm"');
         expect(renderToString(<Flag code="FR" />)).toContain("🇫🇷");
 
@@ -64,14 +64,13 @@ describe("flag", () => {
 });
 describe("emoji", () => {
 
-    test("inline stays text, a still draws from public, a live reaction offers motion only to those who welcome it", () => {
+    test("an emoji draws its 3D still from public, a flag emoji draws its country's flag, and a glyph without a drawing stays text", () => {
 
-        expect(renderToString(<Emoji glyph="👍" context="inline" />)).toContain('aria-label="thumbs up">👍<');
-        expect(renderToString(<Emoji glyph="👍" context="picker" />)).toContain('src="/_generated/images/emoji/static/1f44d.webp"');
-        expect(renderToString(<Emoji glyph="👍🏿" context="picker" size="sm" />)).toContain('src="/_generated/images/emoji/static/1f44d-1f3ff.webp"');
-        expect(renderToString(<Emoji glyph="👍" context="reaction" active />)).toContain("background-image:url(/_generated/images/emoji/motion/1f44d.webp)");
-        expect(renderToString(<Emoji glyph="🇪🇬" context="reaction" active />)).toContain('src="/_generated/images/emoji/static/1f1ea-1f1ec.webp"');
-        expect(renderToString(<Emoji glyph="🫩" context="reaction" active />)).toContain("🫩");
+        expect(renderToString(<Emoji glyph="👍" />)).toContain('src="/_generated/world/emoji/1f44d.webp"');
+        expect(renderToString(<Emoji glyph="👍" />)).toContain('alt="thumbs up"');
+        expect(renderToString(<Emoji glyph="🇪🇬" size="sm" />)).toContain('src="/_generated/world/flag/eg.svg"');
+        expect(renderToString(<Emoji glyph="🫩" />)).toContain(">🫩<");
+        expect(renderToString(<Emoji glyph="👍" onPress={() => undefined} />)).toContain('aria-label="thumbs up"');
 
     });
 

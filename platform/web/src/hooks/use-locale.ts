@@ -8,6 +8,6 @@ export function useLocale (): string {
 
     const params = useParams<{ locale?: string }>();
 
-    return choose(routing.locales, params.locale, routing.defaultLocale);
+    return choose(routing.locales, params?.locale, routing.defaultLocale);
 
 }

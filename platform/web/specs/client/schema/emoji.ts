@@ -12,7 +12,7 @@ export default screen({
         block({ width: "wide", padding: 6 }, [
             feature("emoji", {
                 heading: true,
-                options: { title: t("emoji.title"), placeholder: t("emoji.placeholder"), empty: t("emoji.empty"), tone: t("emoji.tone") },
+                options: { title: t("emoji.title"), placeholder: t("emoji.placeholder"), empty: t("emoji.empty") },
             }),
         ]),
     ],

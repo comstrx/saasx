@@ -279,9 +279,8 @@
   },
   "emoji": {
     "title": "Emoji",
-    "description": "Every emoji, in 3D, searchable in Arabic and English.",
+    "description": "Every emoji in 3D, searchable in Arabic and English.",
     "placeholder": "Search emoji",
-    "empty": "No emoji matches.",
-    "tone": "Default"
+    "empty": "No emoji matches."
   }
 }

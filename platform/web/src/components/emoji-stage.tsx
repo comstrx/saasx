@@ -12,7 +12,7 @@ export default function EmojiStage ({ glyph, name, keywords }: Props) {
 
         <Stack gap={2} align="center">
 
-            <Emoji key={glyph} glyph={glyph} context="reaction" active size="xl" />
+            <Emoji key={glyph} glyph={glyph} size="xl" label={name} />
 
             <Text text={name} size="lg" />
 

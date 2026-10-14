@@ -52,7 +52,7 @@ export default function nextConfig ( phase: string ): NextConfig {
         ...(development && devOrigins.length ? { allowedDevOrigins: devOrigins } : {}),
         headers: async () => [
             { source: "/(.*)", headers: spec.secure ? [...headers, transport] : headers },
-            { source: "/_generated/images/:kind(emoji|flag)/:path*", headers: lasting },
+            { source: "/_generated/world/:path*", headers: lasting },
         ],
     };
 }

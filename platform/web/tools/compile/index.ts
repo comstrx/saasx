@@ -4,9 +4,7 @@ import { base64 } from "@engine/base";
 import { mimeOf } from "@engine/file";
 import { settingsResource } from "@engine/spec";
 import { type Files, featureFacts, iconFont } from "@engine/tooling";
-import { iconAliases, iconNames } from "@engine/ui";
-import { defineEmoji } from "@engine/world";
-import { countries } from "../../src/lib/spec/theme.ts";
+import { emojis, iconAliases, iconNames } from "@engine/world";
 import { root, tools } from "../core/index.ts";
 
 import { themeCss } from "./theme.ts";
@@ -35,7 +33,7 @@ function mountModule ( folder: string, features: readonly string[] ): string {
 
 export const compileSpec = tools.build(import.meta.url, {
     brand: ( config ) => [config.content.logo, config.content.logo_dark, config.content.icon],
-    engine: { flags: countries, emoji: defineEmoji().files({ tones: true }) },
+    engine: { flags: true, emoji: emojis.files, fonts: true },
     keep: [".well-known"],
     emit: async ({ spec, config, assets, folder }) => {
 
