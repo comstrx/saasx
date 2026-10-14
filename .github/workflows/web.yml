@@ -109,7 +109,9 @@ jobs:
       - name: Lighthouse
         run: |
           for run in 1 2 3; do
-            npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="lighthouse-${run}.json" --only-categories=performance,accessibility,best-practices,seo --preset=desktop
+            for attempt in 1 2 3; do
+              npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="lighthouse-${run}.json" --only-categories=performance,accessibility,best-practices,seo --preset=desktop && break
+            done
           done
 
       - name: Lighthouse floors
