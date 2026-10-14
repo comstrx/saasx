@@ -40,13 +40,17 @@ export {
 } from "./dsl.ts";
 export {
     createMeter,
+    createObserver,
     type Level as ReportLevel,
     type Meter,
     type Metric,
+    type Observation,
     type Observer,
+    type ObserverOptions,
     type Outcome,
     type Report,
     reportOf,
+    type Signal,
 } from "./observe.ts";
 export {
     type Context,

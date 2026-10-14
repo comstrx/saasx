@@ -133,6 +133,7 @@ export function configShapes<C extends z.ZodObject, S extends z.ZodObject, I ext
             api: apiShape.nullable(),
             contract: contractShape,
             realtime: realtimeShape.nullable(),
+            assets: siteUrl.nullable(),
             insecure: z.boolean(),
         }),
         configInputShape: z.strictObject({

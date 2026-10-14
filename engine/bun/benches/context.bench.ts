@@ -1,6 +1,6 @@
 import { applyPatch, createForm } from "@engine/context";
+import { bench, do_not_optimize, run } from "@engine/tooling";
 import type { FieldFact } from "@engine/validate";
-import { bench, do_not_optimize, run } from "mitata";
 
 const rows = Array.from({ length: 500 }, ( _, i ) => ({ id: i, name: `Row ${i}`, updated_at: "2026-10-13T00:00:00+00:00" }));
 const patch = { path: "catalog", key: "id", version: "updated_at" };

@@ -26,9 +26,9 @@
     "@engine/context": "workspace:*",
     "@engine/cookie": "workspace:*",
     "@engine/device": "workspace:*",
-    "@engine/emoji": "workspace:*",
     "@engine/error": "workspace:*",
     "@engine/file": "workspace:*",
+    "@engine/history": "workspace:*",
     "@engine/log": "workspace:*",
     "@engine/net": "workspace:*",
     "@engine/parse": "workspace:*",
@@ -43,7 +43,6 @@
     "@engine/world": "workspace:*",
     "@types/bun": "1.4.2",
     "@types/react": "19.3.0",
-    "mitata": "1.0.34",
     "typescript": "7.0.2"
   }
 }

@@ -1,4 +1,5 @@
-export type Named = { en: string; ar: string; native: string };
+export type Bilingual = { en: string; ar: string };
+export type Named = Bilingual & { native: string };
 export type Country = {
     alpha2: string;
     alpha3: string;
@@ -13,3 +14,20 @@ export type Country = {
 };
 export type Currency = { code: string; symbol: string; digits: number; countries: readonly string[]; name: Named };
 export type Language = { code: string; direction: "ltr" | "rtl"; name: Named };
+export type EmojiGroup = { key: string; name: Bilingual };
+export type EmojiTone = { key: string; modifier: string; name: Bilingual };
+export type EmojiMotion = readonly [frames: number, ms: number];
+export type EmojiTuple = readonly [glyph: string, group: number, en: string, ar: string, enKeys: string, arKeys: string, toned: string, facts: number];
+export type Emoji = {
+    glyph: string;
+    key: string;
+    group: string;
+    name: Bilingual;
+    keywords: Bilingual;
+    toned: boolean;
+    assets: { static: boolean; animated: boolean; tones: boolean };
+};
+export type EmojiContext = "inline" | "picker" | "standalone" | "reaction";
+export type EmojiSprite = { src: string; frames: number; columns: number; rows: number; ms: number };
+export type EmojiDisplay = { kind: "glyph"; glyph: string } | { kind: "static"; src: string; glyph: string } | { kind: "animated"; sprite: EmojiSprite; still: string | undefined; glyph: string };
+export type EmojiMoment = { context: EmojiContext; active?: boolean | undefined; reducedMotion?: boolean | undefined };

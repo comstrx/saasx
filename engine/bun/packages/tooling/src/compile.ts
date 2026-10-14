@@ -1,8 +1,10 @@
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { dirname, relative, resolve } from "node:path";
 import process from "node:process";
-import { mapValues } from "@engine/base";
+import { generatedPath, isRecord, mapValues } from "@engine/base";
+import { type EmojiFiles, emojiFolder, flagFolder } from "@engine/world";
+import type { Files } from "./assets.ts";
 
 export type Mode = "development" | "production";
 export type Connection = {
@@ -94,35 +96,67 @@ export function registryModule ( root: string, folder: string, features: readonl
 
 }
 export const engineAssets: string = resolve(import.meta.dir, "../../../assets");
+export const generatedRoot = `public${generatedPath}`;
 
-export type AssetSet = { from: string; to: string; files: readonly string[] };
+export type EngineAssets = { flags?: readonly string[] | undefined; emoji?: EmojiFiles | undefined };
 
-export function syncEngineAssets ( root: string, sets: readonly AssetSet[] ): number {
+function copyAssets ( root: string, from: string, to: string, files: readonly string[] ): number {
 
+    const target = resolve(root, `public${to}`);
     let copied = 0;
 
-    for ( const set of sets ) {
+    mkdirSync(target, { recursive: true });
 
-        const target = resolve(root, "public", set.to);
+    for ( const name of files ) {
 
-        mkdirSync(target, { recursive: true });
+        const source = resolve(engineAssets, from, name);
+        const destination = resolve(target, name);
 
-        for ( const name of set.files ) {
+        if ( !existsSync(source) ) throw new Error(`Missing engine asset: ${from}/${name}`);
+        if ( existsSync(destination) && statSync(destination).size === statSync(source).size ) continue;
 
-            const source = resolve(engineAssets, set.from, name);
-            const destination = resolve(target, name);
-
-            if ( !existsSync(source) ) throw new Error(`Missing engine asset: ${set.from}/${name}`);
-            if ( existsSync(destination) && statSync(destination).size === statSync(source).size ) continue;
-
-            copyFileSync(source, destination);
-            copied += 1;
-
-        }
+        copyFileSync(source, destination);
+        copied += 1;
 
     }
 
     return copied;
+
+}
+export function syncEngineAssets ( root: string, assets: EngineAssets ): number {
+
+    const flags = (assets.flags ?? []).map(( code ) => `${code.toLowerCase()}.svg`);
+
+    return copyAssets(root, "flag", flagFolder, flags)
+        + copyAssets(root, "emoji/static", `${emojiFolder}/static`, assets.emoji?.static ?? [])
+        + copyAssets(root, "emoji/motion", `${emojiFolder}/motion`, assets.emoji?.motion ?? []);
+
+}
+export function publishedUrls<T> ( value: T, files: ReadonlyMap<string, Uint8Array> ): T {
+
+    if ( typeof value === "string" ) return (value.startsWith("/") && files.has(value.slice(1)) ? `${generatedPath}${value}` : value) as T;
+    if ( Array.isArray(value) ) return value.map(( item ) => publishedUrls(item, files)) as T;
+    if ( isRecord(value) ) return mapValues(value, ( item ) => publishedUrls(item, files)) as T;
+
+    return value;
+
+}
+export function publishAssets ( root: string, folders: readonly string[], files: Files ): void {
+
+    const stranger = [...files.keys()].find(( name ) => !folders.some(( folder ) => name.startsWith(`${folder}/`)));
+
+    if ( stranger ) throw new Error(`Asset outside the published folders: ${stranger}`);
+
+    for ( const folder of folders ) rmSync(resolve(root, generatedRoot, folder), { recursive: true, force: true });
+
+    for ( const [name, bytes] of files ) {
+
+        const path = resolve(root, generatedRoot, name);
+
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, bytes);
+
+    }
 
 }
 export type Required = { name: string; from: string; file: string };

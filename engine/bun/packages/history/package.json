@@ -1,0 +1,12 @@
+{
+  "name": "@engine/history",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A navigation history as data: a bounded stack of entries with push, replace, navigate, back, reset and query updates, leave guards, native dismissal sync and href parsing — pure, no router and no runtime assumptions.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {}
+}

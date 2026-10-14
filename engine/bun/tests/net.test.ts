@@ -114,4 +114,33 @@ describe("edges", () => {
 
     });
 
+describe("bounded bodies", () => {
+
+    test("a body streamed without a length is cut off as soon as it passes the limit, never read to the end", async () => {
+
+        let pulled = 0;
+        const endless = new ReadableStream<Uint8Array>({
+            pull: ( controller ) => {
+
+                pulled += 1;
+                controller.enqueue(new Uint8Array(1024).fill(120));
+
+            },
+        });
+
+        await expect(readJson(new Response(endless), 4096)).rejects.toMatchObject({ reason: "too_large" });
+        expect(pulled).toBeLessThan(10);
+
+    });
+    test("a request body is read with the same limit, so a route handler can refuse a flood", async () => {
+
+        const small = new Request("http://a.test/report", { method: "POST", body: JSON.stringify({ ok: true }) });
+        const large = new Request("http://a.test/report", { method: "POST", body: "x".repeat(10_000) });
+
+        expect(await readJson(small, 1024)).toEqual({ ok: true });
+        await expect(readJson(large, 1024)).rejects.toMatchObject({ reason: "too_large" });
+
+    });
+
+});
 });

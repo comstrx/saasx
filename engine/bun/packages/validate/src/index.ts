@@ -23,4 +23,4 @@ export {
 } from "./fields.ts";
 export { assert, issuesOf, type Parsed, parse, ruleNames, rulesOf, shapeKeys } from "./parse.ts";
 export * as z from "./z.ts";
-export { type Fluent, fluent } from "./z.ts";
+export { type Fluent, fluent, jitless } from "./z.ts";

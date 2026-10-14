@@ -1,2 +1,3 @@
-Emoji artwork: Microsoft Fluent Emoji (https://github.com/microsoft/fluentui-emoji, https://github.com/microsoft/fluentui-emoji-animated), MIT License, Copyright (c) Microsoft Corporation. The 3D renders were resized and encoded as WebP; the animated set as animated WebP.
-Emoji names and keywords in packages/emoji/src/catalog.ts: Unicode Emoji data files and CLDR annotations, Unicode License v3 (https://www.unicode.org/license.txt), Copyright Unicode, Inc.
+Emoji artwork: Microsoft Fluent Emoji (https://github.com/microsoft/fluentui-emoji, https://github.com/microsoft/fluentui-emoji-animated), MIT License, Copyright (c) Microsoft Corporation. The 3D renders were resized and encoded as WebP; the animated set as sprite sheets of up to 48 frames in 8 columns, encoded as WebP.
+Flag emoji: rendered from the flag images in assets/flag (see assets/flag/LICENSE.txt), resized onto a square transparent canvas.
+Emoji names and keywords in packages/world/src/generated/emoji.ts: Unicode Emoji 18.0 data files and CLDR annotations, Unicode License v3 (https://www.unicode.org/license.txt), Copyright Unicode, Inc.

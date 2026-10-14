@@ -23,7 +23,7 @@ import { onTouched, touched } from "./touches.ts";
 
 export type Written = ApiResult<unknown>;
 export type Input = Record<string, unknown>;
-export type PortCache = { store: Store; ttl: number; prefix?: string | undefined };
+export type PortCache = { store: Store; ttl: number; prefix?: string | undefined; limit?: number | undefined };
 export type PortLive = {
     subscribe: (
         channel: string,
@@ -80,9 +80,9 @@ export function applyPatch ( current: unknown, many: boolean, event: string, dat
 }
 export function portKey ( port: CompiledPort | undefined, route: Route, identity: readonly unknown[] ): string {
 
-    const input = port?.kind === "read" ? fillInput(port.input, route) : undefined;
+    if ( port?.kind !== "read" ) return JSON.stringify([port, identity]);
 
-    return JSON.stringify([port, input, identity]);
+    return `${port.feature}.${port.operation}|${JSON.stringify(fillInput(port.input, route))}|${JSON.stringify(identity)}`;
 
 }
 function waiting ( port: CompiledPort | undefined, route: Route ): boolean {
@@ -101,28 +101,98 @@ function waiting ( port: CompiledPort | undefined, route: Route ): boolean {
 
 type Cached = { at: number; value: unknown };
 
+const memoryLimit = 300;
+const storeLimit = 100;
 const memory = new Map<string, Cached>();
+const chains = new Map<string, Promise<void>>();
 
+function remember ( id: string, entry: Cached ): void {
+
+    memory.delete(id);
+    memory.set(id, entry);
+
+    if ( memory.size > memoryLimit ) memory.delete(memory.keys().next().value ?? "");
+
+}
+function recall ( id: string ): Cached | undefined {
+
+    const entry = memory.get(id);
+
+    if ( entry ) remember(id, entry);
+
+    return entry;
+
+}
+function queue ( prefix: string, work: () => Promise<void> ): Promise<void> {
+
+    const chain = (chains.get(prefix) ?? Promise.resolve()).then(work).catch(() => undefined);
+
+    chains.set(prefix, chain);
+
+    return chain;
+
+}
+async function sweep ( store: Store, prefix: string, keep: ( key: string ) => boolean ): Promise<void> {
+
+    for ( const key of await store.keys() ) if ( key.startsWith(`${prefix}:`) && !keep(key) ) await store.delete(key);
+
+}
+function persist ( cache: PortCache, prefix: string, id: string, entry: Cached ): void {
+
+    const index = typed<string[]>(cache.store);
+    const place = `${prefix}:index`;
+    const limit = cache.limit ?? storeLimit;
+
+    void queue(prefix, async () => {
+
+        const known = await index.read(place);
+
+        if ( !known ) await sweep(cache.store, prefix, ( key ) => key === place);
+
+        await typed<Cached>(cache.store).write(id, entry);
+
+        const ids = (known ?? []).filter(( held ) => held !== id);
+
+        ids.push(id);
+
+        for ( const gone of ids.splice(0, Math.max(0, ids.length - limit)) ) await cache.store.delete(gone);
+
+        await index.write(place, ids);
+
+    });
+
+}
+export function forgetPorts ( cache: PortCache ): Promise<void> {
+
+    const prefix = cache.prefix ?? "port";
+
+    for ( const id of [...memory.keys()] ) if ( id.startsWith(`${prefix}:`) ) memory.delete(id);
+
+    return queue(prefix, () => sweep(cache.store, prefix, () => false));
+
+}
 export function portMemory (
     cache: PortCache | undefined,
     key: string,
 ): { seed: () => unknown | Promise<unknown>; keep: ( value: unknown ) => void } {
 
-    const id = `${cache?.prefix ?? "port"}:${key}`;
-    const box = cache ? typed<Cached>(cache.store) : undefined;
+    const prefix = cache?.prefix ?? "port";
+    const id = `${prefix}:${key}`;
     const fresh = ( entry: Cached | undefined ): unknown =>
         entry && (cache?.ttl ?? 0) > 0 && Date.now() - entry.at <= (cache?.ttl ?? 0) ? entry.value : undefined;
 
     return {
         seed: () => {
 
-            const known = memory.get(id);
+            if ( !cache ) return undefined;
 
-            if ( known || !box ) return fresh(known);
+            const known = recall(id);
 
-            return box.read(id).then(( entry ) => {
+            if ( known ) return fresh(known);
 
-                if ( entry && !memory.has(id) ) memory.set(id, entry);
+            return typed<Cached>(cache.store).read(id).then(( entry ) => {
+
+                if ( entry && !memory.has(id) ) remember(id, entry);
 
                 return fresh(memory.get(id));
 
@@ -131,10 +201,12 @@ export function portMemory (
         },
         keep: ( value ) => {
 
+            if ( !cache ) return;
+
             const entry = { at: Date.now(), value };
 
-            memory.set(id, entry);
-            void box?.write(id, entry);
+            remember(id, entry);
+            persist(cache, prefix, id, entry);
 
         },
     };
@@ -205,7 +277,11 @@ export function usePortResource (
     const many = port?.kind === "read" ? port.many : false;
     const facts = portKey(port, route, identity);
     const key = `${idle ? "idle:" : ""}${facts}${tick ? `#${tick}` : ""}`;
-    const remembered = portMemory(port?.kind === "read" && !idle ? cache : undefined, facts);
+    const caching = port?.kind === "read" && !idle ? cache : undefined;
+    const remembered = useMemo(
+        () => portMemory(caching, facts),
+        [caching?.store, caching?.ttl, caching?.prefix, caching?.limit, facts],
+    );
     const events = channel?.events.join(",") ?? "";
     const patch = channel?.patch;
 

@@ -65,6 +65,15 @@ describe("insecure transports", () => {
         ).toEqual([]);
 
     });
+    test("an asset origin is held to the same rule as the backend", () => {
+
+        const secure = { urls: { production: "https://a.test", local: null }, options: { prefix: "" } };
+
+        expect(transportIssues({ ...secure, assets: "http://cdn.test" }).join("\n")).toContain("contracts.assets");
+        expect(transportIssues({ ...secure, assets: "https://cdn.test" })).toEqual([]);
+        expect(transportIssues({ ...secure, assets: "http://cdn.test", options: { prefix: "", insecure: true } })).toEqual([]);
+
+    });
     test("the backend plan carries insecure apart from the connection", () => {
 
         const plan = backendOf("app", { ...plain, options: { prefix: "", insecure: true } }, "USD");

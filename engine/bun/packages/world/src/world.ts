@@ -1,8 +1,11 @@
+import { generatedPath } from "@engine/base";
 import { type Catalog, catalog, digits } from "@engine/string";
-import { countries as everyCountry } from "./countries.ts";
-import { currencies as everyCurrency } from "./currencies.ts";
+import { countries as everyCountry } from "./generated/countries.ts";
+import { currencies as everyCurrency } from "./generated/currencies.ts";
+import { languages as everyLanguage } from "./generated/languages.ts";
 import type { Country, Currency, Language } from "./kinds.ts";
-import { languages as everyLanguage } from "./languages.ts";
+
+export const flagFolder = `${generatedPath}/images/flag`;
 
 export type Flags = { folder?: string | undefined; format?: "svg" | "webp" | "png" | undefined };
 export type WorldOptions = {
@@ -51,7 +54,7 @@ export function flagEmoji ( alpha2: string ): string {
 }
 export function defineWorld ( options: WorldOptions = {} ): World {
 
-    const flags: Required<Flags> = { folder: options.flags?.folder ?? "images/flag", format: options.flags?.format ?? "svg" };
+    const flags: Required<Flags> = { folder: options.flags?.folder ?? flagFolder, format: options.flags?.format ?? "svg" };
     const countryRows = chosen(everyCountry, ( c ) => c.alpha2, options.countries, "countries");
     const currencyRows = chosen(everyCurrency, ( c ) => c.code, options.currencies, "currencies");
     const languageRows = chosen(everyLanguage, ( l ) => l.code.toUpperCase(), options.languages, "languages");

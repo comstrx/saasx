@@ -16,3 +16,4 @@ export {
     safeKey,
 } from "./object.ts";
 export { anySignal, base64, clone, now, randomBytes, sleep, timeoutSignal } from "./platform.ts";
+export { generatedPath } from "./published.ts";

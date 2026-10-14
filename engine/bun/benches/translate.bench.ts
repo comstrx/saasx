@@ -1,6 +1,6 @@
 import { interpolate } from "@engine/parse";
+import { bench, do_not_optimize, run } from "@engine/tooling";
 import { formatDate, formatMoney, negotiate, plural, translator } from "@engine/translate";
-import { bench, do_not_optimize, run } from "mitata";
 
 const t = translator({ cart: { items: "{count} items for {total}" } });
 const at = new Date(Date.UTC(2026, 9, 13));

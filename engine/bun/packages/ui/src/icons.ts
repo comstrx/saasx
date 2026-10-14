@@ -1,72 +1,65 @@
-/// <reference path="./lucide.d.ts" />
+export const iconAliases = {
+    house: "house",
+    grid: "layout-grid",
+    key: "key-round",
+    tag: "tag",
+    sliders: "sliders-horizontal",
+    plus: "plus",
+    pencil: "pencil",
+    trash: "trash",
+    undo: "undo-2",
+    user: "user-round",
+    pin: "map-pin",
+    camera: "camera",
+    bell: "bell",
+    search: "search",
+    menu: "menu",
+    circle: "circle",
+    chevronStart: "chevron-left",
+    chevronEnd: "chevron-right",
+    check: "check",
+    image: "image",
+    empty: "inbox",
+    failed: "cloud-alert",
+    offline: "wifi-off",
+    denied: "shield-x",
+    done: "circle-check",
+    smile: "smile",
+} as const;
 
-import bell from "lucide/dist/esm/icons/bell.mjs";
-import camera from "lucide/dist/esm/icons/camera.mjs";
-import check from "lucide/dist/esm/icons/check.mjs";
-import chevronStart from "lucide/dist/esm/icons/chevron-left.mjs";
-import chevronEnd from "lucide/dist/esm/icons/chevron-right.mjs";
-import circle from "lucide/dist/esm/icons/circle.mjs";
-import house from "lucide/dist/esm/icons/house.mjs";
-import image from "lucide/dist/esm/icons/image.mjs";
-import key from "lucide/dist/esm/icons/key-round.mjs";
-import grid from "lucide/dist/esm/icons/layout-grid.mjs";
-import pin from "lucide/dist/esm/icons/map-pin.mjs";
-import menu from "lucide/dist/esm/icons/menu.mjs";
-import pencil from "lucide/dist/esm/icons/pencil.mjs";
-import plus from "lucide/dist/esm/icons/plus.mjs";
-import search from "lucide/dist/esm/icons/search.mjs";
-import sliders from "lucide/dist/esm/icons/sliders-horizontal.mjs";
-import tag from "lucide/dist/esm/icons/tag.mjs";
-import trash from "lucide/dist/esm/icons/trash.mjs";
-import undo from "lucide/dist/esm/icons/undo-2.mjs";
-import user from "lucide/dist/esm/icons/user-round.mjs";
+export type IconName = keyof typeof iconAliases;
 
-export type IconNode = readonly (readonly [string, Record<string, string | number>])[];
-export const iconNames = [
-    "house",
-    "grid",
-    "key",
-    "tag",
-    "sliders",
-    "plus",
-    "pencil",
-    "trash",
-    "undo",
-    "user",
-    "pin",
-    "camera",
-    "bell",
-    "search",
-    "menu",
-    "circle",
-    "chevronStart",
-    "chevronEnd",
-    "check",
-    "image",
-] as const;
-export type IconName = (typeof iconNames)[number];
-export const glyphs: Record<IconName, IconNode> = {
-    house,
-    grid,
-    key,
-    tag,
-    sliders,
-    plus,
-    pencil,
-    trash,
-    undo,
-    user,
-    pin,
-    camera,
-    bell,
-    search,
-    menu,
-    circle,
-    chevronStart,
-    chevronEnd,
-    check,
-    image,
+export const iconNames = Object.keys(iconAliases) as IconName[];
+export const iconCodes: Readonly<Record<IconName, number>> = {
+    house: 0xe0f5,
+    grid: 0xe0ff,
+    key: 0xe4a3,
+    tag: 0xe17f,
+    sliders: 0xe29a,
+    plus: 0xe13d,
+    pencil: 0xe1f9,
+    trash: 0xe18d,
+    undo: 0xe2a1,
+    user: 0xe468,
+    pin: 0xe111,
+    camera: 0xe064,
+    bell: 0xe059,
+    search: 0xe151,
+    menu: 0xe115,
+    circle: 0xe076,
+    chevronStart: 0xe06e,
+    chevronEnd: 0xe06f,
+    check: 0xe06c,
+    image: 0xe0f6,
+    empty: 0xe0f7,
+    failed: 0xe633,
+    offline: 0xe1af,
+    denied: 0xe200,
+    done: 0xe226,
+    smile: 0xe164,
 };
+export const iconMirrors: readonly IconName[] = ["chevronStart", "chevronEnd", "undo"];
+
 export type Icons<I> = {
     readonly names: readonly string[];
     has: ( name: string ) => boolean;
@@ -82,5 +75,19 @@ export function createIcons<I> ( set: Readonly<Record<string, I>>, fallback: I )
         has: ( name ) => Object.hasOwn(set, name),
         get: ( name ) => (Object.hasOwn(set, name) ? (set[name] as I) : fallback),
     };
+
+}
+
+const codes: Readonly<Record<string, number>> = iconCodes;
+const mirrored = new Set<string>(iconMirrors);
+
+export function iconGlyph ( name: string ): string {
+
+    return String.fromCodePoint(codes[name] ?? iconCodes.circle);
+
+}
+export function iconMirrored ( name: string ): boolean {
+
+    return mirrored.has(name);
 
 }

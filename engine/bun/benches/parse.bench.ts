@@ -1,5 +1,5 @@
 import { expandTemplate, matchPattern, parseQuery, queryString, segmentsOf } from "@engine/parse";
-import { bench, do_not_optimize, run } from "mitata";
+import { bench, do_not_optimize, run } from "@engine/tooling";
 
 const segments = segmentsOf("/en/catalog/427-walk-hotel");
 

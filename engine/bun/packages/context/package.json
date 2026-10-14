@@ -12,12 +12,16 @@
     "@engine/api": "workspace:*",
     "@engine/array": "workspace:*",
     "@engine/base": "workspace:*",
+    "@engine/device": "workspace:*",
     "@engine/error": "workspace:*",
+    "@engine/socket": "workspace:*",
     "@engine/spec": "workspace:*",
     "@engine/storage": "workspace:*",
     "@engine/translate": "workspace:*",
     "@engine/validate": "workspace:*",
-    "react": "19.3.0",
     "zustand": "5.0.15"
+  },
+  "peerDependencies": {
+    "react": ">=19.2.3"
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, test } from "bun:test";
-import { assert, currency, email, fieldFacts, issuesOf, key, language, localized, money, parse, password, path, phone, rulesOf, shapeKeys, slug, z } from "@engine/validate";
+import { assert, currency, email, fieldFacts, issuesOf, jitless, key, language, localized, money, parse, password, path, phone, rulesOf, shapeKeys, slug, z } from "@engine/validate";
 
 describe("validate", () => {
 
@@ -260,6 +260,20 @@ describe("rules from issues", () => {
         expect(z.safeParse(path, "a/b").success).toBe(false);
         expect(z.safeParse(language, "ar-EG").success).toBe(true);
         expect(z.safeParse(language, "arabic").success).toBe(false);
+
+    });
+
+});
+describe("jitless", () => {
+
+    test("a surface under a strict content policy turns the compiled fast path off and parsing still holds", () => {
+
+        const shape = z.object({ id: z.number(), name: z.string() });
+
+        expect(jitless(true)).toBe(true);
+        expect(shape.safeParse({ id: 1, name: "a" }).success).toBe(true);
+        expect(shape.safeParse({ id: "x", name: "a" }).success).toBe(false);
+        expect(jitless(false)).toBe(false);
 
     });
 

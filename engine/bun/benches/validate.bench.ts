@@ -1,5 +1,5 @@
+import { bench, do_not_optimize, run } from "@engine/tooling";
 import { fieldFacts, parse, z } from "@engine/validate";
-import { bench, do_not_optimize, run } from "mitata";
 
 const row = z.object({ id: z.number().int().positive(), name: z.string().min(2).max(80), price: z.string().regex(/^-?\d+(?:\.\d{1,6})?$/), tags: z.array(z.string()).max(10), address: z.object({ city: z.string(), zip: z.string().optional() }).optional() });
 const rows = z.array(row);

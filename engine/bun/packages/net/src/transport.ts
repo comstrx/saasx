@@ -71,23 +71,76 @@ export async function send ( url: string, init: RequestInit, options: SendOption
     }
 
 }
-export async function readText ( response: Response, maxBytes: number ): Promise<string> {
+type Chunks = { getReader: () => { read: () => Promise<{ done: boolean; value?: Uint8Array | undefined }>; cancel: () => Promise<void> } };
+type Decoder = new () => { decode: ( bytes: Uint8Array ) => string };
 
-    const length = Number(response.headers.get("content-length"));
+export type Readable = {
+    headers: Headers;
+    body?: Chunks | null | undefined;
+    status?: number | undefined;
+    text: () => Promise<string>;
+};
 
-    if ( Number.isFinite(length) && length > maxBytes )
-        throw new Failure("response", { status: response.status, reason: "too_large" });
+async function streamed ( body: Chunks, decoder: Decoder, maxBytes: number, status: number ): Promise<string> {
 
-    const text = await response.text();
+    const reader = body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
 
-    if ( text.length > maxBytes ) throw new Failure("response", { status: response.status, reason: "too_large" });
+    for ( ;; ) {
+
+        const { done, value } = await reader.read();
+
+        if ( done || !value ) break;
+
+        size += value.byteLength;
+
+        if ( size > maxBytes ) {
+
+            await reader.cancel();
+
+            throw new Failure("response", { status, reason: "too_large" });
+
+        }
+
+        chunks.push(value);
+
+    }
+
+    const joined = new Uint8Array(size);
+    let at = 0;
+
+    for ( const chunk of chunks ) {
+
+        joined.set(chunk, at);
+        at += chunk.byteLength;
+
+    }
+
+    return new decoder().decode(joined);
+
+}
+export async function readText ( source: Readable, maxBytes: number ): Promise<string> {
+
+    const status = source.status ?? 0;
+    const length = Number(source.headers.get("content-length"));
+
+    if ( Number.isFinite(length) && length > maxBytes ) throw new Failure("response", { status, reason: "too_large" });
+
+    const decoder = (globalThis as { TextDecoder?: Decoder }).TextDecoder;
+
+    if ( source.body && decoder ) return streamed(source.body, decoder, maxBytes, status);
+
+    const text = await source.text();
+
+    if ( text.length > maxBytes ) throw new Failure("response", { status, reason: "too_large" });
 
     return text;
 
 }
-export async function readJson ( response: Response, maxBytes: number ): Promise<unknown> {
+export async function readJson ( source: Readable, maxBytes: number ): Promise<unknown> {
 
-    const text = await readText(response, maxBytes);
+    const text = await readText(source, maxBytes);
 
     if ( !text ) return undefined;
 
@@ -97,7 +150,7 @@ export async function readJson ( response: Response, maxBytes: number ): Promise
 
     } catch ( error ) {
 
-        throw new Failure("response", { status: response.status, reason: "not_json", cause: error });
+        throw new Failure("response", { status: source.status ?? 0, reason: "not_json", cause: error });
 
     }
 

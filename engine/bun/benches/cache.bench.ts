@@ -1,5 +1,5 @@
 import { expiring, lru, rateLimiter } from "@engine/cache";
-import { bench, do_not_optimize, run } from "mitata";
+import { bench, do_not_optimize, run } from "@engine/tooling";
 
 const recent = lru<string, number>(1000);
 const timed = expiring<number>(60_000);

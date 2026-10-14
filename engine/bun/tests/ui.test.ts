@@ -6,7 +6,11 @@ import {
     defineTokens,
     fontFace,
     fontStack,
-    glyphs,
+    iconAliases,
+    iconCodes,
+    iconGlyph,
+    iconMirrored,
+    iconMirrors,
     iconNames,
     nativeTokens,
     transition,
@@ -80,16 +84,20 @@ describe("fonts and icons", () => {
         expect(fontStack(["Site-ar", "Site-en"])).toBe('"Site-ar", "Site-en", sans-serif');
 
     });
-    test("every named glyph is a list of svg nodes", () => {
+    test("every semantic icon names one drawing, and only directional ones mirror", () => {
 
-        for ( const name of iconNames ) {
+        expect(new Set(Object.values(iconAliases)).size).toBe(iconNames.length);
+        expect(iconNames.every(( name ) => typeof iconAliases[name] === "string")).toBe(true);
+        expect(iconMirrors.every(( name ) => iconNames.includes(name))).toBe(true);
+        expect(iconMirrors).not.toContain("house");
 
-            const nodes = glyphs[name];
+    });
+    test("a glyph is the font code of its icon, an unknown name draws the circle, and only directional icons mirror", () => {
 
-            expect(nodes.length).toBeGreaterThan(0);
-            expect(nodes.every(( [tag, attrs] ) => typeof tag === "string" && typeof attrs === "object")).toBe(true);
-
-        }
+        expect(iconGlyph("house")).toBe(String.fromCodePoint(iconCodes.house));
+        expect(iconGlyph("nothing")).toBe(String.fromCodePoint(iconCodes.circle));
+        expect(iconMirrored("chevronStart")).toBe(true);
+        expect(iconMirrored("house")).toBe(false);
 
     });
     test("unknown icons resolve to the fallback", () => {

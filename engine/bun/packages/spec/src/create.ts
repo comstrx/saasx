@@ -130,6 +130,7 @@ export function createSpecSurface<
             .omit(mask as never)
             .extend({ ...backendOptionFields, tenant: tenantShape, ...contracts.options }),
         realtime: realtimeShape.nullable().default(null),
+        assets: siteUrl.nullable().default(null),
         ...contractOverrides,
     });
     const { configShape, configInputShape } = configShapes(

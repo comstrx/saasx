@@ -102,7 +102,7 @@
       }
     },
     {
-      "includes": ["packages/emoji/src/catalog.ts"],
+      "includes": ["packages/world/src/generated/emoji.ts"],
       "linter": {
         "rules": {
           "style": {

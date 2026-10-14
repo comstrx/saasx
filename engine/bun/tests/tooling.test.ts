@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import {
@@ -10,19 +10,27 @@ import {
     catalogModule,
     composeMessages,
     createCore,
-    emojiKey,
+    createTools,
+    flagCode,
     guard,
+    iconFont,
     messageIssues,
     modeOf,
     parseAnnotations,
     parseEmojiTest,
+    prepareSpec,
+    publishAssets,
+    publishedUrls,
     type Rules,
     selectConnection,
     specAliases,
+    syncEngineAssets,
     tonedGlyphs,
     walk,
     within,
 } from "@engine/tooling";
+import { iconAliases, iconCodes } from "@engine/ui";
+import { emojiKey } from "@engine/world";
 
 const rules: Rules = {
     source: "/part/src",
@@ -139,6 +147,97 @@ describe("files and compile", () => {
         expect(assetHash(new Map([["a", new Uint8Array([1])]]))).toHaveLength(20);
 
     });
+    test("everything a compile generates lands under public/_generated: engine assets copied, spec folders replaced whole", () => {
+
+        const root = mkdtempSync(resolve(tmpdir(), "tooling-"));
+        const generated = ( path: string ) => resolve(root, "public/_generated", path);
+
+        syncEngineAssets(root, { flags: ["EG"], emoji: { static: ["1f44d.webp"], motion: [] } });
+        publishAssets(root, ["images/brand", "fonts"], new Map([["images/brand/logo.svg", new Uint8Array([1])]]));
+        publishAssets(root, ["images/brand", "fonts"], new Map([["fonts/site.woff2", new Uint8Array([2])]]));
+
+        expect(existsSync(generated("images/flag/eg.svg"))).toBe(true);
+        expect(existsSync(generated("images/emoji/static/1f44d.webp"))).toBe(true);
+        expect(existsSync(generated("images/brand/logo.svg"))).toBe(false);
+        expect([...readFileSync(generated("fonts/site.woff2"))]).toEqual([2]);
+        expect(() => publishAssets(root, ["fonts"], new Map([["videos/intro.mp4", new Uint8Array([3])]]))).toThrow("videos/intro.mp4");
+
+    });
+    test("a compiled config names every published asset by its final url and leaves every other string alone", () => {
+
+        const assets = new Map([["images/brand/logo.svg", new Uint8Array([1])], ["fonts/site.woff2", new Uint8Array([2])]]);
+        const config = { content: { logo: "/images/brand/logo.svg", icon: "/images/brand/icon.png", name: "fonts/site.woff2" }, fonts: ["/fonts/site.woff2"], size: 3 };
+
+        expect(publishedUrls(config, assets)).toEqual({
+            content: { logo: "/_generated/images/brand/logo.svg", icon: "/images/brand/icon.png", name: "fonts/site.woff2" },
+            fonts: ["/_generated/fonts/site.woff2"],
+            size: 3,
+        });
+
+    });
+
+});
+describe("surface tools", () => {
+
+    test("one folder table gives the spec paths, the brand folders and the asset reader; dot files and compile output never count", () => {
+
+        const root = mkdtempSync(resolve(tmpdir(), "tools-"));
+        const put = ( path: string, text: string ) => {
+
+            mkdirSync(resolve(root, path, ".."), { recursive: true });
+            writeFileSync(resolve(root, path), text);
+
+        };
+
+        put("public/images/brand/logo.svg", "a");
+        put("public/images/brand/.keep", "");
+        put("public/.well-known/security.txt", "b");
+        put("public/_generated/images/brand/logo.svg", "old");
+        put("specs/shop/brand/images/logo.svg", "c");
+        put("specs/shop/brand/well-known/assetlinks.json", "d");
+
+        const tools = createTools({
+            root,
+            variable: "SPEC",
+            locales: ["en"],
+            catalogue: { operations: [], features: [] } as never,
+            validate: (( input: unknown ) => input) as never,
+            assets: [{ path: "images/brand", brand: "images" }, { path: ".well-known", brand: "well-known" }],
+            architecture: { foundation: /^@engine\//, html: true, owners: {}, layers: [] },
+        });
+        const composed = tools.assets.compose(resolve(root, "public"), resolve(root, "specs/shop/brand"));
+
+        expect(tools.assets.paths).toEqual(["images/brand", ".well-known"]);
+        expect(tools.assets.brandFolders).toEqual(["images", "well-known", "messages"]);
+        expect([...composed.keys()]).toEqual([".well-known/assetlinks.json", ".well-known/security.txt", "images/brand/logo.svg"]);
+        expect(new TextDecoder().decode(composed.get("images/brand/logo.svg"))).toBe("c");
+        expect([...tools.assets.files(resolve(root, "public"), true).keys()].sort()).toEqual([".well-known/security.txt", "images/brand/logo.svg"]);
+        expect(tools.rules.source).toBe(resolve(root, "src"));
+
+    });
+
+});
+describe("build", () => {
+
+    test("a spec is prepared for its mode with every published asset named by its final url", () => {
+
+        const spec = {
+            config: {
+                api: { connections: { primary: { baseUrl: "https://api.shop", development: { baseUrl: "http://127.0.0.1:8000", browserBaseUrl: null } } } },
+                content: { logo: "/images/brand/logo.svg" },
+            },
+            schema: { screens: [{ hero: "/videos/intro.mp4" }] },
+        };
+        const assets = new Map([["images/brand/logo.svg", new Uint8Array([1])], ["videos/intro.mp4", new Uint8Array([2])]]);
+        const development = prepareSpec(spec, assets, "development");
+        const production = prepareSpec({ ...spec, config: { ...spec.config, api: null } }, assets, "production");
+
+        expect(development.config.api?.connections.primary as unknown).toEqual({ baseUrl: "http://127.0.0.1:8000", browserBaseUrl: null });
+        expect(development.config.content.logo).toBe("/_generated/images/brand/logo.svg");
+        expect(development.schema.screens[0]?.hero).toBe("/_generated/videos/intro.mp4");
+        expect(production.config.api).toBeNull();
+
+    });
 
 });
 describe("spec isolation", () => {
@@ -225,17 +324,49 @@ describe("emoji sources", () => {
     test("the catalog folds tones into their base, drops the keyword that repeats the name and marks the artwork it has", () => {
 
         const rows = parseEmojiTest(sample);
-        const catalog = buildCatalog(rows, english, arabic, { statics: new Set(["1f600", "1f44d", "1f44d-1f3fb", "1f44d-1f3fc", "1f44d-1f3fd", "1f44d-1f3fe", "1f44d-1f3ff"]), animated: new Set(["1f44d"]) });
+        const catalog = buildCatalog(rows, english, arabic, { statics: new Set(["1f600", "1f44d", "1f44d-1f3fb", "1f44d-1f3fc", "1f44d-1f3fd", "1f44d-1f3fe", "1f44d-1f3ff"]), motions: new Map([["1f44d", [48, 2100] as const], ["ffff", [8, 500] as const]]) });
 
         expect(catalog.tuples).toEqual([
             ["😀", 0, "grinning face", "وجه مبتسم", "face|grin", "وجه|ابتسامة", "", 1],
             ["👍", 1, "thumbs up", "قبول", "+1|up", "", "👍🏻", 7],
             ["❤️", 0, "red heart", "قلب أحمر", "heart & love", "", "", 0],
         ]);
+        expect(catalog.motions).toEqual({ "1f44d": [48, 2100] });
         expect(catalog.tones[4]).toEqual({ key: "dark", modifier: "🏿", name: { en: "dark skin tone", ar: "غامق" } });
         expect(tonedGlyphs(catalog.tuples[1] as never)).toEqual(["👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"]);
         expect(catalogModule(catalog)).toContain('["👍",1,"thumbs up","قبول","+1|up","","👍🏻",7],');
-        expect(() => buildCatalog(rows, english, new Map(), { statics: new Set(), animated: new Set() })).toThrow("No Arabic annotation");
+        expect(catalogModule(catalog)).toStartWith('import type { EmojiGroup, EmojiMotion, EmojiTone, EmojiTuple } from "../kinds.ts";');
+        expect(() => buildCatalog(rows, english, new Map(), { statics: new Set(), motions: new Map() })).toThrow("No Arabic annotation");
+
+    });
+    test("a flag emoji names its flag file: country pairs and tagged subdivisions, nothing else", () => {
+
+        expect(flagCode("🇪🇬")).toBe("eg");
+        expect(flagCode("🇸🇦")).toBe("sa");
+        expect(flagCode("🏴󠁧󠁢󠁳󠁣󠁴󠁿")).toBe("gb-sct");
+        expect(flagCode("🏳️‍🌈")).toBeUndefined();
+        expect(flagCode("🏴")).toBeUndefined();
+        expect(flagCode("😀")).toBeUndefined();
+
+    });
+
+});
+describe("icon fonts", () => {
+
+    test("a surface's icons become a subset font holding exactly their glyphs, every engine alias resolvable", async () => {
+
+        const names = Object.keys(iconAliases);
+        const font = await iconFont(names, iconAliases, "truetype");
+
+        expect(font.codepoints).toEqual(iconCodes);
+        expect(new Set(Object.values(font.codepoints)).size).toBe(names.length);
+        expect(font.bytes.length).toBeGreaterThan(1000);
+        expect(font.bytes.length).toBeLessThan(40_000);
+
+    });
+    test("an icon the drawing set lacks is refused by name", async () => {
+
+        await expect(iconFont(["house", "no-such-icon"], iconAliases, "truetype")).rejects.toThrow("no-such-icon");
 
     });
 

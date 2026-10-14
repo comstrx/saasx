@@ -10,7 +10,7 @@ export {
     type Tone,
 } from "./adapter.ts";
 export { type FontFace, fontFace, fontStack } from "./fonts.ts";
-export { createIcons, glyphs, type IconName, type IconNode, type Icons, iconNames } from "./icons.ts";
+export { createIcons, type IconName, type Icons, iconAliases, iconCodes, iconGlyph, iconMirrored, iconMirrors, iconNames } from "./icons.ts";
 export { defineMotion, type Motion, type Presets, transition } from "./motion.ts";
 export {
     cssVariables,

@@ -1,4 +1,4 @@
-export { bench, boxplot, group, run, summary } from "mitata";
+export { bench, boxplot, do_not_optimize, group, run, summary } from "mitata";
 export {
     type Analysis,
     analyze,
@@ -11,17 +11,21 @@ export {
     type SurfaceRules,
 } from "./architecture.ts";
 export { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
+export { type Buildable, type BuildPlan, type Built, type Compile, defineBuild, type Emitted, type Meta, type Prepared, prepareSpec } from "./build.ts";
 export {
-    type AssetSet,
     assetBudget,
     assetBytes,
     assetHash,
     brandImages,
     type Connection,
+    type EngineAssets,
     engineAssets,
     flagsModule,
+    generatedRoot,
     type Mode,
     modeOf,
+    publishAssets,
+    publishedUrls,
     type Required,
     type Routing,
     registryModule,
@@ -49,9 +53,10 @@ export {
     walk,
     within,
 } from "./core.ts";
-export { type Annotation, type Annotations, buildCatalog, catalogModule, keyOf as emojiKey, parseAnnotations, parseEmojiTest, type Row, tonedGlyphs } from "./emoji.ts";
+export { type Annotation, type Annotations, buildCatalog, catalogModule, flagCode, parseAnnotations, parseEmojiTest, type Row, tonedGlyphs } from "./emoji.ts";
 export { type Features, featureFacts, featureNames } from "./features.ts";
 export { defaultSources, type EmojiSources, fluentIndex, generateEmoji } from "./fluent.ts";
+export { type IconFont, type IconFormat, iconFont } from "./icons.ts";
 export {
     composeMessages,
     type Dictionaries,
@@ -61,4 +66,4 @@ export {
 } from "./messages.ts";
 export { defineRules } from "./rules.ts";
 export { createLoader, type Loaded, type Loader, type LoaderOptions, type Validate } from "./specs.ts";
-export { createTools, type Tools, type ToolsOptions } from "./tools.ts";
+export { createTools, type SurfaceAssets, type Tools, type ToolsOptions } from "./tools.ts";

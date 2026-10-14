@@ -75,3 +75,46 @@ export function createMeter (): Meter {
     };
 
 }
+export type Signal =
+    | { kind: "report"; report: Report; outcome: Outcome; trace: string }
+    | { kind: "metrics"; metrics: Metric[]; trace: string }
+    | { kind: "error"; name: string; reason: string; trace: string };
+export type ObserverOptions = { trace: string; slow: number; send: ( signal: Signal ) => void; watch?: (( flush: () => void ) => void) | undefined };
+export type Observation = { trace: string; observeCall: Observer; flushMetrics: () => void; reportError: ( name: string, error: unknown ) => void };
+
+export function createObserver ({ trace, slow, send, watch }: ObserverOptions): Observation {
+
+    const meter = createMeter();
+    let watching = false;
+
+    const flushMetrics = (): void => {
+
+        const metrics = meter.flush();
+
+        if ( metrics.length ) send({ kind: "metrics", metrics, trace });
+
+    };
+
+    return {
+        trace,
+        flushMetrics,
+        observeCall: ( outcome ) => {
+
+            meter.record(outcome);
+
+            if ( !watching ) {
+
+                watching = true;
+                watch?.(flushMetrics);
+
+            }
+
+            const report = reportOf(outcome, slow);
+
+            if ( report ) send({ kind: "report", report, outcome, trace });
+
+        },
+        reportError: ( name, error ) => send({ kind: "error", name, reason: error instanceof Error ? error.name : "unknown", trace }),
+    };
+
+}

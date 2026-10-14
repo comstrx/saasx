@@ -37,6 +37,7 @@ export type SurfaceConfig = {
     settings: Settings & { screen: Record<string, unknown>; block: object };
     api: { context: { sessionCookie: string | null } } | null;
     realtime: { url: string; key: string; protocol: "pusher" } | null;
+    assets: string | null;
 };
 export type ConfigInputBase = {
     contents: { seo?: Record<string, unknown> | undefined; [key: string]: unknown };
@@ -55,6 +56,7 @@ export type ScreenInputBase<B extends object> = {
 export type ContractsInput = {
     urls: { production: string | null; local: string | null; browser?: string | null | undefined };
     realtime?: { url: string; key: string; protocol: "pusher" } | null | undefined;
+    assets?: string | null | undefined;
     options: {
         prefix: string;
         execution?: unknown;
@@ -166,6 +168,7 @@ export function transportIssues ( contracts: ContractsInput ): string[] {
     const found = [
         ...(contracts.urls.production && cleartext.test(contracts.urls.production) ? ["urls.production"] : []),
         ...(contracts.realtime?.url && cleartext.test(contracts.realtime.url) ? ["realtime.url"] : []),
+        ...(contracts.assets && cleartext.test(contracts.assets) ? ["assets"] : []),
     ];
 
     return found.map(( where ) => `contracts.${where}: a cleartext address in production needs options.insecure: true.`);
@@ -245,6 +248,7 @@ function compileConfig<
         api,
         contract,
         realtime: (input.contracts as ContractsInput | null)?.realtime ?? null,
+        assets: (input.contracts as ContractsInput | null)?.assets ?? null,
         insecure: backend?.insecure ?? false,
     });
 

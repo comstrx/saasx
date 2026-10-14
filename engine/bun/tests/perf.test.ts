@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { createApi, feature, get, many, requestContext, resolveApi, z } from "@engine/api";
 import { catalogueFacts, compileBlock, createWalk, localizeTree, matchScreen } from "@engine/spec";
+import { formatDate, formatMoney, formatNumber, languageName, plural } from "@engine/translate";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const endpoints = {
@@ -113,6 +114,25 @@ describe("performance budgets (median of 40, generous ceilings so only a regress
                 ),
             ),
         ).toBeLessThan(2);
+
+    });
+    test("formatting the money, date, count and plural of a 50-row table stays under 3 ms", async () => {
+
+        const table = () => {
+
+            for ( let index = 0; index < 50; index += 1 ) {
+
+                formatMoney("ar", index * 12.5, "SAR");
+                formatDate("en", 1_760_000_000_000 + index * 86_400_000, "day", "UTC");
+                formatNumber("en", index * 1000);
+                plural("ar", index, { one: "{n} item", other: "{n} items" });
+                languageName("ar", "en");
+
+            }
+
+        };
+
+        expect(await median(table)).toBeLessThan(3);
 
     });
     test("matching the last of 200 screens stays under 1 ms and localizing 50 blocks under 3 ms", async () => {

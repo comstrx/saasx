@@ -1,6 +1,6 @@
 import { createDevice, webAdapter } from "@engine/device";
+import { bench, do_not_optimize, run } from "@engine/tooling";
 import { cssVariables, defineTokens } from "@engine/ui";
-import { bench, do_not_optimize, run } from "mitata";
 
 const tokens = defineTokens({
     colors: { light: { ink: "#111", body: "#fff" }, dark: { ink: "#eee", body: "#000" } },

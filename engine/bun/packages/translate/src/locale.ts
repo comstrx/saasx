@@ -118,21 +118,67 @@ const autonyms: Record<string, string> = {
     ms: "Bahasa Melayu",
 };
 
-export function languageName ( code: string, locale: string ): string {
+const displays = new Map<string, Intl.DisplayNames | null>();
+
+function display ( locale: string ): Intl.DisplayNames | null {
+
+    if ( !Intl.DisplayNames ) return null;
+
+    const known = displays.get(locale);
+
+    if ( known !== undefined ) return known;
+
+    let made: Intl.DisplayNames | null = null;
+
+    try {
+
+        made = new Intl.DisplayNames([locale], { type: "language" });
+
+    } catch {
+
+        made = null;
+
+    }
+
+    if ( displays.size >= 64 ) displays.clear();
+
+    displays.set(locale, made);
+
+    return made;
+
+}
+const named = new Map<string, string>();
+
+function nameOf ( code: string, locale: string ): string {
 
     const base = code.split(/[-_]/)[0]?.toLowerCase() ?? code;
 
     try {
 
-        const names = Intl.DisplayNames ? new Intl.DisplayNames([locale], { type: "language" }).of(code) : undefined;
-
-        return names ?? autonyms[base] ?? code;
+        return display(locale)?.of(code) ?? autonyms[base] ?? code;
 
     } catch {
 
         return autonyms[base] ?? code;
 
     }
+
+}
+export function languageName ( code: string, locale: string ): string {
+
+    if ( !Intl.DisplayNames ) return nameOf(code, locale);
+
+    const key = `${locale}|${code}`;
+    const known = named.get(key);
+
+    if ( known !== undefined ) return known;
+    if ( named.size >= 512 ) named.clear();
+
+    const name = nameOf(code, locale);
+
+    named.set(key, name);
+
+    return name;
 
 }
 export function languageFacts ( code: string ): Language {

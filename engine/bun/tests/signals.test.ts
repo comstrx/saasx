@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { applyPatch, createSignals, onTouched, portKey, portMemory, touched } from "@engine/context";
+import { applyPatch, createSignals, forgetPorts, onTouched, portKey, portMemory, touched } from "@engine/context";
 import { memoryStore, typed } from "@engine/storage";
 
 describe("signals and port memory", () => {
@@ -137,6 +137,70 @@ describe("port keys", () => {
         expect(portKey(port, base, [])).toBe(portKey(port, { ...base, signals: { search: "tea", selected: 2 } }, []));
         expect(portKey(port, base, [])).not.toBe(portKey(port, { ...base, signals: { search: "milk" } }, []));
         expect(portKey(port, base, ["en"])).not.toBe(portKey(port, base, ["ar"]));
+
+    });
+    test("two ports reading one operation with one input share a key, whatever else the ports carry", () => {
+
+        const route = { parameters: {}, query: {}, signals: { search: "tea" } };
+        const list = { kind: "read" as const, feature: "p", operation: "list", input: { q: { signal: "search" } }, many: true };
+        const live = { ...list, live: { channel: "c", events: ["e"] }, fields: ["name", "price"] };
+
+        expect(portKey(live, route, ["en"])).toBe(portKey(list, route, ["en"]));
+        expect(portKey(list, route, ["en"])).not.toBe(portKey({ ...list, operation: "view" }, route, ["en"]));
+
+    });
+
+});
+describe("bounded port memory", () => {
+
+    test("the store keeps at most the cache's limit of answers and forgets the oldest first", async () => {
+
+        const store = memoryStore();
+        const cache = { store, ttl: 60_000, prefix: "bounded", limit: 3 };
+
+        for ( const key of ["a", "b", "c", "d", "e"] ) portMemory(cache, key).keep([key]);
+
+        await new Promise(( resolve ) => setTimeout(resolve, 10));
+
+        const kept = (await store.keys()).filter(( key ) => key.startsWith("bounded:") && key !== "bounded:index");
+
+        expect(kept.sort()).toEqual(["bounded:c", "bounded:d", "bounded:e"]);
+
+    });
+    test("thousands of distinct answers never grow the memory past its ceiling", () => {
+
+        for ( let index = 0; index < 5000; index += 1 ) portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, `k${index}`).keep(index);
+
+        expect(portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, "k4999").seed()).toBe(4999);
+        expect(portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, "k0").seed()).toBeInstanceOf(Promise);
+
+    });
+
+    test("forgetting a cache wipes its answers from memory and store, old orphans included, and spares other prefixes", async () => {
+
+        const store = memoryStore();
+        const mine = { store, ttl: 60_000, prefix: "mine" };
+        const theirs = { store, ttl: 60_000, prefix: "theirs" };
+
+        await store.set("mine:legacy-key", "{\"at\":1,\"value\":1}");
+        portMemory(mine, "a").keep(["a"]);
+        portMemory(theirs, "b").keep(["b"]);
+        await forgetPorts(mine);
+
+        expect((await store.keys()).filter(( key ) => key.startsWith("mine:"))).toEqual([]);
+        expect(portMemory(mine, "a").seed()).toBeInstanceOf(Promise);
+        expect(portMemory(theirs, "b").seed()).toEqual(["b"]);
+
+    });
+    test("the first write under a prefix sweeps keys an older layout left behind", async () => {
+
+        const store = memoryStore();
+
+        await store.set("swept:{\"kind\":\"read\"}", "{\"at\":1,\"value\":1}");
+        portMemory({ store, ttl: 60_000, prefix: "swept" }, "fresh").keep(1);
+        await new Promise(( resolve ) => setTimeout(resolve, 10));
+
+        expect((await store.keys()).filter(( key ) => key.startsWith("swept:")).sort()).toEqual(["swept:fresh", "swept:index"]);
 
     });
 

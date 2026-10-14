@@ -22,24 +22,40 @@ export type Outbox = {
     ) => Promise<Replay>;
 };
 
+const chains = new WeakMap<Store, Map<string, Promise<unknown>>>();
+
+function serial<T> ( store: Store, key: string, work: () => Promise<T> ): Promise<T> {
+
+    const held = chains.get(store) ?? new Map<string, Promise<unknown>>();
+    const run = (held.get(key) ?? Promise.resolve()).then(work, work);
+
+    held.set(key, run.catch(() => undefined));
+    chains.set(store, held);
+
+    return run;
+
+}
 export function createOutbox ({ store, key }: { store: Store; key: string }): Outbox {
 
     const box = typed<Pending[]>(store);
-    const list = async (): Promise<Pending[]> => (await box.read(key)) ?? [];
-    const save = ( entries: Pending[] ): Promise<void> => box.write(key, entries);
+    const read = async (): Promise<Pending[]> => (await box.read(key)) ?? [];
+    const change = ( edit: ( entries: Pending[] ) => Pending[] ): Promise<void> =>
+        serial(store, key, async () => box.write(key, edit(await read())));
+    const list = (): Promise<Pending[]> => serial(store, key, read);
+    const remove = ( id: string ): Promise<void> => change(( entries ) => entries.filter(( entry ) => entry.id !== id));
 
     return {
         list,
+        remove,
         add: async ( entry ) => {
 
             const pending: Pending = { ...entry, id: uuid(), at: Date.now() };
 
-            await save([...(await list()), pending]);
+            await change(( entries ) => [...entries, pending]);
 
             return pending;
 
         },
-        remove: async ( id ) => save((await list()).filter(( entry ) => entry.id !== id)),
         replay: async ( perform, onDrop ) => {
 
             const outcome: Replay = { sent: 0, dropped: 0, waiting: 0 };
@@ -59,7 +75,6 @@ export function createOutbox ({ store, key }: { store: Store; key: string }): Ou
                     if ( transient(failure) ) {
 
                         outcome.waiting = entries.length - index;
-                        await save(entries.slice(index));
 
                         return outcome;
 
@@ -70,9 +85,9 @@ export function createOutbox ({ store, key }: { store: Store; key: string }): Ou
 
                 }
 
-            }
+                await remove(entry.id);
 
-            await save([]);
+            }
 
             return outcome;
 

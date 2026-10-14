@@ -1,4 +1,97 @@
-import * as zm from "zod/mini";
+import type * as zm from "zod/mini";
+import {
+    array as zodArray,
+    boolean as zodBoolean,
+    coerce as zodCoerce,
+    config as zodConfig,
+    custom as zodCustom,
+    _default as zodDefault,
+    email as zodEmail,
+    enum as zodEnum,
+    extend as zodExtend,
+    file as zodFile,
+    globalRegistry as zodGlobalRegistry,
+    gte as zodGte,
+    int as zodInt,
+    iso as zodIso,
+    lazy as zodLazy,
+    literal as zodLiteral,
+    lte as zodLte,
+    maxLength as zodMaxLength,
+    minLength as zodMinLength,
+    never as zodNever,
+    nonnegative as zodNonnegative,
+    null as zodNull,
+    nullable as zodNullable,
+    nullish as zodNullish,
+    number as zodNumber,
+    omit as zodOmit,
+    optional as zodOptional,
+    parse as zodParse,
+    partial as zodPartial,
+    partialRecord as zodPartialRecord,
+    pick as zodPick,
+    positive as zodPositive,
+    prefault as zodPrefault,
+    record as zodRecord,
+    refine as zodRefine,
+    regex as zodRegex,
+    required as zodRequired,
+    safeParse as zodSafeParse,
+    string as zodString,
+    union as zodUnion,
+    unknown as zodUnknown,
+    ZodMiniDefault as zodZodMiniDefault,
+    ZodMiniObject as zodZodMiniObject,
+    ZodMiniType as zodZodMiniType,
+} from "zod/mini";
+import * as core from "zod/v4/core";
+
+const mini = {
+    ZodMiniDefault: zodZodMiniDefault,
+    ZodMiniObject: zodZodMiniObject,
+    ZodMiniType: zodZodMiniType,
+    _default: zodDefault,
+    array: zodArray,
+    boolean: zodBoolean,
+    coerce: zodCoerce,
+    custom: zodCustom,
+    email: zodEmail,
+    enum: zodEnum,
+    extend: zodExtend,
+    file: zodFile,
+    globalRegistry: zodGlobalRegistry,
+    gte: zodGte,
+    int: zodInt,
+    iso: zodIso,
+    lazy: zodLazy,
+    literal: zodLiteral,
+    lte: zodLte,
+    maxLength: zodMaxLength,
+    minLength: zodMinLength,
+    never: zodNever,
+    nonnegative: zodNonnegative,
+    null: zodNull,
+    nullable: zodNullable,
+    nullish: zodNullish,
+    number: zodNumber,
+    omit: zodOmit,
+    optional: zodOptional,
+    parse: zodParse,
+    partial: zodPartial,
+    partialRecord: zodPartialRecord,
+    pick: zodPick,
+    positive: zodPositive,
+    prefault: zodPrefault,
+    record: zodRecord,
+    refine: zodRefine,
+    regex: zodRegex,
+    required: zodRequired,
+    safeParse: zodSafeParse,
+    string: zodString,
+    union: zodUnion,
+    unknown: zodUnknown,
+};
 
 type Any = zm.ZodMiniType;
 type Shape = zm.core.$ZodShape;
@@ -71,39 +164,39 @@ function withCheck<S extends Any> ( schema: S, check: zm.core.$ZodCheck<never> )
 
 }
 const chain: { [K in keyof Chain<Any>]: ( schema: Any, ...args: never[] ) => unknown } = {
-    optional: ( schema ) => fluent(zm.optional(schema)),
-    nullable: ( schema ) => fluent(zm.nullable(schema)),
-    nullish: ( schema ) => fluent(zm.nullish(schema)),
-    default: ( schema, value: unknown ) => fluent(zm._default(schema, value as never)),
+    optional: ( schema ) => fluent(mini.optional(schema)),
+    nullable: ( schema ) => fluent(mini.nullable(schema)),
+    nullish: ( schema ) => fluent(mini.nullish(schema)),
+    default: ( schema, value: unknown ) => fluent(mini._default(schema, value as never)),
     min: ( schema, limit: number, message?: Message ) =>
-        withCheck(schema, lengths.has(kindOf(schema)) ? zm.minLength(limit, message) : zm.gte(limit, message)),
+        withCheck(schema, lengths.has(kindOf(schema)) ? mini.minLength(limit, message) : mini.gte(limit, message)),
     max: ( schema, limit: number, message?: Message ) =>
-        withCheck(schema, lengths.has(kindOf(schema)) ? zm.maxLength(limit, message) : zm.lte(limit, message)),
-    regex: ( schema, pattern: RegExp, message?: Message ) => withCheck(schema, zm.regex(pattern, message)),
-    int: ( schema ) => withCheck(schema, zm.int()),
-    positive: ( schema ) => withCheck(schema, zm.positive()),
-    nonnegative: ( schema ) => withCheck(schema, zm.nonnegative()),
+        withCheck(schema, lengths.has(kindOf(schema)) ? mini.maxLength(limit, message) : mini.lte(limit, message)),
+    regex: ( schema, pattern: RegExp, message?: Message ) => withCheck(schema, mini.regex(pattern, message)),
+    int: ( schema ) => withCheck(schema, mini.int()),
+    positive: ( schema ) => withCheck(schema, mini.positive()),
+    nonnegative: ( schema ) => withCheck(schema, mini.nonnegative()),
     finite: ( schema ) => fluent(schema),
     refine: ( schema, test: ( value: unknown ) => boolean, message?: Message ) =>
-        withCheck(schema, zm.refine(test, message) as zm.core.$ZodCheck<never>),
+        withCheck(schema, mini.refine(test, message) as zm.core.$ZodCheck<never>),
     meta: ( schema, data: Record<string, unknown> ) => {
 
         const out = fluent(schema);
 
-        zm.globalRegistry.add(schema, data as never);
-        zm.globalRegistry.add(out, data as never);
+        mini.globalRegistry.add(schema, data as never);
+        mini.globalRegistry.add(out, data as never);
 
         return out;
 
     },
-    or: ( schema, other: Any ) => fluent(zm.union([schema, other])),
-    partial: ( schema ) => fluent(zm.partial(schema as Objectish)),
-    required: ( schema ) => fluent(zm.required(schema as Objectish)),
-    extend: ( schema, shape: Shape ) => fluent(zm.extend(schema as Objectish, shape)),
-    omit: ( schema, mask: Record<string, true> ) => fluent(zm.omit(schema as Objectish, mask as never)),
-    passthrough: ( schema ) => jitObject((schema as Objectish).shape, zm.unknown()),
-    pick: ( schema, mask: Record<string, true> ) => fluent(zm.pick(schema as Objectish, mask as never)),
-    prefault: ( schema, value: unknown ) => fluent(zm.prefault(schema, value as never)),
+    or: ( schema, other: Any ) => fluent(mini.union([schema, other])),
+    partial: ( schema ) => fluent(mini.partial(schema as Objectish)),
+    required: ( schema ) => fluent(mini.required(schema as Objectish)),
+    extend: ( schema, shape: Shape ) => fluent(mini.extend(schema as Objectish, shape)),
+    omit: ( schema, mask: Record<string, true> ) => fluent(mini.omit(schema as Objectish, mask as never)),
+    passthrough: ( schema ) => jitObject((schema as Objectish).shape, mini.unknown()),
+    pick: ( schema, mask: Record<string, true> ) => fluent(mini.pick(schema as Objectish, mask as never)),
+    prefault: ( schema, value: unknown ) => fluent(mini.prefault(schema, value as never)),
     unwrap: ( schema ) => fluent((schema._zod.def as unknown as { innerType: Any }).innerType),
     valueType: ( schema ) => (schema._zod.def as unknown as { valueType: Any }).valueType,
 };
@@ -151,21 +244,21 @@ function wrap<A extends unknown[], S extends Any> ( create: ( ...args: A ) => S 
 
 }
 
-export const string = wrap(zm.string);
-export const number = wrap(zm.number);
-export const boolean = wrap(zm.boolean);
-export const unknown = wrap(zm.unknown);
-export const never = wrap(zm.never);
-export const email = wrap(zm.email);
-export const file = wrap(zm.file);
+export const string = wrap(mini.string);
+export const number = wrap(mini.number);
+export const boolean = wrap(mini.boolean);
+export const unknown = wrap(mini.unknown);
+export const never = wrap(mini.never);
+export const email = wrap(mini.email);
+export const file = wrap(mini.file);
 export function literal<const T extends zm.core.util.Literal> ( value: T ): Fluent<zm.ZodMiniLiteral<T>> {
 
-    return fluent(zm.literal(value));
+    return fluent(mini.literal(value));
 
 }
 export function array<T extends Any> ( item: T ): Fluent<zm.ZodMiniArray<T>> {
 
-    return fluent(zm.array(item));
+    return fluent(mini.array(item));
 
 }
 export function record<K extends zm.core.$ZodRecordKey, V extends Any> (
@@ -173,7 +266,7 @@ export function record<K extends zm.core.$ZodRecordKey, V extends Any> (
     value: V,
 ): Fluent<zm.ZodMiniRecord<K, V>> {
 
-    return fluent(zm.record(key, value));
+    return fluent(mini.record(key, value));
 
 }
 export function partialRecord<K extends zm.core.$ZodRecordKey, V extends Any> (
@@ -181,27 +274,28 @@ export function partialRecord<K extends zm.core.$ZodRecordKey, V extends Any> (
     value: V,
 ): Fluent<ReturnType<typeof zm.partialRecord<K, V>>> {
 
-    return fluent(zm.partialRecord(key, value));
+    return fluent(mini.partialRecord(key, value));
 
 }
 export function union<const T extends readonly Any[]> ( options: T ): Fluent<zm.ZodMiniUnion<T>> {
 
-    return fluent(zm.union(options));
+    return fluent(mini.union(options));
 
 }
 export function lazy<T extends Any> ( getter: () => T ): Fluent<zm.ZodMiniLazy<T>> {
 
-    return fluent(zm.lazy(getter));
+    return fluent(mini.lazy(getter));
 
 }
 
-const miniType: zm.core.$constructor<zm.ZodMiniType> = zm.ZodMiniType;
+const miniType: zm.core.$constructor<zm.ZodMiniType> = mini.ZodMiniType;
+const objectJit: zm.core.$constructor<zm.core.$ZodObject> = core.$ZodObjectJIT;
 
-const JitObject: zm.core.$constructor<zm.ZodMiniObject> = zm.core.$constructor("ZodMiniObject", ( inst, def ) => {
+const JitObject: zm.core.$constructor<zm.ZodMiniObject> = core.$constructor("ZodMiniObject", ( inst, def ) => {
 
-    zm.core.$ZodObjectJIT.init(inst, def);
+    objectJit.init(inst, def);
     miniType.init(inst, def);
-    zm.core.util.installLazyProp(inst, "shape", ( self: zm.ZodMiniObject ) => self._zod.def.shape, false);
+    core.util.installLazyProp(inst, "shape", ( self: zm.ZodMiniObject ) => self._zod.def.shape, false);
 
 });
 
@@ -222,45 +316,45 @@ export function object<T extends Shape> ( shape: T ): Fluent<zm.ZodMiniObject<T,
 }
 export function strictObject<T extends Shape> ( shape: T ): Fluent<zm.ZodMiniObject<T, zm.core.$strict>> {
 
-    return jitObject(shape, zm.never());
+    return jitObject(shape, mini.never());
 
 }
 export function looseObject<T extends Shape> ( shape: T ): Fluent<zm.ZodMiniObject<T, zm.core.$loose>> {
 
-    return jitObject(shape, zm.unknown());
+    return jitObject(shape, mini.unknown());
 
 }
 export function custom<T> ( test?: ( value: unknown ) => unknown ): Fluent<zm.ZodMiniCustom<T, T>> {
 
-    return fluent(zm.custom<T>(test));
+    return fluent(mini.custom<T>(test));
 
 }
 export function enumOf<const T extends readonly string[]> (
     values: T,
 ): Fluent<zm.ZodMiniEnum<zm.core.util.ToEnum<T[number]>>> {
 
-    return fluent(zm.enum(values as unknown as [string, ...string[]]) as never);
+    return fluent(mini.enum(values as unknown as [string, ...string[]]) as never);
 
 }
 export { enumOf as enum };
 export function nullOf (): Fluent<zm.ZodMiniNull> {
 
-    return fluent(zm.null());
+    return fluent(mini.null());
 
 }
 export { nullOf as null };
 export const coerce = {
-    number: wrap(zm.coerce.number),
-    string: wrap(zm.coerce.string),
-    boolean: wrap(zm.coerce.boolean),
+    number: wrap(mini.coerce.number),
+    string: wrap(mini.coerce.string),
+    boolean: wrap(mini.coerce.boolean),
 };
-export const iso = { date: wrap(zm.iso.date), datetime: wrap(zm.iso.datetime) };
-export const globalRegistry = zm.globalRegistry;
-export { core } from "zod/mini";
-export const ZodObject = zm.ZodMiniObject;
-export const ZodDefault = zm.ZodMiniDefault;
-export const safeParse = zm.safeParse;
-export const parse = zm.parse;
+export const iso = { date: wrap(mini.iso.date), datetime: wrap(mini.iso.datetime) };
+export const globalRegistry = mini.globalRegistry;
+export type { core } from "zod/mini";
+export const ZodObject = mini.ZodMiniObject;
+export const ZodDefault = mini.ZodMiniDefault;
+export const safeParse = mini.safeParse;
+export const parse = mini.parse;
 
 export type ZodType<O = unknown, I = unknown> = zm.ZodMiniType<O, I>;
 export type ZodObject<
@@ -285,3 +379,10 @@ export type ZodError = zm.core.$ZodError;
 export type output<T> = zm.output<T>;
 export type input<T> = zm.input<T>;
 export type infer<T> = zm.output<T>;
+if ( typeof (globalThis as { document?: unknown }).document !== "undefined" ) zodConfig({ jitless: true });
+
+export function jitless ( on = true ): boolean {
+
+    return zodConfig({ jitless: on }).jitless === true;
+
+}

@@ -1,3 +1,6 @@
+export { type Access, type Client, type ClientDoors, defineClient, type Permission, type Write } from "./client.ts";
+export { bindForm, type Deferred, type FormBinding, type FormOptions as ClientFormOptions, isDeferred, type Saved } from "./client-form.ts";
+export { bindDevice, type DeviceBinding, type Fact as DeviceFact } from "./device.ts";
 export {
     createForm,
     type FormOptions,
@@ -11,6 +14,7 @@ export {
 export { createOutbox, type Outbox, type Pending, type Queued, type Replay } from "./outbox.ts";
 export {
     applyPatch,
+    forgetPorts,
     type Input as PortInput,
     type Patched,
     type PortCache,
