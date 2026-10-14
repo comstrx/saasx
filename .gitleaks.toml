@@ -40,3 +40,10 @@ regexes = [
     '''(?i)\b(?:xxxx+|yyyy+|zzzz+|0000+|1111+)\b''',
     '''(?i)\b(?:your[-_ ]?(?:api[-_ ]?)?key|your[-_ ]?token|insert[-_ ]?here)\b''',
 ]
+
+[[allowlists]]
+description = "The lab Reverb key: a public app key bound to a loopback socket"
+condition = "AND"
+regexTarget = "line"
+paths = ['''^platform/(?:web|mobile)/specs/[^/]+/config/contracts\.ts$''']
+regexes = ['''realtime:\s*\{\s*url:\s*"ws://127\.0\.0\.1:\d+",\s*key:''']
