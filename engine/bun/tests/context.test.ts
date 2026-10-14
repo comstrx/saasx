@@ -137,7 +137,7 @@ describe("client", () => {
         trace: "t-1",
     }) as unknown as Parameters<typeof defineClient>[0];
 
-    test("one call names every store after the spec and ending a session forgets its answers", async () => {
+    test("one call names every store after the spec, a write queued by one user is never replayed for another, and ending a session forgets its answers", async () => {
 
         const persistent = memoryStore();
         const client = defineClient(doors(persistent));
@@ -145,8 +145,11 @@ describe("client", () => {
         expect(client.portCache).toEqual({ store: persistent, ttl: 60_000, prefix: "shop.port" });
         expect(client.live).toBeUndefined();
 
-        await client.outbox.add({ feature: "f", operation: "o", input: {}, idempotencyKey: "k" });
-        expect(await persistent.get("shop.outbox")).toContain("\"k\"");
+        await client.outboxOf(7).add({ feature: "f", operation: "o", input: {}, idempotencyKey: "k" });
+        expect(await persistent.get("shop.outbox.7")).toContain("\"k\"");
+        expect(await client.outboxOf(8).list()).toEqual([]);
+        expect(await client.outboxOf(null).list()).toEqual([]);
+        expect(client.outboxOf(7)).toBe(client.outboxOf("7"));
 
         await persistent.set("shop.port:x", "1");
 

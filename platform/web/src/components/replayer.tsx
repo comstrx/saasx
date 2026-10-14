@@ -3,12 +3,13 @@
 import type { ApiSurface } from "@engine/api";
 import { touched } from "@engine/context";
 import { useEffect } from "react";
-import { outbox, useApi } from "@/hooks/use-client";
+import { useApi, useOutbox } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
 
 export default function Replayer () {
 
     const api = useApi() as ApiSurface;
+    const outbox = useOutbox();
     const device = useDevice();
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export default function Replayer () {
 
         return device.watch("online", ( online ) => { if ( online ) void replay(); });
 
-    }, [api, device]);
+    }, [api, device, outbox]);
 
     return null;
 

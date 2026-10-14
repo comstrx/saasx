@@ -23,6 +23,6 @@ export const client = defineClient({
     observe: observeCall,
 });
 
-export const { outbox, useSession, useApi, useAccess, usePermission, usePort, useWrite } = client;
+export const { useOutbox, useSession, useApi, useAccess, usePermission, usePort, useWrite } = client;
 export const { useSignal, useSignals, Provider: SignalsProvider } = client.signals;
 export const SessionProvider = client.session.Provider;

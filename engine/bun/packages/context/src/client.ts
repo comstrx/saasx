@@ -33,7 +33,8 @@ export type Client<C extends Catalogue> = {
     sessionStore: Defined<Session, SessionActions>;
     session: Binding<Session, SessionActions>;
     signals: SignalBinding;
-    outbox: Outbox;
+    outboxOf: ( owner: string | number | null | undefined ) => Outbox;
+    useOutbox: () => Outbox;
     portCache: PortCache;
     live: PortLive | undefined;
     forgetAnswers: () => void;
@@ -91,7 +92,17 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
 
     const { identity, endpoints, api, locales, useLocale, stores, site, trace, observe } = doors;
     const portCache: PortCache = { store: stores.persistent, ttl: doors.answers, prefix: `${identity}.port` };
-    const outbox = createOutbox({ store: stores.persistent, key: `${identity}.outbox` });
+    const boxes = new Map<string, Outbox>();
+    const outboxOf = ( owner: string | number | null | undefined ): Outbox => {
+
+        const name = owner === null || owner === undefined ? "guest" : String(owner);
+        const box = boxes.get(name) ?? createOutbox({ store: stores.persistent, key: `${identity}.outbox.${name}` });
+
+        boxes.set(name, box);
+
+        return box;
+
+    };
     const forgetAnswers = (): void => { void forgetPorts(portCache); };
     const sessionStore = defineSession({ name: `${identity}.session`, store: stores.session, onEnd: forgetAnswers });
     const session = bind(sessionStore);
@@ -121,6 +132,11 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
             });
 
         }, [locale, token, end]);
+
+    }
+    function useOutbox (): Outbox {
+
+        return outboxOf(useSession().user?.id);
 
     }
     function useAccess ( access: readonly string[] ): Access {
@@ -153,6 +169,7 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
 
         const values = signals.useSignals();
         const permission = usePermission(port);
+        const outbox = useOutbox();
         const runner = useOperation(useApi() as ApiSurface, port, queue ? outbox : undefined);
         const bound = port?.kind === "write" ? port.input : {};
         const filled = JSON.stringify(fillInput(bound, { ...route, signals: values }));
@@ -162,6 +179,6 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
         return { ...runner, ...permission, run, queued };
 
     }
-    return { identity, locales, useLocale, sessionStore, session, signals, outbox, portCache, live, forgetAnswers, useSession, useApi, useAccess, usePermission, usePort, useWrite };
+    return { identity, locales, useLocale, sessionStore, session, signals, outboxOf, useOutbox, portCache, live, forgetAnswers, useSession, useApi, useAccess, usePermission, usePort, useWrite };
 
 }

@@ -20,13 +20,14 @@ export function isDeferred ( result: unknown ): result is Deferred {
 }
 export function bindForm<C extends Catalogue> ( client: Client<C> ): FormBinding {
 
-    const { locales, useLocale, useApi, outbox } = client;
+    const { locales, useLocale, useApi, useOutbox } = client;
 
     function useForm ( port: CompiledPort | undefined, route: Route, { errors, queue = false, initial, autosave }: FormOptions = {} ): FormState<Saved | Deferred> {
 
         const current = useRef<ApiSurface>(useApi() as ApiSurface);
         const write = port?.kind === "write" ? port : undefined;
         const locale = useLocale();
+        const outbox = useOutbox();
 
         current.current = useApi() as ApiSurface;
 
