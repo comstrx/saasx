@@ -21,12 +21,12 @@ Bun is the only tool: package manager, workspace, script runner and test runner.
 package.json · bun.lock · bunfig.toml                  the workspace root
 tsconfig.json · biome.json                             governance, applies to every file
 packages/<name>/   member packages; `base` is the substrate every other one builds on
-assets/            engine-owned shared assets (flags, emoji); a surface's compile copies what it enables into `public/_generated`, where everything it generates lands
+packages/world/    `src` (the code), `data` (plain JSON lists: countries, regions, languages, currencies, emojis, fonts) and `asset` (emoji, flag and font files); a surface's compile copies what it uses into `public/_generated/world`
 tests/             contract tests, flat files, importing packages the way a consumer does
 benches/           mitata benchmarks, flat files
 ```
 
-Consumers depend on member packages through the workspace. A consumer's own packages never add an ecosystem dependency directly; when one needs a capability, the engine learns it.
+Consumers depend on member packages through the workspace. A library both web and mobile use lives here once; a library only one of them uses (its framework, or something native to it) lives in that part.
 
 ## Package anatomy
 
@@ -44,7 +44,6 @@ Packages are runtime-agnostic: a lint rejects `Bun`, `process`, `Buffer`, `requi
 bun install --frozen-lockfile
 bun run gates    # check (tsc) · lint (biome) · test (bun test) · audit (bun audit)
 bun run bench    # mitata benchmarks
-bun run emoji    # regenerate assets/emoji and packages/world/src/generated/emoji.ts from Unicode, CLDR and Fluent Emoji
 bun run fmt      # biome assists (imports); no formatter runs here
 ```
 

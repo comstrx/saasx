@@ -25,7 +25,6 @@
         "@engine/string": "workspace:*",
         "@engine/tooling": "workspace:*",
         "@engine/translate": "workspace:*",
-        "@engine/ui": "workspace:*",
         "@engine/validate": "workspace:*",
         "@engine/world": "workspace:*",
         "@types/bun": "1.4.2",
@@ -198,10 +197,6 @@
         "@engine/parse": "workspace:*",
       },
     },
-    "packages/ui": {
-      "name": "@engine/ui",
-      "version": "0.1.0",
-    },
     "packages/validate": {
       "name": "@engine/validate",
       "version": "0.1.0",
@@ -275,8 +270,6 @@
     "@engine/tooling": ["@engine/tooling@workspace:packages/tooling"],
 
     "@engine/translate": ["@engine/translate@workspace:packages/translate"],
-
-    "@engine/ui": ["@engine/ui@workspace:packages/ui"],
 
     "@engine/validate": ["@engine/validate@workspace:packages/validate"],
 

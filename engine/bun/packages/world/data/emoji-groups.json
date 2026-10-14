@@ -1,0 +1,65 @@
+[
+  {
+    "key": "smileys",
+    "name": {
+      "en": "Smileys & Emotion",
+      "ar": "أشكال تعبيرية ومشاعر"
+    }
+  },
+  {
+    "key": "people",
+    "name": {
+      "en": "People & Body",
+      "ar": "أشخاص وجسد"
+    }
+  },
+  {
+    "key": "nature",
+    "name": {
+      "en": "Animals & Nature",
+      "ar": "حيوانات وطبيعة"
+    }
+  },
+  {
+    "key": "food",
+    "name": {
+      "en": "Food & Drink",
+      "ar": "طعام وشراب"
+    }
+  },
+  {
+    "key": "travel",
+    "name": {
+      "en": "Travel & Places",
+      "ar": "سفر وأماكن"
+    }
+  },
+  {
+    "key": "activities",
+    "name": {
+      "en": "Activities",
+      "ar": "أنشطة"
+    }
+  },
+  {
+    "key": "objects",
+    "name": {
+      "en": "Objects",
+      "ar": "أشياء"
+    }
+  },
+  {
+    "key": "symbols",
+    "name": {
+      "en": "Symbols",
+      "ar": "رموز"
+    }
+  },
+  {
+    "key": "flags",
+    "name": {
+      "en": "Flags",
+      "ar": "أعلام"
+    }
+  }
+]

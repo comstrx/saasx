@@ -5,19 +5,14 @@ import { resolve } from "node:path";
 import {
     analyze,
     assetHash,
-    buildCatalog,
     type Connection,
-    catalogModule,
     composeMessages,
     createCore,
     createTools,
-    flagCode,
     guard,
     iconFont,
     messageIssues,
     modeOf,
-    parseAnnotations,
-    parseEmojiTest,
     prepareSpec,
     publishAssets,
     publishedUrls,
@@ -25,12 +20,10 @@ import {
     selectConnection,
     specAliases,
     syncEngineAssets,
-    tonedGlyphs,
     walk,
     within,
 } from "@engine/tooling";
-import { iconAliases, iconCodes } from "@engine/ui";
-import { emojiKey } from "@engine/world";
+import { iconAliases, iconCodes } from "@engine/world";
 
 const rules: Rules = {
     source: "/part/src",
@@ -147,20 +140,22 @@ describe("files and compile", () => {
         expect(assetHash(new Map([["a", new Uint8Array([1])]]))).toHaveLength(20);
 
     });
-    test("everything a compile generates lands under public/_generated: engine assets copied, spec folders replaced whole", () => {
+    test("everything a compile generates lands under public/_generated: the world's drawings and fonts copied, spec folders replaced whole", () => {
 
         const root = mkdtempSync(resolve(tmpdir(), "tooling-"));
         const generated = ( path: string ) => resolve(root, "public/_generated", path);
 
-        syncEngineAssets(root, { flags: ["EG"], emoji: { static: ["1f44d.webp"], motion: [] } });
+        syncEngineAssets(root, { flags: ["EG"], emoji: ["1f44d.webp"], fonts: true });
         publishAssets(root, ["images/brand", "fonts"], new Map([["images/brand/logo.svg", new Uint8Array([1])]]));
         publishAssets(root, ["images/brand", "fonts"], new Map([["fonts/site.woff2", new Uint8Array([2])]]));
 
-        expect(existsSync(generated("images/flag/eg.svg"))).toBe(true);
-        expect(existsSync(generated("images/emoji/static/1f44d.webp"))).toBe(true);
+        expect(existsSync(generated("world/flag/eg.svg"))).toBe(true);
+        expect(existsSync(generated("world/emoji/1f44d.webp"))).toBe(true);
+        expect(existsSync(generated("world/font/readex-pro-arabic.woff2"))).toBe(true);
         expect(existsSync(generated("images/brand/logo.svg"))).toBe(false);
         expect([...readFileSync(generated("fonts/site.woff2"))]).toEqual([2]);
         expect(() => publishAssets(root, ["fonts"], new Map([["videos/intro.mp4", new Uint8Array([3])]]))).toThrow("videos/intro.mp4");
+        expect(() => syncEngineAssets(root, { emoji: ["ffff.webp"] })).toThrow("Missing world asset: emoji/ffff.webp");
 
     });
     test("a compiled config names every published asset by its final url and leaves every other string alone", () => {
@@ -289,64 +284,6 @@ describe("message contracts", () => {
             "ar: missing errors.rules.max",
         ]);
         expect(messageIssues(dictionaries, { reasons: ["not_found"], rules: ["min"] })).toEqual([]);
-
-    });
-
-});
-describe("emoji sources", () => {
-
-    const sample = [
-        "# group: Smileys & Emotion",
-        "1F600                                                  ; fully-qualified     # 😀 E1.0 grinning face",
-        "1F600                                                  ; minimally-qualified # 😀 E1.0 grinning face",
-        "# group: People & Body",
-        "1F44D                                                  ; fully-qualified     # 👍 E0.6 thumbs up",
-        "1F44D 1F3FB                                            ; fully-qualified     # 👍🏻 E1.0 thumbs up: light skin tone",
-        "1F44D 1F3FF                                            ; fully-qualified     # 👍🏿 E1.0 thumbs up: dark skin tone",
-        "# group: Smileys & Emotion",
-        "2764 FE0F                                              ; fully-qualified     # ❤️ E0.6 red heart",
-        "# group: Component",
-        "1F3FB                                                  ; component           # 🏻 E1.0 light skin tone",
-    ].join("\n");
-    const english = parseAnnotations('<ldml><annotations><annotation cp="😀">face | grin</annotation><annotation cp="😀" type="tts">grinning face</annotation><annotation cp="👍">+1 | thumbs up | up</annotation><annotation cp="👍" type="tts">thumbs up</annotation><annotation cp="❤">heart &amp; love</annotation><annotation cp="❤" type="tts">red heart</annotation><annotation cp="🏻" type="tts">light skin tone</annotation><annotation cp="🏼" type="tts">medium-light skin tone</annotation><annotation cp="🏽" type="tts">medium skin tone</annotation><annotation cp="🏾" type="tts">medium-dark skin tone</annotation><annotation cp="🏿" type="tts">dark skin tone</annotation></annotations></ldml>');
-    const arabic = parseAnnotations('<ldml><annotations><annotation cp="😀" type="tts">وجه مبتسم</annotation><annotation cp="😀">وجه | ابتسامة</annotation><annotation cp="👍" type="tts">قبول</annotation><annotation cp="❤" type="tts">قلب أحمر</annotation><annotation cp="🏻" type="tts">فاتح</annotation><annotation cp="🏼" type="tts">فاتح متوسط</annotation><annotation cp="🏽" type="tts">متوسط</annotation><annotation cp="🏾" type="tts">غامق متوسط</annotation><annotation cp="🏿" type="tts">غامق</annotation></annotations></ldml>');
-
-    test("the unicode list keeps fully-qualified rows with their group; annotations split keywords and decode entities", () => {
-
-        const rows = parseEmojiTest(sample);
-
-        expect(rows.map(( row ) => row.glyph)).toEqual(["😀", "👍", "👍🏻", "👍🏿", "❤️"]);
-        expect(rows[1]).toEqual({ codes: ["1F44D"], glyph: "👍", name: "thumbs up", group: "People & Body" });
-        expect(english.get("❤")).toEqual({ name: "red heart", keywords: ["heart & love"] });
-        expect(emojiKey("❤️")).toBe("2764");
-
-    });
-    test("the catalog folds tones into their base, drops the keyword that repeats the name and marks the artwork it has", () => {
-
-        const rows = parseEmojiTest(sample);
-        const catalog = buildCatalog(rows, english, arabic, { statics: new Set(["1f600", "1f44d", "1f44d-1f3fb", "1f44d-1f3fc", "1f44d-1f3fd", "1f44d-1f3fe", "1f44d-1f3ff"]), motions: new Map([["1f44d", [48, 2100] as const], ["ffff", [8, 500] as const]]) });
-
-        expect(catalog.tuples).toEqual([
-            ["😀", 0, "grinning face", "وجه مبتسم", "face|grin", "وجه|ابتسامة", "", 1],
-            ["👍", 1, "thumbs up", "قبول", "+1|up", "", "👍🏻", 7],
-            ["❤️", 0, "red heart", "قلب أحمر", "heart & love", "", "", 0],
-        ]);
-        expect(catalog.motions).toEqual({ "1f44d": [48, 2100] });
-        expect(catalog.tones[4]).toEqual({ key: "dark", modifier: "🏿", name: { en: "dark skin tone", ar: "غامق" } });
-        expect(tonedGlyphs(catalog.tuples[1] as never)).toEqual(["👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"]);
-        expect(catalogModule(catalog)).toContain('["👍",1,"thumbs up","قبول","+1|up","","👍🏻",7],');
-        expect(catalogModule(catalog)).toStartWith('import type { EmojiGroup, EmojiMotion, EmojiTone, EmojiTuple } from "../kinds.ts";');
-        expect(() => buildCatalog(rows, english, new Map(), { statics: new Set(), motions: new Map() })).toThrow("No Arabic annotation");
-
-    });
-    test("a flag emoji names its flag file: country pairs and tagged subdivisions, nothing else", () => {
-
-        expect(flagCode("🇪🇬")).toBe("eg");
-        expect(flagCode("🇸🇦")).toBe("sa");
-        expect(flagCode("🏴󠁧󠁢󠁳󠁣󠁴󠁿")).toBe("gb-sct");
-        expect(flagCode("🏳️‍🌈")).toBeUndefined();
-        expect(flagCode("🏴")).toBeUndefined();
-        expect(flagCode("😀")).toBeUndefined();
 
     });
 

@@ -1,0 +1,191 @@
+[
+  {
+    "code": "002",
+    "name": {
+      "en": "Africa",
+      "ar": "أفريقيا"
+    }
+  },
+  {
+    "code": "005",
+    "name": {
+      "en": "South America",
+      "ar": "أمريكا الجنوبية"
+    }
+  },
+  {
+    "code": "009",
+    "name": {
+      "en": "Oceania",
+      "ar": "أوقيانوسيا"
+    }
+  },
+  {
+    "code": "011",
+    "name": {
+      "en": "Western Africa",
+      "ar": "غرب أفريقيا"
+    }
+  },
+  {
+    "code": "013",
+    "name": {
+      "en": "Central America",
+      "ar": "أمريكا الوسطى"
+    }
+  },
+  {
+    "code": "014",
+    "name": {
+      "en": "Eastern Africa",
+      "ar": "شرق أفريقيا"
+    }
+  },
+  {
+    "code": "015",
+    "name": {
+      "en": "Northern Africa",
+      "ar": "شمال أفريقيا"
+    }
+  },
+  {
+    "code": "017",
+    "name": {
+      "en": "Middle Africa",
+      "ar": "وسط أفريقيا"
+    }
+  },
+  {
+    "code": "018",
+    "name": {
+      "en": "Southern Africa",
+      "ar": "أفريقيا الجنوبية"
+    }
+  },
+  {
+    "code": "019",
+    "name": {
+      "en": "Americas",
+      "ar": "الأمريكتان"
+    }
+  },
+  {
+    "code": "021",
+    "name": {
+      "en": "Northern America",
+      "ar": "شمال أمريكا"
+    }
+  },
+  {
+    "code": "029",
+    "name": {
+      "en": "Caribbean",
+      "ar": "الكاريبي"
+    }
+  },
+  {
+    "code": "030",
+    "name": {
+      "en": "Eastern Asia",
+      "ar": "شرق آسيا"
+    }
+  },
+  {
+    "code": "034",
+    "name": {
+      "en": "Southern Asia",
+      "ar": "جنوب آسيا"
+    }
+  },
+  {
+    "code": "035",
+    "name": {
+      "en": "Southeast Asia",
+      "ar": "جنوب شرق آسيا"
+    }
+  },
+  {
+    "code": "039",
+    "name": {
+      "en": "Southern Europe",
+      "ar": "جنوب أوروبا"
+    }
+  },
+  {
+    "code": "053",
+    "name": {
+      "en": "Australasia",
+      "ar": "أسترالاسيا"
+    }
+  },
+  {
+    "code": "054",
+    "name": {
+      "en": "Melanesia",
+      "ar": "ميلانيزيا"
+    }
+  },
+  {
+    "code": "057",
+    "name": {
+      "en": "Micronesian Region",
+      "ar": "الجزر الميكرونيزية"
+    }
+  },
+  {
+    "code": "061",
+    "name": {
+      "en": "Polynesia",
+      "ar": "بولينيزيا"
+    }
+  },
+  {
+    "code": "142",
+    "name": {
+      "en": "Asia",
+      "ar": "آسيا"
+    }
+  },
+  {
+    "code": "143",
+    "name": {
+      "en": "Central Asia",
+      "ar": "وسط آسيا"
+    }
+  },
+  {
+    "code": "145",
+    "name": {
+      "en": "Western Asia",
+      "ar": "غرب آسيا"
+    }
+  },
+  {
+    "code": "150",
+    "name": {
+      "en": "Europe",
+      "ar": "أوروبا"
+    }
+  },
+  {
+    "code": "151",
+    "name": {
+      "en": "Eastern Europe",
+      "ar": "شرق أوروبا"
+    }
+  },
+  {
+    "code": "154",
+    "name": {
+      "en": "Northern Europe",
+      "ar": "شمال أوروبا"
+    }
+  },
+  {
+    "code": "155",
+    "name": {
+      "en": "Western Europe",
+      "ar": "غرب أوروبا"
+    }
+  }
+]

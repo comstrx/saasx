@@ -13,14 +13,11 @@ export {
 export { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
 export { type Buildable, type BuildPlan, type Built, type Compile, defineBuild, type Emitted, type Meta, type Prepared, prepareSpec } from "./build.ts";
 export {
-    assetBudget,
-    assetBytes,
     assetHash,
     brandImages,
     type Connection,
     type EngineAssets,
-    engineAssets,
-    flagsModule,
+    flagFiles,
     generatedRoot,
     type Mode,
     modeOf,
@@ -35,6 +32,7 @@ export {
     selectConnections,
     specAliases,
     syncEngineAssets,
+    worldAssets,
 } from "./compile.ts";
 export {
     type Core,
@@ -53,9 +51,7 @@ export {
     walk,
     within,
 } from "./core.ts";
-export { type Annotation, type Annotations, buildCatalog, catalogModule, flagCode, parseAnnotations, parseEmojiTest, type Row, tonedGlyphs } from "./emoji.ts";
 export { type Features, featureFacts, featureNames } from "./features.ts";
-export { defaultSources, type EmojiSources, fluentIndex, generateEmoji } from "./fluent.ts";
 export { type IconFont, type IconFormat, iconFont } from "./icons.ts";
 export {
     composeMessages,

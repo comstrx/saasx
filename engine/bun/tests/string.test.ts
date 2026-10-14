@@ -91,7 +91,7 @@ describe("search", () => {
         expect(digits("+20 (10) 99")).toBe("201099");
         expect(rank("ab", ["ab"])).toBe(0);
         expect(rank("ab", ["abc", "xab"])).toBe(1);
-        expect(rank("ab", ["xab"])).toBe(2);
+        expect(rank("ab", ["xab"])).toBe(3);
         expect(rank("ab", ["zz"])).toBe(-1);
 
         const items = catalog([{ code: "A", words: ["apple", "تفاح"] }, { code: "B", words: ["pineapple"] }, { code: "C", words: ["app"] }], ( item ) => item.code, ( item ) => item.words);
@@ -101,6 +101,33 @@ describe("search", () => {
         expect(items.get("a")?.code).toBe("A");
         expect(items.has("z")).toBe(false);
         expect(items.search("  ")).toEqual([]);
+
+    });
+    test("folding reads arabic-indic and persian digits, persian letter forms and direction marks as the plain text a user means", () => {
+
+        expect(fold("٠١٢٣٤٥٦٧٨٩")).toBe("0123456789");
+        expect(fold("۲۰۲۶")).toBe("2026");
+        expect(fold("ج.م.\u200f")).toBe("ج.م.");
+        expect(fold("ی ک")).toBe("ي ك");
+        expect(fold("  Multiple   Spaces ")).toBe("multiple spaces");
+
+    });
+    test("a catalog finds a word without its arabic article, every typed word by its start, and ranks a whole-field match above a word match", () => {
+
+        const items = catalog([
+            { code: "AE", names: ["United Arab Emirates", "الإمارات العربية المتحدة"] },
+            { code: "SA", names: ["Saudi Arabia", "المملكة العربية السعودية"] },
+            { code: "AR", names: ["Arabic", "العربية"] },
+        ], ( item ) => item.code, ( item ) => item.names);
+        const codes = ( query: string ) => items.search(query).map(( item ) => item.code);
+
+        expect(codes("امارات")).toEqual(["AE"]);
+        expect(codes("الامارات")).toEqual(["AE"]);
+        expect(codes("united emi")).toEqual(["AE"]);
+        expect(codes("سعوديه")).toEqual(["SA"]);
+        expect(codes("arab")).toEqual(["AR", "AE", "SA"]);
+        expect(codes("عربي")).toEqual(["AR", "AE", "SA"]);
+        expect(codes("emirates united")).toEqual(["AE"]);
 
     });
 

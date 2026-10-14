@@ -1,158 +1,71 @@
 import { generatedPath } from "@engine/base";
 import { type Catalog, catalog } from "@engine/string";
-import { emojiGroups, emojiMotions, emojiTones, emojiTuples } from "./generated/emoji.ts";
-import type { Emoji, EmojiDisplay, EmojiGroup, EmojiMoment, EmojiSprite, EmojiTone } from "./kinds.ts";
+import groupRows from "../data/emoji-groups.json" with { type: "json" };
+import rows from "../data/emojis.json" with { type: "json" };
+import { type FlagPlace, flagCode, flagOf } from "./flag.ts";
 
-export const emojiFolder = `${generatedPath}/images/emoji`;
-
-export type EmojiOptions = {
-    folder?: string | undefined;
-    format?: string | undefined;
-    animated?: readonly string[] | undefined;
-};
-export type EmojiFiles = { static: string[]; motion: string[] };
-export type Emojis = {
-    all: readonly Emoji[];
+export type EmojiGroup = { key: string; name: { en: string; ar: string } };
+export type Emoji = { glyph: string; code: string; group: string; name: { en: string; ar: string }; keywords: { en: readonly string[]; ar: readonly string[] } };
+export type EmojiOptions = { folder?: string | undefined; flags?: FlagPlace | undefined };
+export type Browse = { query?: string | undefined; group?: string | undefined; limit?: number | undefined };
+export type Emojis = Catalog<Emoji> & {
     groups: readonly EmojiGroup[];
-    tones: readonly EmojiTone[];
-    get: ( glyph: string ) => Emoji | undefined;
-    search: ( query: string, limit?: number ) => Emoji[];
+    files: readonly string[];
     of: ( group: string ) => Emoji[];
-    tone: ( glyph: string, tone?: string | undefined ) => string;
-    keyOf: ( glyph: string ) => string;
-    staticOf: ( glyph: string ) => string | undefined;
-    motionOf: ( glyph: string ) => EmojiSprite | undefined;
-    display: ( glyph: string, moment: EmojiMoment ) => EmojiDisplay;
-    files: ( options?: { tones?: boolean | undefined } ) => EmojiFiles;
+    browse: ( browse: Browse ) => Emoji[];
+    imageOf: ( glyph: string ) => string | undefined;
 };
 
-const selector = /\uFE0F/g;
-const hasStatic = 1;
-const hasAnimated = 2;
-const hasTones = 4;
-const light = emojiTones[0]?.modifier ?? "";
-const columns = 8;
+const selector = /️/g;
+
+export const emojiFolder = `${generatedPath}/world/emoji`;
+export const everyEmoji = rows as Emoji[];
+export const emojiGroups = groupRows as EmojiGroup[];
 
 export function plainEmoji ( glyph: string ): string {
 
     return glyph.replace(selector, "");
 
 }
-export function emojiKey ( glyph: string ): string {
+export function emojiCode ( glyph: string ): string {
 
-    return [...plainEmoji(glyph)].map(( character ) => (character.codePointAt(0) ?? 0).toString(16)).join("-");
-
-}
-function expand (): { all: Emoji[]; toned: Map<string, string> } {
-
-    const toned = new Map<string, string>();
-    const all = emojiTuples.map(( [glyph, group, en, ar, enKeys, arKeys, lightGlyph, facts] ): Emoji => {
-
-        if ( lightGlyph ) toned.set(plainEmoji(glyph), lightGlyph);
-
-        return {
-            glyph,
-            key: emojiKey(glyph),
-            group: emojiGroups[group]?.key ?? "",
-            name: { en, ar },
-            keywords: { en: enKeys, ar: arKeys },
-            toned: lightGlyph !== "",
-            assets: { static: (facts & hasStatic) !== 0, animated: (facts & hasAnimated) !== 0, tones: (facts & hasTones) !== 0 },
-        };
-
-    });
-
-    return { all, toned };
+    return [...plainEmoji(glyph)].map(( char ) => (char.codePointAt(0) ?? 0).toString(16)).join("-");
 
 }
-function baseOf ( glyph: string ): string {
+export function defineEmoji ({ folder = emojiFolder, flags }: EmojiOptions = {}): Emojis {
 
-    return plainEmoji(glyph).replace(/[\u{1F3FB}-\u{1F3FF}]/gu, "");
-
-}
-export function defineEmoji ( options: EmojiOptions = {} ): Emojis {
-
-    const folder = options.folder ?? emojiFolder;
-    const format = options.format ?? "webp";
-    const { all, toned } = expand();
-    const chosen = options.animated ? new Set(options.animated.map(plainEmoji)) : null;
-    const index: Catalog<Emoji> = catalog(all, ( emoji ) => plainEmoji(emoji.glyph), ( emoji ) => [emoji.glyph, emoji.name.en, emoji.name.ar, ...emoji.keywords.en.split("|"), ...emoji.keywords.ar.split("|")].filter(Boolean));
-    const get = ( glyph: string ): Emoji | undefined => index.get(plainEmoji(glyph)) ?? index.get(baseOf(glyph));
-    const tone = ( glyph: string, key?: string | undefined ): string => {
-
-        const base = get(glyph);
-        const modifier = key ? emojiTones.find(( entry ) => entry.key === key)?.modifier : undefined;
-        const lightGlyph = base ? toned.get(plainEmoji(base.glyph)) : undefined;
-
-        if ( !base ) return glyph;
-        if ( !modifier || !lightGlyph ) return base.glyph;
-
-        return lightGlyph.replaceAll(light, modifier);
-
-    };
-    const isToned = ( glyph: string ): boolean => plainEmoji(glyph) !== baseOf(glyph);
-    const staticOf = ( glyph: string ): string | undefined => {
-
-        const base = get(glyph);
-
-        if ( !base?.assets.static || (isToned(glyph) && !base.assets.tones) ) return undefined;
-
-        return `${folder}/static/${emojiKey(glyph)}.${format}`;
-
-    };
-    const motionOf = ( glyph: string ): EmojiSprite | undefined => {
-
-        const base = get(glyph);
-        const motion = base ? emojiMotions[base.key] : undefined;
-
-        if ( !base || !motion || isToned(glyph) || (chosen && !chosen.has(plainEmoji(base.glyph))) ) return undefined;
-
-        const [frames, ms] = motion;
-
-        return { src: `${folder}/motion/${base.key}.${format}`, frames, columns, rows: Math.ceil(frames / columns), ms };
-
-    };
-    const fallback = ( glyph: string ): EmojiDisplay => {
-
-        const still = staticOf(glyph);
-
-        return still ? { kind: "static", src: still, glyph } : { kind: "glyph", glyph };
-
-    };
+    const found = catalog(everyEmoji, ( emoji ) => plainEmoji(emoji.glyph), ( emoji ) => [emoji.glyph, emoji.name.en, emoji.name.ar, ...emoji.keywords.en, ...emoji.keywords.ar]);
+    const get = ( glyph: string ): Emoji | undefined => found.get(plainEmoji(glyph));
+    const of = ( group: string ): Emoji[] => everyEmoji.filter(( emoji ) => emoji.group === group);
 
     return {
-        all,
-        groups: emojiGroups,
-        tones: emojiTones,
+        ...found,
         get,
-        search: ( query, limit = 40 ) => index.search(query, limit),
-        of: ( group ) => all.filter(( emoji ) => emoji.group === group),
-        tone,
-        keyOf: emojiKey,
-        staticOf,
-        motionOf,
-        display: ( glyph, moment ) => {
+        has: ( glyph ) => get(glyph) !== undefined,
+        groups: emojiGroups,
+        files: everyEmoji.filter(( emoji ) => !flagCode(emoji.glyph)).map(( emoji ) => `${emoji.code}.webp`),
+        of,
+        browse: ({ query, group, limit = 400 }) => {
 
-            if ( moment.context === "inline" ) return { kind: "glyph", glyph };
-            if ( moment.context === "picker" || !moment.active || moment.reducedMotion ) return fallback(glyph);
+            const typed = query?.trim() ?? "";
 
-            const sprite = motionOf(glyph);
+            if ( !typed ) return group ? of(group).slice(0, limit) : everyEmoji.slice(0, limit);
 
-            return sprite ? { kind: "animated", sprite, still: staticOf(glyph), glyph } : fallback(glyph);
+            return found.search(typed, everyEmoji.length).filter(( emoji ) => !group || emoji.group === group).slice(0, limit);
 
         },
-        files: ( chosenFiles = {} ) => ({
-            static: all.flatMap(( emoji ) => {
+        imageOf: ( glyph ) => {
 
-                if ( !emoji.assets.static ) return [];
+            const emoji = get(glyph);
+            const code = emoji ? flagCode(emoji.glyph) : undefined;
 
-                const variants = chosenFiles.tones && emoji.assets.tones ? emojiTones.map(( entry ) => tone(emoji.glyph, entry.key)) : [];
+            if ( !emoji ) return undefined;
 
-                return [emoji.glyph, ...variants].map(( glyph ) => `${emojiKey(glyph)}.${format}`);
+            return code ? flagOf(code, flags) : `${folder}/${emoji.code}.webp`;
 
-            }),
-            motion: all.filter(( emoji ) => motionOf(emoji.glyph) !== undefined).map(( emoji ) => `${emoji.key}.${format}`),
-        }),
+        },
     };
 
 }
+
+export const emojis: Emojis = defineEmoji();

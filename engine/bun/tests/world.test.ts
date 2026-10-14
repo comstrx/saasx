@@ -1,219 +1,334 @@
 import { describe, expect, test } from "bun:test";
-import { fold } from "@engine/string";
-import { countries, currencies, defineEmoji, defineWorld, emojiFolder, emojiKey, emojiMotions, flagEmoji, flagFolder, languages, plainEmoji } from "@engine/world";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import {
+    countries,
+    createIcons,
+    cssVariables,
+    currencies,
+    defineEmoji,
+    defineMotion,
+    defineTokens,
+    defineWorld,
+    emojiCode,
+    emojiFolder,
+    emojis,
+    flagCode,
+    flagEmoji,
+    flagFolder,
+    flagOf,
+    fontFace,
+    fontFaces,
+    fontFolder,
+    fontOf,
+    fontStack,
+    fonts,
+    iconAliases,
+    iconCodes,
+    iconGlyph,
+    iconMirrored,
+    iconMirrors,
+    iconNames,
+    keys,
+    languages,
+    nativeTokens,
+    plainEmoji,
+    transition,
+} from "@engine/world";
 
-const world = defineWorld();
-const emoji = defineEmoji();
-const few = defineEmoji({ folder: "/images/emoji", animated: ["❤️", "👍"] });
+const asset = resolve(import.meta.dir, "../packages/world/asset");
+const scales = {
+    space: { 0: 0, 4: 16 },
+    radius: { full: 9999 },
+    type: { lg: { size: 20, line: 28, weight: 600 as const }, md: { size: 16, line: 24, weight: 400 as const } },
+};
 
-describe("the whole world", () => {
+describe("countries", () => {
 
-    test("every country names its currencies and languages in the tables and carries three names", () => {
+    test("every country carries ISO codes, three names, a region, and only currencies and languages the tables know", () => {
 
-        expect(countries.length).toBeGreaterThan(240);
+        expect(countries.all.length).toBe(250);
 
-        for ( const country of countries ) {
+        for ( const country of countries.all ) {
 
+            expect(country.code).toMatch(/^[A-Z]{2}$/);
+            expect(country.alpha3).toMatch(/^[A-Z]{3}$/);
+            expect(country.numeric).toMatch(/^\d{3}$/);
             expect(country.name.en && country.name.ar && country.name.native).toBeTruthy();
-
-            for ( const code of country.currencies ) expect(world.currencies.has(code)).toBe(true);
-            for ( const code of country.languages ) expect(world.languages.has(code)).toBe(true);
+            expect(country.currencies.every(( code ) => currencies.has(code))).toBe(true);
+            expect(country.languages.every(( code ) => languages.has(code))).toBe(true);
 
         }
 
-        expect(currencies.every(( c ) => c.countries.every(( alpha2 ) => world.countries.has(alpha2)))).toBe(true);
-        expect(languages.find(( l ) => l.code === "ar")?.direction).toBe("rtl");
+        expect(new Set(countries.all.map(( country ) => country.alpha3)).size).toBe(250);
+        expect(countries.get("eg")?.subregion?.name).toEqual({ en: "Northern Africa", ar: "شمال أفريقيا" });
+        expect(countries.inRegion("002").length).toBeGreaterThan(50);
+        expect(countries.spending("EUR").map(( country ) => country.code)).toContain("DE");
+        expect(countries.speaking("AR").map(( country ) => country.code)).toContain("EG");
 
     });
-    test("a country is found by any of its names, codes or dialing code, exact matches first", () => {
+    test("a country is found by any of its names in arabic, english or its own tongue, by any code, and by its key with or without a plus", () => {
 
-        expect(world.countries.search("مصر")[0]?.alpha2).toBe("EG");
-        expect(world.countries.search("مِصْر")[0]?.alpha2).toBe("EG");
-        expect(world.countries.search("egypt")[0]?.alpha2).toBe("EG");
-        expect(world.countries.search("EGY")[0]?.alpha2).toBe("EG");
-        expect(world.countries.search("+20")[0]?.alpha2).toBe("EG");
-        expect(world.countries.search("Côte")[0]?.alpha2).toBe("CI");
-        expect(world.countries.search("cote d")[0]?.alpha2).toBe("CI");
-        expect(world.countries.search("السعوديه")[0]?.alpha2).toBe("SA");
-        expect(world.countries.search("zzzz")).toEqual([]);
-        expect(world.countries.search("")).toEqual([]);
+        const first = ( query: string ) => countries.search(query)[0]?.code;
 
-    });
-    test("a currency is found by code, symbol, any name, or the country that spends it", () => {
-
-        expect(world.currencies.search("ريال سعودي")[0]?.code).toBe("SAR");
-        expect(world.currencies.search("السعودية")[0]?.code).toBe("SAR");
-        expect(world.currencies.search("$")[0]?.code).toBe("USD");
-        expect(world.currencies.search("Egyptian")[0]?.code).toBe("EGP");
-        expect(world.currencies.search("eg").some(( c ) => c.code === "EGP")).toBe(true);
-        expect(world.currenciesOf("eg").map(( c ) => c.code)).toEqual(["EGP"]);
-        expect(world.countriesOf("SAR").map(( c ) => c.alpha2)).toEqual(["SA"]);
-        expect(world.currencies.get("usd")?.digits).toBe(2);
-        expect(world.currencies.get("JPY")?.digits).toBe(0);
+        expect(first("مصر")).toBe("EG");
+        expect(first("مِصْر")).toBe("EG");
+        expect(first("egypt")).toBe("EG");
+        expect(first("EGY")).toBe("EG");
+        expect(first("818")).toBe("EG");
+        expect(first("+20")).toBe("EG");
+        expect(first("0020")).toBe("EG");
+        expect(first("امارات")).toBe("AE");
+        expect(first("السعوديه")).toBe("SA");
+        expect(first("Deutschland")).toBe("DE");
+        expect(first("日本")).toBe("JP");
+        expect(first("Côte")).toBe("CI");
+        expect(first("فلسطين")).toBe("PS");
+        expect(countries.search("zzzz")).toEqual([]);
+        expect(countries.search(" ")).toEqual([]);
 
     });
-    test("dialing searches by digits however they are typed", () => {
 
-        expect(world.dialing.search("+2 0").map(( c ) => c.alpha2)).toContain("EG");
-        expect(world.dialing.search("966")[0]?.alpha2).toBe("SA");
-        expect(world.dialing.of("sa")).toBe("+966");
-        expect(world.dialing.search("")).toEqual([]);
+});
+describe("keys", () => {
+
+    test("a key is found however it is typed, the territory that owns a shared key comes first, and an area code finds its island", () => {
+
+        const first = ( query: string ) => keys.search(query)[0]?.code;
+
+        expect(keys.of("eg")).toBe("+20");
+        expect(first("+20")).toBe("EG");
+        expect(first("20")).toBe("EG");
+        expect(first("0020")).toBe("EG");
+        expect(first("٢٠")).toBe("EG");
+        expect(first("+1")).toBe("US");
+        expect(first("+44")).toBe("GB");
+        expect(first("1268")).toBe("AG");
+        expect(first("+1 268")).toBe("AG");
+        expect(first("مصر")).toBe("EG");
+        expect(keys.search("+9").length).toBeGreaterThan(10);
+        expect(keys.all.some(( key ) => key.code === "AQ")).toBe(false);
+        expect(keys.search("")).toEqual([]);
+
+    });
+
+});
+describe("languages and currencies", () => {
+
+    test("a language knows its direction and script and answers to its code or any of its three names", () => {
+
+        expect(languages.get("ar")).toEqual({ code: "ar", direction: "rtl", script: "Arab", name: { en: "Arabic", ar: "العربية", native: "العربية" } });
+        expect(languages.get("fa")?.direction).toBe("rtl");
+        expect(languages.search("عربي")[0]?.code).toBe("ar");
+        expect(languages.search("français")[0]?.code).toBe("fr");
+        expect(languages.search("english")[0]?.code).toBe("en");
+
+    });
+    test("a currency answers to its code, number, any symbol, any name and the countries that spend it, with its minor digits", () => {
+
+        const first = ( query: string ) => currencies.search(query)[0]?.code;
+
+        expect(first("egp")).toBe("EGP");
+        expect(first("818")).toBe("EGP");
+        expect(first("ج.م")).toBe("EGP");
+        expect(first("جنيه مصري")).toBe("EGP");
+        expect(first("مصر")).toBe("EGP");
+        expect(first("$")).toBe("USD");
+        expect(first("ريال سعودي")).toBe("SAR");
+        expect(currencies.get("KWD")?.digits).toBe(3);
+        expect(currencies.get("JPY")?.digits).toBe(0);
+        expect(currencies.of("ps").map(( currency ) => currency.code)).toEqual(["ILS", "JOD"]);
+
+    });
+
+});
+describe("flags", () => {
+
+    test("one drawing per country serves both the flag and the flag emoji, as svg for the web and webp for native", () => {
+
+        expect(flagEmoji("eg")).toBe("🇪🇬");
+        expect(flagEmoji("x")).toBe("");
+        expect(flagCode("🇪🇬")).toBe("EG");
+        expect(flagCode("😀")).toBeUndefined();
+        expect(flagOf("EG")).toBe(`${flagFolder}/eg.svg`);
+        expect(flagOf("EG", { format: "webp", folder: "flags" })).toBe("flags/eg.webp");
+
+        for ( const country of countries.all ) {
+
+            expect(existsSync(resolve(asset, "flag", `${country.code.toLowerCase()}.svg`))).toBe(true);
+            expect(existsSync(resolve(asset, "flag", `${country.code.toLowerCase()}.webp`))).toBe(true);
+
+        }
+
+    });
+
+});
+describe("emojis", () => {
+
+    test("every emoji has both names, a group, a key that round-trips its glyph, and a drawing on disk", () => {
+
+        expect(emojis.all.length).toBeGreaterThan(1800);
+
+        for ( const emoji of emojis.all ) {
+
+            expect(emoji.name.en && emoji.name.ar).toBeTruthy();
+            expect(emojis.groups.some(( group ) => group.key === emoji.group)).toBe(true);
+            expect(emojiCode(emoji.glyph)).toBe(emoji.code);
+
+            const code = flagCode(emoji.glyph);
+
+            expect(existsSync(code ? resolve(asset, "flag", `${code.toLowerCase()}.svg`) : resolve(asset, "emoji", `${emoji.code}.webp`))).toBe(true);
+
+        }
+
+        expect(new Set(emojis.all.map(( emoji ) => emoji.code)).size).toBe(emojis.all.length);
+        expect(emojis.files.length).toBe(emojis.all.filter(( emoji ) => !flagCode(emoji.glyph)).length);
+
+    });
+    test("a glyph is found with or without its presentation selector, and its image is the emoji drawing or its country's flag", () => {
+
+        expect(plainEmoji("❤️")).toBe("❤");
+        expect(emojis.get("❤")?.glyph).toBe("❤️");
+        expect(emojis.imageOf("👍")).toBe(`${emojiFolder}/1f44d.webp`);
+        expect(emojis.imageOf("🇪🇬")).toBe(`${flagFolder}/eg.svg`);
+        expect(defineEmoji({ folder: "e", flags: { folder: "f", format: "webp" } }).imageOf("🇪🇬")).toBe("f/eg.webp");
+        expect(emojis.imageOf("🫩")).toBeUndefined();
+        expect(emojis.imageOf("not an emoji")).toBeUndefined();
+
+    });
+    test("arabic and english names and keywords find an emoji, and browsing narrows to a group unless a query is typed", () => {
+
+        expect(emojis.search("thumbs up")[0]?.glyph).toBe("👍");
+        expect(emojis.search("ابهام")[0]?.glyph).toBe("👍");
+        expect(emojis.search("قلب").some(( emoji ) => emoji.glyph === "❤️")).toBe(true);
+        expect(emojis.browse({ group: "flags" }).every(( emoji ) => emoji.group === "flags")).toBe(true);
+        expect(emojis.browse({ group: "flags", query: "مصر" })[0]?.glyph).toBe("🇪🇬");
+        expect(emojis.of("smileys")[0]?.group).toBe("smileys");
+
+    });
+
+});
+describe("fonts", () => {
+
+    test("arabic script draws in Readex Pro and every other script in Figtree, each face a file on disk with its unicode range", () => {
+
+        expect(fontOf("Arab").family).toBe("Readex Pro");
+        expect(fontOf("Latn").family).toBe("Figtree");
+        expect(fontOf("Cyrl").family).toBe("Figtree");
+
+        for ( const font of fonts ) for ( const face of font.files ) expect(existsSync(resolve(asset, "font", face.file))).toBe(true);
+
+        const css = fontFaces().join("\n");
+
+        expect(css).toContain(`font-family: "Readex Pro"; src: url("${fontFolder}/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700`);
+        expect(css).toContain("unicode-range: U+0600-06FF");
+        expect(css).toContain("size-adjust: 104%");
 
     });
 
 });
 describe("a surface's world", () => {
 
-    test("a filter keeps only what the backend supports, in the order given, and refuses strangers", () => {
+    test("a surface keeps only what its backend supports, in its own order, refuses strangers, and draws each language in its script's font", () => {
 
-        const mine = defineWorld({ countries: ["sa", "EG"], currencies: ["SAR", "EGP", "USD"], languages: ["ar", "en"] });
+        const world = defineWorld({ countries: ["SA", "EG"], currencies: ["usd"], languages: ["ar", "en"] });
 
-        expect(mine.countries.all.map(( c ) => c.alpha2)).toEqual(["SA", "EG"]);
-        expect(mine.countries.search("egypt")).toHaveLength(1);
-        expect(mine.countries.search("france")).toEqual([]);
-        expect(mine.currencies.all.map(( c ) => c.code)).toEqual(["SAR", "EGP", "USD"]);
-        expect(mine.currenciesOf("US")).toEqual([]);
-        expect(mine.languages.all.map(( l ) => l.code)).toEqual(["ar", "en"]);
+        expect(world.countries.all.map(( country ) => country.code)).toEqual(["SA", "EG"]);
+        expect(world.keys.search("+2")[0]?.code).toBe("EG");
+        expect(world.currencies.all.map(( currency ) => currency.code)).toEqual(["USD"]);
+        expect(world.fontOf("ar").family).toBe("Readex Pro");
+        expect(world.fontOf("en").family).toBe("Figtree");
         expect(() => defineWorld({ countries: ["XX"] })).toThrow("Unknown countries: XX");
 
     });
-    test("flags and emoji are drawn from where a compile publishes them unless a surface names another folder", () => {
 
-        expect(flagFolder).toBe("/_generated/images/flag");
-        expect(emojiFolder).toBe("/_generated/images/emoji");
-        expect(defineWorld().flagOf("EG")).toBe("/_generated/images/flag/eg.svg");
-        expect(defineEmoji().staticOf("👍")).toBe("/_generated/images/emoji/static/1f44d.webp");
-        expect(defineWorld({ flags: { format: "webp" } }).flagOf("sa")).toBe("/_generated/images/flag/sa.webp");
-        expect(defineWorld({ flags: { folder: "/images/flag" } }).flagOf("AE")).toBe("/images/flag/ae.svg");
-        expect(flagEmoji("EG")).toBe("🇪🇬");
-        expect(flagEmoji("e")).toBe("");
-        expect(fold("Côte d'Ivoire")).toBe("cote d'ivoire");
+});
+describe("tokens", () => {
+
+    const tokens = defineTokens({ colors: { light: { ink: "#111" }, dark: { ink: "#eee" } }, ...scales });
+
+    test("every scale comes from the surface, and each scheme keeps its own palette", () => {
+
+        expect(tokens.space[4]).toBe(16);
+        expect(tokens.colors.dark.ink).toBe("#eee");
+        expect(tokens.radius.full).toBe(9999);
+
+    });
+    test("css variables project a scheme under a selector in rem", () => {
+
+        const css = cssVariables(tokens, "dark", '[data-theme="dark"]');
+
+        expect(css.startsWith('[data-theme="dark"] {\n')).toBe(true);
+        expect(css).toContain("--ink: #eee;");
+        expect(css).toContain("--gap-4: 1rem;");
+        expect(css).toContain("--gap-0: 0;");
+        expect(css).toContain("--radius-full: 999rem;");
+        expect(css).toContain("--type-lg-weight: 600;");
+
+    });
+    test("native tokens keep plain numbers", () => {
+
+        const native = nativeTokens(tokens, "light");
+
+        expect(native.colors.ink).toBe("#111");
+        expect(native.space[4]).toBe(16);
+        expect(native.type.md).toEqual({ size: 16, line: 24, weight: 400 });
 
     });
 
 });
-describe("the emoji catalog", () => {
+describe("motion", () => {
 
-    test("every entry carries both names, a group, a unique key that round-trips its glyph, and motion only when flagged", () => {
+    const presets = { durations: { fast: 120, base: 200 }, easings: { standard: "ease", enter: "ease-out" } };
 
-        const keys = new Set<string>();
+    test("reduced motion collapses every duration and transitions follow", () => {
 
-        for ( const entry of emoji.all ) {
+        const full = defineMotion(presets, false);
+        const reduced = defineMotion(presets, true);
 
-            expect(entry.name.en && entry.name.ar && entry.group).toBeTruthy();
-            expect(keys.has(entry.key)).toBe(false);
-            expect(emojiKey(entry.glyph)).toBe(entry.key);
-            expect(entry.assets.animated).toBe(emojiMotions[entry.key] !== undefined);
-            keys.add(entry.key);
-
-        }
-
-        expect(Object.keys(emojiMotions).every(( key ) => keys.has(key))).toBe(true);
-
-    });
-    test("a glyph is found with or without its presentation selector, and a toned glyph finds its base", () => {
-
-        expect(emoji.get("❤️")?.name.en).toBe("red heart");
-        expect(emoji.get("❤")?.name.ar).toBe("قلب أحمر");
-        expect(emoji.get("👍🏿")?.glyph).toBe("👍");
-        expect(emoji.get("x")).toBeUndefined();
-        expect(plainEmoji("❤️")).toBe("❤");
-        expect(emojiKey("👍🏻")).toBe("1f44d-1f3fb");
-        expect(emojiKey("❤️")).toBe("2764");
+        expect(transition(full, ["opacity", "transform"], "fast", "enter")).toBe(
+            "opacity 120ms ease-out, transform 120ms ease-out",
+        );
+        expect(transition(reduced, ["opacity"], "base", "standard")).toBe("opacity 0ms ease");
+        expect(() => transition(full, ["opacity"], "slow", "standard")).toThrow("Unknown motion");
 
     });
 
 });
-describe("emoji search", () => {
+describe("font faces and icons", () => {
 
-    test("arabic and english names and keywords find an emoji, exact names first", () => {
+    test("font faces and stacks render as css", () => {
 
-        expect(emoji.search("قبول")[0]?.glyph).toBe("👍");
-        expect(emoji.search("thumbs up")[0]?.glyph).toBe("👍");
-        expect(emoji.search("مصر")[0]?.glyph).toBe("🇪🇬");
-        expect(emoji.search("بحبك").some(( entry ) => entry.glyph === "❤️")).toBe(true);
-        expect(emoji.search("❤️")[0]?.glyph).toBe("❤️");
-        expect(emoji.search("")).toEqual([]);
-        expect(emoji.search("zzzzz")).toEqual([]);
-        expect(emoji.search("face", 5)).toHaveLength(5);
-        expect(emoji.of("flags").every(( entry ) => entry.group === "flags")).toBe(true);
-        expect(emoji.of("nope")).toEqual([]);
+        expect(fontFace({ family: "Site-ar", src: "/fonts/ar.woff2", weight: 400 })).toBe(
+            '@font-face { font-family: "Site-ar"; src: url("/fonts/ar.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }',
+        );
+        expect(fontStack(["Site-ar", "Site-en"])).toBe('"Site-ar", "Site-en", sans-serif');
 
     });
+    test("every semantic icon names one drawing, and only directional ones mirror", () => {
 
-});
-describe("emoji skin tones", () => {
-
-    test("a tone applies to every person in a toned glyph and never to one that takes none", () => {
-
-        expect(emoji.tone("👍", "dark")).toBe("👍🏿");
-        expect(emoji.tone("👍🏻", "medium")).toBe("👍🏽");
-        expect(emoji.tone("👍🏻")).toBe("👍");
-        expect(emoji.tone("🧑‍🤝‍🧑", "light")).toBe("🧑🏻‍🤝‍🧑🏻");
-        expect(emoji.tone("❤️", "dark")).toBe("❤️");
-        expect(emoji.tone("x", "dark")).toBe("x");
-        expect(emoji.get("👍")?.toned).toBe(true);
-        expect(emoji.get("❤️")?.toned).toBe(false);
+        expect(new Set(Object.values(iconAliases)).size).toBe(iconNames.length);
+        expect(iconNames.every(( name ) => typeof iconAliases[name] === "string")).toBe(true);
+        expect(iconMirrors.every(( name ) => iconNames.includes(name))).toBe(true);
+        expect(iconMirrors).not.toContain("house");
 
     });
+    test("a glyph is the font code of its icon, an unknown name draws the circle, and only directional icons mirror", () => {
 
-});
-describe("emoji assets", () => {
-
-    test("stills follow the folder and the key; a tone has a still only when its base has all five toned renders", () => {
-
-        expect(emoji.staticOf("👍")).toBe("/_generated/images/emoji/static/1f44d.webp");
-        expect(few.staticOf("👍🏿")).toBe("/images/emoji/static/1f44d-1f3ff.webp");
-        expect(emoji.staticOf("❤️🏿")).toBeUndefined();
-        expect(emoji.staticOf("🇪🇬")).toBe("/_generated/images/emoji/static/1f1ea-1f1ec.webp");
-        expect(emoji.staticOf("🫩")).toBeUndefined();
-
-        const handshake = emoji.get("🤝");
-
-        expect(emoji.staticOf("🤝🏿") === undefined).toBe(!handshake?.assets.tones);
+        expect(iconGlyph("house")).toBe(String.fromCodePoint(iconCodes.house));
+        expect(iconGlyph("nothing")).toBe(String.fromCodePoint(iconCodes.circle));
+        expect(iconMirrored("chevronStart")).toBe(true);
+        expect(iconMirrored("house")).toBe(false);
 
     });
-    test("a motion is a sprite sheet whose grid holds exactly its frames, offered only for the surface's chosen glyphs", () => {
+    test("unknown icons resolve to the fallback", () => {
 
-        const sprite = few.motionOf("❤️");
+        const icons = createIcons({ house: "H", tag: "T" }, "?");
 
-        expect(sprite?.src).toBe("/images/emoji/motion/2764.webp");
-        expect(sprite && sprite.columns * sprite.rows).toBe(sprite?.frames);
-        expect(sprite && sprite.ms > 0).toBe(true);
-        expect(few.motionOf("👍🏿")).toBeUndefined();
-        expect(few.motionOf("😂")).toBeUndefined();
-        expect(emoji.motionOf("😂")?.src).toBe("/_generated/images/emoji/motion/1f602.webp");
-
-    });
-    test("the file lists name what a surface must carry, tones only when asked", () => {
-
-        const files = few.files();
-        const withTones = few.files({ tones: true });
-
-        expect(files.motion.sort()).toEqual(["1f44d.webp", "2764.webp"]);
-        expect(files.static).toContain("1f44d.webp");
-        expect(files.static).not.toContain("1f44d-1f3ff.webp");
-        expect(withTones.static).toContain("1f44d-1f3ff.webp");
-        expect(new Set(emoji.files().motion)).toEqual(new Set(Object.keys(emojiMotions).map(( key ) => `${key}.webp`)));
-
-    });
-
-});
-describe("emoji display policy", () => {
-
-    test("inline text is always the glyph; a picker is still; a live reaction moves only when active and motion is welcome", () => {
-
-        const moving = few.display("👍", { context: "reaction", active: true });
-
-        expect(few.display("👍", { context: "inline", active: true })).toEqual({ kind: "glyph", glyph: "👍" });
-        expect(few.display("👍", { context: "picker", active: true })).toEqual({ kind: "static", src: "/images/emoji/static/1f44d.webp", glyph: "👍" });
-        expect(moving.kind === "animated" && moving.sprite.src).toBe("/images/emoji/motion/1f44d.webp");
-        expect(moving.kind === "animated" && moving.still).toBe("/images/emoji/static/1f44d.webp");
-        expect(few.display("👍", { context: "reaction", active: true, reducedMotion: true }).kind).toBe("static");
-        expect(few.display("👍", { context: "reaction" }).kind).toBe("static");
-        expect(few.display("😂", { context: "standalone", active: true }).kind).toBe("static");
-        expect(few.display("🫩", { context: "standalone", active: true })).toEqual({ kind: "glyph", glyph: "🫩" });
-        expect(few.display("x", { context: "reaction", active: true })).toEqual({ kind: "glyph", glyph: "x" });
+        expect(icons.names).toEqual(["house", "tag"]);
+        expect(icons.get("tag")).toBe("T");
+        expect(icons.get("nothing")).toBe("?");
+        expect(icons.has("constructor")).toBe(false);
 
     });
 

@@ -1,0 +1,1352 @@
+[
+  {
+    "code": "af",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Afrikaans",
+      "ar": "الأفريقانية",
+      "native": "Afrikaans"
+    }
+  },
+  {
+    "code": "ak",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Akan",
+      "ar": "الأكانية",
+      "native": "Akan"
+    }
+  },
+  {
+    "code": "am",
+    "direction": "ltr",
+    "script": "Ethi",
+    "name": {
+      "en": "Amharic",
+      "ar": "الأمهرية",
+      "native": "አማርኛ"
+    }
+  },
+  {
+    "code": "ar",
+    "direction": "rtl",
+    "script": "Arab",
+    "name": {
+      "en": "Arabic",
+      "ar": "العربية",
+      "native": "العربية"
+    }
+  },
+  {
+    "code": "as",
+    "direction": "ltr",
+    "script": "Beng",
+    "name": {
+      "en": "Assamese",
+      "ar": "الأسامية",
+      "native": "অসমীয়া"
+    }
+  },
+  {
+    "code": "az",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Azerbaijani",
+      "ar": "الأذربيجانية",
+      "native": "azərbaycan"
+    }
+  },
+  {
+    "code": "ba",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Bashkir",
+      "ar": "الباشكيرية",
+      "native": "башҡорт"
+    }
+  },
+  {
+    "code": "be",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Belarusian",
+      "ar": "البيلاروسية",
+      "native": "беларуская"
+    }
+  },
+  {
+    "code": "bg",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Bulgarian",
+      "ar": "البلغارية",
+      "native": "български"
+    }
+  },
+  {
+    "code": "blo",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Anii",
+      "ar": "الآنية",
+      "native": "anii kagɩja"
+    }
+  },
+  {
+    "code": "bn",
+    "direction": "ltr",
+    "script": "Beng",
+    "name": {
+      "en": "Bangla",
+      "ar": "البنغالية",
+      "native": "বাংলা"
+    }
+  },
+  {
+    "code": "br",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Breton",
+      "ar": "البريتونية",
+      "native": "brezhoneg"
+    }
+  },
+  {
+    "code": "bs",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Bosnian",
+      "ar": "البوسنية",
+      "native": "bosanski"
+    }
+  },
+  {
+    "code": "ca",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Catalan",
+      "ar": "الكتالانية",
+      "native": "català"
+    }
+  },
+  {
+    "code": "ceb",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Cebuano",
+      "ar": "السيبيوانية",
+      "native": "Cebuano"
+    }
+  },
+  {
+    "code": "chr",
+    "direction": "ltr",
+    "script": "Cher",
+    "name": {
+      "en": "Cherokee",
+      "ar": "الشيروكي",
+      "native": "ᏣᎳᎩ"
+    }
+  },
+  {
+    "code": "cs",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Czech",
+      "ar": "التشيكية",
+      "native": "čeština"
+    }
+  },
+  {
+    "code": "cv",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Chuvash",
+      "ar": "التشوفاشي",
+      "native": "чӑваш чӗлхи"
+    }
+  },
+  {
+    "code": "cy",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Welsh",
+      "ar": "الويلزية",
+      "native": "Cymraeg"
+    }
+  },
+  {
+    "code": "da",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Danish",
+      "ar": "الدانمركية",
+      "native": "dansk"
+    }
+  },
+  {
+    "code": "de",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "German",
+      "ar": "الألمانية",
+      "native": "Deutsch"
+    }
+  },
+  {
+    "code": "dsb",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Lower Sorbian",
+      "ar": "صوربيا السفلى",
+      "native": "dolnoserbšćina"
+    }
+  },
+  {
+    "code": "dz",
+    "direction": "ltr",
+    "script": "Tibt",
+    "name": {
+      "en": "Dzongkha",
+      "ar": "دزونكا",
+      "native": "རྫོང་ཁ"
+    }
+  },
+  {
+    "code": "el",
+    "direction": "ltr",
+    "script": "Grek",
+    "name": {
+      "en": "Greek",
+      "ar": "اليونانية",
+      "native": "Ελληνικά"
+    }
+  },
+  {
+    "code": "en",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "English",
+      "ar": "الإنجليزية",
+      "native": "English"
+    }
+  },
+  {
+    "code": "eo",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Esperanto",
+      "ar": "الإسبرانتو",
+      "native": "Esperanto"
+    }
+  },
+  {
+    "code": "es",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Spanish",
+      "ar": "الإسبانية",
+      "native": "español"
+    }
+  },
+  {
+    "code": "et",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Estonian",
+      "ar": "الإستونية",
+      "native": "eesti"
+    }
+  },
+  {
+    "code": "eu",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Basque",
+      "ar": "الباسكية",
+      "native": "euskara"
+    }
+  },
+  {
+    "code": "fa",
+    "direction": "rtl",
+    "script": "Arab",
+    "name": {
+      "en": "Persian",
+      "ar": "الفارسية",
+      "native": "فارسی"
+    }
+  },
+  {
+    "code": "fi",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Finnish",
+      "ar": "الفنلندية",
+      "native": "suomi"
+    }
+  },
+  {
+    "code": "fil",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Filipino",
+      "ar": "الفلبينية",
+      "native": "Filipino"
+    }
+  },
+  {
+    "code": "fo",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Faroese",
+      "ar": "الفاروية",
+      "native": "føroyskt"
+    }
+  },
+  {
+    "code": "fr",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "French",
+      "ar": "الفرنسية",
+      "native": "français"
+    }
+  },
+  {
+    "code": "ga",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Irish",
+      "ar": "الأيرلندية",
+      "native": "Gaeilge"
+    }
+  },
+  {
+    "code": "gd",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Scottish Gaelic",
+      "ar": "الغيلية الأسكتلندية",
+      "native": "Gàidhlig"
+    }
+  },
+  {
+    "code": "gl",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Galician",
+      "ar": "الجاليكية",
+      "native": "galego"
+    }
+  },
+  {
+    "code": "gn",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Guarani",
+      "ar": "الغوارانية",
+      "native": "avañe’ẽ"
+    }
+  },
+  {
+    "code": "gsw",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Swiss German",
+      "ar": "الألمانية السويسرية",
+      "native": "Schwiizertüütsch"
+    }
+  },
+  {
+    "code": "gu",
+    "direction": "ltr",
+    "script": "Gujr",
+    "name": {
+      "en": "Gujarati",
+      "ar": "الغوجاراتية",
+      "native": "ગુજરાતી"
+    }
+  },
+  {
+    "code": "gv",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Manx",
+      "ar": "المنكية",
+      "native": "Gaelg"
+    }
+  },
+  {
+    "code": "ha",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Hausa",
+      "ar": "الهوسا",
+      "native": "Hausa"
+    }
+  },
+  {
+    "code": "he",
+    "direction": "rtl",
+    "script": "Hebr",
+    "name": {
+      "en": "Hebrew",
+      "ar": "العبرية",
+      "native": "עברית"
+    }
+  },
+  {
+    "code": "hi",
+    "direction": "ltr",
+    "script": "Deva",
+    "name": {
+      "en": "Hindi",
+      "ar": "الهندية",
+      "native": "हिन्दी"
+    }
+  },
+  {
+    "code": "hr",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Croatian",
+      "ar": "الكرواتية",
+      "native": "hrvatski"
+    }
+  },
+  {
+    "code": "hsb",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Upper Sorbian",
+      "ar": "الصوربية العليا",
+      "native": "hornjoserbšćina"
+    }
+  },
+  {
+    "code": "ht",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Haitian Creole",
+      "ar": "الكريولية الهايتية",
+      "native": "Kreyòl Ayisyen"
+    }
+  },
+  {
+    "code": "hu",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Hungarian",
+      "ar": "الهنغارية",
+      "native": "magyar"
+    }
+  },
+  {
+    "code": "hy",
+    "direction": "ltr",
+    "script": "Armn",
+    "name": {
+      "en": "Armenian",
+      "ar": "الأرمنية",
+      "native": "հայերեն"
+    }
+  },
+  {
+    "code": "ia",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Interlingua",
+      "ar": "اللّغة الوسيطة",
+      "native": "interlingua"
+    }
+  },
+  {
+    "code": "id",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Indonesian",
+      "ar": "الإندونيسية",
+      "native": "Indonesia"
+    }
+  },
+  {
+    "code": "ig",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Igbo",
+      "ar": "الإيجبو",
+      "native": "Igbo"
+    }
+  },
+  {
+    "code": "is",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Icelandic",
+      "ar": "الأيسلندية",
+      "native": "íslenska"
+    }
+  },
+  {
+    "code": "it",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Italian",
+      "ar": "الإيطالية",
+      "native": "italiano"
+    }
+  },
+  {
+    "code": "ja",
+    "direction": "ltr",
+    "script": "Jpan",
+    "name": {
+      "en": "Japanese",
+      "ar": "اليابانية",
+      "native": "日本語"
+    }
+  },
+  {
+    "code": "jv",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Javanese",
+      "ar": "الجاوية",
+      "native": "Jawa"
+    }
+  },
+  {
+    "code": "ka",
+    "direction": "ltr",
+    "script": "Geor",
+    "name": {
+      "en": "Georgian",
+      "ar": "الجورجية",
+      "native": "ქართული"
+    }
+  },
+  {
+    "code": "kk",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Kazakh",
+      "ar": "الكازاخستانية",
+      "native": "қазақ тілі"
+    }
+  },
+  {
+    "code": "kl",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Kalaallisut",
+      "ar": "الكالاليست",
+      "native": "kalaallisut"
+    }
+  },
+  {
+    "code": "km",
+    "direction": "ltr",
+    "script": "Khmr",
+    "name": {
+      "en": "Khmer",
+      "ar": "الخميرية",
+      "native": "ខ្មែរ"
+    }
+  },
+  {
+    "code": "kn",
+    "direction": "ltr",
+    "script": "Knda",
+    "name": {
+      "en": "Kannada",
+      "ar": "الكانادا",
+      "native": "ಕನ್ನಡ"
+    }
+  },
+  {
+    "code": "ko",
+    "direction": "ltr",
+    "script": "Kore",
+    "name": {
+      "en": "Korean",
+      "ar": "الكورية",
+      "native": "한국어"
+    }
+  },
+  {
+    "code": "kok",
+    "direction": "ltr",
+    "script": "Deva",
+    "name": {
+      "en": "Konkani",
+      "ar": "الكونكانية",
+      "native": "कोंकणी"
+    }
+  },
+  {
+    "code": "ky",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Kyrgyz",
+      "ar": "القيرغيزية",
+      "native": "кыргызча"
+    }
+  },
+  {
+    "code": "lb",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Luxembourgish",
+      "ar": "اللكسمبورغية",
+      "native": "Lëtzebuergesch"
+    }
+  },
+  {
+    "code": "lo",
+    "direction": "ltr",
+    "script": "Laoo",
+    "name": {
+      "en": "Lao",
+      "ar": "اللاوية",
+      "native": "ລາວ"
+    }
+  },
+  {
+    "code": "lt",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Lithuanian",
+      "ar": "الليتوانية",
+      "native": "lietuvių"
+    }
+  },
+  {
+    "code": "lv",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Latvian",
+      "ar": "اللاتفية",
+      "native": "latviešu"
+    }
+  },
+  {
+    "code": "mg",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Malagasy",
+      "ar": "الملغاشي",
+      "native": "Malagasy"
+    }
+  },
+  {
+    "code": "mi",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Māori",
+      "ar": "الماورية",
+      "native": "Māori"
+    }
+  },
+  {
+    "code": "mk",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Macedonian",
+      "ar": "المقدونية",
+      "native": "македонски"
+    }
+  },
+  {
+    "code": "ml",
+    "direction": "ltr",
+    "script": "Mlym",
+    "name": {
+      "en": "Malayalam",
+      "ar": "المالايالامية",
+      "native": "മലയാളം"
+    }
+  },
+  {
+    "code": "mn",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Mongolian",
+      "ar": "المنغولية",
+      "native": "монгол"
+    }
+  },
+  {
+    "code": "mr",
+    "direction": "ltr",
+    "script": "Deva",
+    "name": {
+      "en": "Marathi",
+      "ar": "الماراثية",
+      "native": "मराठी"
+    }
+  },
+  {
+    "code": "ms",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Malay",
+      "ar": "الماليزية",
+      "native": "Melayu"
+    }
+  },
+  {
+    "code": "mt",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Maltese",
+      "ar": "المالطية",
+      "native": "Malti"
+    }
+  },
+  {
+    "code": "my",
+    "direction": "ltr",
+    "script": "Mymr",
+    "name": {
+      "en": "Burmese",
+      "ar": "البورمية",
+      "native": "မြန်မာ"
+    }
+  },
+  {
+    "code": "nb",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Norwegian Bokmål",
+      "ar": "النرويجية بوكمال",
+      "native": "norsk bokmål"
+    }
+  },
+  {
+    "code": "nd",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "North Ndebele",
+      "ar": "النديبيل الشمالية",
+      "native": "isiNdebele"
+    }
+  },
+  {
+    "code": "ne",
+    "direction": "ltr",
+    "script": "Deva",
+    "name": {
+      "en": "Nepali",
+      "ar": "النيبالية",
+      "native": "नेपाली"
+    }
+  },
+  {
+    "code": "nl",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Dutch",
+      "ar": "الهولندية",
+      "native": "Nederlands"
+    }
+  },
+  {
+    "code": "nn",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Norwegian Nynorsk",
+      "ar": "النرويجية نينورسك",
+      "native": "norsk nynorsk"
+    }
+  },
+  {
+    "code": "no",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Norwegian",
+      "ar": "النرويجية",
+      "native": "norsk"
+    }
+  },
+  {
+    "code": "ny",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Nyanja",
+      "ar": "النيانجا",
+      "native": "Nyanja"
+    }
+  },
+  {
+    "code": "or",
+    "direction": "ltr",
+    "script": "Orya",
+    "name": {
+      "en": "Odia",
+      "ar": "الأورية",
+      "native": "ଓଡ଼ିଆ"
+    }
+  },
+  {
+    "code": "pa",
+    "direction": "ltr",
+    "script": "Guru",
+    "name": {
+      "en": "Punjabi",
+      "ar": "البنجابية",
+      "native": "ਪੰਜਾਬੀ"
+    }
+  },
+  {
+    "code": "pap",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Papiamento",
+      "ar": "البابيامينتو",
+      "native": "Papiamentu"
+    }
+  },
+  {
+    "code": "pcm",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Nigerian Pidgin",
+      "ar": "البدجنية النيجيرية",
+      "native": "Naijíriá Píjin"
+    }
+  },
+  {
+    "code": "pl",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Polish",
+      "ar": "البولندية",
+      "native": "polski"
+    }
+  },
+  {
+    "code": "ps",
+    "direction": "rtl",
+    "script": "Arab",
+    "name": {
+      "en": "Pashto",
+      "ar": "البشتو",
+      "native": "پښتو"
+    }
+  },
+  {
+    "code": "pt",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Portuguese",
+      "ar": "البرتغالية",
+      "native": "português"
+    }
+  },
+  {
+    "code": "qu",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Quechua",
+      "ar": "كيشوا",
+      "native": "Runasimi"
+    }
+  },
+  {
+    "code": "rm",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Romansh",
+      "ar": "الرومانشية",
+      "native": "rumantsch"
+    }
+  },
+  {
+    "code": "rn",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Rundi",
+      "ar": "الرندي",
+      "native": "Ikirundi"
+    }
+  },
+  {
+    "code": "ro",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Romanian",
+      "ar": "الرومانية",
+      "native": "română"
+    }
+  },
+  {
+    "code": "ru",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Russian",
+      "ar": "الروسية",
+      "native": "русский"
+    }
+  },
+  {
+    "code": "rw",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Kinyarwanda",
+      "ar": "الكينيارواندا",
+      "native": "Ikinyarwanda"
+    }
+  },
+  {
+    "code": "sc",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Sardinian",
+      "ar": "السردينية",
+      "native": "sardu"
+    }
+  },
+  {
+    "code": "sd",
+    "direction": "rtl",
+    "script": "Arab",
+    "name": {
+      "en": "Sindhi",
+      "ar": "السندية",
+      "native": "سنڌي"
+    }
+  },
+  {
+    "code": "sg",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Sango",
+      "ar": "السانجو",
+      "native": "Sängö"
+    }
+  },
+  {
+    "code": "shn",
+    "direction": "ltr",
+    "script": "Mymr",
+    "name": {
+      "en": "Shan",
+      "ar": "الشان",
+      "native": "တႆး"
+    }
+  },
+  {
+    "code": "si",
+    "direction": "ltr",
+    "script": "Sinh",
+    "name": {
+      "en": "Sinhala",
+      "ar": "السنهالية",
+      "native": "සිංහල"
+    }
+  },
+  {
+    "code": "sk",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Slovak",
+      "ar": "السلوفاكية",
+      "native": "slovenčina"
+    }
+  },
+  {
+    "code": "sl",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Slovenian",
+      "ar": "السلوفانية",
+      "native": "slovenščina"
+    }
+  },
+  {
+    "code": "sn",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Shona",
+      "ar": "الشونا",
+      "native": "chiShona"
+    }
+  },
+  {
+    "code": "so",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Somali",
+      "ar": "الصومالية",
+      "native": "Soomaali"
+    }
+  },
+  {
+    "code": "sq",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Albanian",
+      "ar": "الألبانية",
+      "native": "shqip"
+    }
+  },
+  {
+    "code": "sr",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Serbian",
+      "ar": "الصربية",
+      "native": "српски"
+    }
+  },
+  {
+    "code": "ss",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Swati",
+      "ar": "السواتي",
+      "native": "siSwati"
+    }
+  },
+  {
+    "code": "st",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Southern Sotho",
+      "ar": "السوتو الجنوبية",
+      "native": "Sesotho"
+    }
+  },
+  {
+    "code": "sv",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Swedish",
+      "ar": "السويدية",
+      "native": "svenska"
+    }
+  },
+  {
+    "code": "sw",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Swahili",
+      "ar": "السواحلية",
+      "native": "Kiswahili"
+    }
+  },
+  {
+    "code": "ta",
+    "direction": "ltr",
+    "script": "Taml",
+    "name": {
+      "en": "Tamil",
+      "ar": "التاميلية",
+      "native": "தமிழ்"
+    }
+  },
+  {
+    "code": "te",
+    "direction": "ltr",
+    "script": "Telu",
+    "name": {
+      "en": "Telugu",
+      "ar": "التيلوغوية",
+      "native": "తెలుగు"
+    }
+  },
+  {
+    "code": "tg",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Tajik",
+      "ar": "الطاجيكية",
+      "native": "тоҷикӣ"
+    }
+  },
+  {
+    "code": "th",
+    "direction": "ltr",
+    "script": "Thai",
+    "name": {
+      "en": "Thai",
+      "ar": "التايلاندية",
+      "native": "ไทย"
+    }
+  },
+  {
+    "code": "ti",
+    "direction": "ltr",
+    "script": "Ethi",
+    "name": {
+      "en": "Tigrinya",
+      "ar": "التغرينية",
+      "native": "ትግርኛ"
+    }
+  },
+  {
+    "code": "tk",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Turkmen",
+      "ar": "التركمانية",
+      "native": "türkmen dili"
+    }
+  },
+  {
+    "code": "tn",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Tswana",
+      "ar": "التسوانية",
+      "native": "Setswana"
+    }
+  },
+  {
+    "code": "to",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Tongan",
+      "ar": "التونغية",
+      "native": "lea fakatonga"
+    }
+  },
+  {
+    "code": "tpi",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Tok Pisin",
+      "ar": "التوك بيسين",
+      "native": "Tok Pisin"
+    }
+  },
+  {
+    "code": "tr",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Turkish",
+      "ar": "التركية",
+      "native": "Türkçe"
+    }
+  },
+  {
+    "code": "tt",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Tatar",
+      "ar": "التترية",
+      "native": "татар"
+    }
+  },
+  {
+    "code": "tzm",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Central Atlas Tamazight",
+      "ar": "الأمازيغية وسط الأطلس",
+      "native": "Tamaziɣt n laṭlaṣ"
+    }
+  },
+  {
+    "code": "uk",
+    "direction": "ltr",
+    "script": "Cyrl",
+    "name": {
+      "en": "Ukrainian",
+      "ar": "الأوكرانية",
+      "native": "українська"
+    }
+  },
+  {
+    "code": "ur",
+    "direction": "rtl",
+    "script": "Arab",
+    "name": {
+      "en": "Urdu",
+      "ar": "الأوردية",
+      "native": "اردو"
+    }
+  },
+  {
+    "code": "uz",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Uzbek",
+      "ar": "الأوزبكية",
+      "native": "o‘zbek"
+    }
+  },
+  {
+    "code": "vec",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Venetian",
+      "ar": "البندقية",
+      "native": "veneto"
+    }
+  },
+  {
+    "code": "vi",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Vietnamese",
+      "ar": "الفيتنامية",
+      "native": "Tiếng Việt"
+    }
+  },
+  {
+    "code": "wo",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Wolof",
+      "ar": "الولوفية",
+      "native": "Wolof"
+    }
+  },
+  {
+    "code": "xh",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Xhosa",
+      "ar": "الخوسا",
+      "native": "IsiXhosa"
+    }
+  },
+  {
+    "code": "yo",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Yoruba",
+      "ar": "اليوروبا",
+      "native": "Èdè Yorùbá"
+    }
+  },
+  {
+    "code": "yue",
+    "direction": "ltr",
+    "script": "Hant",
+    "name": {
+      "en": "Cantonese",
+      "ar": "الكَنْتُونية",
+      "native": "粵語"
+    }
+  },
+  {
+    "code": "zh",
+    "direction": "ltr",
+    "script": "Hans",
+    "name": {
+      "en": "Chinese",
+      "ar": "الصينية",
+      "native": "中文"
+    }
+  },
+  {
+    "code": "zu",
+    "direction": "ltr",
+    "script": "Latn",
+    "name": {
+      "en": "Zulu",
+      "ar": "الزولو",
+      "native": "isiZulu"
+    }
+  }
+]

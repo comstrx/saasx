@@ -2,7 +2,15 @@
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "root": true,
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/coverage", "!bun.lock", "!**/*.d.ts", "!assets"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/coverage",
+      "!bun.lock",
+      "!**/*.d.ts",
+      "!packages/world/asset",
+      "!packages/world/data"
+    ]
   },
   "formatter": {
     "enabled": false
@@ -97,16 +105,6 @@
                 ]
               }
             }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["packages/world/src/generated/emoji.ts"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noExcessiveLinesPerFile": "off"
           }
         }
       }

@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import process from "node:process";
 import { generatedPath, isRecord, mapValues } from "@engine/base";
-import { type EmojiFiles, emojiFolder, flagFolder } from "@engine/world";
+import { emojiFolder, flagFolder, fontFolder, fonts } from "@engine/world";
 import type { Files } from "./assets.ts";
 
 export type Mode = "development" | "production";
@@ -95,10 +95,10 @@ export function registryModule ( root: string, folder: string, features: readonl
     return `export default {\n${lines.join("\n")}\n};\n`;
 
 }
-export const engineAssets: string = resolve(import.meta.dir, "../../../assets");
+export const worldAssets: string = resolve(import.meta.dir, "../../world/asset");
 export const generatedRoot = `public${generatedPath}`;
 
-export type EngineAssets = { flags?: readonly string[] | undefined; emoji?: EmojiFiles | undefined };
+export type EngineAssets = { flags?: readonly string[] | true | undefined; emoji?: readonly string[] | undefined; fonts?: boolean | undefined };
 
 function copyAssets ( root: string, from: string, to: string, files: readonly string[] ): number {
 
@@ -109,10 +109,10 @@ function copyAssets ( root: string, from: string, to: string, files: readonly st
 
     for ( const name of files ) {
 
-        const source = resolve(engineAssets, from, name);
+        const source = resolve(worldAssets, from, name);
         const destination = resolve(target, name);
 
-        if ( !existsSync(source) ) throw new Error(`Missing engine asset: ${from}/${name}`);
+        if ( !existsSync(source) ) throw new Error(`Missing world asset: ${from}/${name}`);
         if ( existsSync(destination) && statSync(destination).size === statSync(source).size ) continue;
 
         copyFileSync(source, destination);
@@ -123,13 +123,17 @@ function copyAssets ( root: string, from: string, to: string, files: readonly st
     return copied;
 
 }
+export function flagFiles ( format: string ): string[] {
+
+    return readdirSync(resolve(worldAssets, "flag")).filter(( file ) => file.endsWith(`.${format}`)).sort();
+
+}
 export function syncEngineAssets ( root: string, assets: EngineAssets ): number {
 
-    const flags = (assets.flags ?? []).map(( code ) => `${code.toLowerCase()}.svg`);
+    const flags = assets.flags === true ? flagFiles("svg") : (assets.flags ?? []).map(( code ) => `${code.toLowerCase()}.svg`);
+    const faces = assets.fonts ? fonts.flatMap(( font ) => font.files.map(( face ) => face.file)) : [];
 
-    return copyAssets(root, "flag", flagFolder, flags)
-        + copyAssets(root, "emoji/static", `${emojiFolder}/static`, assets.emoji?.static ?? [])
-        + copyAssets(root, "emoji/motion", `${emojiFolder}/motion`, assets.emoji?.motion ?? []);
+    return copyAssets(root, "flag", flagFolder, flags) + copyAssets(root, "emoji", emojiFolder, assets.emoji ?? []) + copyAssets(root, "font", fontFolder, faces);
 
 }
 export function publishedUrls<T> ( value: T, files: ReadonlyMap<string, Uint8Array> ): T {
@@ -165,9 +169,9 @@ export function requireModule ( root: string, folder: string, entries: readonly 
 
     const lines = entries.map(( entry ) => {
 
-        const file = resolve(engineAssets, entry.from, entry.file);
+        const file = resolve(worldAssets, entry.from, entry.file);
 
-        if ( !existsSync(file) ) throw new Error(`Missing engine asset: ${entry.from}/${entry.file}`);
+        if ( !existsSync(file) ) throw new Error(`Missing world asset: ${entry.from}/${entry.file}`);
 
         const path = relative(resolve(root, folder), file).replaceAll("\\", "/");
 
@@ -176,24 +180,5 @@ export function requireModule ( root: string, folder: string, entries: readonly 
     });
 
     return `export default {\n${lines.join("\n")}\n};\n`;
-
-}
-export function flagsModule ( root: string, folder: string, codes: readonly string[], format: string ): string {
-
-    return requireModule(root, folder, codes.map(( code ) => ({ name: code.toLowerCase(), from: "flag", file: `${code.toLowerCase()}.${format}` })));
-
-}
-export function assetBytes ( entries: readonly Required[] ): number {
-
-    return entries.reduce(( total, entry ) => total + statSync(resolve(engineAssets, entry.from, entry.file)).size, 0);
-
-}
-export function assetBudget ( entries: readonly Required[], limit: number, what: string ): number {
-
-    const bytes = assetBytes(entries);
-
-    if ( bytes > limit ) throw new Error(`${what}: ${entries.length} files weigh ${(bytes / 1048576).toFixed(2)} MB, over the ${(limit / 1048576).toFixed(2)} MB budget.`);
-
-    return bytes;
 
 }
