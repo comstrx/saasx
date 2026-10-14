@@ -1,11 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { createApi, requestContext } from "@engine/api";
+import { browserConfig, createApi, requestContext } from "@engine/api";
+import { prepareSpec } from "@engine/tooling";
 import { endpoints } from "../src/api/features/index.ts";
-import { assemble } from "../tools/compile/index.ts";
 import { loadSpec, specFromEnvironment } from "../tools/core/index.ts";
 
 const spec = await loadSpec(specFromEnvironment());
-const client = assemble(spec, "production").client;
+const { config } = prepareSpec(spec, new Map(), "production");
+const client = config.api ? browserConfig(config.api, config.contract) : null;
 const base = client?.api.connections.primary?.baseUrl ?? null;
 const alive = base ? await fetch(`${base}/ready`).then(() => true, () => false) : false;
 const live = alive ? test : test.skip;

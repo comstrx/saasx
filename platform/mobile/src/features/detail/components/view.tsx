@@ -7,9 +7,8 @@ import DetailCard from "@/components/detail-card";
 import Note from "@/components/note";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { usePort, useWrite } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
-import { usePort } from "@/hooks/use-port";
-import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { from: string; missing: string; back: string; pick: string; loading: string; failed: string; offline: string; cached: string; edit: string; editLabel: string; remove: string; restore: string; removed: string; restored: string; denied: string; labels: Record<string, string>; errors: Messages };

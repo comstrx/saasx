@@ -1,25 +1,25 @@
-import { useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { Alert } from "react-native";
+import { useEntry } from "@/hooks/use-router";
+import { history } from "@/stores/navigation";
 
 export function useDirtyGuard ( dirty: boolean, leave: string ): void {
 
-    const navigation = useNavigation();
+    const { key } = useEntry();
 
     useEffect(() => {
 
         if ( !dirty ) return undefined;
 
-        return navigation.addListener("beforeRemove", ( event ) => {
+        return history.guard(key, ( proceed ) => {
 
-            event.preventDefault();
             Alert.alert(leave, undefined, [
                 { text: "✕", style: "cancel" },
-                { text: "→", style: "destructive", onPress: () => navigation.dispatch(event.data.action) },
+                { text: "→", style: "destructive", onPress: proceed },
             ]);
 
         });
 
-    }, [dirty, leave, navigation]);
+    }, [dirty, leave, key]);
 
 }

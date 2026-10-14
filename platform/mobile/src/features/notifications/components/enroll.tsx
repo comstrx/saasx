@@ -2,9 +2,9 @@ import { useAction } from "@engine/context";
 import { isFailure } from "@engine/error";
 import { failureMessages, type Messages } from "@engine/translate";
 import ActionCard, { type Note } from "@/components/action-card";
+import { useWrite } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
 import { useLocale } from "@/hooks/use-locale";
-import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { title: string; detail: string; enable: string; saved: string; queued: string; failed: string; denied: string; unsupported: string; errors: Messages };

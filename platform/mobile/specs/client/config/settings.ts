@@ -30,6 +30,7 @@ export default {
         tabs: false,
         loader: true,
         order: 50,
+        scroll: true,
     },
     block: {
         width: "full",

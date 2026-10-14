@@ -1,43 +1,32 @@
-import { createMeter, type Observer, reportOf } from "@engine/api";
+import { createObserver } from "@engine/api";
 import { uuid } from "@engine/base";
 import { createLogger, type Logger } from "@engine/log";
 import { sink } from "@/lib/providers/console";
 import { onBackground } from "@/lib/providers/lifecycle";
 
-const meter = createMeter();
-let watching = false;
-
 export const logger: Logger = createLogger({ sinks: [sink] });
 
-export const trace: string = uuid();
+export const { trace, observeCall, flushMetrics, reportError } = createObserver({
+    trace: uuid(),
+    slow: 3000,
+    watch: onBackground,
+    send: ( signal ) => {
 
-export function reportError ( name: string, error: unknown ): void {
+        if ( signal.kind === "report" ) return logger[signal.report.level](signal.report.event, signal.report.facts);
+        if ( signal.kind === "metrics" ) return logger.info("api.metrics", { trace: signal.trace, metrics: signal.metrics });
 
-    logger.error("render.failed", { name, reason: error instanceof Error ? error.name : "unknown", trace });
+        logger.error("render.failed", { name: signal.name, reason: signal.reason, trace: signal.trace });
+
+    },
+});
+
+let ready = false;
+
+export function markReady (): void {
+
+    if ( ready ) return;
+
+    ready = true;
+    logger.info("app.ready", { trace, at: Date.now() });
 
 }
-export function flushMetrics (): void {
-
-    const metrics = meter.flush();
-
-    if ( metrics.length ) logger.info("api.metrics", { trace, metrics });
-
-}
-function watch (): void {
-
-    if ( watching ) return;
-
-    watching = true;
-    onBackground(flushMetrics);
-
-}
-export const observeCall: Observer = ( outcome ) => {
-
-    meter.record(outcome);
-    watch();
-
-    const report = reportOf(outcome, 3000);
-
-    if ( report ) logger[report.level](report.event, report.facts);
-
-};

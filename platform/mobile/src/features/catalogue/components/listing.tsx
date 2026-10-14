@@ -5,8 +5,8 @@ import CatalogGrid from "@/components/catalog-grid";
 import Note from "@/components/note";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { usePort } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
-import { usePort } from "@/hooks/use-port";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { title: string; empty: string; from: string; columns: number; loading: string; failed: string; offline: string; cached: string };

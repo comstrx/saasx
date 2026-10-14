@@ -4,9 +4,9 @@ import { interpolate } from "@engine/parse";
 import { failureMessages, formatNumber, type Messages } from "@engine/translate";
 import { useState } from "react";
 import ActionCard, { type Note } from "@/components/action-card";
+import { useWrite } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
 import { useLocale } from "@/hooks/use-locale";
-import { useWrite } from "@/hooks/use-write";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { title: string; detail: string; locate: string; saved: string; queued: string; failed: string; denied: string; unsupported: string; errors: Messages };

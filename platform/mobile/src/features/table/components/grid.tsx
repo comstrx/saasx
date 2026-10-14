@@ -8,9 +8,8 @@ import SortSelect from "@/components/sort-select";
 import Status from "@/components/status";
 import TableFrame from "@/components/table-frame";
 import Titled from "@/components/titled";
+import { usePort, useSignal, useSignals } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
-import { usePort } from "@/hooks/use-port";
-import { useSignal, useSignals } from "@/hooks/use-signal";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = {

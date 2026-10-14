@@ -4,7 +4,8 @@ A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaki
 
 ## What differs
 
-- Every feature is client-owned; a screen carries `presentation: stack | modal | tab`, `tabs`, `header`, `order`.
+- Every feature is client-owned; a screen carries `presentation: stack | modal | tab`, `tabs`, `header`, `order` and `scroll` (`false` hands the scrolling to a feature that owns a virtualized list, with a `height: "screen"` block filling the frame).
+- Navigation needs no router package: the engine's `@engine/history` keeps the stack as data (push, replace, navigate, back, leave guards, native dismissal), `render/navigator.tsx` draws it as a native stack on `react-native-screens`, and the hardware back button and deep links (`settings.app.scheme`) feed it.
 - Shell parts are `header`, `tabs` (a tab bar derived from the screens that opt in with `options.tabs: true`) and `loader`.
 - Storage is a platform door: AsyncStorage for ports and the outbox, SecureStore for the session (`lib/providers/secure.native.ts`).
 - The device adapter (`lib/providers/device.native.ts`) doors expo-location, expo-image-picker, expo-notifications and expo-localization behind the engine's Device DSL.
@@ -29,7 +30,16 @@ Android's cleartext permission follows the spec: `contracts.options.insecure` in
 
 ## Release weight
 
-Metro bundles whatever a module reaches, so the app imports one file per icon (`lucide-react-native/icons/<name>`) and `metro.config.cjs` resolves zod's locale table and JSON Schema writers to nothing: the Android bytecode bundle went from 6.3 MB to 3.9 MB. Release builds run R8 with resource shrinking and keep the bundle uncompressed for a faster start (`expo-build-properties` in `app.config.ts`). Measure with `bun run export` (bundle size) and `bun run perf` (cold start, jank).
+Metro bundles whatever a module reaches and does not tree-shake, so weight is decided by what the app imports:
+
+- No router, animation or SVG runtime: the native stack is `react-native-screens` alone, icons and state illustrations are glyphs of a font the compile subsets from the lucide set to exactly the icons the engine names (`fonts/lucide.ttf`, embedded by `expo-font` at build time), and images use React Native's own `Image` (Fresco).
+- Emoji ship as data plus a small set of bundled stills (`emoji.bundled` in `lib/spec/theme.ts`, gated by `EMOJI_BUDGET`); every other still and every motion sheet loads from `contracts.assets` and stays in Fresco's disk cache, and with no asset origin the system glyph speaks.
+- `metro.config.cjs` resolves zod's locale table, compiler and JSON Schema writers to nothing.
+- Release builds run R8 with resource shrinking and keep the bundle uncompressed for a faster start (`expo-build-properties` in `app.config.ts`).
+- Every native component carries a static view config (React Native core, react-native-screens, safe-area, Expo views), so `MainApplication` turns React Native's native view config interop off (`staticViews` in `app.config.ts`): start-up no longer reflects over every registered view manager on the JavaScript thread. A dependency that still calls `requireNativeComponent` fails loudly on first render.
+- Metro's `inlineRequires` defers every module's evaluation to its first use (the emoji catalog costs nothing until the emoji screen opens), and the Android theme draws no window background (`bareWindow` in `app.config.ts`): the app's own frame is the only full-screen layer.
+
+Measure with `bun run export` (bundle size) and `bun run perf` (cold start, jank).
 
 ## Device gates
 

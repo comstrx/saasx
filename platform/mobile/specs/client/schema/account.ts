@@ -10,7 +10,7 @@ export default screen({
         description: t("account.description"),
         icon: "user",
     },
-    options: { presentation: "tab", order: 1, tabs: true },
+    options: { presentation: "tab", order: 2, tabs: true },
     access: "user",
     redirect: "/login",
     blocks: [

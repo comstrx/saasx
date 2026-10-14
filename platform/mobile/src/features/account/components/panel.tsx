@@ -2,9 +2,7 @@ import { interpolate } from "@engine/parse";
 import { field, row } from "@engine/spec";
 import AccountCard from "@/components/account-card";
 import Status from "@/components/status";
-import { usePort } from "@/hooks/use-port";
-import { useSession } from "@/hooks/use-session";
-import { useWrite } from "@/hooks/use-write";
+import { usePort, useSession, useWrite } from "@/hooks/use-client";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { hello: string; logout: string; loading: string; failed: string; offline: string; cached: string; errors: Record<string, unknown> };

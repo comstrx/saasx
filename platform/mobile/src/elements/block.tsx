@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     block: { width: "100%", alignSelf: "center" },
     flow: { flexDirection: "row", flexWrap: "wrap" },
     cell: { minWidth: 0 },
+    fill: { flex: 1, alignContent: "stretch" },
 });
 
 function tone ( palette: Palette, value: BlockOptions["tone"] ): { backgroundColor?: string | undefined; borderColor?: string | undefined; borderWidth?: number | undefined } {
@@ -29,9 +30,9 @@ export default function Block ({ entries, grid, gap, padding, align, width, heig
 
     return (
 
-        <View style={[styles.block, { maxWidth: widths[width], minHeight: height === "screen" ? "100%" : undefined, padding: step(padding), borderRadius: radii[radius] }, tone(palette, look)]}>
+        <View style={[styles.block, { maxWidth: widths[width], padding: step(padding), borderRadius: radii[radius] }, height === "screen" && styles.fill, tone(palette, look)]}>
 
-            <View style={[styles.flow, { gap: spacing, alignItems: align === "stretch" ? "stretch" : `flex-${align === "center" ? "center" : align}` as "flex-start" | "flex-end" | "center" }]}>
+            <View style={[styles.flow, height === "screen" && styles.fill, { gap: spacing, alignItems: align === "stretch" ? "stretch" : `flex-${align === "center" ? "center" : align}` as "flex-start" | "flex-end" | "center" }]}>
 
                 {entries.map(( entry ) => (
 

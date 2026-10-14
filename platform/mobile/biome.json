@@ -75,7 +75,7 @@
       }
     },
     {
-      "includes": ["src/app/**", "src/render/**"],
+      "includes": ["src/render/**"],
       "linter": {
         "rules": {
           "style": {

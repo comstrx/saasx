@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { ConfigContext, ExpoConfig } from "expo/config";
+import { type ConfigPlugin, withAndroidStyles, withMainApplication } from "expo/config-plugins.js";
 
-type Meta = { identity: string; insecure: boolean; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
+type Meta = { identity: string; insecure: boolean; icons: string; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
 
 const root = import.meta.dirname;
 
@@ -14,16 +15,33 @@ function compiled (): Meta {
 
     return JSON.parse(readFileSync(path, "utf8")) as Meta;
 }
+const bareWindow: ConfigPlugin = ( config ) => withAndroidStyles(config, ( styles ) => {
+    const theme = styles.modResults.resources.style?.find(( style ) => style.$.name === "AppTheme");
+
+    if ( theme ) theme.item = [...theme.item.filter(( item ) => item.$.name !== "android:windowBackground"), { $: { name: "android:windowBackground" }, _: "@null" }];
+
+    return styles;
+});
+const staticViews: ConfigPlugin = ( config ) => withMainApplication(config, ( app ) => {
+    const flags = "com.facebook.react.internal.featureflags";
+    const entry = "loadReactNative(this)\n";
+
+    if ( !app.modResults.contents.includes(entry) ) throw new Error("MainApplication no longer calls loadReactNative(this): move the view config override.");
+
+    app.modResults.contents = app.modResults.contents.replace(entry, `${entry}    if (DefaultNewArchitectureEntryPoint.releaseLevel == ReleaseLevel.STABLE) ${flags}.ReactNativeFeatureFlags.dangerouslyForceOverride(object : ${flags}.ReactNativeNewArchitectureFeatureFlagsDefaults() { override fun useNativeViewConfigsInBridgelessMode(): Boolean = false })\n`);
+
+    return app;
+});
 const push = resolve(root, "google-services.json");
 const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
-    const { identity, insecure, app } = compiled();
+    const { identity, insecure, icons, app } = compiled();
     const build: [string, Record<string, unknown>] = ["expo-build-properties", {
         android: { usesCleartextTraffic: insecure, enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true, enableBundleCompression: false },
     }];
 
-    return {
+    return staticViews(bareWindow({
         ...config,
         name: app.name,
         slug: app.slug,
@@ -33,11 +51,11 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
         userInterfaceStyle: "automatic",
         ...(app.icon ? { icon: app.icon } : {}),
         plugins: [
-            "expo-router",
             ["expo-location", { locationWhenInUsePermission: "Your location fills your address." }],
             ["expo-image-picker", { photosPermission: "Your photos become your profile picture.", cameraPermission: "The camera takes your profile picture." }],
             ["expo-notifications", { defaultChannel: "default" }],
             "expo-localization",
+            ["expo-font", { fonts: [icons] }],
             ...(app.icon ? [["expo-splash-screen", { backgroundColor: app.background, image: app.icon }] as [string, Record<string, unknown>]] : []),
             build,
         ],
@@ -46,7 +64,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ...(process.env.APP_LAB === "1" && existsSync(push) ? { googleServicesFile: push } : {}),
             ...config.android,
         },
-        experiments: { typedRoutes: true, tsconfigPaths: true },
+        experiments: { tsconfigPaths: true },
         extra: { ...config.extra, spec: identity, ...(process.env.APP_LAB === "1" && existsSync(push) ? { eas: { projectId: labProject } } : {}) },
-    };
+    }));
 };

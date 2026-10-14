@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "@/hooks/use-router";
 import { usePalette } from "@/styles/palette";
 
 type Props = { href: string; label: string; tone?: "default" | "primary" | "button" | undefined; icon?: ReactNode | undefined };
@@ -15,7 +15,7 @@ export default function Link ({ href, label, tone = "default", icon }: Props) {
 
     return (
 
-        <Pressable accessibilityRole="link" onPress={() => router.push(href as never)} style={({ pressed }) => [tone === "button" && [styles.button, { borderColor: palette.line, backgroundColor: palette.panel }], pressed && styles.pressed]}>
+        <Pressable accessibilityRole="link" onPress={() => router.push(href)} style={({ pressed }) => [tone === "button" && [styles.button, { borderColor: palette.line, backgroundColor: palette.panel }], pressed && styles.pressed]}>
 
             <View style={styles.inner}>{icon}<Text style={[styles.link, tone === "primary" && styles.primary, { color }]}>{label}</Text></View>
 

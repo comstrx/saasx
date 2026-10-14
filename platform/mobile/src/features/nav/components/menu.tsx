@@ -1,5 +1,5 @@
 import NavBar from "@/components/nav-bar";
-import { useSession } from "@/hooks/use-session";
+import { useSession } from "@/hooks/use-client";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 export type Options = { brand: string; login: string; account: string };

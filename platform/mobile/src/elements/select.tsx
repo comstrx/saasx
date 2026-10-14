@@ -5,7 +5,8 @@ export type Choice = { value: string; label: string };
 type Props = { name: string; value: string; choices: readonly Choice[]; disabled?: boolean | undefined; onChange: ( value: string ) => void };
 
 const styles = StyleSheet.create({
-    row: { gap: 8, paddingVertical: 4 },
+    bar: { flexGrow: 0 },
+    row: { gap: 8, paddingVertical: 4, alignItems: "center" },
     chip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
     label: { fontSize: 14 },
     pressed: { opacity: 0.7 },
@@ -17,7 +18,7 @@ export default function Select ({ name, value, choices, disabled = false, onChan
 
     return (
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row} testID={name}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bar} contentContainerStyle={styles.row} testID={name}>
 
             {choices.map(( choice ) => {
 

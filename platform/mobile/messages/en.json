@@ -272,5 +272,12 @@
   "form": {
     "leave": "You have unsaved changes. Leave anyway?",
     "tags": "Separate items with commas"
+  },
+  "emoji": {
+    "title": "Emoji",
+    "description": "Every emoji, in 3D, searchable in Arabic and English.",
+    "placeholder": "Search emoji",
+    "empty": "No emoji matches.",
+    "tone": "Default"
   }
 }

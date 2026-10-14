@@ -19,6 +19,7 @@ export const surface = createSpecSurface({
         tabs: z.boolean(),
         loader: z.boolean(),
         order: z.number().int().min(0).max(100),
+        scroll: z.boolean(),
     }),
     blockOptions: z.strictObject({
         width: z.enum(["full", "boxed", "narrow"]),
@@ -37,7 +38,7 @@ export const surface = createSpecSurface({
     themeDefaults,
     settingsDefaults: {
         currency,
-        screen: { presentation: "stack", title: true, header: true, tabs: false, loader: true, order: 50 },
+        screen: { presentation: "stack", title: true, header: true, tabs: false, loader: true, order: 50, scroll: true },
         block: { width: "full", height: "auto", grid: 1, gap: 4, padding: 4, align: "stretch", tone: "default", radius: "none" },
         shell: { header: null, tabs: null, loader: null },
     },

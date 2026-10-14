@@ -1,6 +1,6 @@
 import type { CompiledPort } from "@engine/spec";
 import type { ReactNode } from "react";
-import { usePermission } from "@/hooks/use-permission";
+import { usePermission } from "@/hooks/use-client";
 
 type Props = { port: CompiledPort | undefined; fallback?: ReactNode | undefined; children: ReactNode };
 

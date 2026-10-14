@@ -19,8 +19,9 @@ const aliases = {
 const config = getDefaultConfig(root);
 
 config.watchFolders = [...(config.watchFolders ?? []), engine];
+config.transformer.getTransformOptions = async () => ({ transform: { experimentalImportSupport: true, inlineRequires: true } });
 
-const unreached = [/\/zod\/v4\/locales\/index\.c?js$/, /\/zod\/v4\/core\/json-schema-processors\.c?js$/];
+const unreached = [/\/zod\/v4\/locales\/index\.c?js$/, /\/zod\/v4\/core\/(?:json-schema-processors|json-schema-generator|to-json-schema|compile)\.c?js$/];
 
 config.resolver.resolveRequest = ( context, moduleName, platform ) => {
     const aliased = aliases[moduleName];

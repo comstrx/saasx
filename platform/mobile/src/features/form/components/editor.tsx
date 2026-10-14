@@ -2,15 +2,15 @@ import type { FormState } from "@engine/context";
 import { interpolate } from "@engine/parse";
 import { row, rows } from "@engine/spec";
 import type { Messages } from "@engine/translate";
-import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import Note from "@/components/note";
 import SchemaForm, { type Choices, type Labels } from "@/components/schema-form";
 import Status from "@/components/status";
 import Titled from "@/components/titled";
+import { usePort } from "@/hooks/use-client";
 import { useDirtyGuard } from "@/hooks/use-dirty-guard";
-import { isQueued, useForm } from "@/hooks/use-form";
-import { usePort } from "@/hooks/use-port";
+import { isDeferred, useForm } from "@/hooks/use-form";
+import { useRouter } from "@/hooks/use-router";
 import type { FeatureProps } from "@/lib/spec/feature";
 
 function withTexts ( record: Record<string, unknown> | undefined, translations: Record<string, unknown>[], fields: FormState<unknown>["fields"] ): Record<string, unknown> | undefined {
@@ -56,15 +56,15 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
 
     useEffect(() => {
 
-        if ( form.status !== "done" || !options.next || isQueued(form.result) ) return;
+        if ( form.status !== "done" || !options.next || isDeferred(form.result) ) return;
 
         const saved = row(form.result);
 
-        router.push(interpolate(options.next, Object.fromEntries(Object.entries(saved ?? {}).map(( [key, value] ) => [key, String(value ?? "")]))) as never);
+        router.push(interpolate(options.next, Object.fromEntries(Object.entries(saved ?? {}).map(( [key, value] ) => [key, String(value ?? "")]))));
 
     }, [form.status, form.result, options.next, router]);
 
-    const note = form.status === "done" ? { text: isQueued(form.result) ? options.queued : options.saved, tone: "success" as const } : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const } : undefined;
+    const note = form.status === "done" ? { text: isDeferred(form.result) ? options.queued : options.saved, tone: "success" as const } : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const } : undefined;
     const failing = item.status === "failed" || texts.status === "failed";
     const nothing = Boolean(ports.item) && settled && record === undefined;
 

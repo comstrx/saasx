@@ -1,9 +1,8 @@
 import type { ApiSurface } from "@engine/api";
 import { touched } from "@engine/context";
 import { useEffect } from "react";
-import { useApi } from "@/hooks/use-api";
+import { outbox, useApi } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
-import { outbox } from "@/stores/outbox";
 
 export default function Replayer () {
 

@@ -2,12 +2,12 @@ import { shellFeature } from "@engine/spec";
 import { createElement, type ReactNode } from "react";
 import Frame from "@/elements/frame";
 import Loading from "@/elements/loading";
+import { SignalsProvider } from "@/hooks/use-client";
 import { useLocale, useTheme } from "@/hooks/use-locale";
 import type { Screen as Facing, Route } from "@/lib/spec/feature";
 import { type Locale, languages } from "@/lib/spec/languages";
 import { config, localize, shell, text } from "@/lib/spec/runtime";
 import type { Shell } from "@/lib/spec/surface";
-import { SignalsProvider } from "@/stores/signals";
 import { palette } from "@/styles/theme";
 import { Blocks, type Facts, feature } from "./blocks";
 import { Boundary } from "./boundary";
@@ -35,7 +35,7 @@ export function Screen ({ screen, route }: Props) {
 
     return (
 
-        <Frame palette={colors} direction={languages[locale].direction} header={part("header", screen, route, locale)} tabs={part("tabs", screen, route, locale)}>
+        <Frame palette={colors} direction={languages[locale].direction} scroll={screen.options.scroll} header={part("header", screen, route, locale)} tabs={part("tabs", screen, route, locale)}>
 
             {gated}
 
