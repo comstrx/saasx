@@ -52,6 +52,7 @@ export {
     within,
 } from "./core.ts";
 export { type Features, featureFacts, featureNames } from "./features.ts";
+export { type StaticFont, staticFonts } from "./fonts.ts";
 export { type IconFont, type IconFormat, iconFont } from "./icons.ts";
 export {
     composeMessages,

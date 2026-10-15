@@ -19,6 +19,7 @@ import {
     type Rules,
     selectConnection,
     specAliases,
+    staticFonts,
     syncEngineAssets,
     walk,
     within,
@@ -284,6 +285,41 @@ describe("message contracts", () => {
             "ar: missing errors.rules.max",
         ]);
         expect(messageIssues(dictionaries, { reasons: ["not_found"], rules: ["min"] })).toEqual([]);
+
+    });
+
+});
+function tables ( bytes: Uint8Array ): Map<string, number> {
+
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+
+    return new Map(Array.from({ length: view.getUint16(4) }, ( _, index ) => [String.fromCharCode(...bytes.subarray(12 + index * 16, 16 + index * 16)), view.getUint32(20 + index * 16)]));
+
+}
+describe("static fonts", () => {
+
+    test("each world font becomes one static TrueType file per weight it can draw, keeping every glyph it ships", async () => {
+
+        const files = await staticFonts([400, 800]);
+        const glyphs = { "Readex Pro": 228, Figtree: 264 } as Record<string, number>;
+
+        expect(files.map(( font ) => [font.family, font.weight, font.file])).toEqual([
+            ["Readex Pro", 400, "readex-pro-400.ttf"],
+            ["Figtree", 400, "figtree-400.ttf"],
+            ["Figtree", 800, "figtree-800.ttf"],
+        ]);
+
+        for ( const font of files ) {
+
+            const view = new DataView(font.bytes.buffer, font.bytes.byteOffset, font.bytes.byteLength);
+            const table = tables(font.bytes);
+
+            expect(view.getUint32(0)).toBe(0x00010000);
+            expect(table.has("fvar")).toBe(false);
+            expect(view.getUint16((table.get("OS/2") as number) + 4)).toBe(font.weight);
+            expect(view.getUint16((table.get("maxp") as number) + 4)).toBeGreaterThanOrEqual(glyphs[font.family] as number);
+
+        }
 
     });
 
