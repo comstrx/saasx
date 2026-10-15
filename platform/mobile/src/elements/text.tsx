@@ -1,4 +1,5 @@
 import { Text as Native, StyleSheet } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 type Props = { text: string; tone?: "default" | "muted" | "danger" | "success" | "inverse" | undefined; size?: "sm" | "md" | "lg" | undefined };
@@ -12,8 +13,9 @@ const styles = StyleSheet.create({
 export default function Text ({ text, tone = "default", size = "md" }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
     const colors = { default: palette.ink, muted: palette.muted, danger: palette.danger, success: palette.success, inverse: palette.panel };
 
-    return <Native style={[styles[size], { color: colors[tone] }]}>{text}</Native>;
+    return <Native style={[font, styles[size], { color: colors[tone] }]}>{text}</Native>;
 
 }

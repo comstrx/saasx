@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 type Fact = { key: string; label: string; value: string };
@@ -9,6 +10,7 @@ const styles = StyleSheet.create({ facts: { flexDirection: "row", flexWrap: "wra
 export default function Facts ({ facts }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
 
     return (
 
@@ -18,9 +20,9 @@ export default function Facts ({ facts }: Props) {
 
                 <View key={fact.key} style={styles.fact}>
 
-                    <Text style={[styles.label, { color: palette.muted }]}>{fact.label}</Text>
+                    <Text style={[font, styles.label, { color: palette.muted }]}>{fact.label}</Text>
 
-                    <Text style={[styles.value, { color: palette.ink }]}>{fact.value}</Text>
+                    <Text style={[font, styles.value, { color: palette.ink }]}>{fact.value}</Text>
 
                 </View>
 

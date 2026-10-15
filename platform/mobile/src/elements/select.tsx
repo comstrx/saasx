@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 export type Choice = { value: string; label: string };
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
 export default function Select ({ name, value, choices, disabled = false, onChange }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
 
     return (
 
@@ -35,7 +37,7 @@ export default function Select ({ name, value, choices, disabled = false, onChan
                         style={({ pressed }) => [styles.chip, { backgroundColor: chosen ? palette.primary : palette.panel, borderColor: chosen ? palette.primary : palette.line }, pressed && styles.pressed]}
                     >
 
-                        <Text style={[styles.label, { color: chosen ? palette.panel : palette.ink }]}>{choice.label}</Text>
+                        <Text style={[font, styles.label, { color: chosen ? palette.panel : palette.ink }]}>{choice.label}</Text>
 
                     </Pressable>
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 export type Tab = { key: string; label: string; icon?: ReactNode | undefined; current: boolean; onPress: () => void };
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
 export default function TabBar ({ label, tabs }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
 
     return (
 
@@ -26,7 +28,7 @@ export default function TabBar ({ label, tabs }: Props) {
 
                     {tab.icon}
 
-                    <Text style={[styles.label, { color: tab.current ? palette.primary : palette.muted, fontWeight: tab.current ? "700" : "400" }]}>{tab.label}</Text>
+                    <Text style={[font, styles.label, { color: tab.current ? palette.primary : palette.muted, fontWeight: tab.current ? "700" : "400" }]}>{tab.label}</Text>
 
                 </Pressable>
 

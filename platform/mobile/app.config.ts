@@ -3,7 +3,8 @@ import { resolve } from "node:path";
 import type { ConfigContext, ExpoConfig } from "expo/config";
 import { type ConfigPlugin, withAndroidStyles, withMainApplication } from "expo/config-plugins.js";
 
-type Meta = { identity: string; insecure: boolean; icons: string; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
+type Font = { fontFamily: string; fontDefinitions: { path: string; weight: number }[] };
+type Meta = { identity: string; insecure: boolean; icons: string; fonts: Font[]; app: { name: string; slug: string; scheme: string; icon: string | null; background: string } };
 
 const root = import.meta.dirname;
 
@@ -44,7 +45,7 @@ const push = resolve(root, "google-services.json");
 const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
-    const { identity, insecure, icons, app } = compiled();
+    const { identity, insecure, icons, fonts, app } = compiled();
     const build: [string, Record<string, unknown>] = ["expo-build-properties", {
         android: { usesCleartextTraffic: insecure, enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true, enableBundleCompression: false },
     }];
@@ -63,7 +64,7 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             ["expo-image-picker", { photosPermission: "Your photos become your profile picture.", cameraPermission: "The camera takes your profile picture." }],
             ["expo-notifications", { defaultChannel: "default" }],
             "expo-localization",
-            ["expo-font", { fonts: [icons] }],
+            ["expo-font", { fonts: [icons], android: { fonts } }],
             ...(app.icon ? [["expo-splash-screen", { backgroundColor: app.background, image: app.icon }] as [string, Record<string, unknown>]] : []),
             build,
         ],

@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 type Props = { label: string };
@@ -8,12 +9,13 @@ const styles = StyleSheet.create({ badge: { alignSelf: "flex-start", paddingHori
 export default function Badge ({ label }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
 
     return (
 
         <View style={[styles.badge, { backgroundColor: palette.line }]}>
 
-            <Text style={[styles.label, { color: palette.ink }]}>{label}</Text>
+            <Text style={[font, styles.label, { color: palette.ink }]}>{label}</Text>
 
         </View>
 

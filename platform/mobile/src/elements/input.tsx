@@ -1,4 +1,5 @@
 import { StyleSheet, TextInput } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 type Props = { name: string; kind?: "text" | "email" | "password" | "search" | "code" | "number" | "date" | "phone" | undefined; value: string; placeholder?: string | undefined; invalid?: boolean | undefined; disabled?: boolean | undefined; onChange: ( value: string ) => void; onSubmit?: (() => void) | undefined };
@@ -18,13 +19,14 @@ const kinds = {
 export default function Input ({ name, kind = "text", value, placeholder, invalid = false, disabled = false, onChange, onSubmit }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
 
     return (
 
         <TextInput
             testID={name}
             accessibilityLabel={placeholder ?? name}
-            style={[styles.input, { backgroundColor: palette.panel, color: palette.ink, borderColor: invalid ? palette.danger : palette.line, opacity: disabled ? 0.6 : 1 }]}
+            style={[font, styles.input, { backgroundColor: palette.panel, color: palette.ink, borderColor: invalid ? palette.danger : palette.line, opacity: disabled ? 0.6 : 1 }]}
             value={value}
             placeholder={placeholder}
             placeholderTextColor={palette.muted}

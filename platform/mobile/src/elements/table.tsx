@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 export type Column = { key: string; label: string; align?: "start" | "end" | undefined; width?: number | undefined };
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
 export default function Table ({ columns, rows, selected, onSelect }: Props) {
 
     const palette = usePalette();
+    const font = useFont();
     const width = ( column: Column ): number => column.width ?? 140;
 
     return (
@@ -34,7 +36,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
 
                         <View key={column.key} style={[styles.cell, { width: width(column) }, column.align === "end" && styles.end]}>
 
-                            <Text style={[styles.head, { color: palette.muted }]}>{column.label}</Text>
+                            <Text style={[font, styles.head, { color: palette.muted }]}>{column.label}</Text>
 
                         </View>
 
@@ -49,7 +51,7 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
 
                         <View key={column.key} style={[styles.cell, { width: width(column) }, column.align === "end" && styles.end]}>
 
-                            {typeof row.cells[column.key] === "string" ? <Text style={[styles.text, { color: palette.ink }]}>{row.cells[column.key]}</Text> : row.cells[column.key]}
+                            {typeof row.cells[column.key] === "string" ? <Text style={[font, styles.text, { color: palette.ink }]}>{row.cells[column.key]}</Text> : row.cells[column.key]}
 
                         </View>
 
