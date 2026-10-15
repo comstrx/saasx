@@ -1,6 +1,6 @@
-import { isRecord } from "@engine/base";
-import { templateKeys } from "@engine/parse";
-import type { FieldFact } from "@engine/validate";
+import { isRecord } from "engine/base";
+import { templateKeys } from "engine/parse";
+import type { FieldFact } from "engine/validate";
 import type { OperationFacts, Walk } from "./compile.ts";
 import type { Binding, CompiledPort, Live, Manifest, Port, SiteFeature, Value } from "./shapes.ts";
 

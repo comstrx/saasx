@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { Failure } from "@engine/error";
-import { dictionary, directionOf, failureMessages, formatDate, formatMoney, formatNumber, formatPercent, formatRange, isolate, isTimeZone, languageFacts, languageName, localePath, mergeMessages, messageTree, missingKeys, negotiate, plural, preferredPath, prefixed, regionOf, splitLocale, translator } from "@engine/translate";
+import { Failure } from "engine/error";
+import { dictionary, directionOf, failureMessages, formatDate, formatMoney, formatNumber, formatPercent, formatRange, isolate, isTimeZone, languageFacts, languageName, localePath, mergeMessages, messageTree, missingKeys, negotiate, plural, preferredPath, prefixed, regionOf, splitLocale, translator } from "engine/translate";
 
 const routing = { locales: ["en", "ar"], defaultLocale: "en" };
 

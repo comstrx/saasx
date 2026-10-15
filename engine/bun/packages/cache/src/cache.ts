@@ -1,4 +1,4 @@
-import { now } from "@engine/base";
+import { now } from "engine/base";
 
 type Entry<T> = { value: T; expires: number };
 type Pending<T> = { value: Promise<T>; expires: number };

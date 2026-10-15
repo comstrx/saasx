@@ -1,4 +1,4 @@
-import { type Query, queryEntries } from "@engine/parse";
+import { type Query, queryEntries } from "engine/parse";
 
 export function isOrigin ( value: string ): boolean {
 

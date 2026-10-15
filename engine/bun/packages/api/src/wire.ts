@@ -1,6 +1,6 @@
-import { compact, safeKey } from "@engine/base";
-import { isEndpoint } from "@engine/net";
-import { z } from "@engine/validate";
+import { compact, safeKey } from "engine/base";
+import { isEndpoint } from "engine/net";
+import { z } from "engine/validate";
 
 const methods = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 const executions = ["server", "client", "hybrid"] as const;

@@ -2,7 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fonts } from "@engine/world";
+import { fonts } from "engine/world";
 import subsetFont from "subset-font";
 import { worldAssets } from "./compile.ts";
 

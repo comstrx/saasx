@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { createApi, feature, get, many, requestContext, resolveApi, z } from "@engine/api";
-import { catalogueFacts, compileBlock, createWalk, localizeTree, matchScreen } from "@engine/spec";
-import { formatDate, formatMoney, formatNumber, languageName, plural } from "@engine/translate";
+import { createApi, feature, get, many, requestContext, resolveApi, z } from "engine/api";
+import { catalogueFacts, compileBlock, createWalk, localizeTree, matchScreen } from "engine/spec";
+import { formatDate, formatMoney, formatNumber, languageName, plural } from "engine/translate";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const endpoints = {

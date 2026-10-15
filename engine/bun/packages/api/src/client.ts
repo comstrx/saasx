@@ -1,8 +1,8 @@
-import { clone, mapValues, now, uuid } from "@engine/base";
-import { dedupe } from "@engine/cache";
-import { Failure } from "@engine/error";
-import { readJson, retryAfter, send, type Transport } from "@engine/net";
-import { issuesOf, rulesOf, type z } from "@engine/validate";
+import { clone, mapValues, now, uuid } from "engine/base";
+import { dedupe } from "engine/cache";
+import { Failure } from "engine/error";
+import { readJson, retryAfter, send, type Transport } from "engine/net";
+import { issuesOf, rulesOf, type z } from "engine/validate";
 import type { Connection } from "./config.ts";
 import type { Catalogue, Endpoint } from "./dsl.ts";
 import type { Observer, Outcome } from "./observe.ts";

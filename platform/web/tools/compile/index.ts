@@ -1,10 +1,10 @@
 import { relative, resolve } from "node:path";
-import { browserConfig } from "@engine/api";
-import { base64 } from "@engine/base";
-import { mimeOf } from "@engine/file";
-import { settingsResource } from "@engine/spec";
-import { type Files, featureFacts, iconFont } from "@engine/tooling";
-import { emojis, iconAliases, iconNames } from "@engine/world";
+import { browserConfig } from "engine/api";
+import { base64 } from "engine/base";
+import { mimeOf } from "engine/file";
+import { settingsResource } from "engine/spec";
+import { type Files, featureFacts, iconFont } from "engine/tooling";
+import { emojis, iconAliases, iconNames } from "engine/world";
 import { root, tools } from "../core/index.ts";
 
 import { themeCss } from "./theme.ts";

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { Failure } from "@engine/error";
-import { driverStore, lazyStore, memoryStore, namespaced, typed, webStore } from "@engine/storage";
+import { Failure } from "engine/error";
+import { driverStore, lazyStore, memoryStore, namespaced, typed, webStore } from "engine/storage";
 
 describe("storage", () => {
 

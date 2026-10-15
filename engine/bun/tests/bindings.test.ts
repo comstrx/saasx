@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { del, get, many, need, post, feature as spec, z } from "@engine/api";
+import { del, get, many, need, post, feature as spec, z } from "engine/api";
 import {
     catalogueFacts,
     compileBlock,
@@ -10,7 +10,7 @@ import {
     type SiteFeature,
     stateIssues,
     write,
-} from "@engine/spec";
+} from "engine/spec";
 
 type Block = { gap: number };
 

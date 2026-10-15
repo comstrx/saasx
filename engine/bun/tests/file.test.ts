@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { Failure } from "@engine/error";
-import { checkFile, dataUri, extensionOf, isFileRef, mimeOf, toFormData } from "@engine/file";
+import { Failure } from "engine/error";
+import { checkFile, dataUri, extensionOf, isFileRef, mimeOf, toFormData } from "engine/file";
 
 describe("file", () => {
 

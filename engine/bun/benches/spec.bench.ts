@@ -1,6 +1,6 @@
-import { feature, get, many, z } from "@engine/api";
-import { catalogueFacts, compileBlock, createWalk, localizeTree, matchScreen } from "@engine/spec";
-import { bench, do_not_optimize, run } from "@engine/tooling";
+import { feature, get, many, z } from "engine/api";
+import { catalogueFacts, compileBlock, createWalk, localizeTree, matchScreen } from "engine/spec";
+import { bench, do_not_optimize, run } from "engine/tooling";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const catalogue = catalogueFacts({

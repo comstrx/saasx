@@ -1,4 +1,4 @@
-import { isRecord, kindOf, mapValues } from "@engine/base";
+import { isRecord, kindOf, mapValues } from "engine/base";
 import { isSpecKey } from "./fields.ts";
 import type { Manifest, Options } from "./shapes.ts";
 

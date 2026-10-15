@@ -1,7 +1,7 @@
 import "server-only";
 
-import { rows } from "@engine/spec";
-import { localePath } from "@engine/translate";
+import { rows } from "engine/spec";
+import { localePath } from "engine/translate";
 import type { Metadata, MetadataRoute } from "next";
 import { entities, type Feature, type OperationOf } from "@/api/features";
 import { read } from "@/api/workflow/server";

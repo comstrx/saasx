@@ -1,7 +1,7 @@
 import "server-only";
 
-import { type Observer, reportOf } from "@engine/api";
-import { createLogger, lineSink } from "@engine/log";
+import { type Observer, reportOf } from "engine/api";
+import { createLogger, lineSink } from "engine/log";
 
 const slow = 1500;
 

@@ -1,6 +1,6 @@
-import { browserConfig } from "@engine/api";
-import { flagFiles, generatedRoot, iconFont, requireModule, staticFonts } from "@engine/tooling";
-import { emojis, iconAliases, iconNames } from "@engine/world";
+import { browserConfig } from "engine/api";
+import { flagFiles, generatedRoot, iconFont, requireModule, staticFonts } from "engine/tooling";
+import { emojis, iconAliases, iconNames } from "engine/world";
 import { root, tools } from "../core/index.ts";
 
 const stem = ( file: string ): string => file.slice(0, file.lastIndexOf("."));

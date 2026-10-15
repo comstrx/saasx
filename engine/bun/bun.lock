@@ -4,213 +4,21 @@
   "workspaces": {
     "": {
       "name": "engine",
+      "dependencies": {
+        "lucide-static": "1.52.0",
+        "mitata": "1.0.34",
+        "subset-font": "2.9.0",
+        "zod": "4.6.5",
+        "zustand": "5.0.15",
+      },
       "devDependencies": {
         "@biomejs/biome": "2.5.15",
-        "@engine/api": "workspace:*",
-        "@engine/array": "workspace:*",
-        "@engine/base": "workspace:*",
-        "@engine/cache": "workspace:*",
-        "@engine/context": "workspace:*",
-        "@engine/cookie": "workspace:*",
-        "@engine/device": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/file": "workspace:*",
-        "@engine/history": "workspace:*",
-        "@engine/log": "workspace:*",
-        "@engine/net": "workspace:*",
-        "@engine/parse": "workspace:*",
-        "@engine/socket": "workspace:*",
-        "@engine/spec": "workspace:*",
-        "@engine/storage": "workspace:*",
-        "@engine/string": "workspace:*",
-        "@engine/tooling": "workspace:*",
-        "@engine/translate": "workspace:*",
-        "@engine/validate": "workspace:*",
-        "@engine/world": "workspace:*",
         "@types/bun": "1.4.2",
         "@types/react": "19.3.0",
         "typescript": "7.0.2",
       },
-    },
-    "packages/api": {
-      "name": "@engine/api",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/cache": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/file": "workspace:*",
-        "@engine/net": "workspace:*",
-        "@engine/parse": "workspace:*",
-        "@engine/validate": "workspace:*",
-      },
-    },
-    "packages/array": {
-      "name": "@engine/array",
-      "version": "0.1.0",
-    },
-    "packages/base": {
-      "name": "@engine/base",
-      "version": "0.1.0",
-    },
-    "packages/cache": {
-      "name": "@engine/cache",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-      },
-    },
-    "packages/context": {
-      "name": "@engine/context",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/api": "workspace:*",
-        "@engine/array": "workspace:*",
-        "@engine/base": "workspace:*",
-        "@engine/device": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/socket": "workspace:*",
-        "@engine/spec": "workspace:*",
-        "@engine/storage": "workspace:*",
-        "@engine/translate": "workspace:*",
-        "@engine/validate": "workspace:*",
-        "zustand": "5.0.15",
-      },
       "peerDependencies": {
         "react": ">=19.2.3",
-      },
-    },
-    "packages/cookie": {
-      "name": "@engine/cookie",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/storage": "workspace:*",
-        "@engine/translate": "workspace:*",
-        "@engine/validate": "workspace:*",
-      },
-    },
-    "packages/device": {
-      "name": "@engine/device",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/error": "workspace:*",
-        "@engine/file": "workspace:*",
-      },
-    },
-    "packages/error": {
-      "name": "@engine/error",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-      },
-    },
-    "packages/file": {
-      "name": "@engine/file",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/error": "workspace:*",
-        "@engine/parse": "workspace:*",
-      },
-    },
-    "packages/history": {
-      "name": "@engine/history",
-      "version": "0.1.0",
-    },
-    "packages/log": {
-      "name": "@engine/log",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/error": "workspace:*",
-      },
-    },
-    "packages/net": {
-      "name": "@engine/net",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/parse": "workspace:*",
-      },
-    },
-    "packages/parse": {
-      "name": "@engine/parse",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/error": "workspace:*",
-      },
-    },
-    "packages/socket": {
-      "name": "@engine/socket",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/log": "workspace:*",
-      },
-    },
-    "packages/spec": {
-      "name": "@engine/spec",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/api": "workspace:*",
-        "@engine/base": "workspace:*",
-        "@engine/net": "workspace:*",
-        "@engine/parse": "workspace:*",
-        "@engine/string": "workspace:*",
-        "@engine/translate": "workspace:*",
-        "@engine/validate": "workspace:*",
-      },
-    },
-    "packages/storage": {
-      "name": "@engine/storage",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/error": "workspace:*",
-      },
-    },
-    "packages/string": {
-      "name": "@engine/string",
-      "version": "0.1.0",
-    },
-    "packages/tooling": {
-      "name": "@engine/tooling",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/spec": "workspace:*",
-        "@engine/translate": "workspace:*",
-        "@engine/validate": "workspace:*",
-        "@engine/world": "workspace:*",
-        "lucide-static": "1.52.0",
-        "mitata": "1.0.34",
-        "subset-font": "2.9.0",
-      },
-    },
-    "packages/translate": {
-      "name": "@engine/translate",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/error": "workspace:*",
-        "@engine/parse": "workspace:*",
-      },
-    },
-    "packages/validate": {
-      "name": "@engine/validate",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/error": "workspace:*",
-        "zod": "4.6.5",
-      },
-    },
-    "packages/world": {
-      "name": "@engine/world",
-      "version": "0.1.0",
-      "dependencies": {
-        "@engine/base": "workspace:*",
-        "@engine/string": "workspace:*",
       },
     },
   },
@@ -232,48 +40,6 @@
     "@biomejs/cli-win32-arm64": ["@biomejs/cli-win32-arm64@2.5.15", "", { "os": "win32", "cpu": "arm64" }, "sha512-2kPKzhNlm8C+Ru3GcO0Me2ODkCBLrVOUNuyi84RJyWDVKAA4+Kjj3jMjL938lF6BRfvltC4vB2nPY9SvN51Ovg=="],
 
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.5.15", "", { "os": "win32", "cpu": "x64" }, "sha512-yAzh4UqEImV6Hcy0zjUqNfJAsUhoD64FBQCdTG8Md/Z2wQeVP/ZmJ3XRYAs1g8J9fjTFyl2fCtc5FB5til47+g=="],
-
-    "@engine/api": ["@engine/api@workspace:packages/api"],
-
-    "@engine/array": ["@engine/array@workspace:packages/array"],
-
-    "@engine/base": ["@engine/base@workspace:packages/base"],
-
-    "@engine/cache": ["@engine/cache@workspace:packages/cache"],
-
-    "@engine/context": ["@engine/context@workspace:packages/context"],
-
-    "@engine/cookie": ["@engine/cookie@workspace:packages/cookie"],
-
-    "@engine/device": ["@engine/device@workspace:packages/device"],
-
-    "@engine/error": ["@engine/error@workspace:packages/error"],
-
-    "@engine/file": ["@engine/file@workspace:packages/file"],
-
-    "@engine/history": ["@engine/history@workspace:packages/history"],
-
-    "@engine/log": ["@engine/log@workspace:packages/log"],
-
-    "@engine/net": ["@engine/net@workspace:packages/net"],
-
-    "@engine/parse": ["@engine/parse@workspace:packages/parse"],
-
-    "@engine/socket": ["@engine/socket@workspace:packages/socket"],
-
-    "@engine/spec": ["@engine/spec@workspace:packages/spec"],
-
-    "@engine/storage": ["@engine/storage@workspace:packages/storage"],
-
-    "@engine/string": ["@engine/string@workspace:packages/string"],
-
-    "@engine/tooling": ["@engine/tooling@workspace:packages/tooling"],
-
-    "@engine/translate": ["@engine/translate@workspace:packages/translate"],
-
-    "@engine/validate": ["@engine/validate@workspace:packages/validate"],
-
-    "@engine/world": ["@engine/world@workspace:packages/world"],
 
     "@types/bun": ["@types/bun@1.4.2", "", { "dependencies": { "bun-types": "1.4.2" } }, "sha512-GimotNn7+ZV0uVArItBbriZsR1oNf0+WTzPkdcFrzShI7k2norL0uzEaJT8T33dWr7O/c9ZDuAFQrctKCi72oQ=="],
 

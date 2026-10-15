@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { camelCase, catalog, collapse, digits, escapeHtml, escapeRegExp, fold, initials, isBlank, kebabCase, mask, pascalCase, rank, slugify, snakeCase, titleCase, truncate, words } from "@engine/string";
+import { camelCase, catalog, collapse, digits, escapeHtml, escapeRegExp, fold, initials, isBlank, kebabCase, mask, pascalCase, rank, slugify, snakeCase, titleCase, truncate, words } from "engine/string";
 
 describe("string", () => {
 

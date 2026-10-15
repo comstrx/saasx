@@ -1,6 +1,6 @@
 "use client";
 
-import { choose } from "@engine/base";
+import { choose } from "engine/base";
 import { useParams } from "next/navigation";
 import { routing } from "@/lib/spec/config";
 

@@ -34,7 +34,7 @@ import {
     nativeTokens,
     plainEmoji,
     transition,
-} from "@engine/world";
+} from "engine/world";
 
 const asset = resolve(import.meta.dir, "../packages/world/asset");
 const scales = {

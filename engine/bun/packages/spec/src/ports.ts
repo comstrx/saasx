@@ -1,4 +1,4 @@
-import { isRecord, pathGet } from "@engine/base";
+import { isRecord, pathGet } from "engine/base";
 import type { CompiledPort, Input } from "./shapes.ts";
 
 export type Route = {

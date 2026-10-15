@@ -1,5 +1,5 @@
-import { field, row } from "@engine/spec";
-import { formatMoney } from "@engine/translate";
+import { field, row } from "engine/spec";
+import { formatMoney } from "engine/translate";
 import { notFound } from "next/navigation";
 import { portOf } from "@/api/workflow/ports";
 import DetailCard from "@/components/detail-card";

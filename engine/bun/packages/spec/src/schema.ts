@@ -1,4 +1,4 @@
-import { z } from "@engine/validate";
+import { z } from "engine/validate";
 import { key, path, specText } from "./fields.ts";
 import { accessShape, type CompiledBlock, treeShapes } from "./shapes.ts";
 

@@ -1,9 +1,9 @@
-import { isScalar, pathSet, uuid } from "@engine/base";
-import { Failure, guarded } from "@engine/error";
-import { toFormData } from "@engine/file";
-import { hostname, joinUrl } from "@engine/net";
-import { expandTemplate, isQuery, type Query, type QueryValue, templateKeys } from "@engine/parse";
-import { currency as currencyShape } from "@engine/validate";
+import { isScalar, pathSet, uuid } from "engine/base";
+import { Failure, guarded } from "engine/error";
+import { toFormData } from "engine/file";
+import { hostname, joinUrl } from "engine/net";
+import { expandTemplate, isQuery, type Query, type QueryValue, templateKeys } from "engine/parse";
+import { currency as currencyShape } from "engine/validate";
 import type { ApiConfig } from "./config.ts";
 import { type HeaderKey, requiredHeaders, type Wire } from "./wire.ts";
 

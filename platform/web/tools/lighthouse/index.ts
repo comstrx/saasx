@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { report, task } from "@engine/tooling";
+import { report, task } from "engine/tooling";
 
 type Report = { categories: Record<string, { score: number | null }> };
 

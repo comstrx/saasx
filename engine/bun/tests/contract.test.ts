@@ -10,8 +10,8 @@ import {
     fontsShape,
     settingsInput,
     sharedSettingsDefaults,
-} from "@engine/spec";
-import { z } from "@engine/validate";
+} from "engine/spec";
+import { z } from "engine/validate";
 
 const locale = z.enum(["en", "ar"]);
 const image = brandImage("/assets/images/brand", ["png", "webp"]);

@@ -1,4 +1,4 @@
-import { Failure } from "@engine/error";
+import { Failure } from "engine/error";
 
 const durations: Record<string, number> = { ms: 1, s: 1000, m: 60000, h: 3600000, d: 86400000 };
 const sizes: Record<string, number> = { b: 1, kb: 1024, mb: 1048576, gb: 1073741824 };

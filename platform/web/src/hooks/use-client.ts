@@ -1,6 +1,6 @@
 "use client";
 
-import { defineClient } from "@engine/context";
+import { defineClient } from "engine/context";
 import { endpoints } from "@/api/features";
 import { useLocale } from "@/hooks/use-locale";
 import { observeCall, trace } from "@/lib/observe/browser";

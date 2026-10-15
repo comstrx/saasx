@@ -1,5 +1,5 @@
-import type { Endpoint, Layer } from "@engine/api";
-import { z } from "@engine/validate";
+import type { Endpoint, Layer } from "engine/api";
+import { z } from "engine/validate";
 import type { Features } from "./compile.ts";
 import {
     backendOptionFields,

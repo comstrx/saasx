@@ -1,8 +1,8 @@
 "use client";
 
-import type { Preferences } from "@engine/cookie";
-import { Failure } from "@engine/error";
-import { readJson, send } from "@engine/net";
+import type { Preferences } from "engine/cookie";
+import { Failure } from "engine/error";
+import { readJson, send } from "engine/net";
 
 export type { Preferences };
 export type Saved = { language: string; currency: string; theme: string };

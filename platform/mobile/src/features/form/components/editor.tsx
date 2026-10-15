@@ -1,7 +1,7 @@
-import type { FormState } from "@engine/context";
-import { interpolate } from "@engine/parse";
-import { row, rows } from "@engine/spec";
-import type { Messages } from "@engine/translate";
+import type { FormState } from "engine/context";
+import { interpolate } from "engine/parse";
+import { row, rows } from "engine/spec";
+import type { Messages } from "engine/translate";
 import { useEffect, useRef } from "react";
 import Note from "@/components/note";
 import SchemaForm, { type Choices, type Labels } from "@/components/schema-form";

@@ -1,4 +1,4 @@
-import { parseHref, type Query } from "@engine/history";
+import { parseHref, type Query } from "engine/history";
 import { useContext, useEffect, useSyncExternalStore } from "react";
 import { BackHandler, Linking } from "react-native";
 import { config } from "@/lib/spec/runtime";

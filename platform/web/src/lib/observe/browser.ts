@@ -1,7 +1,7 @@
 "use client";
 
-import { createObserver, type Signal } from "@engine/api";
-import { uuid } from "@engine/base";
+import { createObserver, type Signal } from "engine/api";
+import { uuid } from "engine/base";
 
 const every = 60_000;
 

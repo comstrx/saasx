@@ -1,4 +1,4 @@
-import { describe } from "@engine/error";
+import { describe } from "engine/error";
 
 export type Level = "debug" | "info" | "warn" | "error";
 export type Facts = Record<string, unknown>;

@@ -1,8 +1,8 @@
-import { type Localized, localizeTree, matchScreen, messageText, type Routed, type SpecText } from "@engine/spec";
 import client from "@spec/client";
 import config from "@spec/config";
 import messages from "@spec/messages";
 import schema from "@spec/schema";
+import { type Localized, localizeTree, matchScreen, messageText, type Routed, type SpecText } from "engine/spec";
 import type { Locale } from "./languages.ts";
 import type { CompiledScreen } from "./surface.ts";
 

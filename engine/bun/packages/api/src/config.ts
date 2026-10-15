@@ -1,4 +1,4 @@
-import { currency, z } from "@engine/validate";
+import { currency, z } from "engine/validate";
 import { nameShape, url } from "./wire.ts";
 
 export const connectionDefaults = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { localePath } from "@engine/translate";
+import { localePath } from "engine/translate";
 import { usePathname } from "next/navigation";
 import NavBar from "@/components/nav-bar";
 import { useSession } from "@/hooks/use-client";

@@ -1,7 +1,7 @@
 "use client";
 
-import { interpolate } from "@engine/parse";
-import { fillInput, rows } from "@engine/spec";
+import { interpolate } from "engine/parse";
+import { fillInput, rows } from "engine/spec";
 import { useEffect, useRef } from "react";
 import DataTable, { type Column } from "@/components/data-table";
 import Note from "@/components/note";

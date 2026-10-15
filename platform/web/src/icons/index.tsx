@@ -1,4 +1,4 @@
-import { iconGlyph, iconMirrored } from "@engine/world";
+import { iconGlyph, iconMirrored } from "engine/world";
 
 type Props = { name: string; label?: string | undefined; size?: "sm" | "md" | undefined };
 

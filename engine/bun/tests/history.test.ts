@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createHistory, formatHref, parseHref } from "@engine/history";
+import { createHistory, formatHref, parseHref } from "engine/history";
 
 describe("hrefs", () => {
 

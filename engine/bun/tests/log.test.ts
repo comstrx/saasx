@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createLogger, lineSink, logLine, memorySink } from "@engine/log";
+import { createLogger, lineSink, logLine, memorySink } from "engine/log";
 
 describe("log", () => {
 

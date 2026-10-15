@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { dedupe, expiring, lru, rateLimiter, remember } from "@engine/cache";
+import { dedupe, expiring, lru, rateLimiter, remember } from "engine/cache";
 
 describe("cache", () => {
 

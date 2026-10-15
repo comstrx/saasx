@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { browserConfig, createApi, requestContext } from "@engine/api";
-import { prepareSpec } from "@engine/tooling";
+import { browserConfig, createApi, requestContext } from "engine/api";
+import { prepareSpec } from "engine/tooling";
 import { endpoints } from "../src/api/features/index.ts";
 import { loadSpec, specFromEnvironment } from "../tools/core/index.ts";
 

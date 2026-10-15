@@ -1,4 +1,4 @@
-import type { ManifestInput } from "@engine/spec";
+import type { ManifestInput } from "engine/spec";
 
 export default {
     owner: "client",

@@ -1,4 +1,4 @@
-import { flagEmoji } from "@engine/world";
+import { flagEmoji } from "engine/world";
 import { Image, StyleSheet, Text } from "react-native";
 import { flagSource, world } from "@/lib/spec/world";
 

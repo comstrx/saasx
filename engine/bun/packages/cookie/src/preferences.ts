@@ -1,6 +1,6 @@
-import { isRecord } from "@engine/base";
-import { negotiate } from "@engine/translate";
-import { currency as currencyShape } from "@engine/validate";
+import { isRecord } from "engine/base";
+import { negotiate } from "engine/translate";
+import { currency as currencyShape } from "engine/validate";
 
 export type Preferences = { language?: string | undefined; currency?: string | undefined; theme?: string | undefined };
 export type PreferenceNames = { language: string; currency: string; theme?: string | undefined };

@@ -1,5 +1,5 @@
-import { menuOf } from "@engine/spec";
-import { localePath } from "@engine/translate";
+import { menuOf } from "engine/spec";
+import { localePath } from "engine/translate";
 import SideMenu, { type SideEntry } from "@/components/side-menu";
 import { requestLocale } from "@/lib/site/request";
 import type { FeatureProps } from "@/lib/spec/feature";

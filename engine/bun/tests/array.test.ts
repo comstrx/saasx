@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { chunk, groupBy, indexBy, move, partition, range, removeBy, sortBy, sumBy, uniqueBy, upsertBy, zip } from "@engine/array";
+import { chunk, groupBy, indexBy, move, partition, range, removeBy, sortBy, sumBy, uniqueBy, upsertBy, zip } from "engine/array";
 
 const rows = [
     { id: 3, name: "c", price: 3 },

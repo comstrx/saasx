@@ -1,5 +1,5 @@
-import { defineWorld } from "@engine/world";
 import flags from "@spec/flags";
+import { defineWorld } from "engine/world";
 import { supportedLocales } from "./languages.ts";
 import { countries, currency } from "./theme.ts";
 

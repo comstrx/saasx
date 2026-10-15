@@ -1,5 +1,5 @@
-import { field, rows } from "@engine/spec";
-import { formatMoney } from "@engine/translate";
+import { field, rows } from "engine/spec";
+import { formatMoney } from "engine/translate";
 import type { CatalogItem } from "@/components/catalog-card";
 import CatalogGrid from "@/components/catalog-grid";
 import Note from "@/components/note";

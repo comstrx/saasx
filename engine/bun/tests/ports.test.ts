@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { field, fillInput, portAnswer, portValue, row, rows } from "@engine/spec";
+import { field, fillInput, portAnswer, portValue, row, rows } from "engine/spec";
 
 const route = { parameters: { id: "7" }, query: { q: "tea", tags: ["a", "b"] } };
 

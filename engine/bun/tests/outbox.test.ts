@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { createOutbox } from "@engine/context";
-import { Failure } from "@engine/error";
-import { memoryStore, type Store } from "@engine/storage";
+import { createOutbox } from "engine/context";
+import { Failure } from "engine/error";
+import { memoryStore, type Store } from "engine/storage";
 
 function slow ( store: Store ): Store {
 

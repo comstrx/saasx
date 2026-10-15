@@ -1,6 +1,6 @@
-import { useAction } from "@engine/context";
-import { field, row } from "@engine/spec";
-import { failureMessages, type Messages } from "@engine/translate";
+import { useAction } from "engine/context";
+import { field, row } from "engine/spec";
+import { failureMessages, type Messages } from "engine/translate";
 import { useState } from "react";
 import AvatarCard from "@/components/avatar-card";
 import Status from "@/components/status";

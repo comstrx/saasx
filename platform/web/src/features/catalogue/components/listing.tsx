@@ -1,5 +1,5 @@
-import { field, rows } from "@engine/spec";
-import { formatMoney, localePath } from "@engine/translate";
+import { field, rows } from "engine/spec";
+import { formatMoney, localePath } from "engine/translate";
 import { portOf } from "@/api/workflow/ports";
 import type { CatalogItem } from "@/components/catalog-card";
 import CatalogGrid from "@/components/catalog-grid";

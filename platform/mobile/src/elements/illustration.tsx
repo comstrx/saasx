@@ -1,4 +1,4 @@
-import { iconGlyph } from "@engine/world";
+import { iconGlyph } from "engine/world";
 import { StyleSheet, Text, View } from "react-native";
 import { usePalette } from "@/styles/palette";
 

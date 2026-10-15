@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import process from "node:process";
-import { ruleNames } from "@engine/validate";
+import { ruleNames } from "engine/validate";
 import { inspect, layoutIssues, type Rules, readSources, type SurfaceRules } from "./architecture.ts";
 import { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
 import { type Buildable, type BuildPlan, type Compile, defineBuild } from "./build.ts";

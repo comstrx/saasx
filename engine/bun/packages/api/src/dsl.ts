@@ -1,6 +1,6 @@
-import { mapValues } from "@engine/base";
-import { templateKeys } from "@engine/parse";
-import { z } from "@engine/validate";
+import { mapValues } from "engine/base";
+import { templateKeys } from "engine/parse";
+import { z } from "engine/validate";
 import { type Resource, resourceShapes } from "./resource.ts";
 import { type Layer, type Method, merge } from "./wire.ts";
 

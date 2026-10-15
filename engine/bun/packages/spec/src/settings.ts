@@ -8,9 +8,9 @@ import {
     type Layer,
     resolveApi,
     type Seeds,
-} from "@engine/api";
-import { compact, isRecord, mapValues } from "@engine/base";
-import { patternKeys } from "@engine/parse";
+} from "engine/api";
+import { compact, isRecord, mapValues } from "engine/base";
+import { patternKeys } from "engine/parse";
 import {
     type Catalogue,
     compileBlock,

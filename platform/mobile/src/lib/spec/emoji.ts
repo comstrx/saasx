@@ -1,5 +1,5 @@
-import { defineEmoji, flagCode } from "@engine/world";
 import bundled from "@spec/emoji";
+import { defineEmoji, flagCode } from "engine/world";
 import { flagSource } from "./world.ts";
 
 export const emoji = defineEmoji();

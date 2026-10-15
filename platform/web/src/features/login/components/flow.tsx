@@ -1,9 +1,9 @@
 "use client";
 
-import { interpolate } from "@engine/parse";
-import { field, row } from "@engine/spec";
-import type { Messages } from "@engine/translate";
-import { failureMessages } from "@engine/translate";
+import { interpolate } from "engine/parse";
+import { field, row } from "engine/spec";
+import type { Messages } from "engine/translate";
+import { failureMessages } from "engine/translate";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

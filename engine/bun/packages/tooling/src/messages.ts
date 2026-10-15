@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { dictionary, type Messages, mergeMessages, messageAt, messageKeys } from "@engine/translate";
+import { dictionary, type Messages, mergeMessages, messageAt, messageKeys } from "engine/translate";
 import { failure } from "./core.ts";
 
 export type Dictionaries<L extends string = string> = Record<L, Messages>;

@@ -1,5 +1,5 @@
-import type { Store as Persistence } from "@engine/storage";
-import { typed } from "@engine/storage";
+import type { Store as Persistence } from "engine/storage";
+import { typed } from "engine/storage";
 import { createStore as createZustand, type StoreApi } from "zustand/vanilla";
 
 export type Setter<S> = ( patch: Partial<S> | (( state: S ) => Partial<S>) ) => void;

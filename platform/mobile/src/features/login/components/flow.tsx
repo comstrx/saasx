@@ -1,6 +1,6 @@
-import { interpolate } from "@engine/parse";
-import { field, row } from "@engine/spec";
-import { failureMessages, type Messages } from "@engine/translate";
+import { interpolate } from "engine/parse";
+import { field, row } from "engine/spec";
+import { failureMessages, type Messages } from "engine/translate";
 import { useState } from "react";
 import CodeForm from "@/components/code-form";
 import CredentialsForm, { type Credentials } from "@/components/credentials-form";

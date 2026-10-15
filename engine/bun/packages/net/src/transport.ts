@@ -1,5 +1,5 @@
-import { anySignal, now, sleep, timeoutSignal } from "@engine/base";
-import { Failure, isFailure, transient } from "@engine/error";
+import { anySignal, now, sleep, timeoutSignal } from "engine/base";
+import { Failure, isFailure, transient } from "engine/error";
 import { retryAfter } from "./headers.ts";
 
 export type Transport = ( url: string, init: RequestInit ) => Promise<Response>;

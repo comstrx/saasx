@@ -1,5 +1,5 @@
-import { formatBytes, parseInteger } from "@engine/parse";
-import { report, task } from "@engine/tooling";
+import { formatBytes, parseInteger } from "engine/parse";
+import { report, task } from "engine/tooling";
 
 type Asset = { url: string; bytes: number };
 

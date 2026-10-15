@@ -1,5 +1,5 @@
-import { Failure } from "@engine/error";
-import type { FileRef } from "@engine/file";
+import { Failure } from "engine/error";
+import type { FileRef } from "engine/file";
 
 export type Platform = "web" | "ios" | "android" | "unknown";
 export type Permission = "location" | "camera" | "microphone" | "notifications" | "clipboard" | "contacts" | "photos";

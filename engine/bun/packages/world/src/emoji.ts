@@ -1,5 +1,5 @@
-import { generatedPath } from "@engine/base";
-import { type Catalog, catalog } from "@engine/string";
+import { generatedPath } from "engine/base";
+import { type Catalog, catalog } from "engine/string";
 import groupRows from "../data/emoji-groups.json" with { type: "json" };
 import rows from "../data/emojis.json" with { type: "json" };
 import { type FlagPlace, flagCode, flagOf } from "./flag.ts";

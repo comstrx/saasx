@@ -1,4 +1,4 @@
-import { type Language, languageFacts } from "@engine/translate";
+import { type Language, languageFacts } from "engine/translate";
 
 export const supportedLocales = ["en", "ar"] as const;
 

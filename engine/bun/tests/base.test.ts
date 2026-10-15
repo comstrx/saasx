@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { base64, choose, compact, deepMerge, identifier, includes, kindOf, mapValues, pathGet, pathSet, safeKey, trace, uuid } from "@engine/base";
+import { base64, choose, compact, deepMerge, identifier, includes, kindOf, mapValues, pathGet, pathSet, safeKey, trace, uuid } from "engine/base";
 
 describe("object", () => {
 

@@ -1,6 +1,6 @@
-import { type ApiClient, type ApiConfig, type ApiSurface, allowed, type Catalogue, type Contract, createApi, missing, type Observer, type RequestOptions, requestContext } from "@engine/api";
-import { type CompiledPort, fillInput, granted, type Pagination, type Route } from "@engine/spec";
-import type { Store } from "@engine/storage";
+import { type ApiClient, type ApiConfig, type ApiSurface, allowed, type Catalogue, type Contract, createApi, missing, type Observer, type RequestOptions, requestContext } from "engine/api";
+import { type CompiledPort, fillInput, granted, type Pagination, type Route } from "engine/spec";
+import type { Store } from "engine/storage";
 import { useCallback, useMemo } from "react";
 import { createOutbox, type Outbox } from "./outbox.ts";
 import { forgetPorts, type Input, type PortCache, type PortLive, type Queued, useOperation, usePortResource, type Written } from "./ports.ts";
@@ -57,7 +57,7 @@ function liveOf ( doors: { realtime?: { url: string; key: string } | null | unde
     let source: Promise<PortLive> | undefined;
     const open = (): Promise<PortLive> => {
 
-        source ??= import("@engine/socket").then(( socket ) => socket.liveSource(socket.pusherRealtime(socket.createConnection({ url: socket.pusherUrl(realtime.url, realtime.key, "engine", trace), trace, observe }))));
+        source ??= import("engine/socket").then(( socket ) => socket.liveSource(socket.pusherRealtime(socket.createConnection({ url: socket.pusherUrl(realtime.url, realtime.key, "engine", trace), trace, observe }))));
 
         return source;
 

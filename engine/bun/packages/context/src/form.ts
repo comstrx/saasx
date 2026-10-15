@@ -1,7 +1,7 @@
-import { pathGet, pathSet, uuid } from "@engine/base";
-import { formErrors } from "@engine/error";
-import { failureMessages, type Messages } from "@engine/translate";
-import type { FieldFact } from "@engine/validate";
+import { pathGet, pathSet, uuid } from "engine/base";
+import { formErrors } from "engine/error";
+import { failureMessages, type Messages } from "engine/translate";
+import type { FieldFact } from "engine/validate";
 import { useState } from "react";
 import { useStore } from "zustand";
 import { createStore, type StoreApi } from "zustand/vanilla";

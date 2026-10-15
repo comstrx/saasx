@@ -1,4 +1,4 @@
-import { createHistory, type Entry } from "@engine/history";
+import { createHistory, type Entry } from "engine/history";
 import { createContext } from "react";
 import { config } from "@/lib/spec/runtime";
 

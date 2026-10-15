@@ -1,4 +1,4 @@
-import { granted } from "@engine/spec";
+import { granted } from "engine/spec";
 import TabBar from "@/elements/tab-bar";
 import { useSession } from "@/hooks/use-client";
 import { useRouter } from "@/hooks/use-router";

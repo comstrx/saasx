@@ -1,14 +1,38 @@
 {
   "name": "engine",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
+  "description": "A curated TypeScript foundation shared by every web and mobile surface: one package, one subpath per concern.",
   "packageManager": "bun@1.4.3",
   "engines": {
     "bun": ">=1.4.3"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "exports": {
+    "./api": "./packages/api/src/index.ts",
+    "./array": "./packages/array/src/index.ts",
+    "./base": "./packages/base/src/index.ts",
+    "./cache": "./packages/cache/src/index.ts",
+    "./context": "./packages/context/src/index.ts",
+    "./cookie": "./packages/cookie/src/index.ts",
+    "./device": "./packages/device/src/index.ts",
+    "./error": "./packages/error/src/index.ts",
+    "./file": "./packages/file/src/index.ts",
+    "./history": "./packages/history/src/index.ts",
+    "./log": "./packages/log/src/index.ts",
+    "./net": "./packages/net/src/index.ts",
+    "./parse": "./packages/parse/src/index.ts",
+    "./socket": "./packages/socket/src/index.ts",
+    "./spec": "./packages/spec/src/index.ts",
+    "./storage": "./packages/storage/src/index.ts",
+    "./string": "./packages/string/src/index.ts",
+    "./tooling": "./packages/tooling/src/index.ts",
+    "./translate": "./packages/translate/src/index.ts",
+    "./validate": "./packages/validate/src/index.ts",
+    "./world": "./packages/world/src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "scripts": {
     "check": "tsc -p .",
     "lint": "biome ci .",
@@ -16,29 +40,18 @@
     "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done",
     "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
   },
+  "dependencies": {
+    "lucide-static": "1.52.0",
+    "mitata": "1.0.34",
+    "subset-font": "2.9.0",
+    "zod": "4.6.5",
+    "zustand": "5.0.15"
+  },
+  "peerDependencies": {
+    "react": ">=19.2.3"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@engine/api": "workspace:*",
-    "@engine/array": "workspace:*",
-    "@engine/base": "workspace:*",
-    "@engine/cache": "workspace:*",
-    "@engine/context": "workspace:*",
-    "@engine/cookie": "workspace:*",
-    "@engine/device": "workspace:*",
-    "@engine/error": "workspace:*",
-    "@engine/file": "workspace:*",
-    "@engine/history": "workspace:*",
-    "@engine/log": "workspace:*",
-    "@engine/net": "workspace:*",
-    "@engine/parse": "workspace:*",
-    "@engine/socket": "workspace:*",
-    "@engine/spec": "workspace:*",
-    "@engine/storage": "workspace:*",
-    "@engine/string": "workspace:*",
-    "@engine/tooling": "workspace:*",
-    "@engine/translate": "workspace:*",
-    "@engine/validate": "workspace:*",
-    "@engine/world": "workspace:*",
     "@types/bun": "1.4.2",
     "@types/react": "19.3.0",
     "typescript": "7.0.2"

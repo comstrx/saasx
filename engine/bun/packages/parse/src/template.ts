@@ -1,4 +1,4 @@
-import { pathGet } from "@engine/base";
+import { pathGet } from "engine/base";
 
 const placeholder = /\{([a-zA-Z0-9_.]+)\}/g;
 

@@ -1,4 +1,4 @@
-import type { Store } from "@engine/storage";
+import type { Store } from "engine/storage";
 
 export type SameSite = "lax" | "strict" | "none";
 export type CookieOptions = {

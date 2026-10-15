@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { createForm } from "@engine/context";
-import type { FieldFact } from "@engine/validate";
+import { createForm } from "engine/context";
+import type { FieldFact } from "engine/validate";
 import { renderToString } from "react-dom/server";
 import SchemaForm from "../src/components/schema-form";
 

@@ -1,7 +1,7 @@
-import type { ApiSurface } from "@engine/api";
-import { isRecord, mapValues, pathGet } from "@engine/base";
-import { matchPattern } from "@engine/parse";
-import { type Messages, messageAt, messageTree } from "@engine/translate";
+import type { ApiSurface } from "engine/api";
+import { isRecord, mapValues, pathGet } from "engine/base";
+import { matchPattern } from "engine/parse";
+import { type Messages, messageAt, messageTree } from "engine/translate";
 import { isSpecKey, type Localized, type SpecText } from "./fields.ts";
 import type { PortSource } from "./ports.ts";
 import type { CompiledPort } from "./shapes.ts";

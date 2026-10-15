@@ -1,4 +1,4 @@
-import { defineClient } from "@engine/context";
+import { defineClient } from "engine/context";
 import { createElement, type ReactNode } from "react";
 import { endpoints } from "@/api/features";
 import { useLocale } from "@/hooks/use-locale";

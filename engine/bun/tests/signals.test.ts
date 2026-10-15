@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { applyPatch, createSignals, forgetPorts, onTouched, portKey, portMemory, touched } from "@engine/context";
-import { memoryStore, typed } from "@engine/storage";
+import { applyPatch, createSignals, forgetPorts, onTouched, portKey, portMemory, touched } from "engine/context";
+import { memoryStore, typed } from "engine/storage";
 
 describe("signals and port memory", () => {
 

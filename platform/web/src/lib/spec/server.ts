@@ -1,9 +1,9 @@
 import "server-only";
 
-import { type Localized, localizeTree, matchScreen, messageText, type Routed, type SpecText } from "@engine/spec";
 import config from "@spec/config";
 import messages from "@spec/messages";
 import schema from "@spec/schema";
+import { type Localized, localizeTree, matchScreen, messageText, type Routed, type SpecText } from "engine/spec";
 import type { Locale } from "@/lib/spec/languages";
 import type { CompiledScreen } from "@/lib/spec/surface";
 

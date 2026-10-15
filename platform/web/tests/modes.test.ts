@@ -1,42 +1,61 @@
 import { describe, expect, test } from "bun:test";
-import { catalogueFacts } from "@engine/spec";
-import { featureFacts } from "@engine/tooling";
+import { catalogueFacts } from "engine/spec";
+import { featureFacts } from "engine/tooling";
 import { endpoints } from "../src/api/features/index.ts";
-import { type SiteConfig, validateSpec } from "../src/lib/spec/surface.ts";
-import { composeMessages, loadSpec, root } from "../tools/core/index.ts";
+import { block, feature, param, read, type SiteConfig, screen, t, validateSpec } from "../src/lib/spec/surface.ts";
+import { composeMessages, installedSpecs, root } from "../tools/core/index.ts";
 
-const [client, admin] = await Promise.all([loadSpec("client"), loadSpec("admin")]);
+const [identity = ""] = installedSpecs();
+const folder = `${root}/specs/${identity}`;
+const base = ((await import(`${folder}/config/index.ts`)) as { default: SiteConfig }).default;
+const messages = composeMessages(`${folder}/brand/messages`);
 const facts = await featureFacts(`${root}/src/features`);
 const catalogue = catalogueFacts(endpoints);
-const messagesOf = ( folder: string ) => composeMessages(`${folder}/brand/messages`);
-const sources = { client: await import("../specs/client/config/index.ts"), admin: await import("../specs/admin/config/index.ts") };
-const schemas = { client: await import("../specs/client/schema/index.ts"), admin: await import("../specs/admin/schema/index.ts") };
+const backend = {
+    urls: { production: "http://127.0.0.1:8000", local: "http://127.0.0.1:8000", browser: "http://127.0.0.1:8000" },
+    options: { prefix: "v1", tenant: "tenant.example.test", proxies: 0, insecure: true },
+    realtime: null,
+};
+const home = screen({
+    contents: { name: "home", path: "/", title: t("nav.home"), description: t("home.description") },
+    blocks: [block({}, [feature("catalogue", { heading: true, options: { title: t("catalogue.title"), empty: t("catalogue.empty"), from: t("catalogue.from"), columns: 3 }, ports: { items: read("catalogs.list", { limit: 12 }) } })])],
+});
+const catalog = screen({
+    contents: { name: "catalog", path: "/catalog/:id", title: t("catalog.title"), description: t("catalog.description"), entity: "catalog" },
+    blocks: [block({}, [feature("detail", { heading: true, options: { from: t("catalogue.from"), missing: t("state.missing"), back: t("catalog.back") }, ports: { item: read("catalogs.view", { id: param("id") }) } })])],
+});
+const quiet = screen({
+    contents: { name: "home", path: "/", title: t("nav.home"), description: t("home.description") },
+    blocks: [block({}, [feature("nav", { heading: true })])],
+});
 
 type Variant = Partial<SiteConfig>;
 
-function compile ( name: "client" | "admin", variant: Variant ) {
+function compile ( variant: Variant, screens: readonly unknown[] = [home, catalog] ) {
 
-    const base = sources[name].default as SiteConfig;
-    const folder = name === "client" ? client.folder : admin.folder;
-    const config = { ...base, ...variant, contents: { ...base.contents, ...(variant.contents ?? {}) } };
+    const config = { ...base, settings: { ...base.settings, delivery: "server", screen: { render: "server" } }, contracts: backend, ...variant, contents: { ...base.contents, ...(variant.contents ?? {}) } };
 
-    return validateSpec(name, config, schemas[name].default, messagesOf(folder), facts, catalogue);
+    return validateSpec(identity, config, { screens }, messages, facts, catalogue);
+
+}
+function crawlers ( allow: string[], sitemap: string[] ): Variant {
+
+    return { contents: { ...base.contents, seo: { title: null, description: null, keywords: [], image: null, twitter: null, robots: { allow, disallow: allow.length ? [] : ["/"] }, sitemap, verification: {} } } };
 
 }
 describe("one surface, many modes, by values alone", () => {
 
-    test("seo: the client site crawls, lists its screens and enumerates its entities", () => {
+    test("seo: an open robots list and a sitemap list the named screens for crawlers", () => {
 
-        const { config, schema } = compile("client", {});
-        const listed = schema.screens.filter(( screen ) => screen.listed).map(( screen ) => screen.name);
+        const { config, schema } = compile(crawlers(["/"], ["home", "catalog"]));
 
         expect(config.content.seo.robots.allow).toEqual(["/"]);
-        expect(listed).toEqual(["home", "catalog"]);
+        expect(schema.screens.filter(( screen ) => screen.listed).map(( screen ) => screen.name)).toEqual(["home", "catalog"]);
 
     });
-    test("non-seo: empty robots and sitemap lists turn the admin panel dark to crawlers without a flag", () => {
+    test("non-seo: empty robots and sitemap lists turn the surface dark to crawlers without a flag", () => {
 
-        const { config, schema } = compile("admin", {});
+        const { config, schema } = compile(crawlers([], []));
 
         expect(config.content.seo.robots.allow).toEqual([]);
         expect(config.content.seo.sitemap).toEqual([]);
@@ -45,7 +64,7 @@ describe("one surface, many modes, by values alone", () => {
     });
     test("with backend: the contracts give every connection an address and the catalogue its operations", () => {
 
-        const { config, schema } = compile("client", {});
+        const { config, schema } = compile({});
 
         expect(config.api?.connections.primary?.baseUrl).toBe("http://127.0.0.1:8000/v1");
         expect(schema.operations).toEqual(expect.arrayContaining(["catalogs.list", "catalogs.view"]));
@@ -53,39 +72,24 @@ describe("one surface, many modes, by values alone", () => {
     });
     test("without backend: contracts null refuses every read until the schema stops reading", () => {
 
-        expect(() => compile("client", { contracts: null })).toThrow("needs a backend");
-
-        const quiet = { screens: [{ contents: { name: "home", path: "/", title: { key: "nav.home" }, description: { key: "home.description" } }, blocks: [{ options: {}, features: [{ name: "nav", heading: true }], blocks: [] }] }] };
-        const base = sources.client.default as SiteConfig;
-        const { config } = validateSpec("client", { ...base, contracts: null }, quiet, messagesOf(client.folder), facts, catalogue);
-
-        expect(config.api).toBeNull();
+        expect(() => compile({ contracts: null })).toThrow("needs a backend");
+        expect(compile({ contracts: null }, [quiet]).config.api).toBeNull();
 
     });
     test("single tenant: a declared tenant is pinned into the request context", () => {
 
-        const { config } = compile("client", {});
-
-        expect(config.api?.context.tenant).toBe("www.zainlak.com");
+        expect(compile({}).config.api?.context.tenant).toBe("tenant.example.test");
 
     });
     test("a cleartext production address compiles only when the contracts say insecure", () => {
 
-        const base = sources.client.default as SiteConfig;
-        const contracts = base.contracts && typeof base.contracts === "object" ? base.contracts : null;
-
-        expect(contracts?.urls.production).toMatch(/^http:/);
-        expect(() => compile("client", { contracts: contracts ? { ...contracts, options: { ...contracts.options, insecure: false } } : null })).toThrow("insecure");
-        expect(() => compile("client", { contracts })).not.toThrow();
+        expect(() => compile({ contracts: { ...backend, options: { ...backend.options, insecure: false } } })).toThrow("insecure");
+        expect(() => compile({})).not.toThrow();
 
     });
     test("multi tenant: no declared tenant lets the request host name the tenant", () => {
 
-        const base = sources.client.default as SiteConfig;
-        const contracts = base.contracts && typeof base.contracts === "object" ? { ...base.contracts, options: { ...base.contracts.options, tenant: null } } : null;
-        const { config } = compile("client", { contracts });
-
-        expect(config.api?.context.tenant).toBeNull();
+        expect(compile({ contracts: { ...backend, options: { ...backend.options, tenant: null } } }).config.api?.context.tenant).toBeNull();
 
     });
 

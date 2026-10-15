@@ -1,9 +1,9 @@
-const { existsSync, readFileSync, readdirSync } = require("node:fs");
-const { resolve } = require("node:path");
+const { existsSync, readFileSync, realpathSync } = require("node:fs");
+const { dirname, resolve, sep } = require("node:path");
 const { getDefaultConfig } = require("expo/metro-config");
 
 const root = __dirname;
-const engine = resolve(root, "../../engine/bun");
+const engine = dirname(realpathSync(require.resolve("engine/package.json", { paths: [root] })));
 const mode = process.env.NODE_ENV === "production" ? "production" : "development";
 const metaPath = resolve(root, "node_modules/.cache/spec", mode, "meta.json");
 
@@ -11,11 +11,8 @@ if ( !existsSync(metaPath) ) throw new Error(`No compiled spec for ${mode}: run 
 
 const meta = JSON.parse(readFileSync(metaPath, "utf8"));
 const declared = Object.keys(JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")).dependencies ?? {});
-const host = ( name ) => /^(react|react-dom|react-native|react-native-.*|expo|expo-.*|@expo\/.*|@react-native\/.*|@react-native-.*)$/.test(name);
-const aliases = {
-    ...Object.fromEntries(Object.entries(meta.aliases).map(( [name, path] ) => [name, resolve(root, path)])),
-    ...Object.fromEntries(readdirSync(resolve(engine, "packages")).map(( name ) => [`@engine/${name}`, resolve(engine, "packages", name, "src/index.ts")])),
-};
+const host = ( name ) => /^(engine|react|react-dom|react-native|react-native-.*|expo|expo-.*|@expo\/.*|@react-native\/.*|@react-native-.*)$/.test(name);
+const aliases = Object.fromEntries(Object.entries(meta.aliases).map(( [name, path] ) => [name, resolve(root, path)]));
 const config = getDefaultConfig(root);
 
 config.watchFolders = [...(config.watchFolders ?? []), engine];
@@ -30,7 +27,7 @@ config.resolver.resolveRequest = ( context, moduleName, platform ) => {
     if ( context.originModulePath.includes("/zod/") && unreached.some(( file ) => file.test(resolve(context.originModulePath, "..", moduleName))) ) return { type: "empty" };
 
     const bare = !moduleName.startsWith(".") && !moduleName.startsWith("/");
-    const fromEngine = context.originModulePath.startsWith(engine);
+    const fromEngine = context.originModulePath.startsWith(`${engine}${sep}`);
 
     if ( bare && fromEngine ) {
         const name = moduleName.startsWith("@") ? moduleName.split("/").slice(0, 2).join("/") : moduleName.split("/")[0];

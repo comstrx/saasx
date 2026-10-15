@@ -1,5 +1,5 @@
-import { bench, do_not_optimize, run } from "@engine/tooling";
-import { countries, cssVariables, currencies, defineTokens, defineWorld, emojis, keys } from "@engine/world";
+import { bench, do_not_optimize, run } from "engine/tooling";
+import { countries, cssVariables, currencies, defineTokens, defineWorld, emojis, keys } from "engine/world";
 
 const mine = defineWorld({ countries: ["EG", "SA", "AE"], currencies: ["EGP", "SAR", "USD"] });
 const tokens = defineTokens({ colors: { light: { ink: "#111", body: "#fff" }, dark: { ink: "#eee", body: "#000" } }, space: { 0: 0, 1: 4, 2: 8, 4: 16 }, radius: { sm: 6, md: 12 }, type: { md: { size: 16, line: 24, weight: 400 } } });

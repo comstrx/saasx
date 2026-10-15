@@ -1,4 +1,4 @@
-import { type Catalog, catalog } from "@engine/string";
+import { type Catalog, catalog } from "engine/string";
 import rows from "../data/countries.json" with { type: "json" };
 import regionRows from "../data/regions.json" with { type: "json" };
 

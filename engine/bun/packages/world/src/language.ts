@@ -1,4 +1,4 @@
-import { type Catalog, catalog } from "@engine/string";
+import { type Catalog, catalog } from "engine/string";
 import rows from "../data/languages.json" with { type: "json" };
 import { chosen } from "./country.ts";
 

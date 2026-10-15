@@ -29,8 +29,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@engine/*": ["../../engine/bun/packages/*/src/index.ts"]
+      "@/*": ["./src/*"]
     },
     "allowJs": true,
     "esModuleInterop": true

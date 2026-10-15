@@ -1,8 +1,8 @@
-import type { ApiSurface, Catalogue, RequestOptions } from "@engine/api";
-import { uuid } from "@engine/base";
-import { transient } from "@engine/error";
-import { type CompiledPort, fillInput, type Route } from "@engine/spec";
-import type { Messages } from "@engine/translate";
+import type { ApiSurface, Catalogue, RequestOptions } from "engine/api";
+import { uuid } from "engine/base";
+import { transient } from "engine/error";
+import { type CompiledPort, fillInput, type Route } from "engine/spec";
+import type { Messages } from "engine/translate";
 import { useRef } from "react";
 import type { Client } from "./client.ts";
 import { type FormState, useForm as useEngineForm } from "./form.ts";

@@ -1,9 +1,9 @@
 "use client";
 
-import { isFailure } from "@engine/error";
-import { interpolate } from "@engine/parse";
-import { field, row } from "@engine/spec";
-import { failureMessages, formatDate, formatMoney, localePath, type Messages } from "@engine/translate";
+import { isFailure } from "engine/error";
+import { interpolate } from "engine/parse";
+import { field, row } from "engine/spec";
+import { failureMessages, formatDate, formatMoney, localePath, type Messages } from "engine/translate";
 import DetailActions, { type DetailAction } from "@/components/detail-actions";
 import DetailCard from "@/components/detail-card";
 import Note from "@/components/note";

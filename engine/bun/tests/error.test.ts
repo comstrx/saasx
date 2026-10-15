@@ -8,7 +8,7 @@ import {
     reference,
     settled,
     transient,
-} from "@engine/error";
+} from "engine/error";
 
 describe("failure", () => {
 

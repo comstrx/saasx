@@ -1,5 +1,5 @@
-import { isRecord, pathGet, safeKey } from "@engine/base";
-import { interpolate, type Scope } from "@engine/parse";
+import { isRecord, pathGet, safeKey } from "engine/base";
+import { interpolate, type Scope } from "engine/parse";
 
 export type Messages = { [key: string]: string | Messages };
 export type Dictionaries = Readonly<Record<string, Messages>>;

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { Failure } from "@engine/error";
+import { Failure } from "engine/error";
 import { renderToString } from "react-dom/server";
 import DataTable from "../src/components/data-table";
 import Status from "../src/components/status";

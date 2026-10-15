@@ -1,4 +1,4 @@
-import { key, path, text, word, z } from "@engine/validate";
+import { key, path, text, word, z } from "engine/validate";
 
 export type SpecText = z.infer<typeof specText>;
 export type Localized<T> = T extends string | number | boolean | null | undefined

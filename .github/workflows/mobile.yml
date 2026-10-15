@@ -48,7 +48,7 @@ jobs:
           node-version: 26
 
       - name: Install the engine
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile && bun link
         working-directory: engine/bun
 
       - name: Install

@@ -1,7 +1,7 @@
-import { useAction } from "@engine/context";
-import { isFailure } from "@engine/error";
-import { interpolate } from "@engine/parse";
-import { failureMessages, formatNumber, type Messages } from "@engine/translate";
+import { useAction } from "engine/context";
+import { isFailure } from "engine/error";
+import { interpolate } from "engine/parse";
+import { failureMessages, formatNumber, type Messages } from "engine/translate";
 import { useState } from "react";
 import ActionCard, { type Note } from "@/components/action-card";
 import { useWrite } from "@/hooks/use-client";

@@ -1,4 +1,4 @@
-import { menuOf } from "@engine/spec";
+import { menuOf } from "engine/spec";
 import TabMenu, { type TabEntry } from "@/components/tab-menu";
 import { useLocale } from "@/hooks/use-locale";
 import type { FeatureProps } from "@/lib/spec/feature";

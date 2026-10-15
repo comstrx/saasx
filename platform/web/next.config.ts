@@ -1,12 +1,13 @@
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, resolve, sep } from "node:path";
 import type { NextConfig } from "next";
 import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
 
 type Meta = { identity: string; delivery: "server" | "static"; secure: boolean; insecure: boolean; media: string[]; aliases: Record<string, string> };
 
 const root = import.meta.dirname;
-const engine = Object.fromEntries(["base", "api", "spec"].map(( name ) => [`@engine/${name}`, `../../engine/bun/packages/${name}/src/index.ts`]));
+const engine = dirname(realpathSync(createRequire(import.meta.url).resolve("engine/package.json")));
 const headers = [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "X-Frame-Options", value: "DENY" },
@@ -17,6 +18,13 @@ const headers = [
 const transport = { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" };
 const lasting = [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" }];
 
+function shared ( a: string, b: string ): string {
+    const left = a.split(sep);
+    const right = b.split(sep);
+    const length = left.findIndex(( part, index ) => part !== right[index]);
+
+    return left.slice(0, length === -1 ? left.length : length).join(sep) || sep;
+}
 function compiled ( mode: "development" | "production" ): Meta {
     const path = resolve(root, "node_modules/.cache/spec", mode, "meta.json");
 
@@ -27,6 +35,7 @@ function compiled ( mode: "development" | "production" ): Meta {
 export default function nextConfig ( phase: string ): NextConfig {
     const development = phase === PHASE_DEVELOPMENT_SERVER;
     const spec = compiled(development ? "development" : "production");
+    const workspace = shared(root, engine);
     const devOrigins = (process.env.NEXT_DEV_ORIGINS ?? "").split(/[\s,]+/).filter(Boolean);
 
     return {
@@ -47,8 +56,9 @@ export default function nextConfig ( phase: string ): NextConfig {
             minimumCacheTTL: 2592000,
         },
         env: { NEXT_PUBLIC_SPEC: spec.identity },
-        outputFileTracingRoot: resolve(root, "../.."),
-        turbopack: { root: resolve(root, "../.."), resolveAlias: { ...spec.aliases, ...engine } },
+        transpilePackages: ["engine"],
+        outputFileTracingRoot: workspace,
+        turbopack: { root: workspace, resolveAlias: spec.aliases },
         ...(development && devOrigins.length ? { allowedDevOrigins: devOrigins } : {}),
         headers: async () => [
             { source: "/(.*)", headers: spec.secure ? [...headers, transport] : headers },

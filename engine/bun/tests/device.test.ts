@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createDevice, type Host, webAdapter } from "@engine/device";
+import { createDevice, type Host, webAdapter } from "engine/device";
 
 function browser (): { host: Host; fire: ( type: string ) => void; flip: ( query: string, matches: boolean ) => void } {
 

@@ -1,5 +1,5 @@
-import { bind, defineStore } from "@engine/context";
-import { negotiate } from "@engine/translate";
+import { bind, defineStore } from "engine/context";
+import { negotiate } from "engine/translate";
 import { device } from "@/lib/providers/device";
 import { store } from "@/lib/providers/storage";
 import { routing, storage } from "@/lib/spec/config";

@@ -1,6 +1,6 @@
-import { trace } from "@engine/base";
-import { contentSecurityPolicy, nonce as token } from "@engine/net";
-import { preferredPath, prefixed, splitLocale } from "@engine/translate";
+import { trace } from "engine/base";
+import { contentSecurityPolicy, nonce as token } from "engine/net";
+import { preferredPath, prefixed, splitLocale } from "engine/translate";
 import { type NextRequest, NextResponse } from "next/server";
 import { cookieOptions, detectPreferences, preferenceCookies, readPreferences } from "@/lib/site/preferences";
 import { routing } from "@/lib/spec/config";

@@ -1,10 +1,10 @@
 "use client";
 
-import type { FormState } from "@engine/context";
-import { interpolate } from "@engine/parse";
-import { row, rows } from "@engine/spec";
-import type { Messages } from "@engine/translate";
-import { localePath } from "@engine/translate";
+import type { FormState } from "engine/context";
+import { interpolate } from "engine/parse";
+import { row, rows } from "engine/spec";
+import type { Messages } from "engine/translate";
+import { localePath } from "engine/translate";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";

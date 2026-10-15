@@ -1,4 +1,4 @@
-import { Failure } from "@engine/error";
+import { Failure } from "engine/error";
 
 export type Store = {
     get: ( key: string ) => Promise<string | null> | string | null;

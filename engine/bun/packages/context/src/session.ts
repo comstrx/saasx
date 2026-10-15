@@ -1,5 +1,5 @@
-import type { Store } from "@engine/storage";
-import { z } from "@engine/validate";
+import type { Store } from "engine/storage";
+import { z } from "engine/validate";
 import { type Defined, defineStore } from "./store.ts";
 
 const userShape = z.looseObject({ id: z.union([z.number(), z.string()]), permissions: z.array(z.string()) });

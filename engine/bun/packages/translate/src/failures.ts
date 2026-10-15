@@ -1,5 +1,5 @@
-import { isFailure } from "@engine/error";
-import { interpolate } from "@engine/parse";
+import { isFailure } from "engine/error";
+import { interpolate } from "engine/parse";
 import { type Messages, messageAt } from "./messages.ts";
 
 export function failureMessages ( error: unknown, dictionary: Messages, fallback: string ): Record<string, string> {

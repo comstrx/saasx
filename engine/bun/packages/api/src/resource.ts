@@ -1,4 +1,4 @@
-import { flag, optionalText as text, z } from "@engine/validate";
+import { flag, optionalText as text, z } from "engine/validate";
 
 export const resourceShapes = {
     content: z.object({

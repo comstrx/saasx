@@ -41,7 +41,7 @@ declare module "@spec/mount" {
     export default views;
 }
 declare module "@spec/messages" {
-    import type { Messages } from "@engine/translate";
+    import type { Messages } from "engine/translate";
     import type { Locale } from "@/lib/spec/languages";
 
     const dictionaries: Record<Locale, Messages>;
@@ -54,7 +54,7 @@ declare module "@spec/well-known" {
     export default files;
 }
 declare module "@spec/browser" {
-    import type { BrowserConfig } from "@engine/api";
+    import type { BrowserConfig } from "engine/api";
     import type { CompiledConfig } from "@/lib/spec/surface";
 
     const browser: BrowserConfig & { realtime: CompiledConfig["realtime"] };

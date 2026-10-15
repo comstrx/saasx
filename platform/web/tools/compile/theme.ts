@@ -1,5 +1,5 @@
-import { publishedUrls } from "@engine/tooling";
-import { cssVariables, defineMotion, defineTokens, fontFace, fontFaces, fontOf, fontStack, languages, fonts as worldFonts } from "@engine/world";
+import { publishedUrls } from "engine/tooling";
+import { cssVariables, defineMotion, defineTokens, fontFace, fontFaces, fontOf, fontStack, languages, fonts as worldFonts } from "engine/world";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
 import { motion as presets, radius, space, type } from "../../src/lib/spec/theme.ts";
 

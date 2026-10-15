@@ -1,6 +1,6 @@
 "use client";
 
-import type { CompiledPort } from "@engine/spec";
+import type { CompiledPort } from "engine/spec";
 import type { ReactNode } from "react";
 import { usePermission } from "@/hooks/use-client";
 

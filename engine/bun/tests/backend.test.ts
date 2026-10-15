@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { backendOf, transportIssues } from "@engine/spec";
+import { backendOf, transportIssues } from "engine/spec";
 
 describe("backend plan", () => {
 

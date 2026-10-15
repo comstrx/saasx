@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { createForm } from "@engine/context";
-import { Failure } from "@engine/error";
-import type { FieldFact } from "@engine/validate";
+import { createForm } from "engine/context";
+import { Failure } from "engine/error";
+import type { FieldFact } from "engine/validate";
 
 const fields: FieldFact[] = [
     { name: "name", kind: "text", required: true, nullable: false, min: 2 },

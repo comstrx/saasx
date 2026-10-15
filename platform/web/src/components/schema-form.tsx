@@ -1,9 +1,9 @@
 "use client";
 
-import { pathGet } from "@engine/base";
-import type { FormState, FormValue } from "@engine/context";
-import { languageName } from "@engine/translate";
-import type { FieldFact } from "@engine/validate";
+import { pathGet } from "engine/base";
+import type { FormState, FormValue } from "engine/context";
+import { languageName } from "engine/translate";
+import type { FieldFact } from "engine/validate";
 import { type ReactNode, useId } from "react";
 import Button from "@/elements/button";
 import Checkbox from "@/elements/checkbox";

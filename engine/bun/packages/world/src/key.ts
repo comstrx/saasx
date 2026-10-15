@@ -1,4 +1,4 @@
-import { catalog, digits } from "@engine/string";
+import { catalog, digits } from "engine/string";
 import { type Country, dialings, everyCountry } from "./country.ts";
 
 export type Key = { code: string; key: string; areas: readonly string[]; primary: boolean; name: Country["name"] };

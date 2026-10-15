@@ -1,7 +1,7 @@
 import "server-only";
 
-import { rateLimiter } from "@engine/cache";
-import { forwardedFor, sameOrigin } from "@engine/net";
+import { rateLimiter } from "engine/cache";
+import { forwardedFor, sameOrigin } from "engine/net";
 import { config } from "@/lib/spec/server";
 
 const proxies = config.api?.context.proxies ?? 0;

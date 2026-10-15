@@ -6,7 +6,7 @@ declare module "@spec/config" {
     export default config;
 }
 declare module "@spec/client" {
-    import type { BrowserConfig } from "@engine/api";
+    import type { BrowserConfig } from "engine/api";
 
     const client: BrowserConfig | null;
 
@@ -34,7 +34,7 @@ declare module "@spec/registry" {
     export default registry;
 }
 declare module "@spec/messages" {
-    import type { Messages } from "@engine/translate";
+    import type { Messages } from "engine/translate";
     import type { Locale } from "@/lib/spec/languages";
 
     const dictionaries: Record<Locale, Messages>;

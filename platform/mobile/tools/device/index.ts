@@ -1,6 +1,6 @@
-import { parseInteger } from "@engine/parse";
-import { report, task } from "@engine/tooling";
 import { $ } from "bun";
+import { parseInteger } from "engine/parse";
+import { report, task } from "engine/tooling";
 
 const app = process.env.APP_ID ?? "com.zainlak.app";
 const activity = process.env.APP_ACTIVITY ?? ".MainActivity";

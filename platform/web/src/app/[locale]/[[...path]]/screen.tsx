@@ -1,6 +1,6 @@
 import "server-only";
 
-import { shellFeature } from "@engine/spec";
+import { shellFeature } from "engine/spec";
 import type { ReactNode } from "react";
 import Shell from "@/elements/shell";
 import { SignalsProvider } from "@/hooks/use-client";

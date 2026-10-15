@@ -1,7 +1,7 @@
-import type { ApiInput, ContractOverrides, Layer } from "@engine/api";
-import { compact } from "@engine/base";
-import type { Messages } from "@engine/translate";
-import type { z } from "@engine/validate";
+import type { ApiInput, ContractOverrides, Layer } from "engine/api";
+import { compact } from "engine/base";
+import type { Messages } from "engine/translate";
+import type { z } from "engine/validate";
 import type { Catalogue, Features } from "./compile.ts";
 import { translationIssues } from "./facts.ts";
 import { stateIssues } from "./options.ts";

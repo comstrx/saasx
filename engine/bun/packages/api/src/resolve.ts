@@ -1,5 +1,5 @@
-import { compact, mapValues } from "@engine/base";
-import { z } from "@engine/validate";
+import { compact, mapValues } from "engine/base";
+import { z } from "engine/validate";
 import { type ApiConfig, type ApiInput, apiInputShape, type Connection, connectionDefaults } from "./config.ts";
 import type { Catalogue } from "./dsl.ts";
 import { resourceShapes } from "./resource.ts";

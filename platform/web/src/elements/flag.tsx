@@ -1,4 +1,4 @@
-import { flagEmoji, flagOf } from "@engine/world";
+import { flagEmoji, flagOf } from "engine/world";
 import { world } from "@/lib/spec/world";
 
 type Props = { code: string; size?: "sm" | "md" | undefined };

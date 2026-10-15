@@ -1,4 +1,4 @@
-import { formatHref } from "@engine/history";
+import { formatHref } from "engine/history";
 import { useState } from "react";
 import Panes from "@/elements/panes";
 import { type Entry, EntryContext } from "@/stores/navigation";

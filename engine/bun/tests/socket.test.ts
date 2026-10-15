@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createConnection, liveSource, pusherRealtime, pusherUrl } from "@engine/socket";
+import { createConnection, liveSource, pusherRealtime, pusherUrl } from "engine/socket";
 
 type Served = { send: ( frame: unknown ) => void; drop: () => void; received: string[] };
 

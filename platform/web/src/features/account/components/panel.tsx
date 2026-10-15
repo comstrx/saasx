@@ -1,7 +1,7 @@
 "use client";
 
-import { interpolate } from "@engine/parse";
-import { field, row } from "@engine/spec";
+import { interpolate } from "engine/parse";
+import { field, row } from "engine/spec";
 import AccountCard from "@/components/account-card";
 import Status from "@/components/status";
 import { usePort, useSession, useWrite } from "@/hooks/use-client";

@@ -1,4 +1,4 @@
-import { isFailure } from "@engine/error";
+import { isFailure } from "engine/error";
 import Spinner from "@/elements/spinner";
 import SceneNote from "./scene";
 

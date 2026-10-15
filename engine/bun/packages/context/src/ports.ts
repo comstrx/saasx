@@ -1,7 +1,7 @@
-import type { ApiResult, ApiSurface, RequestOptions } from "@engine/api";
-import { removeBy, upsertBy } from "@engine/array";
-import { isRecord, pathGet, uuid } from "@engine/base";
-import { transient } from "@engine/error";
+import type { ApiResult, ApiSurface, RequestOptions } from "engine/api";
+import { removeBy, upsertBy } from "engine/array";
+import { isRecord, pathGet, uuid } from "engine/base";
+import { transient } from "engine/error";
 import {
     type CompiledPort,
     fillInput,
@@ -13,9 +13,9 @@ import {
     type Route,
     row,
     rows,
-} from "@engine/spec";
-import type { Store } from "@engine/storage";
-import { typed } from "@engine/storage";
+} from "engine/spec";
+import type { Store } from "engine/storage";
+import { typed } from "engine/storage";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Outbox } from "./outbox.ts";
 import { type Resource, type Runner, useAction, useResource } from "./react.ts";

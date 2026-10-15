@@ -1,6 +1,6 @@
-import { sleep } from "@engine/base";
-import { Failure } from "@engine/error";
-import type { Logger } from "@engine/log";
+import { sleep } from "engine/base";
+import { Failure } from "engine/error";
+import type { Logger } from "engine/log";
 
 export type Status = "idle" | "connecting" | "open" | "closed" | "failed";
 export type Listener = ( message: unknown ) => void;

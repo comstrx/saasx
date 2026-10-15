@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { entityRoute, entityShape, screenShapes } from "@engine/spec";
-import { z } from "@engine/validate";
+import { entityRoute, entityShape, screenShapes } from "engine/spec";
+import { z } from "engine/validate";
 
 const entities = { product: { parameter: "productId" } };
 const options = z.strictObject({ title: z.boolean() });

@@ -1,5 +1,5 @@
-import { readJson } from "@engine/net";
-import { z } from "@engine/validate";
+import { readJson } from "engine/net";
+import { z } from "engine/validate";
 import { logger } from "@/lib/observe/server";
 import { guardRequest } from "@/lib/site/guard";
 

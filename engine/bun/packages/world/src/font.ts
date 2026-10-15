@@ -1,4 +1,4 @@
-import { generatedPath } from "@engine/base";
+import { generatedPath } from "engine/base";
 import rows from "../data/fonts.json" with { type: "json" };
 
 export type FontFile = { file: string; range: string };

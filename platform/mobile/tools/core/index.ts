@@ -1,5 +1,5 @@
-import { catalogueFacts } from "@engine/spec";
-import { createTools, type Loaded, task } from "@engine/tooling";
+import { catalogueFacts } from "engine/spec";
+import { createTools, type Loaded, task } from "engine/tooling";
 import { reasons } from "../../src/api/core/index.ts";
 import { endpoints } from "../../src/api/features/index.ts";
 import { type Locale, supportedLocales } from "../../src/lib/spec/languages.ts";
@@ -21,7 +21,7 @@ export const tools = createTools<Compiled, Locale>({
         { path: "audios", brand: "audios" },
     ],
     architecture: {
-        foundation: /^(react(?:\/|$)|expo(?:-[a-z-]+)?(?:\/|$)|@expo\/|@engine\/)/,
+        foundation: /^(react(?:\/|$)|expo(?:-[a-z-]+)?(?:\/|$)|@expo\/|engine\/)/,
         native: /^react-native(?:\/|$)/,
         free: ["elements", "icons", "hooks", "styles"],
         html: false,

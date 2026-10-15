@@ -1,6 +1,6 @@
-import { isRecord } from "@engine/base";
-import { slugify } from "@engine/string";
-import type { FieldFact } from "@engine/validate";
+import { isRecord } from "engine/base";
+import { slugify } from "engine/string";
+import type { FieldFact } from "engine/validate";
 import { compilePorts, consumesSignal, emptyManifest } from "./binding.ts";
 import { type Features, mergeOptions, optionIssues, stateNames } from "./options.ts";
 

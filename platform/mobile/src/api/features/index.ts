@@ -1,5 +1,5 @@
-import { del, document, type Endpoint, factsOf, feature, get, localized, many, need, password, post, put, z } from "@engine/api";
-import { keysOf, mapValues } from "@engine/base";
+import { del, document, type Endpoint, factsOf, feature, get, localized, many, need, password, post, put, z } from "engine/api";
+import { keysOf, mapValues } from "engine/base";
 
 const money = z.object({ amount: z.string(), currency: z.string() }).nullish();
 const catalog = z.object({

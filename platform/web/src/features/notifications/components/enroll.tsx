@@ -1,8 +1,8 @@
 "use client";
 
-import { useAction } from "@engine/context";
-import { isFailure } from "@engine/error";
-import { failureMessages, type Messages } from "@engine/translate";
+import { useAction } from "engine/context";
+import { isFailure } from "engine/error";
+import { failureMessages, type Messages } from "engine/translate";
 import ActionCard, { type Note } from "@/components/action-card";
 import { useWrite } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";

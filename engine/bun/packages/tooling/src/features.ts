@@ -1,8 +1,8 @@
 import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { isRecord } from "@engine/base";
-import { type Manifest, manifestShape } from "@engine/spec";
+import { isRecord } from "engine/base";
+import { type Manifest, manifestShape } from "engine/spec";
 import { failure } from "./core.ts";
 
 export type Features = Record<string, Manifest>;

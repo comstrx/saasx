@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { feature, get, many, z } from "@engine/api";
+import { feature, get, many, z } from "engine/api";
 import {
     catalogueFacts,
     choiceIssues,
@@ -15,7 +15,7 @@ import {
     settingsResource,
     shellIssues,
     shellOptions,
-} from "@engine/spec";
+} from "engine/spec";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const endpoints = { products: feature({}, { list: get("/products", {}, many(item)) }) };

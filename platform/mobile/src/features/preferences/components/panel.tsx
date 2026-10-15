@@ -1,4 +1,4 @@
-import { languageName } from "@engine/translate";
+import { languageName } from "engine/translate";
 import { useState } from "react";
 import PreferenceForm, { type PreferenceField, type PreferenceName } from "@/components/preference-form";
 import Titled from "@/components/titled";

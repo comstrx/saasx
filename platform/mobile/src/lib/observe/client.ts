@@ -1,6 +1,6 @@
-import { createObserver } from "@engine/api";
-import { uuid } from "@engine/base";
-import { createLogger, type Logger } from "@engine/log";
+import { createObserver } from "engine/api";
+import { uuid } from "engine/base";
+import { createLogger, type Logger } from "engine/log";
 import { sink } from "@/lib/providers/console";
 import { onBackground } from "@/lib/providers/lifecycle";
 

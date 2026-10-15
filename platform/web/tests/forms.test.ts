@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { del, get, feature as group, many, need, post, z } from "@engine/api";
-import { type Catalogue, catalogueFacts, type Features } from "@engine/spec";
+import { del, get, feature as group, many, need, post, z } from "engine/api";
+import { type Catalogue, catalogueFacts, type Features } from "engine/spec";
 import { block, feature, param, read, screen, type Tree, t, validateSpec, write } from "../src/lib/spec/surface.ts";
 
 const messages = { en: { nav: { home: "Home" }, item: { fields: { title: "Title", stock: "Stock" } } }, ar: { nav: { home: "الرئيسية" }, item: { fields: { title: "العنوان", stock: "المخزون" } } } };
@@ -64,7 +64,7 @@ describe("forms from the catalogue", () => {
     });
     test("a message branch fills an object option when the tree localizes", async () => {
 
-        const { localizeTree } = await import("@engine/spec");
+        const { localizeTree } = await import("engine/spec");
         const { schema } = compile({ screens: [page("/", feature("form", { heading: true, options: { errors: t("item"),  labels: t("item.fields") }, ports: { save: write("products.save") } }))] });
         const localized = localizeTree(schema.screens[0]?.blocks[0]?.features[0]?.options, messages.ar, "ar") as { labels: Record<string, string> };
 

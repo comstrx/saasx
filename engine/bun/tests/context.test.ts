@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { bind, bindDevice, defineClient, defineSession, defineStore } from "@engine/context";
-import { createDevice } from "@engine/device";
-import { memoryStore } from "@engine/storage";
+import { bind, bindDevice, defineClient, defineSession, defineStore } from "engine/context";
+import { createDevice } from "engine/device";
+import { memoryStore } from "engine/storage";
 
 type Session = { token: string | null; user: { id: number } | null };
 

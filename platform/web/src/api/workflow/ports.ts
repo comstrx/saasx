@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { ApiSurface } from "@engine/api";
-import { portSource, portValue, type Route } from "@engine/spec";
+import type { ApiSurface } from "engine/api";
+import { portSource, portValue, type Route } from "engine/spec";
 import type { Ports } from "../../lib/spec/feature.ts";
 import { endpoints, type Feature, features, type OperationOf } from "../features/index.ts";
 import { read, siteContent } from "./server.ts";

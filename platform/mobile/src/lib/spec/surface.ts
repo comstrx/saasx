@@ -1,6 +1,6 @@
-import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, key, specText, stepShape } from "@engine/spec";
-import { z } from "@engine/validate";
-import { iconNames } from "@engine/world";
+import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, key, specText, stepShape } from "engine/spec";
+import { z } from "engine/validate";
+import { iconNames } from "engine/world";
 import { core } from "../../api/core/index.ts";
 import { endpoints, entities } from "../../api/features/index.ts";
 import { supportedLocales } from "./languages.ts";
@@ -47,6 +47,12 @@ export const surface = createSpecSurface({
 
 export const { configShape, configInputShape, schemaShape, screenOptions, blockOptions, shellShape, settingsShape, contentShape, entityRoute } = surface;
 export const { defineConfig, defineSchema, screen, block, feature, t, read, write, data, site, param, query, signal, live } = surface.define;
+
+export function env ( name: string, fallback: string ): string {
+
+    return process.env[name] || fallback;
+
+}
 
 export const validateSpec = surface.validator({
     reserved: /^\/(?:_|\+|\(|api(?:\/|$))/,

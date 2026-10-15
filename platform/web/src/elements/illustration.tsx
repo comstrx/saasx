@@ -1,4 +1,4 @@
-import { iconGlyph } from "@engine/world";
+import { iconGlyph } from "engine/world";
 
 export type Scene = "empty" | "failed" | "offline" | "denied" | "done";
 type Props = { scene: Scene; label?: string | undefined };

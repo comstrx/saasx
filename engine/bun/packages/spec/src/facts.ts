@@ -1,8 +1,8 @@
-import type { Catalogue as Endpoints } from "@engine/api";
-import { factsOf } from "@engine/api";
-import { mapValues } from "@engine/base";
-import { type Messages, messageAt, messageTree } from "@engine/translate";
-import { fieldFacts, shapeKeys } from "@engine/validate";
+import type { Catalogue as Endpoints } from "engine/api";
+import { factsOf } from "engine/api";
+import { mapValues } from "engine/base";
+import { type Messages, messageAt, messageTree } from "engine/translate";
+import { fieldFacts, shapeKeys } from "engine/validate";
 import type { Catalogue } from "./compile.ts";
 import { isSpecKey } from "./fields.ts";
 

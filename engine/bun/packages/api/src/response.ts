@@ -1,6 +1,6 @@
-import { isRecord, pathGet } from "@engine/base";
-import { Failure, type FieldErrors, type Kind } from "@engine/error";
-import { z } from "@engine/validate";
+import { isRecord, pathGet } from "engine/base";
+import { Failure, type FieldErrors, type Kind } from "engine/error";
+import { z } from "engine/validate";
 import type { Endpoint } from "./dsl.ts";
 import { target } from "./request.ts";
 import { parseResource } from "./resource.ts";

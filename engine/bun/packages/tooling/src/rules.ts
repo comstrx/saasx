@@ -24,6 +24,7 @@ const shared = {
         "query",
         "signal",
         "live",
+        "env",
     ],
     structure: [
         "api",

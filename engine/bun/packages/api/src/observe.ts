@@ -1,4 +1,4 @@
-import { describe, type Failure } from "@engine/error";
+import { describe, type Failure } from "engine/error";
 
 export type Outcome = {
     call: string;

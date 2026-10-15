@@ -1,4 +1,4 @@
-import { Failure } from "@engine/error";
+import { Failure } from "engine/error";
 
 export type Params = Readonly<Record<string, string>>;
 

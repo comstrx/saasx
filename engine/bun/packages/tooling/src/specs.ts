@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
-import type { Catalogue } from "@engine/spec";
+import type { Catalogue } from "engine/spec";
 import { directories, entries, failure, guard } from "./core.ts";
 import { type Features, featureFacts } from "./features.ts";
 import { composeMessages, type Dictionaries } from "./messages.ts";

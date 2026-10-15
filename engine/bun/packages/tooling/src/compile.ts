@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import process from "node:process";
-import { generatedPath, isRecord, mapValues } from "@engine/base";
-import { emojiFolder, flagFolder, fontFolder, fonts } from "@engine/world";
+import { generatedPath, isRecord, mapValues } from "engine/base";
+import { emojiFolder, flagFolder, fontFolder, fonts } from "engine/world";
 import type { Files } from "./assets.ts";
 
 export type Mode = "development" | "production";

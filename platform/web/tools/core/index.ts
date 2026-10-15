@@ -1,5 +1,5 @@
-import { catalogueFacts } from "@engine/spec";
-import { createTools, type Loaded, task } from "@engine/tooling";
+import { catalogueFacts } from "engine/spec";
+import { createTools, type Loaded, task } from "engine/tooling";
 import { reasons } from "../../src/api/core/index.ts";
 import { endpoints } from "../../src/api/features/index.ts";
 import { type Locale, supportedLocales } from "../../src/lib/spec/languages.ts";
@@ -22,7 +22,7 @@ export const tools = createTools<Compiled, Locale>({
         { path: ".well-known", brand: "well-known" },
     ],
     architecture: {
-        foundation: /^(react(?:\/|$)|next(?:\/|$)|server-only$|@engine\/)/,
+        foundation: /^(react(?:\/|$)|next(?:\/|$)|server-only$|engine\/)/,
         html: true,
         structure: ["proxy.ts"],
         owners: {

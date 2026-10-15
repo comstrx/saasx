@@ -1,5 +1,5 @@
-import { isRecord } from "@engine/base";
-import { Failure } from "@engine/error";
+import { isRecord } from "engine/base";
+import { Failure } from "engine/error";
 import type { Connection } from "./connection.ts";
 
 export type Event = { channel?: string | undefined; event: string; data: unknown };

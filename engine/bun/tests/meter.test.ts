@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { createMeter, createObserver, type Signal } from "@engine/api";
-import { Failure } from "@engine/error";
+import { createMeter, createObserver, type Signal } from "engine/api";
+import { Failure } from "engine/error";
 
 describe("meter", () => {
 

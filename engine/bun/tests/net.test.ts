@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { Failure } from "@engine/error";
-import { contentSecurityPolicy, forwardedFor, hostname, isEndpoint, isLoopback, isOrigin, joinUrl, originOf, readJson, retryAfter, sameOrigin, send } from "@engine/net";
+import { Failure } from "engine/error";
+import { contentSecurityPolicy, forwardedFor, hostname, isEndpoint, isLoopback, isOrigin, joinUrl, originOf, readJson, retryAfter, sameOrigin, send } from "engine/net";
 
 describe("net", () => {
 

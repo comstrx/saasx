@@ -1,7 +1,7 @@
 import "server-only";
 
-import { choose, trace } from "@engine/base";
-import { forwardedFor, originOf } from "@engine/net";
+import { choose, trace } from "engine/base";
+import { forwardedFor, originOf } from "engine/net";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { readPreferences } from "@/lib/site/preferences";

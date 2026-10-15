@@ -23,13 +23,13 @@ import {
     syncEngineAssets,
     walk,
     within,
-} from "@engine/tooling";
-import { iconAliases, iconCodes } from "@engine/world";
+} from "engine/tooling";
+import { iconAliases, iconCodes } from "engine/world";
 
 const rules: Rules = {
     source: "/part/src",
     specs: "/part/specs",
-    foundation: /^(react(?:\/|$)|@engine\/)/,
+    foundation: /^(react(?:\/|$)|engine\/)/,
     native: /^react-native(?:\/|$)/,
     free: ["elements/", "hooks/"],
     html: true,
@@ -199,7 +199,7 @@ describe("surface tools", () => {
             catalogue: { operations: [], features: [] } as never,
             validate: (( input: unknown ) => input) as never,
             assets: [{ path: "images/brand", brand: "images" }, { path: ".well-known", brand: "well-known" }],
-            architecture: { foundation: /^@engine\//, html: true, owners: {}, layers: [] },
+            architecture: { foundation: /^engine\//, html: true, owners: {}, layers: [] },
         });
         const composed = tools.assets.compose(resolve(root, "public"), resolve(root, "specs/shop/brand"));
 

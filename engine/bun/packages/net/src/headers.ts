@@ -1,4 +1,4 @@
-import { base64, randomBytes } from "@engine/base";
+import { base64, randomBytes } from "engine/base";
 
 export type Directives = Readonly<Record<string, readonly (string | false | null | undefined)[]>>;
 

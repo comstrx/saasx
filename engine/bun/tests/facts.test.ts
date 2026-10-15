@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { post, z } from "@engine/api";
-import { bindingShape, catalogueFacts } from "@engine/spec";
+import { post, z } from "engine/api";
+import { bindingShape, catalogueFacts } from "engine/spec";
 
 const item = z.object({ id: z.number() });
 describe("operation facts over nested inputs", () => {

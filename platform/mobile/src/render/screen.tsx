@@ -1,4 +1,4 @@
-import { shellFeature } from "@engine/spec";
+import { shellFeature } from "engine/spec";
 import { createElement, type ReactNode } from "react";
 import Frame from "@/elements/frame";
 import Loading from "@/elements/loading";

@@ -1,5 +1,5 @@
-import { Failure } from "@engine/error";
-import { formatBytes } from "@engine/parse";
+import { Failure } from "engine/error";
+import { formatBytes } from "engine/parse";
 
 export type Limits = { maxBytes: number; maxFiles: number; types?: readonly string[] | undefined };
 export type FileRef = { uri: string; name: string; type: string };

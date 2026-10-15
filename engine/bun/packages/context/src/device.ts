@@ -1,4 +1,4 @@
-import type { Device, Info, Watched } from "@engine/device";
+import type { Device, Info, Watched } from "engine/device";
 import { useEffect, useState } from "react";
 
 export type Fact = Exclude<keyof Watched, "location"> & keyof Info;

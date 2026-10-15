@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { documentJar, headerJar, parseCookies, preferenceJar, serializeCookie, storageJar } from "@engine/cookie";
-import { memoryStore } from "@engine/storage";
+import { documentJar, headerJar, parseCookies, preferenceJar, serializeCookie, storageJar } from "engine/cookie";
+import { memoryStore } from "engine/storage";
 
 describe("cookie", () => {
 

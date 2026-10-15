@@ -1,6 +1,6 @@
-import { deepMerge, pathGet } from "@engine/base";
-import { matchPattern } from "@engine/parse";
-import { bench, do_not_optimize, run } from "@engine/tooling";
+import { deepMerge, pathGet } from "engine/base";
+import { matchPattern } from "engine/parse";
+import { bench, do_not_optimize, run } from "engine/tooling";
 
 const document = { meta: { pagination: { page: 3 } } };
 

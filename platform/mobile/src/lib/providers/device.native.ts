@@ -1,4 +1,4 @@
-import { createDevice, type Device, type Grant, type Info, type Permission, type Picked, unknownInfo } from "@engine/device";
+import { createDevice, type Device, type Grant, type Info, type Permission, type Picked, unknownInfo } from "engine/device";
 import Constants from "expo-constants";
 import * as ImagePicker from "expo-image-picker";
 import * as Localization from "expo-localization";

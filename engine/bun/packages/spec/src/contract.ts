@@ -1,7 +1,7 @@
-import { apiInputShape, apiShape, contractShape, overridesShape, resourceShapes } from "@engine/api";
-import { isOrigin } from "@engine/net";
-import { isTimeZone } from "@engine/translate";
-import { currency, fluent, z } from "@engine/validate";
+import { apiInputShape, apiShape, contractShape, overridesShape, resourceShapes } from "engine/api";
+import { isOrigin } from "engine/net";
+import { isTimeZone } from "engine/translate";
+import { currency, fluent, z } from "engine/validate";
 import { text, word } from "./fields.ts";
 
 export type Shape = z.ZodType;

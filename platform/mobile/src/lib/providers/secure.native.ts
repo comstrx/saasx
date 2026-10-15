@@ -1,4 +1,4 @@
-import { driverStore, type Store } from "@engine/storage";
+import { driverStore, type Store } from "engine/storage";
 import * as SecureStore from "expo-secure-store";
 
 export const secure: Store = driverStore({

@@ -1,4 +1,4 @@
-import { generatedPath } from "@engine/base";
+import { generatedPath } from "engine/base";
 
 export type FlagFormat = "svg" | "webp";
 export type FlagPlace = { folder?: string | undefined; format?: FlagFormat | undefined };

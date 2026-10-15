@@ -13,7 +13,7 @@ import {
     requestContext,
     resolveApi,
     z,
-} from "@engine/api";
+} from "engine/api";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const catalogue = {

@@ -1,4 +1,4 @@
-import { type Preferences, preferenceJar } from "@engine/cookie";
+import { type Preferences, preferenceJar } from "engine/cookie";
 import { preferences, routing } from "@/lib/spec/config";
 
 export type { Preferences };

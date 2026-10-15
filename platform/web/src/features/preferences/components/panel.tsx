@@ -1,7 +1,7 @@
 "use client";
 
-import { useAction, useResource } from "@engine/context";
-import { languageName, localePath, splitLocale } from "@engine/translate";
+import { useAction, useResource } from "engine/context";
+import { languageName, localePath, splitLocale } from "engine/translate";
 import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
 import { loadPreferences, savePreferences } from "@/api/workflow/preferences";

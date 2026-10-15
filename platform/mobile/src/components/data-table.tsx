@@ -1,5 +1,5 @@
-import { field } from "@engine/spec";
-import { formatDate, formatMoney } from "@engine/translate";
+import { field } from "engine/spec";
+import { formatDate, formatMoney } from "engine/translate";
 import Badge from "@/elements/badge";
 import Table, { type Column as Cell, type Row } from "@/elements/table";
 import Icon from "@/icons";

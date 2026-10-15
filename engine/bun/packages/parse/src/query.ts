@@ -1,4 +1,4 @@
-import { Failure } from "@engine/error";
+import { Failure } from "engine/error";
 
 export type QueryValue = string | number | boolean;
 export type QueryInput = QueryValue | null | undefined | readonly QueryInput[] | { readonly [key: string]: QueryInput };

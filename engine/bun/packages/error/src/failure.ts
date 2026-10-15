@@ -1,4 +1,4 @@
-import { isRecord } from "@engine/base";
+import { isRecord } from "engine/base";
 
 export const kinds = {
     configuration: 503,

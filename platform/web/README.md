@@ -34,11 +34,11 @@ Signals let features talk on one screen: `search` emits `search`, `table` emits 
 
 ## Runtime pieces
 
-- `usePort` (`hooks/use-client`, from `defineClient` in `@engine/context`) — any port as a resource (idle · loading · ready · failed) with a persistent cache, stale answers kept offline, live patches, and `meta.pagination`.
+- `usePort` (`hooks/use-client`, from `defineClient` in `engine/context`) — any port as a resource (idle · loading · ready · failed) with a persistent cache, stale answers kept offline, live patches, and `meta.pagination`.
 - `useWrite` — a write port as an action; bound inputs ride along; `{ queue: true }` parks an undeliverable write in the outbox and replays it when the device is back online (same idempotency key).
 - `useForm` — a form over a write port: fields from the catalogue, one idempotency key per unchanged values, failures spoken through `errors` (`reasons`, `rules`, `fields`), never a backend sentence as a key.
 - `components/schema-form` — one control per field kind: text/email/phone/password/number/date, choice, boolean, localized (one input per language), list, file.
-- Device DSL (`@engine/device`): `require(permission)`, `locate()`, `pick(source)`, `pushToken()`; `location`, `avatar`, `notifications` features are the reference consumers.
+- Device DSL (`engine/device`): `require(permission)`, `locate()`, `pick(source)`, `pushToken()`; `location`, `avatar`, `notifications` features are the reference consumers.
 - Boundaries: every feature and every screen is wrapped; a screen failure shows a retry and is reported through `/api/report` (same beacon failed and slow calls use).
 
 ## Gates
