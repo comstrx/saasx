@@ -4,27 +4,15 @@
 mod tests {
 
     use std::io::{Error as IoError, Result as IoResult};
-    use std::process::{Command, Output};
-    use std::path::{Path, PathBuf};
     use engine::process::Cargo;
-    use std::ffi::OsString;
-    use std::env::vars_os;
-
-    fn binary () -> IoResult<PathBuf> {
-
-        Cargo::binary(Path::new(env!("CARGO_MANIFEST_DIR")), "infra", false).map_err(|failure| IoError::other(failure.to_string()))
-
-    }
-
-    fn kept () -> impl Iterator<Item = ( OsString, OsString )> {
-
-        vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("INFRA_"))
-
-    }
+    use std::process::Output;
+    use std::path::Path;
 
     fn run ( args: &[&str] ) -> IoResult<Output> {
 
-        Command::new(binary()?).args(args).env_clear().envs(kept()).output()
+        let mut command = Cargo::command(Path::new(env!("CARGO_MANIFEST_DIR")), "infra", false, "INFRA_").map_err(|failure| IoError::other(failure.to_string()))?;
+
+        command.args(args).output()
 
     }
 

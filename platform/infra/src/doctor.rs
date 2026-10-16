@@ -18,7 +18,7 @@ impl Infra {
         writeln!(out, "manager={}", Manager::detect().await.map_or_else(|failure| failure.key().to_owned(), |manager| manager.to_string()))?;
         writeln!(out, "provider={}", Provider::detect().map_or_else(|failure| failure.key().to_owned(), |provider| provider.to_string()))?;
 
-        self.log.info("doctor").field("platform", System::platform().name()).emit();
+        self.tool.log().info("doctor").field("platform", System::platform().name()).emit();
 
         Ok(out)
 

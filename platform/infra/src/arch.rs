@@ -1,9 +1,7 @@
-use engine::process::Args;
-use engine::log::Log;
+use engine::process::Tool;
 
 pub(crate) struct Infra {
-    pub(crate) args: Args,
-    pub(crate) log:  Log,
+    pub(crate) tool: Tool,
 }
 
 pub(crate) struct Faults;

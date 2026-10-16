@@ -4,7 +4,6 @@ use crate::arch::Faults;
 
 impl Faults {
 
-    pub(crate) const NO_COMMAND: Fault       = Fault::new("no_command", Code::Usage, "a command is required");
     pub(crate) const NO_NAME: Fault          = Fault::new("no_name", Code::Usage, "a name is required");
     pub(crate) const NO_ACTION: Fault        = Fault::new("no_action", Code::Usage, "an action is required");
     pub(crate) const UNKNOWN_ACTION: Fault   = Fault::new("unknown_action", Code::Usage, "the action is not known");

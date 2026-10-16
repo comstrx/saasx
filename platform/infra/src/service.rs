@@ -38,7 +38,7 @@ impl Infra {
             _           => manager.restart(name).await,
         };
 
-        self.log.audit(action).actor(&actor).outcome(if outcome.is_ok() { Outcome::Done } else { Outcome::Failed }).field("service", name).commit()?;
+        self.tool.log().audit(action).actor(&actor).outcome(if outcome.is_ok() { Outcome::Done } else { Outcome::Failed }).field("service", name).commit()?;
         outcome?;
 
         Ok(format!("{action} {name}: done\n"))
@@ -47,16 +47,16 @@ impl Infra {
 
     fn spec ( &self, name: &str ) -> Result<Spec> {
 
-        let command = PathBuf::from(self.args.need("command")?);
+        let command = PathBuf::from(self.tool.args().need("command")?);
         let mut spec = Spec::new(name, command);
 
-        for arg in self.args.all("arg") { spec = spec.arg(arg); }
+        for arg in self.tool.args().all("arg") { spec = spec.arg(arg); }
 
-        for ( key, value ) in self.args.all("env").filter_map(|pair| pair.split_once('=')) { spec = spec.env(key, value); }
+        for ( key, value ) in self.tool.args().all("env").filter_map(|pair| pair.split_once('=')) { spec = spec.env(key, value); }
 
-        if let Some(cwd) = self.args.get("cwd") { spec = spec.cwd(cwd); }
+        if let Some(cwd) = self.tool.args().get("cwd") { spec = spec.cwd(cwd); }
 
-        if let Some(description) = self.args.get("description") { spec = spec.description(description); }
+        if let Some(description) = self.tool.args().get("description") { spec = spec.description(description); }
 
         Ok(spec)
 
@@ -64,7 +64,7 @@ impl Infra {
 
     fn provider ( &self ) -> Result<Provider> {
 
-        match self.args.get("provider") {
+        match self.tool.args().get("provider") {
             Some("systemd") => Ok(Provider::Systemd),
             Some("launchd") => Ok(Provider::Launchd),
             Some("windows") => Ok(Provider::Windows),

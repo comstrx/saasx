@@ -20,7 +20,7 @@ impl Infra {
             other       => return Err(Faults::UNKNOWN_ACTION.because(format!("{other} is not a package action"))),
         };
 
-        self.log.audit(action).actor(&actor).outcome(if outcome.is_ok() { Outcome::Done } else { Outcome::Failed }).field("package", self.name()?).field("manager", manager.binary()).commit()?;
+        self.tool.log().audit(action).actor(&actor).outcome(if outcome.is_ok() { Outcome::Done } else { Outcome::Failed }).field("package", self.name()?).field("manager", manager.binary()).commit()?;
         outcome?;
 
         Ok(format!("{action} {}: done via {manager}\n", self.name()?))
