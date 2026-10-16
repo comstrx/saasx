@@ -1,31 +1,23 @@
 //! Scenario: what one request to the real `iam` server costs over the loopback, and what its pieces cost alone.
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use std::process::{Child, Command, Stdio};
+use engine::error::{Code, Failure, Fault};
 use std::io::{BufRead as _, BufReader};
 use engine::http::{Client, Response};
-use std::path::{Path, PathBuf};
-use engine::error::{Code, Failure, Fault};
+use std::process::{Child, Stdio};
+use engine::thread::Runtime;
 use engine::process::Cargo;
 use core::hint::black_box;
 use core::time::Duration;
-use engine::thread::Runtime;
 use std::thread::spawn;
-use std::env::vars_os;
+use std::path::Path;
 
 const BAD_CREDENTIALS: Fault = Fault::new("bad_credentials", Code::Unauthenticated, "the email or the password is wrong");
 
-fn binary () -> Option<PathBuf> {
-
-    Cargo::binary(&Path::new(env!("CARGO_MANIFEST_DIR")).join(".."), "iam", true).ok()
-
-}
-
 fn launch () -> Option<( Child, String )> {
 
-    let mut child = Command::new(binary()?)
-        .env_clear()
-        .envs(vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("IAM_")))
+    let mut child = Cargo::command(&Path::new(env!("CARGO_MANIFEST_DIR")).join(".."), "iam", true, "IAM_")
+        .ok()?
         .env("IAM_ADDR", "127.0.0.1:0")
         .env("IAM_USER", "bench@example.com")
         .env("IAM_PASSWORD", "a-long-bench-secret")

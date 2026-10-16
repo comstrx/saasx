@@ -5,18 +5,17 @@ mod tests {
 
     use std::io::{BufRead as _, BufReader, Error as IoError, Result as IoResult};
     use engine::http::{Body, Client, Header, Method, Request, Response};
-    use engine::crypto::Digest;
     use std::process::{Child, Command, Stdio, id};
     use std::fs::{read_to_string, remove_file};
     use engine::error::{Code, Failure, Result};
     use engine::net::{Address, Dial};
-    use engine::thread::Runtime;
-    use std::env::{temp_dir, vars_os};
-    use std::thread::spawn;
     use std::path::{Path, PathBuf};
+    use engine::thread::Runtime;
+    use engine::crypto::Digest;
     use engine::process::Cargo;
     use core::time::Duration;
-    use std::ffi::OsString;
+    use std::env::temp_dir;
+    use std::thread::spawn;
 
     const PASSWORD: &str = "correct-horse-battery";
 
@@ -42,15 +41,9 @@ mod tests {
 
     }
 
-    fn binary () -> IoResult<PathBuf> {
+    fn iam () -> IoResult<Command> {
 
-        Cargo::binary(&root(), "iam", false).map_err(|failure| IoError::other(failure.to_string()))
-
-    }
-
-    fn kept () -> impl Iterator<Item = ( OsString, OsString )> {
-
-        vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("IAM_"))
+        Cargo::command(&root(), "iam", false, "IAM_").map_err(|failure| IoError::other(failure.to_string()))
 
     }
 
@@ -65,9 +58,7 @@ mod tests {
         let audit = unique(&format!("{name}-audit"));
         let logs  = unique(&format!("{name}-logs"));
 
-        let mut child = Command::new(binary()?)
-            .env_clear()
-            .envs(kept())
+        let mut child = iam()?
             .env("IAM_ADDR", "127.0.0.1:0")
             .env("IAM_WORKERS", "2")
             .env("IAM_LOG", "info")
@@ -253,9 +244,9 @@ mod tests {
 
     }
 
-    fn refused ( path: &Path, env: &[( &str, &str )] ) -> Option<Refusal> {
+    fn refused ( env: &[( &str, &str )] ) -> Option<Refusal> {
 
-        let output = Command::new(path).env_clear().envs(kept()).envs(env.iter().copied()).output().ok()?;
+        let output = iam().ok()?.envs(env.iter().copied()).output().ok()?;
 
         Some(( output.status.code(), String::from_utf8_lossy(&output.stderr).into_owned() ))
 
@@ -264,19 +255,16 @@ mod tests {
     #[test]
     fn misconfiguration_and_arguments_fail_before_listening () {
 
-        let path = binary().ok();
-        let Some(path) = path else { return assert!(path.is_some()); };
-
-        let arg = Command::new(&path).env_clear().envs(kept()).arg("--x").output().ok();
+        let arg = iam().ok().and_then(|mut command| command.arg("--x").output().ok());
         let ok  = [( "IAM_USER", USER ), ( "IAM_PASSWORD", PASSWORD )];
 
         assert_eq!(arg.as_ref().and_then(|output| output.status.code()), Some(64));
         assert!(arg.is_some_and(|output| String::from_utf8_lossy(&output.stderr).starts_with("usage [usage] http 400 exit 64: iam takes no arguments")));
-        assert!(refused(&path, &[( "IAM_USER", USER )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_PASSWORD is not set")));
-        assert!(refused(&path, &[( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_USER is not set")));
-        assert!(refused(&path, &[( "IAM_USER", USER ), ( "IAM_PASSWORD", "too-short" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_PASSWORD [too_short]")));
-        assert!(refused(&path, &[( "IAM_USER", "not-an-email" ), ( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_USER [not_email]")));
-        assert!(refused(&path, &[ok[0], ok[1], ( "IAM_ADDR", "nope" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("not an address") && text.contains("on: IAM_ADDR")));
+        assert!(refused(&[( "IAM_USER", USER )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_PASSWORD is not set")));
+        assert!(refused(&[( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("IAM_USER is not set")));
+        assert!(refused(&[( "IAM_USER", USER ), ( "IAM_PASSWORD", "too-short" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_PASSWORD [too_short]")));
+        assert!(refused(&[( "IAM_USER", "not-an-email" ), ( "IAM_PASSWORD", PASSWORD )]).is_some_and(|( code, text )| code == Some(78) && text.contains("field IAM_USER [not_email]")));
+        assert!(refused(&[ok[0], ok[1], ( "IAM_ADDR", "nope" )]).is_some_and(|( code, text )| code == Some(78) && text.contains("not an address") && text.contains("on: IAM_ADDR")));
 
     }
 
