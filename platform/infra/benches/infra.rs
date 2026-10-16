@@ -16,7 +16,7 @@ fn binary () -> Option<PathBuf> {
 fn bench_infra ( harness: &mut Criterion ) {
 
     let mut group = harness.benchmark_group("infra");
-    let spec      = Spec::new("saasx-iam", "/opt/iam/bin/iam").arg("--serve");
+    let spec      = Spec::new("iam", "/opt/iam/bin/iam").arg("--serve");
 
     if let Some(path) = binary() { group.bench_function("doctor", |bencher| bencher.iter(|| Command::new(&path).arg("doctor").env_clear().envs(vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("INFRA_"))).output().map(|output| output.status.success()))); }
 

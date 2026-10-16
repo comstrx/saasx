@@ -1,6 +1,6 @@
 import "server-only";
 
-import { rows } from "engine/spec";
+import { rows } from "engine/client";
 import { localePath } from "engine/translate";
 import type { Metadata, MetadataRoute } from "next";
 import { entities, type Feature, type OperationOf } from "@/api/features";
@@ -23,7 +23,10 @@ function alternates ( path: string ): NonNullable<Metadata["alternates"]> | unde
 
     const languageLinks = Object.fromEntries(routing.locales.map(( locale ) => [locale, absolute(localePath(locale, path, routing))]));
 
-    return { canonical: absolute(localePath(routing.defaultLocale, path, routing)), languages: { ...languageLinks, "x-default": absolute(path) } };
+    return {
+        canonical: absolute(localePath(routing.defaultLocale, path, routing)),
+        languages: { ...languageLinks, "x-default": absolute(path) },
+    };
 
 }
 export function pageMetadata ( screen: Page, locale: Locale ): Metadata {
@@ -38,7 +41,9 @@ export function pageMetadata ( screen: Page, locale: Locale ): Metadata {
         description: crawlable ? description : undefined,
         robots: { index: listed, follow: listed },
         alternates: crawlable ? alternates(screen.path) : undefined,
-        openGraph: crawlable ? { title, description, siteName: site, locale: languages[locale].openGraph, type: "website", url: absolute(screen.path) } : undefined,
+        openGraph: crawlable
+            ? { title, description, siteName: site, locale: languages[locale].openGraph, type: "website", url: absolute(screen.path) }
+            : undefined,
     };
 
 }
@@ -60,7 +65,9 @@ export function robots (): MetadataRoute.Robots {
 
     const { allow, disallow } = config.content.seo.robots;
     const sitemap = absolute("/sitemap.xml");
-    const rules = allow.length || disallow.length ? { userAgent: "*", ...(allow.length ? { allow } : {}), ...(disallow.length ? { disallow } : {}) } : { userAgent: "*", disallow: "/" };
+    const rules = allow.length || disallow.length
+        ? { userAgent: "*", ...(allow.length ? { allow } : {}), ...(disallow.length ? { disallow } : {}) }
+        : { userAgent: "*", disallow: "/" };
 
     return { rules, ...(crawlable && config.content.seo.sitemap.length && sitemap ? { sitemap } : {}) };
 
@@ -72,7 +79,9 @@ function entry ( path: string ): MetadataRoute.Sitemap[number] {
 
     return {
         url: absolute(path) ?? path,
-        alternates: { languages: Object.fromEntries(routing.locales.map(( locale ) => [locale, absolute(localePath(locale, path, routing)) ?? path])) },
+        alternates: {
+            languages: Object.fromEntries(routing.locales.map(( locale ) => [locale, absolute(localePath(locale, path, routing)) ?? path])),
+        },
     };
 
 }

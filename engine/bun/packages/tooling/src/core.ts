@@ -96,6 +96,11 @@ export function sha256 ( bytes: Uint8Array | string ): string {
     return createHash("sha256").update(bytes).digest("hex");
 
 }
+export function tally ( schema: { screens: readonly unknown[]; features: readonly unknown[]; operations: readonly unknown[] } ): string {
+
+    return `${schema.screens.length} screen(s), ${schema.features.length} feature(s), ${schema.operations.length} operation(s)`;
+
+}
 export function failure ( error: unknown ): string {
 
     return error instanceof Error ? error.message : String(error);

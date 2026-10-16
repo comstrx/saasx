@@ -11,10 +11,12 @@ describe("status", () => {
 
     test("loading shows a live spinner, failure its text, and an offline failure the offline text", () => {
 
-        expect(renderToString(<Status status="loading" loading="Loading" failed="Failed" />)).toContain('role="status"');
-        expect(renderToString(<Status status="failed" loading="Loading" failed="Failed" error={new Failure("http")} />)).toContain("Failed");
-        expect(renderToString(<Status status="failed" loading="Loading" failed="Failed" offline="Offline" error={new Failure("network")} />)).toContain("Offline");
-        expect(renderToString(<Status status="idle" loading="Loading" failed="Failed" />)).toBe("");
+        const texts = { loading: "Loading", failed: "Failed" };
+
+        expect(renderToString(<Status status="loading" {...texts} />)).toContain('role="status"');
+        expect(renderToString(<Status status="failed" {...texts} error={new Failure("http")} />)).toContain("Failed");
+        expect(renderToString(<Status status="failed" {...texts} offline="Offline" error={new Failure("network")} />)).toContain("Offline");
+        expect(renderToString(<Status status="idle" {...texts} />)).toBe("");
 
     });
 
@@ -32,7 +34,15 @@ describe("data table", () => {
 
     test("renders every column kind from a row and the empty text without rows", () => {
 
-        const html = renderToString(<DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={[{ id: 7, name: "Tea", type: "hotel", featured: true, sale_price: { amount: "12.50", currency: "USD" }, created_at: "2026-10-13T00:00:00+00:00" }]} />);
+        const tea = {
+            id: 7,
+            name: "Tea",
+            type: "hotel",
+            featured: true,
+            sale_price: { amount: "12.50", currency: "USD" },
+            created_at: "2026-10-13T00:00:00+00:00",
+        };
+        const html = renderToString(<DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={[tea]} />);
 
         expect(html).toContain("Tea");
         expect(html).toContain('class="badge"');
@@ -44,7 +54,10 @@ describe("data table", () => {
     });
     test("a selectable table marks the chosen row", () => {
 
-        const html = renderToString(<DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={[{ id: 7, name: "Tea" }]} selected="7" onSelect={() => undefined} />);
+        const rows = [{ id: 7, name: "Tea" }];
+        const html = renderToString(
+            <DataTable locale="en" columns={columns} keyField="id" empty="Nothing" rows={rows} selected="7" onSelect={() => undefined} />,
+        );
 
         expect(html).toContain('aria-selected="true"');
 

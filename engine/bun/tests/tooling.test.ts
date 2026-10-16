@@ -9,6 +9,7 @@ import {
     composeMessages,
     createCore,
     createTools,
+    featureEntry,
     guard,
     iconFont,
     messageIssues,
@@ -17,6 +18,7 @@ import {
     publishAssets,
     publishedUrls,
     type Rules,
+    registryModule,
     selectConnection,
     specAliases,
     staticFonts,
@@ -97,6 +99,17 @@ describe("architecture", () => {
 });
 describe("files and compile", () => {
 
+    test("a registry imports each feature lazily from its index, relative to the compiled folder", () => {
+
+        const folder = "node_modules/.cache/spec/production";
+
+        expect(featureEntry("/app", folder, "login")).toBe('"../../../../src/features/login/index.tsx"');
+        expect(registryModule("/app", folder, ["login", "nav"])).toBe(
+            'export default {\n    "login": () => import("../../../../src/features/login/index.tsx"),\n' +
+                '    "nav": () => import("../../../../src/features/nav/index.tsx"),\n};\n',
+        );
+
+    });
     test("the core writes under its root and walks in order", () => {
 
         const root = mkdtempSync(resolve(tmpdir(), "tooling-"));
@@ -162,7 +175,11 @@ describe("files and compile", () => {
     test("a compiled config names every published asset by its final url and leaves every other string alone", () => {
 
         const assets = new Map([["images/brand/logo.svg", new Uint8Array([1])], ["fonts/site.woff2", new Uint8Array([2])]]);
-        const config = { content: { logo: "/images/brand/logo.svg", icon: "/images/brand/icon.png", name: "fonts/site.woff2" }, fonts: ["/fonts/site.woff2"], size: 3 };
+        const config = {
+            content: { logo: "/images/brand/logo.svg", icon: "/images/brand/icon.png", name: "fonts/site.woff2" },
+            fonts: ["/fonts/site.woff2"],
+            size: 3,
+        };
 
         expect(publishedUrls(config, assets)).toEqual({
             content: { logo: "/_generated/images/brand/logo.svg", icon: "/images/brand/icon.png", name: "fonts/site.woff2" },
@@ -207,7 +224,9 @@ describe("surface tools", () => {
         expect(tools.assets.brandFolders).toEqual(["images", "well-known", "messages"]);
         expect([...composed.keys()]).toEqual([".well-known/assetlinks.json", ".well-known/security.txt", "images/brand/logo.svg"]);
         expect(new TextDecoder().decode(composed.get("images/brand/logo.svg"))).toBe("c");
-        expect([...tools.assets.files(resolve(root, "public"), true).keys()].sort()).toEqual([".well-known/security.txt", "images/brand/logo.svg"]);
+        const published = [...tools.assets.files(resolve(root, "public"), true).keys()].sort();
+
+        expect(published).toEqual([".well-known/security.txt", "images/brand/logo.svg"]);
         expect(tools.rules.source).toBe(resolve(root, "src"));
 
     });
@@ -219,7 +238,11 @@ describe("build", () => {
 
         const spec = {
             config: {
-                api: { connections: { primary: { baseUrl: "https://api.shop", development: { baseUrl: "http://127.0.0.1:8000", browserBaseUrl: null } } } },
+                api: {
+                    connections: {
+                        primary: { baseUrl: "https://api.shop", development: { baseUrl: "http://127.0.0.1:8000", browserBaseUrl: null } },
+                    },
+                },
                 content: { logo: "/images/brand/logo.svg" },
             },
             schema: { screens: [{ hero: "/videos/intro.mp4" }] },
@@ -293,7 +316,15 @@ function tables ( bytes: Uint8Array ): Map<string, number> {
 
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
-    return new Map(Array.from({ length: view.getUint16(4) }, ( _, index ) => [String.fromCharCode(...bytes.subarray(12 + index * 16, 16 + index * 16)), view.getUint32(20 + index * 16)]));
+    const record = ( index: number ): [string, number] => {
+
+        const at = 12 + index * 16;
+
+        return [String.fromCharCode(...bytes.subarray(at, at + 4)), view.getUint32(at + 8)];
+
+    };
+
+    return new Map(Array.from({ length: view.getUint16(4) }, ( _, index ) => record(index)));
 
 }
 describe("static fonts", () => {

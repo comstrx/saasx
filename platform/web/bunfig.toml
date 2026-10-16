@@ -4,6 +4,7 @@ telemetry = false
 exact = true
 linker = "hoisted"
 minimumReleaseAge = 259200
+globalDir = "../../engine/bun/.bun"
 
 [test]
 randomize = true

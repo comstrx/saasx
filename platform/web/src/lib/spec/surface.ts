@@ -1,5 +1,15 @@
 import { apiInputShape } from "engine/api";
-import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, reads, siteUrl, specText, stepShape } from "engine/spec";
+import {
+    type Children,
+    type CompiledBlock,
+    type CompiledFeature,
+    countShape,
+    createSpecSurface,
+    reads,
+    siteUrl,
+    specText,
+    stepShape,
+} from "engine/spec";
 import { z } from "engine/validate";
 import { iconNames } from "engine/world";
 import { core } from "../../api/core/index.ts";
@@ -14,7 +24,12 @@ export const surface = createSpecSurface({
     locales: supportedLocales,
     entities,
     icons: iconNames,
-    brand: { images: "/images/brand", imageFormats: ["png", "webp", "jpg", "jpeg", "svg", "avif"], fontFormats: ["woff2", "woff", "ttf", "otf"], fontWeight: /^[1-9]00(?: [1-9]00)?$/ },
+    brand: {
+        images: "/images/brand",
+        imageFormats: ["png", "webp", "jpg", "jpeg", "svg", "avif"],
+        fontFormats: ["woff2", "woff", "ttf", "otf"],
+        fontWeight: /^[1-9]00(?: [1-9]00)?$/,
+    },
     screenOptions: z.strictObject({
         render: z.enum(["server", "client"]),
         title: z.boolean(),
@@ -51,43 +66,90 @@ export const surface = createSpecSurface({
         delivery: "server",
         frameOrigins: [],
         screen: { render: "server", title: true, nav: true, footer: true, sidebar: false, loader: true },
-        block: { width: "full", height: "auto", grid: 1, sizes: [], gap: 6, padding: 0, align: "stretch", tone: "default", radius: "none", shadow: "none" },
+        block: {
+            width: "full",
+            height: "auto",
+            grid: 1,
+            sizes: [],
+            gap: 6,
+            padding: 0,
+            align: "stretch",
+            tone: "default",
+            radius: "none",
+            shadow: "none",
+        },
         shell: { nav: null, footer: null, sidebar: null, loader: null },
     },
+    environment: process.env,
     contracts: {
         browser: true,
-        options: { sessionCookie: apiInputShape.shape.context.shape.sessionCookie.default(null), proxies: apiInputShape.shape.context.shape.proxies.default(1) },
+        options: {
+            sessionCookie: apiInputShape.shape.context.shape.sessionCookie.default(null),
+            proxies: apiInputShape.shape.context.shape.proxies.default(1),
+        },
         dropped: ["baseUrl", "browserBaseUrl", "development"],
     },
 });
 
-export const { configShape, configInputShape, schemaShape, screenOptions, blockOptions, shellShape, settingsShape, contentShape, entityRoute } = surface;
-export const { defineConfig, defineSchema, screen, block, feature, t, read, write, data, site, param, query, signal, live } = surface.define;
-
-export function env ( name: string, fallback: string ): string {
-
-    return process.env[name] || fallback;
-
-}
+export const {
+    configShape,
+    configInputShape,
+    schemaShape,
+    screenOptions,
+    blockOptions,
+    shellShape,
+    settingsShape,
+    contentShape,
+    entityRoute,
+} = surface;
+export const {
+    defineConfig,
+    defineSchema,
+    screen,
+    block,
+    feature,
+    t,
+    read,
+    write,
+    data,
+    site,
+    param,
+    query,
+    signal,
+    live,
+    env,
+} = surface.define;
 
 export const validateSpec = surface.validator({
     reserved: new RegExp(`^/(?:api|_next|_not-found|_generated|assets|${supportedLocales.join("|")})(?:/|$)`),
     endpoints,
     core,
-    walk: ( _screen, options, config ) => ({ client: options.render === "client", session: config.api !== null && config.api.context.sessionCookie !== null }),
+    walk: ( _screen, options, config ) => ({
+        client: options.render === "client",
+        session: config.api !== null && config.api.context.sessionCookie !== null,
+    }),
     screen: ( screen, options, config, compiled, issues ) => {
 
         const { name, path } = screen.contents;
         const access = screen.access ?? "any";
         const listed = config.content.seo.sitemap.some(( entry ) => entry === "*" || entry === name);
 
-        if ( config.settings.delivery === "static" && compiled.walk.params.length ) issues.push(`${path}: a static delivery cannot build parameterised paths.`);
-        if ( config.settings.delivery === "static" && options.render === "server" && reads(compiled.blocks, []) ) issues.push(`${name}: a static delivery renders backend reads in the browser; set render: "client".`);
+        const delivered = config.settings.delivery === "static";
+
+        if ( delivered && compiled.walk.params.length ) issues.push(`${path}: a static delivery cannot build parameterised paths.`);
+
+        if ( delivered && options.render === "server" && reads(compiled.blocks, []) ) {
+
+            issues.push(`${name}: a static delivery renders backend reads in the browser; set render: "client".`);
+
+        }
 
         return { client: options.render === "client" || access !== "any", listed };
 
     },
-    screenIssues: ( screens ) => screens.flatMap(({ contents: { path, article } }) => (article?.modifiedAt && Date.parse(article.modifiedAt) < Date.parse(article.publishedAt) ? [`${path}: modifiedAt precedes publishedAt.`] : [])),
+    screenIssues: ( screens ) => screens
+        .filter(({ contents: { article } }) => article?.modifiedAt && Date.parse(article.modifiedAt) < Date.parse(article.publishedAt))
+        .map(({ contents: { path } }) => `${path}: modifiedAt precedes publishedAt.`),
 });
 
 export type SiteConfig = z.input<typeof configInputShape>;

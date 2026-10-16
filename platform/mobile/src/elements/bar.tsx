@@ -4,7 +4,16 @@ import { usePalette } from "@/styles/palette";
 
 type Props = { brand: ReactNode; actions: ReactNode };
 
-const styles = StyleSheet.create({ bar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 } });
+const styles = StyleSheet.create({
+    bar: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+    },
+});
 
 export default function Bar ({ brand, actions }: Props) {
 

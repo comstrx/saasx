@@ -1,5 +1,6 @@
-import { isRecord, kindOf, mapValues } from "engine/base";
-import { isSpecKey } from "./fields.ts";
+import { unique } from "engine/array";
+import { isRecord, kindOf } from "engine/base";
+import { isMessageKey } from "engine/translate";
 import type { Manifest, Options } from "./shapes.ts";
 
 export type Features = Readonly<Record<string, Manifest>>;
@@ -7,6 +8,11 @@ export type Features = Readonly<Record<string, Manifest>>;
 const readStates = ["loading", "failed", "offline", "cached"] as const;
 const listStates = ["empty"] as const;
 const writeStates = ["failed", "errors"] as const;
+const readerRule = [
+    "a feature that reads names its loading, failed, offline and cached texts in its options;",
+    "one that lists also names empty.",
+].join(" ");
+const writerRule = "a feature that writes names its failed text and an errors map in its options.";
 
 export function stateNames ( manifest: Manifest ): string[] {
 
@@ -17,7 +23,14 @@ export function stateNames ( manifest: Manifest ): string[] {
     const lists = ports.some(( port ) => port.kind === "list");
     const writes = ports.some(( port ) => port.kind === "write");
 
-    return [...new Set([...(reads ? readStates : []), ...(lists ? listStates : []), ...(writes ? writeStates : [])])];
+    return unique([...(reads ? readStates : []), ...(lists ? listStates : []), ...(writes ? writeStates : [])]);
+
+}
+export function stateTexts ( manifest: Manifest, given: Options ): Options {
+
+    const missing = stateNames(manifest).filter(( state ) => given[state] === undefined);
+
+    return Object.fromEntries(missing.map(( state ) => [state, { key: state === "errors" ? "errors" : `state.${state}` }]));
 
 }
 export function stateIssues ( features: Features ): string[] {
@@ -32,18 +45,14 @@ export function stateIssues ( features: Features ): string[] {
 
         const reads = missing.some(( state ) => state !== "failed" && state !== "errors");
 
-        return reads
-            ? [
-                  `features/${name}: a feature that reads names its loading, failed, offline and cached texts in its options; one that lists also names empty.`,
-              ]
-            : [`features/${name}: a feature that writes names its failed text and an errors map in its options.`];
+        return [`features/${name}: ${reads ? readerRule : writerRule}`];
 
     });
 
 }
 function kind ( value: unknown ): string {
 
-    return isSpecKey(value) ? "string" : kindOf(value);
+    return isMessageKey(value) ? "string" : kindOf(value);
 
 }
 export function optionIssues ( given: Options, defaults: Options, feature: string, where: string ): string[] {
@@ -55,7 +64,7 @@ export function optionIssues ( given: Options, defaults: Options, feature: strin
         const expected = kind(defaults[name]);
         const fallback = defaults[name];
 
-        if ( expected === "object" && isSpecKey(value) ) return [];
+        if ( expected === "object" && isMessageKey(value) ) return [];
 
         if ( expected !== kind(value) ) {
 
@@ -66,19 +75,5 @@ export function optionIssues ( given: Options, defaults: Options, feature: strin
         return isRecord(value) && isRecord(fallback) ? optionIssues(value, fallback, feature, `${where}.${name}`) : [];
 
     });
-
-}
-export function mergeOptions ( defaults: Options, given: Options ): Options {
-
-    return {
-        ...defaults,
-        ...mapValues(given, ( value, name ) => {
-
-            const fallback = defaults[name];
-
-            return isRecord(fallback) && isRecord(value) ? mergeOptions(fallback, value) : value;
-
-        }),
-    };
 
 }

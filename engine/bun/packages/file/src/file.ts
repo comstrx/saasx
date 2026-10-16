@@ -54,11 +54,6 @@ export function isFileRef ( value: unknown ): value is FileRef {
     );
 
 }
-export function isImage ( type: string ): boolean {
-
-    return type.startsWith("image/");
-
-}
 export function checkFile ( file: Blob, limits: Limits = uploadLimits, field = "file" ): void {
 
     if ( file.size > limits.maxBytes ) {

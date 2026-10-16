@@ -1,4 +1,4 @@
-import { isRecord, pathGet } from "engine/base";
+import { isRecord, mapValues, pathGet } from "engine/base";
 import { Failure, type FieldErrors, type Kind } from "engine/error";
 import { z } from "engine/validate";
 import type { Endpoint } from "./dsl.ts";
@@ -102,9 +102,7 @@ function pagination ( envelope: Envelope, body: unknown ): Pagination | undefine
 
     if ( !envelope.pagination ) return undefined;
 
-    const located = Object.fromEntries(
-        Object.entries(envelope.pagination).map(( [key, path] ) => [key, pathGet(body, path)]),
-    );
+    const located = mapValues(envelope.pagination, ( path ) => pathGet(body, path));
     const parsed = paginationShape.safeParse(located);
 
     return parsed.success ? parsed.data : undefined;

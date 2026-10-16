@@ -8,7 +8,12 @@ import Text from "@/elements/text";
 export type Credentials = { email: string; password: string };
 
 type Labels = { email: string; password: string; submit: string };
-type Props = { labels: Labels; busy: boolean; errors: Partial<Record<keyof Credentials | "_form", string>>; onSubmit: ( value: Credentials ) => void };
+type Props = {
+    labels: Labels;
+    busy: boolean;
+    errors: Partial<Record<keyof Credentials | "_form", string>>;
+    onSubmit: ( value: Credentials ) => void;
+};
 
 export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Props) {
 
@@ -28,7 +33,14 @@ export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Pro
 
             <Field label={labels.password} error={errors.password}>
 
-                <Input name="password" kind="password" value={password} invalid={Boolean(errors.password)} onChange={setPassword} onSubmit={submit} />
+                <Input
+                    name="password"
+                    kind="password"
+                    value={password}
+                    invalid={Boolean(errors.password)}
+                    onChange={setPassword}
+                    onSubmit={submit}
+                />
 
             </Field>
 

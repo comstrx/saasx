@@ -49,7 +49,11 @@ describe("edges", () => {
     });
     test("redaction reaches nested keys, honors a custom word list, and caps depth", () => {
 
-        const line = logLine("info", "e", { headers: { Authorization: "Bearer x", accept: "json" }, deep: { a: { b: { c: { d: { e: 1 } } } } }, list: [{ token: "t" }] });
+        const line = logLine("info", "e", {
+            headers: { Authorization: "Bearer x", accept: "json" },
+            deep: { a: { b: { c: { d: { e: 1 } } } } },
+            list: [{ token: "t" }],
+        });
         const parsed = JSON.parse(line) as Record<string, unknown>;
 
         expect(parsed.headers).toEqual({ Authorization: "[redacted]", accept: "json" });

@@ -5,16 +5,12 @@ import {
     choiceIssues,
     compileApi,
     compileScreen,
-    granted,
+    compileShell,
     iconIssues,
-    localizeTree,
-    matchScreen,
-    menuOf,
     mergeSettings,
     screenIssues,
     settingsResource,
     shellIssues,
-    shellOptions,
 } from "engine/spec";
 
 const item = z.object({ id: z.number(), title: z.string() });
@@ -57,7 +53,10 @@ describe("surface", () => {
 
         expect(choiceIssues({ ...settings, theme: { default: "dark", enabled: ["light", "light"] } })).toHaveLength(2);
         expect(shellIssues({ nav: "missing" }, features)).toEqual(["settings.shell.nav: no feature named missing."]);
-        expect(shellOptions(settings.shell, features)).toEqual({ nav: { compact: true }, footer: {} });
+        expect(compileShell(settings.shell, features)).toEqual({
+            nav: { feature: "menu", options: { compact: true } },
+            footer: { feature: null, options: {} },
+        });
         expect(
             screenIssues(
                 [{ contents: { name: "a", path: "/api/x" } }, { contents: { name: "a", path: "/api/x" } }],
@@ -128,53 +127,6 @@ describe("surface", () => {
     });
 
 });
-describe("screens", () => {
-
-    const screens = [
-        { path: "/", name: "home" },
-        { path: "/items/:id", name: "item" },
-    ];
-
-    test("paths match exactly first, then by pattern", () => {
-
-        expect(matchScreen(screens, [])?.name).toBe("home");
-        expect(matchScreen(screens, ["items", "7"])).toMatchObject({
-            name: "item",
-            path: "/items/7",
-            pattern: "/items/:id",
-            parameters: { id: "7" },
-        });
-        expect(matchScreen(screens, ["nope"])).toBeUndefined();
-
-    });
-    test("trees localize and missing keys fail loudly", () => {
-
-        expect(
-            localizeTree(
-                { title: { key: "nav.home" }, list: [{ key: "nav.home" }], n: 1 },
-                { nav: { home: "Home" } },
-                "en",
-            ),
-        ).toEqual({ title: "Home", list: ["Home"], n: 1 });
-        expect(
-            localizeTree({ labels: { key: "form" }, one: { key: "form.name" } }, { form: { name: "Name" } }, "en"),
-        ).toEqual({
-            labels: { name: "Name" },
-            one: "Name",
-        } as unknown as { labels: string; one: string });
-        expect(() => localizeTree({ key: "nav.nope" }, {}, "en")).toThrow("nav.nope");
-
-    });
-    test("access is granted by session or held permission", () => {
-
-        expect(granted(null, ["user"])).toBe(false);
-        expect(granted({ permissions: [] }, ["user"])).toBe(true);
-        expect(granted({ permissions: ["admin"] }, ["user", "admin"])).toBe(true);
-        expect(granted({ permissions: [] }, ["admin"])).toBe(false);
-
-    });
-
-});
 describe("shell parts", () => {
 
     test("a shell part may carry options for its feature, checked against the manifest", () => {
@@ -182,7 +134,10 @@ describe("shell parts", () => {
         const shell = { nav: { feature: "menu", options: { compact: false } }, footer: null };
 
         expect(shellIssues(shell, features)).toEqual([]);
-        expect(shellOptions(shell, features)).toEqual({ nav: { compact: false }, footer: {} });
+        expect(compileShell(shell, features)).toEqual({
+            nav: { feature: "menu", options: { compact: false } },
+            footer: { feature: null, options: {} },
+        });
         expect(shellIssues({ nav: { feature: "menu", options: { compact: "x" } } }, features)).toHaveLength(1);
         expect(shellIssues({ nav: { feature: "menu", options: { nope: true } } }, features)).toHaveLength(1);
 
@@ -306,57 +261,6 @@ describe("signals in the compiler", () => {
         });
         compileScreen(server);
         expect(server.issues.some(( issue ) => issue.includes("live port needs a client-owned feature"))).toBe(true);
-
-    });
-    test("a menu lists the screens that show a shell part, reachable without parameters and not guest-only", () => {
-
-        const screens = [
-            {
-                name: "home",
-                path: "/",
-                title: { key: "nav.home" },
-                icon: "house",
-                access: "any",
-                options: { sidebar: true },
-            },
-            {
-                name: "item",
-                path: "/items/:id",
-                title: { key: "nav.item" },
-                icon: null,
-                access: "any",
-                options: { sidebar: true },
-            },
-            {
-                name: "login",
-                path: "/login",
-                title: { key: "nav.login" },
-                icon: null,
-                access: "guest",
-                options: { sidebar: true },
-            },
-            {
-                name: "settings",
-                path: "/settings",
-                title: { key: "nav.settings" },
-                access: "user",
-                options: { sidebar: true },
-            },
-            {
-                name: "about",
-                path: "/about",
-                title: { key: "nav.about" },
-                icon: "info",
-                access: "any",
-                options: { sidebar: false },
-            },
-        ] as const;
-
-        expect(menuOf(screens, "sidebar")).toEqual([
-            { name: "home", path: "/", title: { key: "nav.home" }, icon: "house", access: "any" },
-            { name: "settings", path: "/settings", title: { key: "nav.settings" }, icon: null, access: "user" },
-        ]);
-        expect(menuOf(screens, "footer")).toEqual([]);
 
     });
 

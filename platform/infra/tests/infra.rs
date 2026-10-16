@@ -64,7 +64,7 @@ mod tests {
     #[test]
     fn a_missing_service_is_missing_and_bad_input_is_usage () {
 
-        let status = run(&["service", "status", "saasx-no-such-service-xyz"]).ok();
+        let status = run(&["service", "status", "no-such-service-xyz"]).ok();
 
         assert!(status.as_ref().is_some_and(|output| output.status.code() == Some(0) && text(&output.stdout).trim() == "missing" || output.status.code() == Some(70)));
 

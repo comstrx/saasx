@@ -1,5 +1,4 @@
-import { pathGet } from "engine/base";
-import type { FormState, FormValue } from "engine/context";
+import { type FormState, fieldLabel, formText, localizedTexts } from "engine/client";
 import { languageName } from "engine/translate";
 import type { FieldFact } from "engine/validate";
 import type { ReactNode } from "react";
@@ -13,25 +12,51 @@ import Text from "@/elements/text";
 
 export type Labels = Record<string, string>;
 export type Choices = Record<string, Record<string, string>>;
-type Props = { form: FormState<unknown>; labels: Labels; choices: Choices; submit: string; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined; actions?: ReactNode | undefined };
+type Props = {
+    form: FormState<unknown>;
+    labels: Labels;
+    choices: Choices;
+    submit: string;
+    note?: { text: string; tone: "muted" | "success" | "danger" } | undefined;
+    actions?: ReactNode | undefined;
+};
 
-const kinds = { text: "text", email: "email", phone: "phone", password: "password", number: "number", integer: "number", date: "date", datetime: "date" } as const;
+const kinds = {
+    text: "text",
+    email: "email",
+    phone: "phone",
+    password: "password",
+    number: "number",
+    integer: "number",
+    date: "date",
+    datetime: "date",
+} as const;
 
-function text ( value: FormValue ): string {
-
-    return typeof value === "string" ? value : "";
-
-}
 export default function SchemaForm ({ form, labels, choices, submit, note, actions }: Props) {
 
     const busy = form.status === "pending";
-    const label = ( field: FieldFact ): string => labels[field.name] ?? (typeof pathGet(labels, field.name) === "string" ? (pathGet(labels, field.name) as string) : field.name);
+    const label = ( field: FieldFact ): string => fieldLabel(labels, field.name);
     const control = ( field: FieldFact ): ReactNode => {
 
         const value = form.values[field.name] ?? null;
         const error = form.errors[field.name];
 
-        if ( field.kind === "boolean" ) return <Checkbox key={field.name} name={field.name} label={label(field)} checked={value === true} disabled={busy} onChange={( next ) => form.set(field.name, next)} />;
+        if ( field.kind === "boolean" ) {
+
+            return (
+
+                <Checkbox
+                    key={field.name}
+                    name={field.name}
+                    label={label(field)}
+                    checked={value === true}
+                    disabled={busy}
+                    onChange={( next ) => form.set(field.name, next)}
+                />
+
+            );
+
+        }
 
         if ( field.kind === "choice" ) {
 
@@ -41,7 +66,13 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
 
                 <Field key={field.name} label={label(field)} error={error}>
 
-                    <Select name={field.name} value={text(value)} choices={field.required ? options : [{ value: "", label: "—" }, ...options]} disabled={busy} onChange={( next ) => form.set(field.name, next)} />
+                    <Select
+                        name={field.name}
+                        value={formText(value)}
+                        choices={field.required ? options : [{ value: "", label: "—" }, ...options]}
+                        disabled={busy}
+                        onChange={( next ) => form.set(field.name, next)}
+                    />
 
                 </Field>
 
@@ -51,13 +82,19 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
 
         if ( field.kind === "localized" ) {
 
-            const texts: Record<string, string> = value && typeof value === "object" && !Array.isArray(value) && !("uri" in value) && !(value instanceof Blob) ? (value as Record<string, string>) : {};
+            const texts = localizedTexts(value);
 
             return Object.keys(texts).map(( locale ) => (
 
                 <Field key={`${field.name}-${locale}`} label={`${label(field)} · ${languageName(locale, locale)}`} error={error}>
 
-                    <Input name={`${field.name}[${locale}]`} value={texts[locale] ?? ""} invalid={Boolean(error)} disabled={busy} onChange={( next ) => form.set(field.name, { ...texts, [locale]: next })} />
+                    <Input
+                        name={`${field.name}[${locale}]`}
+                        value={texts[locale] ?? ""}
+                        invalid={Boolean(error)}
+                        disabled={busy}
+                        onChange={( next ) => form.set(field.name, { ...texts, [locale]: next })}
+                    />
 
                 </Field>
 
@@ -73,7 +110,13 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
 
                 <Field key={field.name} label={label(field)} error={error}>
 
-                    <Input name={field.name} value={items.join(", ")} invalid={Boolean(error)} disabled={busy} onChange={( next ) => form.set(field.name, next.split(",").map(( item ) => item.trim()).filter(Boolean))} />
+                    <Input
+                        name={field.name}
+                        value={items.join(", ")}
+                        invalid={Boolean(error)}
+                        disabled={busy}
+                        onChange={( next ) => form.set(field.name, next.split(",").map(( item ) => item.trim()).filter(Boolean))}
+                    />
 
                 </Field>
 
@@ -87,7 +130,14 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
 
             <Field key={field.name} label={label(field)} error={error}>
 
-                <Input name={field.name} kind={kinds[field.kind as keyof typeof kinds]} value={text(value)} invalid={Boolean(error)} disabled={busy} onChange={( next ) => form.set(field.name, next)} />
+                <Input
+                    name={field.name}
+                    kind={kinds[field.kind as keyof typeof kinds]}
+                    value={formText(value)}
+                    invalid={Boolean(error)}
+                    disabled={busy}
+                    onChange={( next ) => form.set(field.name, next)}
+                />
 
             </Field>
 
@@ -107,7 +157,12 @@ export default function SchemaForm ({ form, labels, choices, submit, note, actio
 
             <Stack direction="row" gap={2} align="between">
 
-                <Button label={submit} busy={busy} disabled={!form.dirty && form.status !== "idle"} onPress={() => { void form.submit(); }} />
+                <Button
+                    label={submit}
+                    busy={busy}
+                    disabled={!form.dirty && form.status !== "idle"}
+                    onPress={() => { void form.submit(); }}
+                />
 
                 {actions}
 

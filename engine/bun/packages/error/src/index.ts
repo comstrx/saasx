@@ -16,4 +16,5 @@ export {
     reference,
     settled,
     transient,
+    unreachable,
 } from "./failure.ts";

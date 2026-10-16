@@ -1,6 +1,7 @@
 import "server-only";
 
 import registry from "@spec/registry";
+import { placementOf } from "engine/screen";
 import { type ComponentType, createElement, Fragment, type ReactNode, Suspense } from "react";
 import Block from "@/elements/block";
 import type { FeatureProps, Route, Screen } from "@/lib/spec/feature";
@@ -24,7 +25,6 @@ export async function placed ( name: string, props: FeatureProps ): Promise<Reac
 }
 async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {
 
-    const place = { id: entry.id, slug: entry.slug, heading: entry.heading, access: entry.access };
     const held = entry.features.length + entry.blocks.length > 0;
     const children = held ? (
 
@@ -38,7 +38,9 @@ async function One ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) 
 
     ) : undefined;
 
-    return placed(entry.name, { options: entry.options, ports: entry.ports, screen: facts.screen, route: facts.route, feature: place, children });
+    const { screen, route } = facts;
+
+    return placed(entry.name, { options: entry.options, ports: entry.ports, screen, route, feature: placementOf(entry), children });
 
 }
 function Placed ({ entry, facts }: { entry: CompiledFeature; facts: Facts }) {

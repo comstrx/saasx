@@ -3,7 +3,7 @@ name         = "infra"
 version      = "0.1.0"
 edition      = "2024"
 rust-version = "1.99"
-license      = "AGPL-3.0-only"
+license      = "Apache-2.0"
 authors      = ["comstrx"]
 readme       = "README.md"
 publish      = false
@@ -33,18 +33,17 @@ path    = "benches/infra.rs"
 harness = false
 
 [lints.rust]
-deprecated_safe         = { level = "deny", priority = -1 }
-future_incompatible     = { level = "deny", priority = -1 }
-keyword_idents          = { level = "deny", priority = -1 }
-let_underscore          = { level = "deny", priority = -1 }
-nonstandard_style       = { level = "deny", priority = -1 }
-refining_impl_trait     = { level = "deny", priority = -1 }
-rust_2018_idioms        = { level = "deny", priority = -1 }
-rust_2024_compatibility = { level = "deny", priority = -1 }
-unused                  = { level = "deny", priority = -1 }
-warnings                = { level = "deny", priority = -1 }
 unknown_or_malformed_diagnostic_attributes = { level = "deny", priority = -1 }
-
+deprecated_safe               = { level = "deny", priority = -1 }
+future_incompatible           = { level = "deny", priority = -1 }
+keyword_idents                = { level = "deny", priority = -1 }
+let_underscore                = { level = "deny", priority = -1 }
+nonstandard_style             = { level = "deny", priority = -1 }
+refining_impl_trait           = { level = "deny", priority = -1 }
+rust_2018_idioms              = { level = "deny", priority = -1 }
+rust_2024_compatibility       = { level = "deny", priority = -1 }
+unused                        = { level = "deny", priority = -1 }
+warnings                      = { level = "deny", priority = -1 }
 missing_docs                  = "deny"
 missing_debug_implementations = "deny"
 missing_copy_implementations  = "deny"
@@ -74,11 +73,10 @@ broken_intra_doc_links   = "deny"
 unescaped_backticks      = "deny"
 
 [lints.clippy]
-all      = { level = "deny", priority = -1 }
-cargo    = { level = "deny", priority = -1 }
-nursery  = { level = "deny", priority = -1 }
-pedantic = { level = "deny", priority = -1 }
-
+all                                  = { level = "deny", priority = -1 }
+cargo                                = { level = "deny", priority = -1 }
+nursery                              = { level = "deny", priority = -1 }
+pedantic                             = { level = "deny", priority = -1 }
 allow_attributes_without_reason      = "deny"
 allow_attributes                     = "deny"
 panic                                = "deny"

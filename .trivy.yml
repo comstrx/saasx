@@ -1,6 +1,5 @@
 debug: false
 quiet: false
-
 insecure: false
 timeout: 10m0s
 
@@ -79,9 +78,7 @@ scan:
 
 license:
   full: true
-
   ignored:
-    - AGPL-3.0
     - MIT
     - Apache-2.0
     - OFL-1.1

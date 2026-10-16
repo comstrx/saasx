@@ -30,3 +30,8 @@ export function failureMessages ( error: unknown, dictionary: Messages, fallback
     return { _form: reason ?? code ?? error.errors._form?.[0] ?? (error.spoken ? error.message : undefined) ?? fallback };
 
 }
+export function failureMessage ( error: unknown, dictionary: Messages, fallback: string ): string {
+
+    return Object.values(failureMessages(error, dictionary, fallback))[0] ?? fallback;
+
+}

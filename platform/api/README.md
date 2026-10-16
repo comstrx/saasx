@@ -43,3 +43,9 @@ cargo test --workspace --all-features --locked
 ```
 
 Plain Cargo, no runner: the engine owns the deep gates, a consumer only has to lint and pass its tests. CI runs these two commands and nothing else.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

@@ -16,7 +16,7 @@ impl Infra {
         writeln!(out, "memory={}", System::memory().await.map_or_else(|failure| failure.key().to_owned(), |( total, free )| format!("{total}/{free}")))?;
         writeln!(out, "uptime={}", System::uptime().await.map_or_else(|failure| failure.key().to_owned(), |secs| secs.to_string()))?;
         writeln!(out, "manager={}", Manager::detect().await.map_or_else(|failure| failure.key().to_owned(), |manager| manager.to_string()))?;
-        writeln!(out, "provider={}", Provider::detect().map_or_else(|failure| failure.key().to_owned(), |provider| format!("{provider:?}").to_ascii_lowercase()))?;
+        writeln!(out, "provider={}", Provider::detect().map_or_else(|failure| failure.key().to_owned(), |provider| provider.to_string()))?;
 
         self.log.info("doctor").field("platform", System::platform().name()).emit();
 

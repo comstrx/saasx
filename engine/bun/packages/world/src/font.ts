@@ -2,7 +2,13 @@ import { generatedPath } from "engine/base";
 import rows from "../data/fonts.json" with { type: "json" };
 
 export type FontFile = { file: string; range: string };
-export type Font = { family: string; scripts: readonly string[]; weight: readonly [number, number]; sizeAdjust: string; files: readonly FontFile[] };
+export type Font = {
+    family: string;
+    scripts: readonly string[];
+    weight: readonly [number, number];
+    sizeAdjust: string;
+    files: readonly FontFile[];
+};
 export type FontFace = {
     family: string;
     src: string;
@@ -25,7 +31,7 @@ export function fontOf ( script: string ): Font {
 }
 export function fontFace ( face: FontFace ): string {
 
-    const format = face.src.endsWith(".woff2") ? ' format("woff2")' : "";
+    const format = /\.woff2$|^data:font\/woff2[;,]/.test(face.src) ? ' format("woff2")' : "";
     const parts = [
         `font-family: "${face.family}"`,
         `src: url("${face.src}")${format}`,
@@ -41,7 +47,13 @@ export function fontFace ( face: FontFace ): string {
 }
 export function fontFaces ( folder = fontFolder ): string[] {
 
-    return fonts.flatMap(( font ) => font.files.map(( face ) => fontFace({ family: font.family, src: `${folder}/${face.file}`, weight: font.weight.join(" "), range: face.range, sizeAdjust: font.sizeAdjust })));
+    return fonts.flatMap(( font ) => font.files.map(( face ) => fontFace({
+        family: font.family,
+        src: `${folder}/${face.file}`,
+        weight: font.weight.join(" "),
+        range: face.range,
+        sizeAdjust: font.sizeAdjust,
+    })));
 
 }
 export function fontStack ( families: readonly string[], generic = "sans-serif" ): string {

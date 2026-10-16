@@ -1,4 +1,4 @@
-import { isRecord } from "engine/base";
+import { isRecord, mapValues } from "engine/base";
 
 export const kinds = {
     configuration: 503,
@@ -91,13 +91,14 @@ export function isFailure ( value: unknown ): value is Failure {
     return value instanceof Failure;
 
 }
+export function unreachable ( error: unknown ): boolean {
+
+    return isFailure(error) && (error.kind === "network" || error.kind === "timeout");
+
+}
 export function transient ( error: unknown ): boolean {
 
-    if ( !isFailure(error) ) return false;
-
-    return (
-        error.kind === "network" || error.kind === "timeout" || error.status >= serverFloor || error.status === tooMany
-    );
+    return unreachable(error) || (isFailure(error) && (error.status >= serverFloor || error.status === tooMany));
 
 }
 export function settled ( error: unknown ): boolean {
@@ -169,9 +170,7 @@ export function formErrors ( error: unknown, fallback: string ): Record<string, 
 
     if ( !isFailure(error) ) return { _form: fallback };
 
-    const fields = Object.fromEntries(
-        Object.entries(error.errors).map(( [key, messages] ) => [key, messages[0] ?? fallback]),
-    );
+    const fields = mapValues(error.errors, ( messages ) => messages[0] ?? fallback);
 
     return Object.keys(fields).length ? fields : { _form: error.message || fallback };
 

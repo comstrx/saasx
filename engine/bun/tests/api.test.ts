@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
     allowed,
     browserConfig,
+    connectionOrigins,
     createApi,
     del,
     feature,
@@ -331,6 +332,24 @@ describe("failure hook", () => {
 
         await expect(client.products.list()).rejects.toMatchObject({ kind: "denied", status: 401 });
         expect(seen).toEqual([401]);
+
+    });
+
+});
+describe("connection origins", () => {
+
+    test("every connection with an address names its origin once, and a part without a backend has none", () => {
+
+        const api = {
+            connections: {
+                primary: { baseUrl: "https://api.example.test/v1" },
+                files: { baseUrl: "https://api.example.test/files" },
+                idle: { baseUrl: null },
+            },
+        };
+
+        expect(connectionOrigins(api)).toEqual(["https://api.example.test"]);
+        expect(connectionOrigins(null)).toEqual([]);
 
     });
 

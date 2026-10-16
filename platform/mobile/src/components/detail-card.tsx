@@ -7,7 +7,13 @@ import Link from "@/elements/link";
 import Stack from "@/elements/stack";
 import Text from "@/elements/text";
 
-export type Detail = { name: string; image?: string | null | undefined; type?: string | null | undefined; price?: string | undefined; facts: readonly { key: string; label: string; value: string }[] };
+export type Detail = {
+    name: string;
+    image?: string | null | undefined;
+    type?: string | null | undefined;
+    price?: string | undefined;
+    facts: readonly { key: string; label: string; value: string }[];
+};
 type Props = { item: Detail; back?: { href: string; label: string } | undefined; actions?: ReactNode | undefined };
 
 export default function DetailCard ({ item, back, actions }: Props) {

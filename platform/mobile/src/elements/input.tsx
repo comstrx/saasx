@@ -2,9 +2,20 @@ import { StyleSheet, TextInput } from "react-native";
 import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
-type Props = { name: string; kind?: "text" | "email" | "password" | "search" | "code" | "number" | "date" | "phone" | undefined; value: string; placeholder?: string | undefined; invalid?: boolean | undefined; disabled?: boolean | undefined; onChange: ( value: string ) => void; onSubmit?: (() => void) | undefined };
+type Props = {
+    name: string;
+    kind?: "text" | "email" | "password" | "search" | "code" | "number" | "date" | "phone" | undefined;
+    value: string;
+    placeholder?: string | undefined;
+    invalid?: boolean | undefined;
+    disabled?: boolean | undefined;
+    onChange: ( value: string ) => void;
+    onSubmit?: (() => void) | undefined;
+};
 
-const styles = StyleSheet.create({ input: { minHeight: 44, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 10, borderWidth: 1, fontSize: 15 } });
+const styles = StyleSheet.create({
+    input: { minHeight: 44, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 10, borderWidth: 1, fontSize: 15 },
+});
 const kinds = {
     text: { keyboardType: "default", secureTextEntry: false, autoCapitalize: "sentences", textContentType: "none" },
     email: { keyboardType: "email-address", secureTextEntry: false, autoCapitalize: "none", textContentType: "emailAddress" },
@@ -26,7 +37,16 @@ export default function Input ({ name, kind = "text", value, placeholder, invali
         <TextInput
             testID={name}
             accessibilityLabel={placeholder ?? name}
-            style={[font, styles.input, { backgroundColor: palette.panel, color: palette.ink, borderColor: invalid ? palette.danger : palette.line, opacity: disabled ? 0.6 : 1 }]}
+            style={[
+                font,
+                styles.input,
+                {
+                    backgroundColor: palette.panel,
+                    color: palette.ink,
+                    borderColor: invalid ? palette.danger : palette.line,
+                    opacity: disabled ? 0.6 : 1,
+                },
+            ]}
             value={value}
             placeholder={placeholder}
             placeholderTextColor={palette.muted}

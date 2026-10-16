@@ -5,7 +5,12 @@ import Text from "@/elements/text";
 import Icon from "@/icons";
 
 export type DetailAction = { label: string; icon: string; tone?: "primary" | "ghost" | "danger" | undefined; onPress: () => void };
-type Props = { edit?: { href: string; label: string } | undefined; actions: readonly DetailAction[]; busy: boolean; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined };
+type Props = {
+    edit?: { href: string; label: string } | undefined;
+    actions: readonly DetailAction[];
+    busy: boolean;
+    note?: { text: string; tone: "muted" | "success" | "danger" } | undefined;
+};
 
 export default function DetailActions ({ edit, actions, busy, note }: Props) {
 
@@ -17,7 +22,18 @@ export default function DetailActions ({ edit, actions, busy, note }: Props) {
 
                 {edit ? <Link href={edit.href} label={edit.label} tone="button" icon={<Icon name="pencil" size="sm" />} /> : null}
 
-                {actions.map(( action ) => <Button key={action.label} label={action.label} tone={action.tone} busy={busy} icon={<Icon name={action.icon} size="sm" tone={action.tone === "ghost" ? "primary" : "inverse"} />} onPress={action.onPress} />)}
+                {actions.map(( action ) => (
+
+                    <Button
+                        key={action.label}
+                        label={action.label}
+                        tone={action.tone}
+                        busy={busy}
+                        icon={<Icon name={action.icon} size="sm" tone={action.tone === "ghost" ? "primary" : "inverse"} />}
+                        onPress={action.onPress}
+                    />
+
+                ))}
 
             </Stack>
 

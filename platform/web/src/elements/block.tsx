@@ -28,11 +28,25 @@ export default function Block ({ entries, grid, sizes, gap, padding, align, widt
             data-padding={padding}
         >
 
-            <div className="block-flow" data-mode={sized ? "row" : "grid"} data-gap={gap} data-align={align} style={sized ? undefined : columns(grid)}>
+            <div
+                className="block-flow"
+                data-mode={sized ? "row" : "grid"}
+                data-gap={gap}
+                data-align={align}
+                style={sized ? undefined : columns(grid)}
+            >
 
                 {entries.map(( entry, index ) => (
 
-                    <div key={entry.id} className="block-cell" style={sized ? { flexGrow: sizes[index] ?? 1, flexBasis: 0 } : undefined}>{entry.node}</div>
+                    <div
+                        key={entry.id}
+                        className="block-cell"
+                        style={sized ? { flexGrow: sizes[index] ?? 1, flexBasis: 0 } : undefined}
+                    >
+
+                        {entry.node}
+
+                    </div>
 
                 ))}
 

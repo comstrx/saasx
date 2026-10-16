@@ -6,7 +6,14 @@ import Text from "@/elements/text";
 import Icon from "@/icons";
 
 export type Note = { text: string; tone: "muted" | "success" | "danger" };
-type Props = { icon: string; title: string; detail?: string | undefined; action?: { label: string; busy: boolean; disabled?: boolean | undefined; onPress: () => void } | undefined; note?: Note | undefined; children?: ReactNode | undefined };
+type Props = {
+    icon: string;
+    title: string;
+    detail?: string | undefined;
+    action?: { label: string; busy: boolean; disabled?: boolean | undefined; onPress: () => void } | undefined;
+    note?: Note | undefined;
+    children?: ReactNode | undefined;
+};
 
 export default function ActionCard ({ icon, title, detail, action, note, children }: Props) {
 

@@ -1,6 +1,6 @@
-## Part
+## Scope
 
-<!-- rust | bun | api | infra | skill | web | mobile | global -->
+<!-- the module, package or area this change touches -->
 
 ## What
 
@@ -8,12 +8,11 @@
 
 ## Checklist
 
-- [ ] Scoped to one part (or genuinely cross-cutting and explained above)
-- [ ] The engine's `gates`, or the part's plain commands, pass locally
+- [ ] Scoped to one area (or genuinely cross-cutting and explained above)
+- [ ] Lint, tests and build pass locally
 - [ ] Tests / benchmarks updated where behavior changed
-- [ ] No product-specific code leaked into an engine or a generic part (`engine/`, `platform/api`, `platform/infra`, `platform/skill`, the `platform/web` and `platform/mobile` engines)
 - [ ] No secrets, credentials or private data
-- [ ] Commit messages use the part prefix (`engine(...)`, `api(...)`, `infra(...)`, `skill(...)`, `web(...)`, `mobile(...)`, `global(...)`)
+- [ ] Commit messages follow `scope(topic): what changed`
 
 ## Rollback
 

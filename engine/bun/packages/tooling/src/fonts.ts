@@ -8,7 +8,10 @@ import { worldAssets } from "./compile.ts";
 
 export type StaticFont = { family: string; weight: number; file: string; bytes: Uint8Array };
 
-const everyCharacter = Array.from({ length: 0xffff }, ( _, index ) => index + 1).filter(( code ) => code < 0xd800 || code > 0xdfff).map(( code ) => String.fromCodePoint(code)).join("");
+const everyCharacter = Array.from({ length: 0xffff }, ( _, index ) => index + 1)
+    .filter(( code ) => code < 0xd800 || code > 0xdfff)
+    .map(( code ) => String.fromCodePoint(code))
+    .join("");
 
 export async function staticFonts ( weights: readonly number[] ): Promise<StaticFont[]> {
 

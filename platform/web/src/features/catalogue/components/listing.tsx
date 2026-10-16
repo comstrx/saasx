@@ -1,5 +1,5 @@
-import { field, rows } from "engine/spec";
-import { formatMoney, localePath } from "engine/translate";
+import { field, moneyText, rows } from "engine/client";
+import { localePath } from "engine/translate";
 import { portOf } from "@/api/workflow/ports";
 import type { CatalogItem } from "@/components/catalog-card";
 import CatalogGrid from "@/components/catalog-grid";
@@ -12,10 +12,9 @@ export type Options = { title: string; empty: string; from: string; columns: num
 
 function price ( item: Record<string, unknown>, from: string, locale: string ): string | undefined {
 
-    const amount = Number(field(item, "sale_price.amount") ?? field(item, "min_price.amount"));
-    const currency = field(item, "sale_price.currency") ?? field(item, "min_price.currency");
+    const money = moneyText(locale, item, "sale_price", "min_price");
 
-    return amount > 0 && currency ? `${from} ${formatMoney(locale, amount, currency).text}` : undefined;
+    return money ? `${from} ${money}` : undefined;
 
 }
 export default async function Listing ({ options, ports, route, feature }: FeatureProps<Options>) {

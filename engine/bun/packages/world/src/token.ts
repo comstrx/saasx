@@ -39,6 +39,11 @@ export function cssVariables ( tokens: Tokens, scheme: Scheme, selector: string 
         ]),
     ];
 
+    return cssBlock(selector, lines);
+
+}
+export function cssBlock ( selector: string, lines: readonly string[] ): string {
+
     return `${selector} {\n${lines.map(( line ) => `    ${line}`).join("\n")}\n}`;
 
 }

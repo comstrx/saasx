@@ -9,14 +9,14 @@ import {
     resolveApi,
     type Seeds,
 } from "engine/api";
-import { compact, isRecord, mapValues } from "engine/base";
+import { unique } from "engine/array";
+import { compact, deepMerge, isRecord, mapValues } from "engine/base";
 import { patternKeys } from "engine/parse";
 import {
     type Catalogue,
     compileBlock,
     createWalk,
     type Features,
-    mergeOptions,
     optionIssues,
     type Walk,
 } from "./compile.ts";
@@ -24,6 +24,17 @@ import type { CompiledBlock, SiteBlock } from "./shapes.ts";
 
 export type Choice = { default: string; enabled: string[] };
 export type ShellValue = string | { feature: string; options?: Record<string, unknown> | undefined } | null;
+export type ShellPart = { feature: string | null; options: Record<string, unknown> };
+export type SettingsResource = {
+    language: string;
+    languages: string[];
+    currency: string;
+    currencies: string[];
+    theme: string;
+    themes: string[];
+    maintenance: boolean;
+    maintenance_message: string;
+};
 export type Settings = {
     locale: Choice;
     currency: Choice;
@@ -84,7 +95,7 @@ export function mergeSettings<T extends Patch> ( defaults: T, given: Patch ): T 
     } as T;
 
 }
-export function settingsResource ( settings: Settings ): Record<string, unknown> {
+export function settingsResource ( settings: Settings ): SettingsResource {
 
     return {
         language: settings.locale.default,
@@ -132,22 +143,17 @@ export function shellIssues ( shell: Record<string, ShellValue>, features: Featu
     });
 
 }
-export function shellOptions<K extends string> (
-    shell: Record<K, ShellValue>,
-    features: Features,
-): Record<K, Record<string, unknown>> {
+export function compileShell<K extends string> ( shell: Record<K, ShellValue>, features: Features ): Record<K, ShellPart> {
 
-    const entries = Object.entries<ShellValue>(shell).map(( [part, value] ) => {
+    return mapValues(shell, ( value: ShellValue ) => {
 
-        const name = shellFeature(value);
-        const defaults = name ? (features[name]?.options ?? {}) : {};
+        const feature = shellFeature(value);
+        const defaults = feature ? (features[feature]?.options ?? {}) : {};
         const given = typeof value === "object" && value ? (value.options ?? {}) : {};
 
-        return [part, mergeOptions(defaults, given)];
+        return { feature, options: deepMerge(defaults, given) };
 
-    });
-
-    return Object.fromEntries(entries) as Record<K, Record<string, unknown>>;
+    }) as Record<K, ShellPart>;
 
 }
 export function screenIssues ( screens: readonly Declared[], reserved: RegExp ): string[] {
@@ -271,8 +277,8 @@ export function schemaFacts ( screens: readonly { features: string[]; operations
 } {
 
     return {
-        features: [...new Set(screens.flatMap(( screen ) => screen.features))].sort(),
-        operations: [...new Set(screens.flatMap(( screen ) => screen.operations))].sort(),
+        features: unique(screens.flatMap(( screen ) => screen.features)).sort(),
+        operations: unique(screens.flatMap(( screen ) => screen.operations)).sort(),
     };
 
 }

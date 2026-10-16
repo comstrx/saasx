@@ -4,6 +4,7 @@ import { useLocale, useTheme } from "@/hooks/use-locale";
 import { useLocalSearchParams, usePathname } from "@/hooks/use-router";
 import { markReady } from "@/lib/observe/client";
 import { localize, screenAt, text } from "@/lib/spec/runtime";
+import { type Entry, EntryContext } from "@/stores/navigation";
 import { palette } from "@/styles/theme";
 import { Screen } from "./screen";
 
@@ -27,5 +28,10 @@ export function Page () {
     const { path: _path, ...rest } = query;
 
     return <Screen screen={localized} route={{ parameters: screen.parameters, query: rest }} />;
+
+}
+export function EntryPage ({ entry }: { entry: Entry }) {
+
+    return <EntryContext.Provider value={entry}><Page /></EntryContext.Provider>;
 
 }

@@ -1,6 +1,19 @@
 import { describe, expect, test } from "bun:test";
 import { Failure } from "engine/error";
-import { contentSecurityPolicy, forwardedFor, hostname, isEndpoint, isLoopback, isOrigin, joinUrl, originOf, readJson, retryAfter, sameOrigin, send } from "engine/net";
+import {
+    contentSecurityPolicy,
+    forwardedFor,
+    hostname,
+    isEndpoint,
+    isLoopback,
+    isOrigin,
+    joinUrl,
+    originOf,
+    readJson,
+    retryAfter,
+    sameOrigin,
+    send,
+} from "engine/net";
 
 describe("net", () => {
 
@@ -83,8 +96,9 @@ describe("edges", () => {
     });
     test("a content security policy drops empty and false sources", () => {
 
-        expect(contentSecurityPolicy({ "default-src": ["'self'"], "img-src": ["'self'", false, "", null, "https:"], "frame-ancestors": [] }))
-            .toBe("default-src 'self'; img-src 'self' https:; frame-ancestors");
+        expect(
+            contentSecurityPolicy({ "default-src": ["'self'"], "img-src": ["'self'", false, "", null, "https:"], "frame-ancestors": [] }),
+        ).toBe("default-src 'self'; img-src 'self' https:; frame-ancestors");
 
     });
     test("origins and endpoints are strict about credentials, paths, queries and schemes", () => {

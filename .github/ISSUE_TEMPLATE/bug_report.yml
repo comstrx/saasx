@@ -1,14 +1,15 @@
 name: Bug report
 description: A reproducible defect
-title: '<part>: <short description>'
+
+title: '<scope>: <short description>'
 labels: [bug]
 
 body:
-  - type: dropdown
-    id: part
+  - type: input
+    id: scope
     attributes:
-      label: Part
-      options: [rust, bun, api, infra, skill, web, mobile, global]
+      label: Scope
+      placeholder: The module, package or area involved
     validations:
       required: true
 
@@ -39,7 +40,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      placeholder: OS, architecture, and the rustc or bun version when relevant
+      placeholder: OS, architecture, and the toolchain version when relevant
     validations:
       required: true
 

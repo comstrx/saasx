@@ -41,7 +41,16 @@ export default function EmojiPicker ({ placeholder, empty, query, onQuery, group
 
             <Stack direction="row" gap={2}>
 
-                {groups.map(( choice ) => <Button key={choice.key} label={choice.label} tone={choice.key === group && !query ? "primary" : "ghost"} onPress={() => onGroup(choice.key)} />)}
+                {groups.map(( choice ) => (
+
+                    <Button
+                        key={choice.key}
+                        label={choice.label}
+                        tone={choice.key === group && !query ? "primary" : "ghost"}
+                        onPress={() => onGroup(choice.key)}
+                    />
+
+                ))}
 
             </Stack>
 

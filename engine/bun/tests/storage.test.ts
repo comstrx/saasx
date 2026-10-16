@@ -99,7 +99,10 @@ describe("edges", () => {
             },
         };
         const store = webStore(storage);
-        const numbers = typed<number>(store, { encode: ( value ) => `n:${value}`, decode: ( text ) => (text.startsWith("n:") ? Number(text.slice(2)) : undefined) });
+        const numbers = typed<number>(store, {
+            encode: ( value ) => `n:${value}`,
+            decode: ( text ) => (text.startsWith("n:") ? Number(text.slice(2)) : undefined),
+        });
 
         expect(store.keys()).toEqual(["a", "b"]);
         await numbers.write("n", 7);

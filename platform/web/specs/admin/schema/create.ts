@@ -1,5 +1,7 @@
 import { block, feature, screen, t, write } from "../../../src/lib/spec/surface.ts";
 
+const fields = ["type", "subtype", "name", "stock", "capacity", "featured", "starts_at", "ends_at"];
+
 export default screen({
     contents: {
         name: "create",
@@ -15,11 +17,16 @@ export default screen({
             feature("form", {
                 heading: true,
                 options: {
-                    title: t("admin.newCatalog"), submit: t("admin.create"), saved: t("admin.saved"), failed: t("state.failed"),
-                    loading: t("state.loading"), offline: t("state.offline"), cached: t("state.cached"), empty: t("state.empty"), leave: t("form.leave"), queued: t("state.queued"), errors: t("errors"),
-                    next: "/catalog/{id}/edit", labels: t("catalog.fields"), choices: t("catalog.choices"),
+                    title: t("admin.newCatalog"),
+                    submit: t("admin.create"),
+                    saved: t("admin.saved"),
+                    leave: t("form.leave"),
+                    queued: t("state.queued"),
+                    next: "/catalog/{id}/edit",
+                    labels: t("catalog.fields"),
+                    choices: t("catalog.choices"),
                 },
-                ports: { save: write("manage.create", {}, ["type", "subtype", "name", "stock", "capacity", "featured", "starts_at", "ends_at"]) },
+                ports: { save: write("manage.create", {}, fields) },
             }),
         ]),
     ],

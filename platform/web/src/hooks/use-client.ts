@@ -1,6 +1,6 @@
 "use client";
 
-import { defineClient } from "engine/context";
+import { defineClient } from "engine/client";
 import { endpoints } from "@/api/features";
 import { useLocale } from "@/hooks/use-locale";
 import { observeCall, trace } from "@/lib/observe/browser";
@@ -23,6 +23,6 @@ export const client = defineClient({
     observe: observeCall,
 });
 
-export const { useOutbox, useSession, useApi, useAccess, usePermission, usePort, useWrite } = client;
+export const { useOutbox, useSession, useApi, useAccess, useGate, usePermission, usePort, useWrite } = client;
 export const { useSignal, useSignals, Provider: SignalsProvider } = client.signals;
 export const SessionProvider = client.session.Provider;

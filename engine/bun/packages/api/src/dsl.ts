@@ -1,3 +1,4 @@
+import { unique } from "engine/array";
 import { mapValues } from "engine/base";
 import { templateKeys } from "engine/parse";
 import { z } from "engine/validate";
@@ -78,7 +79,7 @@ export function feature<const T extends Record<string, Endpoint>> ( defaults: La
     const declared = mapValues(endpoints, ( endpoint ) => ({
         ...endpoint,
         wire: merge(layer, endpoint.wire),
-        permissions: [...new Set([...permissions, ...endpoint.permissions])],
+        permissions: unique([...permissions, ...endpoint.permissions]),
     })) as unknown as T;
 
     facts.set(declared, { permissions, touches });
@@ -108,6 +109,6 @@ export function document<R extends Resource> ( resource: R, path?: string, wire:
 }
 export function need<E extends Endpoint> ( permissions: readonly string[], endpoint: E ): E {
 
-    return { ...endpoint, permissions: [...new Set([...endpoint.permissions, ...permissions])] };
+    return { ...endpoint, permissions: unique([...endpoint.permissions, ...permissions]) };
 
 }

@@ -5,7 +5,7 @@ import { inspect, layoutIssues, type Rules, readSources, type SurfaceRules } fro
 import { type AssetFolder, assetFiles, composeAssets, type Files, type Skip } from "./assets.ts";
 import { type Buildable, type BuildPlan, type Compile, defineBuild } from "./build.ts";
 import { generatedRoot } from "./compile.ts";
-import { type Core, createCore, report } from "./core.ts";
+import { type Core, createCore, report, tally } from "./core.ts";
 import { composeMessages, type Dictionaries, messageIssues } from "./messages.ts";
 import { defineRules } from "./rules.ts";
 import { createLoader, type Loader, type LoaderOptions } from "./specs.ts";
@@ -39,7 +39,8 @@ const generatedFolder = generatedRoot.slice(generatedRoot.lastIndexOf("/") + 1);
 function surfaceAssets ( folders: readonly AssetFolder[] ): SurfaceAssets {
 
     const paths = folders.map(( folder ) => folder.path);
-    const skip: Skip = ( name, base, publicFiles ) => base === generatedFolder || (base.startsWith(".") && !(publicFiles && paths.includes(name)));
+    const skip: Skip = ( name, base, publicFiles ) =>
+        base === generatedFolder || (base.startsWith(".") && !(publicFiles && paths.includes(name)));
 
     return {
         paths,
@@ -85,10 +86,10 @@ export function createTools<
 
         for ( const name of loader.installedSpecs() ) {
 
-            const { screens, features, operations } = (await loader.loadSpec(name)).schema;
+            const { schema } = await loader.loadSpec(name);
             const chosen = name === selected ? " (selected)" : "";
 
-            report(`Spec: ${name} — ${screens.length} screen(s), ${features.length} feature(s), ${operations.length} operation(s)${chosen}.`);
+            report(`Spec: ${name} — ${tally(schema)}${chosen}.`);
 
         }
 

@@ -1,6 +1,6 @@
+import { field, row } from "engine/client";
 import { interpolate } from "engine/parse";
-import { field, row } from "engine/spec";
-import { failureMessages, type Messages } from "engine/translate";
+import { failureMessage, failureMessages, type Messages } from "engine/translate";
 import { useState } from "react";
 import CodeForm from "@/components/code-form";
 import CredentialsForm, { type Credentials } from "@/components/credentials-form";
@@ -9,7 +9,18 @@ import { useSession, useWrite } from "@/hooks/use-client";
 import { useRouter } from "@/hooks/use-router";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; email: string; password: string; continue: string; otp: string; verify: string; sent: string; back: string; failed: string; errors: Messages };
+export type Options = {
+    title: string;
+    email: string;
+    password: string;
+    continue: string;
+    otp: string;
+    verify: string;
+    sent: string;
+    back: string;
+    failed: string;
+    errors: Messages;
+};
 
 type Challenge = { token: string; destination: string };
 
@@ -48,7 +59,7 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
         }
 
     };
-    const codeError = verify.status === "failed" ? (failureMessages(verify.error, options.errors, options.failed)._form ?? failureMessages(verify.error, options.errors, options.failed).otp) : undefined;
+    const codeError = verify.status === "failed" ? failureMessage(verify.error, options.errors, options.failed) : undefined;
 
     return (
 
@@ -57,7 +68,12 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
             {challenge ? (
 
                 <CodeForm
-                    labels={{ code: options.otp, submit: options.verify, back: options.back, sent: interpolate(options.sent, { destination: challenge.destination }) }}
+                    labels={{
+                        code: options.otp,
+                        submit: options.verify,
+                        back: options.back,
+                        sent: interpolate(options.sent, { destination: challenge.destination }),
+                    }}
                     busy={verify.status === "pending"}
                     error={codeError}
                     onSubmit={submitCode}

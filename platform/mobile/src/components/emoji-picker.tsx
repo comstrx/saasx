@@ -36,7 +36,12 @@ export default function EmojiPicker ({ placeholder, empty, query, onQuery, group
 
             <Input name="emoji-search" kind="search" value={query} placeholder={placeholder} onChange={onQuery} />
 
-            <Select name="emoji-groups" value={query ? "" : group} choices={groups.map(( choice ) => ({ value: choice.key, label: choice.label }))} onChange={onGroup} />
+            <Select
+                name="emoji-groups"
+                value={query ? "" : group}
+                choices={groups.map(( choice ) => ({ value: choice.key, label: choice.label }))}
+                onChange={onGroup}
+            />
 
             <Tiles items={picks} side={48} keyOf={keyOf} render={tile} empty={<Text text={empty} tone="muted" />} />
 

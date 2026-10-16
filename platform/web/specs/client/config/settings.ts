@@ -42,7 +42,10 @@ export default {
         shadow: "none",
     },
     shell: {
-        nav: { feature: "nav", options: { brand: t("shell.brand"), home: t("nav.home"), login: t("shell.login"), account: t("shell.account") } },
+        nav: {
+            feature: "nav",
+            options: { brand: t("shell.brand"), home: t("nav.home"), login: t("shell.login"), account: t("shell.account") },
+        },
         footer: null,
         sidebar: null,
         loader: null,

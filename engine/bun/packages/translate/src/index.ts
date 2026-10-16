@@ -1,4 +1,4 @@
-export { failureMessages } from "./failures.ts";
+export { failureMessage, failureMessages } from "./failures.ts";
 export {
     type DateStyle,
     formatDate,
@@ -19,6 +19,7 @@ export {
     type Located,
     languageFacts,
     languageName,
+    languagesOf,
     localePath,
     negotiate,
     preferredPath,
@@ -27,6 +28,15 @@ export {
     regionOf,
     splitLocale,
 } from "./locale.ts";
+export {
+    isMessageKey,
+    type Localized,
+    localizeTree,
+    type MessageKey,
+    type MessageText,
+    messageKeyPattern,
+    messageText,
+} from "./localize.ts";
 export {
     type Dictionaries,
     dictionary,

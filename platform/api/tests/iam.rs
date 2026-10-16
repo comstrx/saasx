@@ -56,7 +56,7 @@ mod tests {
 
     fn unique ( name: &str ) -> PathBuf {
 
-        temp_dir().join(format!("saasx-iam-{}-{name}.log", id()))
+        temp_dir().join(format!("iam-{}-{name}.log", id()))
 
     }
 

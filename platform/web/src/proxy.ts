@@ -1,3 +1,4 @@
+import { connectionOrigins } from "engine/api";
 import { trace } from "engine/base";
 import { contentSecurityPolicy, nonce as token } from "engine/net";
 import { preferredPath, prefixed, splitLocale } from "engine/translate";
@@ -7,7 +8,7 @@ import { routing } from "@/lib/spec/config";
 import { config as site } from "@/lib/spec/server";
 
 const development = process.env.NODE_ENV === "development";
-const backends = Object.values(site.api?.connections ?? {}).flatMap(( connection ) => (connection.baseUrl ? [new URL(connection.baseUrl).origin] : []));
+const backends = connectionOrigins(site.api);
 const media = site.settings.mediaOrigins;
 const sockets = site.realtime ? [new URL(site.realtime.url).origin] : [];
 const policy = contentSecurityPolicy({

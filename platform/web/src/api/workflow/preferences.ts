@@ -30,7 +30,8 @@ export async function loadPreferences ( signal?: AbortSignal ): Promise<Saved> {
 }
 export async function savePreferences ( change: Preferences ): Promise<Preferences> {
 
-    const { response } = await send(endpoint, { method: "POST", headers: { ...accept, "content-type": "application/json" }, body: JSON.stringify(change) }, { timeoutMs: 5000 });
+    const init = { method: "POST", headers: { ...accept, "content-type": "application/json" }, body: JSON.stringify(change) };
+    const { response } = await send(endpoint, init, { timeoutMs: 5000 });
 
     return answer<Preferences>(response);
 

@@ -13,7 +13,7 @@
     "./array": "./packages/array/src/index.ts",
     "./base": "./packages/base/src/index.ts",
     "./cache": "./packages/cache/src/index.ts",
-    "./context": "./packages/context/src/index.ts",
+    "./client": "./packages/client/src/index.ts",
     "./cookie": "./packages/cookie/src/index.ts",
     "./device": "./packages/device/src/index.ts",
     "./error": "./packages/error/src/index.ts",
@@ -22,8 +22,10 @@
     "./log": "./packages/log/src/index.ts",
     "./net": "./packages/net/src/index.ts",
     "./parse": "./packages/parse/src/index.ts",
+    "./screen": "./packages/screen/src/index.ts",
     "./socket": "./packages/socket/src/index.ts",
     "./spec": "./packages/spec/src/index.ts",
+    "./state": "./packages/state/src/index.ts",
     "./storage": "./packages/storage/src/index.ts",
     "./string": "./packages/string/src/index.ts",
     "./tooling": "./packages/tooling/src/index.ts",
@@ -54,6 +56,8 @@
     "@biomejs/biome": "2.5.15",
     "@types/bun": "1.4.2",
     "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react-dom": "19.3.0",
     "typescript": "7.0.2"
   }
 }

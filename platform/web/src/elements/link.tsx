@@ -2,7 +2,13 @@ import type { Route } from "next";
 import NextLink from "next/link";
 import type { ReactNode } from "react";
 
-type Props = { href: string; label: string; tone?: "default" | "primary" | "button" | undefined; current?: boolean | undefined; icon?: ReactNode | undefined };
+type Props = {
+    href: string;
+    label: string;
+    tone?: "default" | "primary" | "button" | undefined;
+    current?: boolean | undefined;
+    icon?: ReactNode | undefined;
+};
 
 export default function Link ({ href, label, tone = "default", current = false, icon }: Props) {
 

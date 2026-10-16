@@ -1,5 +1,8 @@
 # ✨ Infra
 
+[![Rust 1.99+](https://img.shields.io/badge/rust-1.99%2B-orange.svg)](https://www.rust-lang.org)
+[![edition 2024](https://img.shields.io/badge/edition-2024-green.svg)](https://doc.rust-lang.org/edition-guide/)
+
 A Rust infrastructure engine for defining, provisioning, deploying, operating and rolling back infrastructure.
 
 ## Overview
@@ -23,7 +26,7 @@ The engine is one crate on the Rust engine, reached by path and never through th
 
 ## Tool
 
-`infra` is the first consumer of the engine's `process` crate, the way `iam` is of `http`:
+`infra` drives the engine's `process` capability:
 
 ```text
 infra doctor                                                  the machine: platform, distro, host, memory, uptime, package and service managers
@@ -31,4 +34,19 @@ infra service show|install|uninstall|start|stop|restart|status <name> [--command
 infra package install|uninstall|check <name>                  through apt, dnf, pacman, apk, zypper, nix, brew, winget, scoop or choco
 ```
 
-A unit is rendered for the machine's provider (or the named one) from one description; nothing escalates privileges on its own. `INFRA_LOG`, `INFRA_LOG_FILE` and `INFRA_AUDIT` work as in `iam`; every change to a service or a package is audited with the user as actor.
+A unit is rendered for the machine's provider (or the named one) from one description; nothing escalates privileges on its own. `INFRA_LOG=<level>` writes text to standard error, `INFRA_LOG_FILE` JSON lines and `INFRA_AUDIT` the audit journal; every change to a service or a package is audited with the user as actor.
+
+## Development
+
+```bash
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
+```
+
+Plain Cargo, no runner: the engine owns the deep gates, a consumer only has to lint and pass its tests. CI runs these two commands and nothing else.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

@@ -1,5 +1,24 @@
 import { describe, expect, expectTypeOf, test } from "bun:test";
-import { assert, currency, email, fieldFacts, issuesOf, jitless, key, language, localized, money, parse, password, path, phone, rulesOf, shapeKeys, slug, z } from "engine/validate";
+import {
+    assert,
+    currency,
+    email,
+    fieldFacts,
+    issuesOf,
+    jitless,
+    key,
+    language,
+    localized,
+    money,
+    parse,
+    password,
+    path,
+    phone,
+    rulesOf,
+    shapeKeys,
+    slug,
+    z,
+} from "engine/validate";
 
 describe("validate", () => {
 

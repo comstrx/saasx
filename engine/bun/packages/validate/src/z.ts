@@ -1,3 +1,4 @@
+import { mapValues } from "engine/base";
 import type * as zm from "zod/mini";
 import {
     array as zodArray,
@@ -202,29 +203,32 @@ const chain: { [K in keyof Chain<Any>]: ( schema: Any, ...args: never[] ) => unk
 };
 const properties = new Set(["valueType"]);
 const marked = Symbol("fluent");
-const descriptors: PropertyDescriptorMap = Object.fromEntries(
-    Object.entries(chain).map(( [name, method] ): [string, PropertyDescriptor] => [
-        name,
-        properties.has(name)
-            ? {
-                  configurable: true,
-                  get ( this: Any ) {
+const descriptors: PropertyDescriptorMap = mapValues(chain, ( method, name ): PropertyDescriptor => {
 
-                      return method(this);
+    if ( properties.has(name) ) {
 
-                  },
-              }
-            : {
-                  configurable: true,
-                  writable: true,
-                  value ( this: Any, ...args: never[] ) {
+        return {
+            configurable: true,
+            get ( this: Any ) {
 
-                      return method(this, ...args);
+                return method(this);
 
-                  },
-              },
-    ]),
-);
+            },
+        };
+
+    }
+
+    return {
+        configurable: true,
+        writable: true,
+        value ( this: Any, ...args: never[] ) {
+
+            return method(this, ...args);
+
+        },
+    };
+
+});
 
 export function fluent<S extends Any> ( schema: S ): Fluent<S> {
 

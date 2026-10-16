@@ -10,11 +10,9 @@ pub(crate) type Sessions = HashMap<Box<str>, Session>;
 pub(crate) struct Faults;
 
 pub(crate) struct Iam {
-    pub(crate) address:  Address,
-    pub(crate) workers:  usize,
-    pub(crate) operator: Arc<Operator>,
-    pub(crate) log:      Log,
-    pub(crate) store:    Arc<Store>,
+    pub(crate) address: Address,
+    pub(crate) workers: usize,
+    pub(crate) service: Service,
 }
 
 pub(crate) struct Operator {
@@ -34,6 +32,7 @@ pub(crate) struct Session {
     pub(crate) since: SystemTime,
 }
 
+#[derive(Clone)]
 pub(crate) struct Service {
     pub(crate) log:      Log,
     pub(crate) store:    Arc<Store>,

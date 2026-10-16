@@ -1,6 +1,5 @@
-import type { FormState } from "engine/context";
+import { row, rows, withTranslations } from "engine/client";
 import { interpolate } from "engine/parse";
-import { row, rows } from "engine/spec";
 import type { Messages } from "engine/translate";
 import { useEffect, useRef } from "react";
 import Note from "@/components/note";
@@ -13,23 +12,23 @@ import { isDeferred, useForm } from "@/hooks/use-form";
 import { useRouter } from "@/hooks/use-router";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-function withTexts ( record: Record<string, unknown> | undefined, translations: Record<string, unknown>[], fields: FormState<unknown>["fields"] ): Record<string, unknown> | undefined {
-
-    if ( !translations.length ) return record;
-
-    const localized = fields.filter(( field ) => field.kind === "localized").map(( field ) => field.name);
-    const merged: Record<string, unknown> = { ...record };
-
-    for ( const name of localized ) {
-
-        merged[name] = Object.fromEntries(translations.flatMap(( text ) => (typeof text.locale === "string" && typeof text[name] === "string" ? [[text.locale, text[name]]] : [])));
-
-    }
-
-    return merged;
-
-}
-export type Options = { title: string; submit: string; saved: string; queued: string; failed: string; loading: string; offline: string; cached: string; empty: string; leave: string; next: string; autosave: number; labels: Labels; choices: Choices; errors: Messages };
+export type Options = {
+    title: string;
+    submit: string;
+    saved: string;
+    queued: string;
+    failed: string;
+    loading: string;
+    offline: string;
+    cached: string;
+    empty: string;
+    leave: string;
+    next: string;
+    autosave: number;
+    labels: Labels;
+    choices: Choices;
+    errors: Messages;
+};
 
 export default function Editor ({ options, ports, route, feature }: FeatureProps<Options>) {
 
@@ -42,7 +41,9 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
     useDirtyGuard(form.dirty && form.status !== "done", options.leave);
 
     const settled = (!ports.item || item.status === "ready") && (!ports.texts || texts.status === "ready");
-    const record = settled ? withTexts(row(item.status === "ready" ? item.value : undefined), rows(texts.status === "ready" ? texts.value : undefined), form.fields) : undefined;
+    const found = item.status === "ready" ? row(item.value) : undefined;
+    const translated = texts.status === "ready" ? rows(texts.value) : [];
+    const record = settled ? withTranslations(found, translated, form.fields) : undefined;
     const stamp = settled ? JSON.stringify(record ?? null) : "";
 
     useEffect(() => {
@@ -58,13 +59,13 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
 
         if ( form.status !== "done" || !options.next || isDeferred(form.result) ) return;
 
-        const saved = row(form.result);
-
-        router.push(interpolate(options.next, Object.fromEntries(Object.entries(saved ?? {}).map(( [key, value] ) => [key, String(value ?? "")]))));
+        router.push(interpolate(options.next, row(form.result) ?? {}));
 
     }, [form.status, form.result, options.next, router]);
 
-    const note = form.status === "done" ? { text: isDeferred(form.result) ? options.queued : options.saved, tone: "success" as const } : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const } : undefined;
+    const note = form.status === "done" ? { text: isDeferred(form.result) ? options.queued : options.saved, tone: "success" as const }
+        : form.status === "failed" && !Object.keys(form.errors).length ? { text: options.failed, tone: "danger" as const }
+        : undefined;
     const failing = item.status === "failed" || texts.status === "failed";
     const nothing = Boolean(ports.item) && settled && record === undefined;
 
@@ -78,7 +79,13 @@ export default function Editor ({ options, ports, route, feature }: FeatureProps
 
             {settled
                 ? <SchemaForm form={form} labels={options.labels} choices={options.choices} submit={options.submit} note={note} />
-                : <Status status={failing ? "failed" : "loading"} loading={options.loading} failed={options.failed} offline={options.offline} error={item.status === "failed" ? item.error : texts.status === "failed" ? texts.error : undefined} />}
+                : <Status
+                    status={failing ? "failed" : "loading"}
+                    loading={options.loading}
+                    failed={options.failed}
+                    offline={options.offline}
+                    error={item.status === "failed" ? item.error : texts.status === "failed" ? texts.error : undefined}
+                />}
 
         </Titled>
 

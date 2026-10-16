@@ -1,6 +1,6 @@
 # Mobile
 
-A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaking the same language as the web engine: screens → blocks → features, manifests with options, ports, signals and access, the same bindings (`read`, `write`, `data`, `site`, `live`, `param`, `query`, `signal`) and the same compiler rules (states contract, permissions on write ports, icon set, translations in every language).
+A spec-driven Expo / React Native engine over the `engine` package, speaking the same language as the web engine: screens → blocks → features, manifests with options, ports, signals and access, the same bindings (`read`, `write`, `data`, `site`, `live`, `param`, `query`, `signal`) and the same compiler rules (states contract, permissions on write ports, icon set, translations in every language).
 
 ## What differs
 
@@ -12,6 +12,10 @@ A spec-driven Expo / React Native engine (→ MobileX) over `engine/bun`, speaki
 - The device adapter (`lib/providers/device.native.ts`) doors expo-location, expo-image-picker, expo-notifications and expo-localization behind the engine's Device DSL.
 - Preferences (language, currency, theme) live in a persisted store; the first language is negotiated from the device locales.
 - Failures are spoken through the same `errors` dictionaries; undeliverable writes wait in the outbox and replay when the device is online again.
+
+## Setup
+
+With `"engine": "link:engine"` in `package.json`, run `bun link` once inside the `engine` package, then `bun install --frozen-lockfile` here; a part that pins a git tag of the engine installs it directly.
 
 ## Gates
 
@@ -55,3 +59,9 @@ bun run compare                                                 # the same two n
 ```
 
 `MAESTRO` names the Maestro binary when it is not on the path; `APP_ID` names the installed package.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

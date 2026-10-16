@@ -11,7 +11,12 @@ import Text from "@/elements/text";
 export type Credentials = { email: string; password: string };
 
 type Labels = { email: string; password: string; submit: string };
-type Props = { labels: Labels; busy: boolean; errors: Partial<Record<keyof Credentials | "_form", string>>; onSubmit: ( value: Credentials ) => void };
+type Props = {
+    labels: Labels;
+    busy: boolean;
+    errors: Partial<Record<keyof Credentials | "_form", string>>;
+    onSubmit: ( value: Credentials ) => void;
+};
 
 export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Props) {
 
@@ -27,13 +32,29 @@ export default function CredentialsForm ({ labels, busy, errors, onSubmit }: Pro
 
                 <Field id={`${id}-email`} label={labels.email} error={errors.email}>
 
-                    <Input id={`${id}-email`} name="email" kind="email" value={email} autoComplete="email" invalid={Boolean(errors.email)} onChange={setEmail} />
+                    <Input
+                        id={`${id}-email`}
+                        name="email"
+                        kind="email"
+                        value={email}
+                        autoComplete="email"
+                        invalid={Boolean(errors.email)}
+                        onChange={setEmail}
+                    />
 
                 </Field>
 
                 <Field id={`${id}-password`} label={labels.password} error={errors.password}>
 
-                    <Input id={`${id}-password`} name="password" kind="password" value={password} autoComplete="current-password" invalid={Boolean(errors.password)} onChange={setPassword} />
+                    <Input
+                        id={`${id}-password`}
+                        name="password"
+                        kind="password"
+                        value={password}
+                        autoComplete="current-password"
+                        invalid={Boolean(errors.password)}
+                        onChange={setPassword}
+                    />
 
                 </Field>
 

@@ -2,7 +2,6 @@ export {
     type Codec,
     type Driver,
     driverStore,
-    jsonCodec,
     lazyStore,
     memoryStore,
     namespaced,

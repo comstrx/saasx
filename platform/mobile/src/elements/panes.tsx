@@ -3,7 +3,11 @@ import { StyleSheet, View } from "react-native";
 
 type Pane = { key: string; active: boolean; children: ReactNode };
 
-const styles = StyleSheet.create({ panes: { flex: 1 }, pane: { ...StyleSheet.absoluteFill }, away: { transform: [{ translateX: 100000 }] } });
+const styles = StyleSheet.create({
+    panes: { flex: 1 },
+    pane: { ...StyleSheet.absoluteFill },
+    away: { transform: [{ translateX: 100000 }] },
+});
 
 export default function Panes ({ panes }: { panes: readonly Pane[] }) {
 
@@ -13,7 +17,13 @@ export default function Panes ({ panes }: { panes: readonly Pane[] }) {
 
             {panes.map(( pane ) => (
 
-                <View key={pane.key} collapsable={false} style={[styles.pane, !pane.active && styles.away]} pointerEvents={pane.active ? "auto" : "none"} importantForAccessibility={pane.active ? "auto" : "no-hide-descendants"}>
+                <View
+                    key={pane.key}
+                    collapsable={false}
+                    style={[styles.pane, !pane.active && styles.away]}
+                    pointerEvents={pane.active ? "auto" : "none"}
+                    importantForAccessibility={pane.active ? "auto" : "no-hide-descendants"}
+                >
 
                     {pane.children}
 

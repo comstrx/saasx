@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { documentJar, headerJar, parseCookies, preferenceJar, serializeCookie, storageJar } from "engine/cookie";
+import { acceptPreferences, documentJar, headerJar, parseCookies, preferenceJar, serializeCookie, storageJar } from "engine/cookie";
 import { memoryStore } from "engine/storage";
 
 describe("cookie", () => {
@@ -39,11 +39,10 @@ describe("cookie", () => {
 });
 describe("preferences", () => {
 
-    const jar = preferenceJar({ language: "site.locale", currency: "site.currency" }, ["en", "ar"]);
+    const jar = preferenceJar({ language: "site.locale", currency: "site.currency" }, { languages: ["en", "ar"] });
     const themed = preferenceJar(
         { language: "site.locale", currency: "site.currency", theme: "site.theme" },
-        ["en", "ar"],
-        ["light", "dark", "system"],
+        { languages: ["en", "ar"], themes: ["light", "dark", "system"] },
     );
 
     test("saved preferences come back only when valid, a first language is negotiated, changes list cookie writes", () => {
@@ -78,6 +77,16 @@ describe("preferences", () => {
         expect(themed.accept({ language: "fr", currency: "EUR" })).toEqual({ currency: "EUR" });
         expect(themed.accept("nonsense")).toEqual({});
         expect(jar.accept({ theme: "dark" })).toEqual({});
+
+    });
+    test("an enabled currency list narrows the currencies a preference may name, with or without a jar", () => {
+
+        const choices = { languages: ["en", "ar"], currencies: ["USD", "SAR"], themes: ["light"] };
+
+        expect(acceptPreferences({ language: "ar", currency: "EUR", theme: "light" }, choices)).toEqual({ language: "ar", theme: "light" });
+        expect(acceptPreferences({ currency: "SAR", theme: "dark" }, choices)).toEqual({ currency: "SAR" });
+        expect(acceptPreferences(null, choices)).toEqual({});
+        expect(preferenceJar({ language: "l", currency: "c" }, choices).read(( name ) => ({ c: "EUR" })[name])).toEqual({});
 
     });
 

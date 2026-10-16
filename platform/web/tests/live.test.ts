@@ -8,14 +8,19 @@ import { loadSpec, specFromEnvironment } from "../tools/core/index.ts";
 const spec = await loadSpec(specFromEnvironment());
 const api = spec.config.api;
 const base = api?.connections.primary?.baseUrl ?? null;
-const alive = base ? await fetch(`${base}/contract`, { headers: { "X-Tenant-Domain": api?.context.tenant ?? "" } }).then(( r ) => r.ok, () => false) : false;
+const alive = base
+    ? await fetch(`${base}/contract`, { headers: { "X-Tenant-Domain": api?.context.tenant ?? "" } }).then(( r ) => r.ok, () => false)
+    : false;
 const live = alive ? test : test.skip;
 
 describe("the backend behind the spec", () => {
 
     live("its published envelope agrees with the core layer this part speaks", async () => {
 
-        const reply = await fetch(`${base}/contract`, { headers: { Accept: "application/json", "X-Tenant-Domain": api?.context.tenant ?? "" } });
+        const reply = await fetch(`${base}/contract`, { headers: {
+            Accept: "application/json",
+            "X-Tenant-Domain": api?.context.tenant ?? "",
+        } });
         const body = (await reply.json()) as { data: { envelope: Record<string, unknown> } };
         const envelope = body.data.envelope;
         const expected = core.response ?? {};
@@ -31,7 +36,8 @@ describe("the backend behind the spec", () => {
 
         if ( !api ) return;
 
-        const client = createApi(endpoints, api, spec.config.contract, () => requestContext(api.context, { language: "en", requestId: "live-1" }), { execution: "server" });
+        const context = () => requestContext(api.context, { language: "en", requestId: "live-1" });
+        const client = createApi(endpoints, api, spec.config.contract, context, { execution: "server" });
         const result = await client.catalogs.list({ limit: 3 });
 
         expect(result.resource.length).toBeGreaterThan(0);
@@ -44,9 +50,11 @@ describe("the backend behind the spec", () => {
 
         if ( !api ) return;
 
-        const client = createApi(endpoints, api, spec.config.contract, () => requestContext(api.context, { language: "en", requestId: "live-2" }), { execution: "client" });
-
-        const refusal = await client.auth.login({ email: "nobody@example.test", password: "Wrong#Password1" }).then(() => undefined, ( error: unknown ) => error);
+        const context = () => requestContext(api.context, { language: "en", requestId: "live-2" });
+        const client = createApi(endpoints, api, spec.config.contract, context, { execution: "client" });
+        const refusal = await client.auth
+            .login({ email: "nobody@example.test", password: "Wrong#Password1" })
+            .then(() => undefined, ( error: unknown ) => error);
 
         if ( isFailure(refusal) && refusal.status === 429 ) return;
 

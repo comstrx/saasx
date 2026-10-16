@@ -21,7 +21,7 @@ function rankOf ( entry: Key, codes: readonly string[], typed: string ): number 
 }
 export function defineKeys ( from: readonly Country[] = everyCountry ): Keys {
 
-    const all: Key[] = from.flatMap(( country ) => (country.key ? [{ code: country.code, key: country.key, areas: country.areas, primary: country.primary, name: country.name }] : []));
+    const all: Key[] = from.flatMap(({ code, key, areas, primary, name }) => (key ? [{ code, key, areas, primary, name }] : []));
     const byCode = new Map(all.map(( entry ) => [entry.code, entry.key]));
     const byName = catalog(all, ( entry ) => entry.code, ( entry ) => [entry.code, entry.name.en, entry.name.ar, entry.name.native]);
     const numbers = all.map(( entry, at ) => ({ entry, at, codes: dialings(entry.key, entry.areas).map(digits) }));

@@ -31,9 +31,9 @@ If you are unsure about scope, start with a short [discussion](https://github.co
 
 1. Fork the repo and clone it locally.
 2. Create a new branch for your change.
-3. Follow the [README](https://github.com/comstrx/saasx/blob/main/README.md), then the README of the engine or part you are changing (`engine/rust`, `engine/bun`, `platform/api`, `platform/infra`, `platform/skill`, `platform/web`, `platform/mobile`) — each engine owns a `gates` command; each part owns plain `cargo`/`bun` commands.
+3. Follow the [README](https://github.com/comstrx/saasx/blob/main/README.md) to set up the project and run its checks.
 4. Make your change, add/adjust tests/docs as needed.
-5. Open a PR scoped to one part when possible and follow the [PR template](https://github.com/comstrx/saasx/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
+5. Open a focused PR and fill in the pull request template.
 
 ---
 
@@ -43,8 +43,8 @@ Before opening a PR, make sure:
 
 - ✅ The change is easy to understand and review
 - ✅ Tests pass and new behavior is covered (when applicable)
-- ✅ The engine's `gates`, or the part's plain commands, pass locally
-- ✅ Commit messages use the part prefix: `engine(...)`, `api(...)`, `infra(...)`, `skill(...)`, `web(...)`, `mobile(...)`, or `global(...)`
+- ✅ The checks described in the README pass locally
+- ✅ Commit messages read `scope(topic): what changed`
 
 ---
 

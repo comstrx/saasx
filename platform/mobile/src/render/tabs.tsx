@@ -1,8 +1,8 @@
 import { formatHref } from "engine/history";
 import { useState } from "react";
 import Panes from "@/elements/panes";
-import { type Entry, EntryContext } from "@/stores/navigation";
-import { Page } from "./page";
+import type { Entry } from "@/stores/navigation";
+import { EntryPage } from "./page";
 
 function same ( a: Entry, b: Entry ): boolean {
 
@@ -18,6 +18,6 @@ export function Tabs ({ current }: { current: Entry }) {
 
     if ( shown.length !== kept.length || shown.some(( entry, index ) => entry !== kept[index]) ) setKept(shown);
 
-    return <Panes panes={shown.map(( entry ) => ({ key: entry.path, active: entry === active, children: <EntryContext.Provider value={entry}><Page /></EntryContext.Provider> }))} />;
+    return <Panes panes={shown.map(( entry ) => ({ key: entry.path, active: entry === active, children: <EntryPage entry={entry} /> }))} />;
 
 }

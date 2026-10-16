@@ -23,6 +23,7 @@ describe("cache", () => {
         cache.set("c", 3);
         expect(cache.has("b")).toBe(false);
         expect(cache.has("a")).toBe(true);
+        expect(cache.keys()).toEqual(["a", "c"]);
 
     });
     test("dedupe shares one in-flight load and remember keeps settled answers", async () => {

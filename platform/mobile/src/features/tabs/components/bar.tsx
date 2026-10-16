@@ -1,4 +1,5 @@
-import { menuOf } from "engine/spec";
+import { permissionsOf } from "engine/client";
+import { menuOf } from "engine/screen";
 import TabMenu, { type TabEntry } from "@/components/tab-menu";
 import { useLocale } from "@/hooks/use-locale";
 import type { FeatureProps } from "@/lib/spec/feature";
@@ -6,13 +7,6 @@ import { screens, text } from "@/lib/spec/runtime";
 
 export type Options = { label: string };
 
-function accessOf ( access: string | readonly string[] ): readonly string[] {
-
-    if ( Array.isArray(access) ) return access;
-
-    return access === "user" ? ["user"] : [];
-
-}
 export default function Bar ({ options, screen }: FeatureProps<Options>) {
 
     const locale = useLocale();
@@ -22,7 +16,7 @@ export default function Bar ({ options, screen }: FeatureProps<Options>) {
         label: text(item.title, locale),
         icon: item.icon,
         current: item.name === screen.name,
-        access: accessOf(item.access),
+        access: permissionsOf(item.access),
     }));
 
     return <TabMenu label={options.label} entries={entries} />;

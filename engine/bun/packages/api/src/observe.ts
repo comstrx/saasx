@@ -1,4 +1,5 @@
 import { describe, type Failure } from "engine/error";
+import type { Beacon } from "./beacon.ts";
 
 export type Outcome = {
     call: string;
@@ -79,8 +80,18 @@ export type Signal =
     | { kind: "report"; report: Report; outcome: Outcome; trace: string }
     | { kind: "metrics"; metrics: Metric[]; trace: string }
     | { kind: "error"; name: string; reason: string; trace: string };
-export type ObserverOptions = { trace: string; slow: number; send: ( signal: Signal ) => void; watch?: (( flush: () => void ) => void) | undefined };
-export type Observation = { trace: string; observeCall: Observer; flushMetrics: () => void; reportError: ( name: string, error: unknown ) => void };
+export type ObserverOptions = {
+    trace: string;
+    slow: number;
+    send: ( signal: Signal ) => void;
+    watch?: (( flush: () => void ) => void) | undefined;
+};
+export type Observation = {
+    trace: string;
+    observeCall: Observer;
+    flushMetrics: () => void;
+    reportError: ( name: string, error: unknown ) => void;
+};
 
 export function createObserver ({ trace, slow, send, watch }: ObserverOptions): Observation {
 
@@ -116,5 +127,24 @@ export function createObserver ({ trace, slow, send, watch }: ObserverOptions): 
         },
         reportError: ( name, error ) => send({ kind: "error", name, reason: error instanceof Error ? error.name : "unknown", trace }),
     };
+
+}
+
+export function beaconOf ( signal: Signal, page: string ): Beacon {
+
+    if ( signal.kind === "metrics" ) return { trace: signal.trace, metrics: signal.metrics, page };
+    if ( signal.kind === "error" ) return {
+        call: `render.${signal.name}`,
+        ms: 0,
+        trace: signal.trace,
+        kind: "render",
+        reason: signal.reason,
+        page,
+    };
+
+    const { call, ms, request } = signal.outcome;
+    const facts = signal.report.facts as { kind?: string; status?: number; reason?: string };
+
+    return { call, ms: Math.round(ms), trace: signal.trace, request, kind: facts.kind, status: facts.status, reason: facts.reason, page };
 
 }

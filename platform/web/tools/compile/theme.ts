@@ -1,5 +1,18 @@
+import { base64 } from "engine/base";
+import { dataUri } from "engine/file";
 import { publishedUrls } from "engine/tooling";
-import { cssVariables, defineMotion, defineTokens, fontFace, fontFaces, fontOf, fontStack, languages, fonts as worldFonts } from "engine/world";
+import {
+    cssVariables,
+    defineMotion,
+    defineTokens,
+    fontFace,
+    fontFaces,
+    fontOf,
+    fontStack,
+    languages,
+    motionVariables,
+    fonts as worldFonts,
+} from "engine/world";
 import type { CompiledConfig } from "../../src/lib/spec/surface.ts";
 import { motion as presets, radius, space, type } from "../../src/lib/spec/theme.ts";
 
@@ -33,12 +46,13 @@ export function themeCss ( config: CompiledConfig, assets: ReadonlyMap<string, U
     const locales = fonts.map(( [locale] ) => locale);
     const tokens = defineTokens({ colors: config.theme.colors, space, radius, type });
     const motion = defineMotion(presets, false);
-    const motionCss = `:root { ${Object.entries(motion.durations).map(( [name, ms] ) => `--motion-${name}: ${ms}ms;`).join(" ")} ${Object.entries(motion.easings).map(( [name, curve] ) => `--ease-${name}: ${curve};`).join(" ")} }`;
+    const still = defineMotion(presets, true);
+    const glyphs = fontFace({ family: "icons", src: dataUri("font/woff2", base64(icons)), weight: 400, display: "block" });
 
     return [
-        motionCss,
-        "@media (prefers-reduced-motion: reduce) { :root { --motion-fast: 0ms; --motion-base: 0ms; --motion-slow: 0ms; --motion-expressive: 0ms; } }",
-        `@font-face { font-family: "icons"; src: url("data:font/woff2;base64,${Buffer.from(icons).toString("base64")}") format("woff2"); font-display: block; }`,
+        motionVariables(motion, ":root"),
+        `@media (prefers-reduced-motion: reduce) {\n${motionVariables(still, ":root")}\n}`,
+        glyphs,
         ...(fonts.length ? fonts.flatMap(( [locale, faces] ) => faces.map(( font ) => face(locale, font, assets))) : fontFaces()),
         cssVariables(tokens, "light", ":root"),
         cssVariables(tokens, "dark", '[data-theme="dark"]'),

@@ -49,19 +49,19 @@ mod tests {
     #[test]
     fn the_environment_is_read_typed_and_layered () {
 
-        let file = temp_dir().join(format!("saasx-skill-{}.env", id()));
+        let file = temp_dir().join(format!("skill-sample-{}.env", id()));
 
-        write(&file, "SAASX_SKILL_A=1\nSAASX_SKILL_B=\"two words\"\n").unwrap_or_default();
+        write(&file, "SKILL_SAMPLE_A=1\nSKILL_SAMPLE_B=\"two words\"\n").unwrap_or_default();
 
-        let both    = run(&["env", "--file", &file.display().to_string(), "SAASX_SKILL_A", "SAASX_SKILL_B"], &[( "SAASX_SKILL_A", "override" )]).ok();
-        let missing = run(&["env", "SAASX_SKILL_NOPE"], &[]).ok();
+        let both    = run(&["env", "--file", &file.display().to_string(), "SKILL_SAMPLE_A", "SKILL_SAMPLE_B"], &[( "SKILL_SAMPLE_A", "override" )]).ok();
+        let missing = run(&["env", "SKILL_SAMPLE_NOPE"], &[]).ok();
         let none    = run(&["env"], &[]).ok();
 
         remove_file(&file).unwrap_or_default();
 
         assert_eq!(both.as_ref().and_then(|output| output.status.code()), Some(0));
-        assert_eq!(both.map(|output| text(&output.stdout)), Some("SAASX_SKILL_A=override\nSAASX_SKILL_B=two words\n".to_owned()));
-        assert!(missing.is_some_and(|output| output.status.code() == Some(78) && text(&output.stderr).contains("SAASX_SKILL_NOPE is not set")));
+        assert_eq!(both.map(|output| text(&output.stdout)), Some("SKILL_SAMPLE_A=override\nSKILL_SAMPLE_B=two words\n".to_owned()));
+        assert!(missing.is_some_and(|output| output.status.code() == Some(78) && text(&output.stderr).contains("SKILL_SAMPLE_NOPE is not set")));
         assert_eq!(none.and_then(|output| output.status.code()), Some(64));
 
     }
@@ -72,7 +72,7 @@ mod tests {
         let fine = run(&["exec", "--", "cargo", "--version"], &[]).ok();
         let bad  = run(&["exec", "--", "cargo", "definitely-not-a-command"], &[]).ok();
         let slow = if cfg!(windows) { run(&["exec", "--deadline", "300ms", "--", "cmd", "/C", "ping -n 4 127.0.0.1 > NUL"], &[]) } else { run(&["exec", "--deadline", "300ms", "--", "sleep", "3"], &[]) }.ok();
-        let gone = run(&["exec", "--", "saasx-no-such-program-xyz"], &[]).ok();
+        let gone = run(&["exec", "--", "no-such-program-xyz"], &[]).ok();
         let none = run(&["exec"], &[]).ok();
         let odd  = run(&["exec", "--deadline", "soon", "--", "cargo"], &[]).ok();
 

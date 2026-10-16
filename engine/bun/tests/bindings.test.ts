@@ -221,7 +221,8 @@ describe("forms and states", () => {
 
         expect(stateIssues(reader)).toEqual([
             "features/editor: a feature that writes names its failed text and an errors map in its options.",
-            "features/reader: a feature that reads names its loading, failed, offline and cached texts in its options; one that lists also names empty.",
+            "features/reader: a feature that reads names its loading, failed, offline and cached texts in its options; " +
+                "one that lists also names empty.",
         ]);
         expect(stateIssues(form).filter(( issue ) => issue.includes("features/form"))).toEqual([]);
 
@@ -247,7 +248,7 @@ describe("forms and states", () => {
             {
                 features: [
                     feature("cards", {
-                        options: { loading: "Loading", failed: "Failed", offline: "Offline", cached: "Saved" },
+                        options: { loading: "Loading", failed: "Failed", offline: "Offline", cached: "Saved", empty: "" },
                         ports: { items: read("products.list") },
                     }),
                 ],
@@ -256,6 +257,38 @@ describe("forms and states", () => {
             "home.blocks[0]",
         );
         expect(walk.issues).toEqual(["home.blocks[0].features[0]: cards leaves its empty text empty."]);
+
+    });
+    test("a state text the spec leaves out speaks the surface's own state message, and a spec may still name its own", () => {
+
+        const texts = { loading: "", failed: "", offline: "", cached: "", empty: "" };
+        const stated: Features = {
+            cards: { ...(features.cards as Features[string]), owner: "client", options: { columns: 3, ...texts } },
+        };
+        const walk = createWalk<Block>({
+            params: [],
+            client: false,
+            session: false,
+            backend: true,
+            block: { gap: 4 },
+            site: {},
+            features: stated,
+            catalogue,
+        });
+        const block = compileBlock<Block>(
+            { features: [feature("cards", { options: { loading: { key: "cards.loading" } }, ports: { items: read("products.list") } })] },
+            walk,
+            "home.blocks[0]",
+        );
+
+        expect(walk.issues).toEqual([]);
+        expect(block.features[0]?.options).toMatchObject({
+            loading: { key: "cards.loading" },
+            failed: { key: "state.failed" },
+            offline: { key: "state.offline" },
+            cached: { key: "state.cached" },
+            empty: { key: "state.empty" },
+        });
 
     });
 
@@ -338,6 +371,7 @@ describe("permissions on ports", () => {
             {
                 features: [
                     feature("pane", {
+                        options: { errors: {} },
                         ports: { items: read("products.list"), remove: write("products.remove", { id: 1 }) },
                     }),
                 ],

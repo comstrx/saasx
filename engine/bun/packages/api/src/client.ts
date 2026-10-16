@@ -30,6 +30,7 @@ export type Result<E extends Endpoint> = ApiResult<
 >;
 export type Operation = ( input?: unknown, options?: RequestOptions ) => Promise<ApiResult<unknown>>;
 export type ApiSurface = Readonly<Record<string, Readonly<Record<string, Operation>>>>;
+export type Caller = ( feature: string, operation: string, input?: unknown, options?: RequestOptions ) => Promise<ApiResult<unknown>>;
 export type Call<E extends Endpoint> =
     Record<string, never> extends z.input<E["input"]>
         ? ( input?: z.input<E["input"]>, options?: RequestOptions ) => Promise<Result<E>>
@@ -200,6 +201,15 @@ async function request (
     }
 
 }
+export function surfaceOf ( catalogue: Catalogue, call: Caller ): ApiSurface {
+
+    return mapValues(catalogue, ( operations, feature ) => mapValues(operations, ( _, operation ) => {
+
+        return ( input?: unknown, options?: RequestOptions ) => call(feature, operation, input, options);
+
+    }));
+
+}
 export function createSurface (
     catalogue: Catalogue,
     settings: Settings,
@@ -221,15 +231,7 @@ export function createSurface (
         inflight: share ? dedupe<ApiResult<unknown>>() : undefined,
     };
 
-    return mapValues(catalogue, ( operations, feature ) => {
-
-        return mapValues(operations, ( _, operation ) => {
-
-            return ( input?: unknown, options?: RequestOptions ) => request(setup, feature, operation, input, options);
-
-        });
-
-    });
+    return surfaceOf(catalogue, ( feature, operation, input, options ) => request(setup, feature, operation, input, options));
 
 }
 export function createApi<const C extends Catalogue> (

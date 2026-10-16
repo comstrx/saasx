@@ -14,8 +14,10 @@ on:
 
   workflow_dispatch:
 
+  workflow_call:
+
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  group: ci-rust-${{ github.event_name == 'pull_request' && github.ref || format('{0}@{1}', github.ref, github.sha) }}
   cancel-in-progress: true
 
 permissions:
@@ -56,4 +58,4 @@ jobs:
         env:
           BASELINE: ${{ github.event.pull_request.base.sha || github.event.before }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- gates --baseline "${BASELINE:-origin/main}"
+        run: cargo xtask gates --baseline "${BASELINE:-origin/main}"

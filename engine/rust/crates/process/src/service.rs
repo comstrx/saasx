@@ -1,6 +1,7 @@
-use error::Result;
+use core::fmt::{Display, Formatter, Result as FmtResult};
 use std::path::{Path, PathBuf};
 use file::{Dir, File};
+use error::Result;
 
 use crate::{Faults, Output, Platform, Provider, Restart, Run, Service, Spec, State, System};
 
@@ -101,7 +102,7 @@ impl Spec {
 
     }
 
-    /// The label launchd and the unit file carry: `name` as given.
+    /// The program it runs.
     #[inline]
     #[must_use]
     pub fn command ( &self ) -> &Path {
@@ -144,6 +145,60 @@ impl Provider {
             ( Self::Launchd, false ) => home.join("Library").join("LaunchAgents").join(format!("{name}.plist")),
             ( Self::Windows, _ )     => PathBuf::from(format!("{name}.service")),
         }
+
+    }
+
+    /// The lower-case name: `systemd`, `launchd`, `windows`.
+    #[inline]
+    #[must_use]
+    pub const fn name ( self ) -> &'static str {
+
+        match self {
+            Self::Systemd => "systemd",
+            Self::Launchd => "launchd",
+            Self::Windows => "windows",
+        }
+
+    }
+
+}
+
+impl Display for Provider {
+
+    #[inline]
+    #[expect(clippy::renamed_function_params, reason = "the workspace minimum identifier length forbids `f`")]
+    fn fmt ( &self, formatter: &mut Formatter<'_> ) -> FmtResult {
+
+        formatter.write_str(self.name())
+
+    }
+
+}
+
+impl State {
+
+    /// The lower-case name: `running`, `stopped`, `missing`.
+    #[inline]
+    #[must_use]
+    pub const fn name ( self ) -> &'static str {
+
+        match self {
+            Self::Running => "running",
+            Self::Stopped => "stopped",
+            Self::Missing => "missing",
+        }
+
+    }
+
+}
+
+impl Display for State {
+
+    #[inline]
+    #[expect(clippy::renamed_function_params, reason = "the workspace minimum identifier length forbids `f`")]
+    fn fmt ( &self, formatter: &mut Formatter<'_> ) -> FmtResult {
+
+        formatter.write_str(self.name())
 
     }
 

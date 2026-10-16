@@ -31,6 +31,7 @@ import {
     iconNames,
     keys,
     languages,
+    motionVariables,
     nativeTokens,
     plainEmoji,
     transition,
@@ -117,7 +118,12 @@ describe("languages and currencies", () => {
 
     test("a language knows its direction and script and answers to its code or any of its three names", () => {
 
-        expect(languages.get("ar")).toEqual({ code: "ar", direction: "rtl", script: "Arab", name: { en: "Arabic", ar: "العربية", native: "العربية" } });
+        expect(languages.get("ar")).toEqual({
+            code: "ar",
+            direction: "rtl",
+            script: "Arab",
+            name: { en: "Arabic", ar: "العربية", native: "العربية" },
+        });
         expect(languages.get("fa")?.direction).toBe("rtl");
         expect(languages.search("عربي")[0]?.code).toBe("ar");
         expect(languages.search("français")[0]?.code).toBe("fr");
@@ -177,7 +183,9 @@ describe("emojis", () => {
 
             const code = flagCode(emoji.glyph);
 
-            expect(existsSync(code ? resolve(asset, "flag", `${code.toLowerCase()}.svg`) : resolve(asset, "emoji", `${emoji.code}.webp`))).toBe(true);
+            const file = code ? resolve(asset, "flag", `${code.toLowerCase()}.svg`) : resolve(asset, "emoji", `${emoji.code}.webp`);
+
+            expect(existsSync(file)).toBe(true);
 
         }
 
@@ -220,7 +228,9 @@ describe("fonts", () => {
 
         const css = fontFaces().join("\n");
 
-        expect(css).toContain(`font-family: "Readex Pro"; src: url("${fontFolder}/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700`);
+        expect(css).toContain(
+            `font-family: "Readex Pro"; src: url("${fontFolder}/readex-pro-arabic.woff2") format("woff2"); font-weight: 160 700`,
+        );
         expect(css).toContain("unicode-range: U+0600-06FF");
         expect(css).toContain("size-adjust: 104%");
 
@@ -239,6 +249,15 @@ describe("a surface's world", () => {
         expect(world.fontOf("ar").family).toBe("Readex Pro");
         expect(world.fontOf("en").family).toBe("Figtree");
         expect(() => defineWorld({ countries: ["XX"] })).toThrow("Unknown countries: XX");
+
+    });
+    test("a world builds its emoji catalog only when first asked, and only once", () => {
+
+        const world = defineWorld();
+
+        expect(typeof Object.getOwnPropertyDescriptor(world, "emojis")?.get).toBe("function");
+        expect(world.emojis).toBe(world.emojis);
+        expect(world.emojis.get("👍")?.code).toBe("1f44d");
 
     });
 
@@ -300,9 +319,18 @@ describe("font faces and icons", () => {
     test("font faces and stacks render as css", () => {
 
         expect(fontFace({ family: "Site-ar", src: "/fonts/ar.woff2", weight: 400 })).toBe(
-            '@font-face { font-family: "Site-ar"; src: url("/fonts/ar.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }',
+            '@font-face { font-family: "Site-ar"; src: url("/fonts/ar.woff2") format("woff2"); ' +
+                "font-weight: 400; font-style: normal; font-display: swap; }",
         );
         expect(fontStack(["Site-ar", "Site-en"])).toBe('"Site-ar", "Site-en", sans-serif');
+
+    });
+    test("a font embedded as a data uri keeps its format hint", () => {
+
+        expect(fontFace({ family: "icons", src: "data:font/woff2;base64,AAAA", weight: 400, display: "block" })).toBe(
+            '@font-face { font-family: "icons"; src: url("data:font/woff2;base64,AAAA") format("woff2"); ' +
+                "font-weight: 400; font-style: normal; font-display: block; }",
+        );
 
     });
     test("every semantic icon names one drawing, and only directional ones mirror", () => {
@@ -329,6 +357,20 @@ describe("font faces and icons", () => {
         expect(icons.get("tag")).toBe("T");
         expect(icons.get("nothing")).toBe("?");
         expect(icons.has("constructor")).toBe(false);
+
+    });
+
+});
+describe("motion variables", () => {
+
+    test("motion presets become css variables, and a reduced motion zeroes every duration", () => {
+
+        const presets = { durations: { fast: 120, slow: 320 }, easings: { standard: "ease" } };
+
+        expect(motionVariables(defineMotion(presets, false), ":root")).toBe(
+            ":root {\n    --motion-fast: 120ms;\n    --motion-slow: 320ms;\n    --ease-standard: ease;\n}",
+        );
+        expect(motionVariables(defineMotion(presets, true), ":root")).toContain("--motion-slow: 0ms;");
 
     });
 

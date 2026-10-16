@@ -18,14 +18,14 @@ export function safeKey ( key: string ): boolean {
     return key.length > 0 && !unsafeKeys.includes(key);
 
 }
-export function keysOf<T extends object> ( value: T ): (keyof T & string)[] {
-
-    return Object.keys(value) as (keyof T & string)[];
-
-}
 export function compact<T extends object> ( value: T | undefined ): Compact<T> {
 
     return Object.fromEntries(Object.entries(value ?? {}).filter(( [, item] ) => item !== undefined)) as Compact<T>;
+
+}
+export function pick<T extends object, K extends keyof T & string> ( value: T, keys: readonly K[] ): Pick<T, K> {
+
+    return Object.fromEntries(keys.filter(( key ) => Object.hasOwn(value, key)).map(( key ) => [key, value[key]])) as Pick<T, K>;
 
 }
 export function mapValues<T, R> (

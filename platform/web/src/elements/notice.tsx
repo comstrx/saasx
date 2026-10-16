@@ -1,4 +1,10 @@
-type Props = { tone: "missing" | "failed"; message: string; action?: string | undefined; onAction?: (() => void) | undefined; digest?: string | undefined };
+type Props = {
+    tone: "missing" | "failed";
+    message: string;
+    action?: string | undefined;
+    onAction?: (() => void) | undefined;
+    digest?: string | undefined;
+};
 
 export default function Notice ({ tone, message, action, onAction, digest }: Props) {
 

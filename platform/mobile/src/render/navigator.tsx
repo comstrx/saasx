@@ -1,8 +1,8 @@
 import Screens from "@/elements/screens";
 import { useBackButton, useDeepLinks, useEntries } from "@/hooks/use-router";
 import { screenAt } from "@/lib/spec/runtime";
-import { type Entry, EntryContext, history } from "@/stores/navigation";
-import { Page } from "./page";
+import { type Entry, history } from "@/stores/navigation";
+import { EntryPage } from "./page";
 import { Tabs } from "./tabs";
 
 function tabbed ( entry: Entry ): boolean {
@@ -16,7 +16,7 @@ export function Navigator () {
     const cards = entries.map(( entry, index ) => ({
         key: entry.key,
         blocked: history.blocked(entry.key),
-        children: index === 0 && tabbed(entry) ? <Tabs current={entry} /> : <EntryContext.Provider value={entry}><Page /></EntryContext.Provider>,
+        children: index === 0 && tabbed(entry) ? <Tabs current={entry} /> : <EntryPage entry={entry} />,
     }));
 
     useBackButton();

@@ -1,7 +1,5 @@
 import { block, feature, live, read, screen, signal, t, write } from "../../../src/lib/spec/surface.ts";
 
-const states = { loading: t("state.loading"), failed: t("state.failed"), offline: t("state.offline"), cached: t("state.cached") };
-
 export default screen({
     contents: {
         name: "dashboard",
@@ -17,13 +15,16 @@ export default screen({
         block({ width: "full", padding: 4, gap: 4 }, [
             feature("search", { options: { placeholder: t("search.placeholder"), go: t("search.go"), mode: "signal" } }),
             feature("account", {
-                options: { hello: t("account.hello"), logout: t("account.logout"), ...states, errors: t("errors") },
+                options: { hello: t("account.hello"), logout: t("account.logout") },
                 ports: { me: read("manage.me"), leave: write("manage.logout") },
             }),
             feature("table", {
                 heading: true,
                 options: {
-                    title: t("admin.catalogs"), empty: t("catalogue.empty"), ...states, select: true, paging: true,
+                    title: t("admin.catalogs"),
+                    empty: t("catalogue.empty"),
+                    select: true,
+                    paging: true,
                     columns: [
                         { key: "id", label: t("table.id"), kind: "number" },
                         { key: "name", label: t("table.name") },
@@ -39,16 +40,33 @@ export default screen({
                     labels: { sort: t("table.sort"), page: t("table.page"), previous: t("table.previous"), next: t("table.next") },
                 },
                 ports: {
-                    rows: read("manage.list", { limit: 10, search: signal("search"), sort: signal("sort"), page: signal("page") }, live("announcements.1", ["announcement.event"], { path: "catalog", version: "updated_at" })),
+                    rows: read(
+                        "manage.list",
+                        { limit: 10, search: signal("search"), sort: signal("sort"), page: signal("page") },
+                        live("announcements.1", ["announcement.event"], { path: "catalog", version: "updated_at" }),
+                    ),
                 },
             }),
             feature("detail", {
                 options: {
-                    from: t("catalogue.from"), missing: t("state.missing"), back: "", pick: t("preview.pick"), ...states,
-                    edit: "/catalog/{id}/edit", editLabel: t("admin.edit"), remove: t("admin.remove"), restore: t("admin.restore"), removed: t("admin.removed"), restored: t("admin.restored"), denied: t("admin.denied"),
-                    labels: t("catalog.fields"), errors: t("errors"),
+                    from: t("catalogue.from"),
+                    missing: t("state.missing"),
+                    back: "",
+                    pick: t("preview.pick"),
+                    edit: "/catalog/{id}/edit",
+                    editLabel: t("admin.edit"),
+                    remove: t("admin.remove"),
+                    restore: t("admin.restore"),
+                    removed: t("admin.removed"),
+                    restored: t("admin.restored"),
+                    denied: t("admin.denied"),
+                    labels: t("catalog.fields"),
                 },
-                ports: { item: read("manage.view", { id: signal("selected", { wait: true }) }), remove: write("manage.remove", { id: signal("selected") }), restore: write("manage.restore", { id: signal("selected") }) },
+                ports: {
+                    item: read("manage.view", { id: signal("selected", { wait: true }) }),
+                    remove: write("manage.remove", { id: signal("selected") }),
+                    restore: write("manage.restore", { id: signal("selected") }),
+                },
             }),
         ]),
     ],

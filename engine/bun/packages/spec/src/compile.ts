@@ -1,20 +1,13 @@
-import { isRecord } from "engine/base";
+import { unique } from "engine/array";
+import { compact, deepMerge, isRecord } from "engine/base";
 import { slugify } from "engine/string";
 import type { FieldFact } from "engine/validate";
 import { compilePorts, consumesSignal, emptyManifest } from "./binding.ts";
-import { type Features, mergeOptions, optionIssues, stateNames } from "./options.ts";
+import { type Features, optionIssues, stateNames, stateTexts } from "./options.ts";
+import type { CompiledBlock, CompiledFeature, CompiledPort, Manifest, SiteBlock, SiteFeature } from "./shapes.ts";
 
 export type { Features } from "./options.ts";
-export { mergeOptions, optionIssues } from "./options.ts";
-
-import type {
-    CompiledBlock,
-    CompiledFeature,
-    CompiledPort,
-    Manifest,
-    SiteBlock,
-    SiteFeature,
-} from "./shapes.ts";
+export { optionIssues } from "./options.ts";
 
 export type OperationFacts = {
     method: string;
@@ -65,7 +58,7 @@ function accessOf<B> (
         port.kind === "read" ? (walk.catalogue[port.feature]?.[port.operation]?.permissions ?? []) : [],
     );
 
-    return [...new Set([...manifest.access, ...(entry.access ?? []), ...bound])].sort();
+    return unique([...manifest.access, ...(entry.access ?? []), ...bound]).sort();
 
 }
 function slugOf<B> ( walk: Walk<B>, name: string, where: string ): string {
@@ -136,10 +129,12 @@ export function compileFeature<B extends object> (
 
     for ( const name of manifest.signals ) walk.emitted.add(name);
 
-    walk.issues.push(...optionIssues(entry.options ?? {}, manifest.options, entry.name, where));
+    const given = entry.options ?? {};
+
+    walk.issues.push(...optionIssues(given, manifest.options, entry.name, where));
     walk.used.add(entry.name);
 
-    const options = mergeOptions(manifest.options, entry.options ?? {});
+    const options = deepMerge(manifest.options, { ...stateTexts(manifest, given), ...given });
 
     for ( const state of stateNames(manifest) ) {
 
@@ -172,11 +167,9 @@ export function compileFeature<B extends object> (
 }
 export function compileBlock<B extends object> ( block: SiteBlock<B>, walk: Walk<B>, where: string ): CompiledBlock<B> {
 
-    const given = Object.fromEntries(Object.entries(block.options ?? {}).filter(( [, value] ) => value !== undefined));
-
     return {
         id: claim(walk, block.id ?? where, where),
-        options: { ...walk.block, ...given },
+        options: { ...walk.block, ...compact(block.options) },
         features: (block.features ?? []).map(( child, index ) =>
             compileFeature(child, walk, `${where}.features[${index}]`),
         ),

@@ -1,5 +1,4 @@
-import { del, document, type Endpoint, factsOf, feature, get, localized, many, need, password, post, put, z } from "engine/api";
-import { keysOf, mapValues } from "engine/base";
+import { del, document, type Endpoint, feature, get, localized, many, need, password, post, put, z } from "engine/api";
 
 const money = z.object({ amount: z.string(), currency: z.string() }).nullish();
 const catalog = z.object({
@@ -26,7 +25,13 @@ const managed = catalog.extend({
     ends_at: z.string().nullish(),
     description: z.string().nullish(),
 });
-const challenge = z.object({ status: z.string(), challenge_token: z.string(), channel: z.string().nullish(), destination: z.string().nullish(), length: z.number().nullish() });
+const challenge = z.object({
+    status: z.string(),
+    challenge_token: z.string(),
+    channel: z.string().nullish(),
+    destination: z.string().nullish(),
+    length: z.number().nullish(),
+});
 const user = z.object({
     id: z.number(),
     name: z.string(),
@@ -58,18 +63,27 @@ const editable = {
     ends_at: z.iso.date().optional(),
 };
 const ack = z.unknown().nullable();
+const byId = { id: z.coerce.number().int().positive() };
+const limit = z.number().int().positive().max(50).optional();
+const position = {
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+    address: z.string().max(255).optional(),
+};
+const device = { token: z.string().min(8), platform: z.enum(["android", "ios", "web"]), locale: z.string().max(10).optional() };
+const translation = z.object({ locale: z.string(), name: z.string().nullish(), description: z.string().nullish() });
 
 export const endpoints = {
     site: document("content"),
     catalogs: feature({ cache: 30 }, {
         list: get("/catalogs", {
             page: z.number().int().positive().optional(),
-            limit: z.number().int().positive().max(50).optional(),
+            limit,
             search: z.string().max(100).optional(),
             sort: z.string().max(40).optional(),
             type: z.string().max(40).optional(),
         }, many(catalog), { request: { fields: { type: "query:filters[type]" } } }),
-        view: get("/catalogs/{id}", { id: z.coerce.number().int().positive() }, catalog),
+        view: get("/catalogs/{id}", byId, catalog),
     }),
     auth: feature({ execution: "client", cache: 0 }, {
         login: post("/auth/login", credentials, challenge),
@@ -79,9 +93,9 @@ export const endpoints = {
         me: get("/account/me", {}, user, { response: { data: "data.user" } }),
         logout: post("/account/logout", {}, ack),
         update: put("/account", { name: z.string().min(2).max(80) }, ack),
-        locate: put("/account/location", { latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), address: z.string().max(255).optional() }, ack),
+        locate: put("/account/location", position, ack),
         avatar: post("/account/image", { image: z.file() }, z.object({ image: z.string().nullish() }), { encoding: "multipart" }),
-        device: post("/account/devices", { token: z.string().min(8), platform: z.enum(["android", "ios", "web"]), locale: z.string().max(10).optional() }, ack),
+        device: post("/account/devices", device, ack),
     }),
     staff: feature({ execution: "client", cache: 0 }, {
         login: post("/admin/auth/login", credentials, challenge),
@@ -92,18 +106,18 @@ export const endpoints = {
         logout: post("/admin/account/logout", {}, ack),
         list: need(["view_catalogs"], get("/admin/catalogs", {
             page: z.number().int().positive().optional(),
-            limit: z.number().int().positive().max(50).optional(),
+            limit,
             search: z.string().max(100).optional(),
             sort: sorts.optional(),
             type: catalogType.optional(),
             trashed: z.boolean().optional(),
         }, many(managed), { request: { fields: { type: "query:filters[type]", trashed: "query:filters[trashed]" } } })),
-        view: need(["view_catalogs"], get("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, managed)),
-        texts: get("/admin/catalogs/{id}/translations", { id: z.coerce.number().int().positive(), limit: z.number().int().positive().max(50).optional() }, many(z.object({ locale: z.string(), name: z.string().nullish(), description: z.string().nullish() }))),
+        view: need(["view_catalogs"], get("/admin/catalogs/{id}", byId, managed)),
+        texts: get("/admin/catalogs/{id}/translations", { ...byId, limit }, many(translation)),
         create: need(["add_catalogs"], post("/admin/catalogs", { type: catalogType, ...editable }, managed)),
-        update: need(["edit_catalogs"], put("/admin/catalogs/{id}", { id: z.coerce.number().int().positive(), type: catalogType, ...editable }, managed)),
-        remove: need(["delete_catalogs"], del("/admin/catalogs/{id}", { id: z.coerce.number().int().positive() }, ack)),
-        restore: need(["delete_catalogs"], post("/admin/catalogs/{id}/restore", { id: z.coerce.number().int().positive() }, managed)),
+        update: need(["edit_catalogs"], put("/admin/catalogs/{id}", { ...byId, type: catalogType, ...editable }, managed)),
+        remove: need(["delete_catalogs"], del("/admin/catalogs/{id}", byId, ack)),
+        restore: need(["delete_catalogs"], post("/admin/catalogs/{id}/restore", byId, managed)),
     }),
 } as const;
 
@@ -114,7 +128,3 @@ export type Feature = keyof Endpoints & string;
 export type OperationOf<F extends Feature> = keyof Endpoints[F] & string;
 export type EndpointOf<F extends Feature, O extends OperationOf<F>> = Endpoints[F][O] extends Endpoint ? Endpoints[F][O] : never;
 export type EntityKind = keyof typeof entities & string;
-
-export const permissions = mapValues(endpoints, ( operations ) => factsOf(operations).permissions);
-export const touches = mapValues(endpoints, ( operations ) => factsOf(operations).touches);
-export const features = keysOf(endpoints);

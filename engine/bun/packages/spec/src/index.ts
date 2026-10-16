@@ -1,12 +1,9 @@
 export {
     type Catalogue,
     compileBlock,
-    compileFeature,
     createWalk,
     type Features,
-    mergeOptions,
     type OperationFacts,
-    optionIssues,
     reads,
     type Site,
     type Walk,
@@ -17,24 +14,16 @@ export {
     baseSettings,
     brandImage,
     choice,
-    colorShape,
     configShapes,
     connectionShape,
     contentShape,
-    contractOverrides,
     fontFace,
     fontsShape,
-    motionShape,
-    paletteShape,
-    prefixShape,
     type Shape,
     type Shapes,
     settingsInput,
     siteUrl,
     stepShape,
-    themeChoice,
-    themeInputShape,
-    themeShape,
 } from "./contract.ts";
 export { type Brand, type Contracts, createSpecSurface, type Vocabulary } from "./create.ts";
 export { type Motion, sharedSettingsDefaults, type ThemeName } from "./defaults.ts";
@@ -42,7 +31,6 @@ export {
     block,
     type Children,
     data,
-    defineSurface,
     type FeatureSettings,
     feature,
     type Helpers,
@@ -58,26 +46,9 @@ export {
     t,
     write,
 } from "./define.ts";
-export { catalogueFacts, translationIssues } from "./facts.ts";
-export { isSpecKey, key, type Localized, operation, path, type SpecText, specText, text, word } from "./fields.ts";
-export { type MenuItem, menuOf } from "./menu.ts";
-export { stateIssues, stateNames } from "./options.ts";
-export {
-    type FeatureProps,
-    field,
-    fillInput,
-    type Pagination,
-    type Placement,
-    type PortAnswer,
-    type PortSource,
-    portAnswer,
-    portValue,
-    type Reader,
-    type Route,
-    type Rows,
-    row,
-    rows,
-} from "./ports.ts";
+export { catalogueFacts } from "./facts.ts";
+export { key, operation, path, type SpecText, specText, text, word } from "./fields.ts";
+export { stateIssues } from "./options.ts";
 export {
     type CompiledSchemaBase,
     type CompiledScreenBase,
@@ -90,43 +61,30 @@ export {
     screenShapes,
 } from "./schema.ts";
 export {
-    granted,
-    type Held,
-    localizeTree,
-    localPort,
-    matchScreen,
-    messageText,
-    portSource,
-    type Routed,
-} from "./screens.ts";
-export {
     type ApiPlan,
     address,
-    assertClean,
     type Backend,
     type Choice,
     type Compiled,
     type Contents,
     choiceIssues,
-    claimShell,
     compileApi,
     compileScreen,
+    compileShell,
     type Declared,
     iconIssues,
     mergeSettings,
     type ScreenPlan,
     type Settings,
+    type SettingsResource,
+    type ShellPart,
     type ShellValue,
-    schemaFacts,
     screenIssues,
     settingsResource,
-    shellFeature,
     shellIssues,
-    shellOptions,
 } from "./settings.ts";
 export {
     type Access,
-    accessShape,
     type Binding,
     bindingShape,
     type CompiledBlock,
@@ -140,14 +98,11 @@ export {
     manifestShape,
     type Options,
     type Owner,
-    optionsShape,
     type Patch,
     type Port,
-    portShape,
     type Reference,
     type SiteBlock,
     type SiteFeature,
-    treeShapes,
     type Value,
 } from "./shapes.ts";
 export {
@@ -155,15 +110,11 @@ export {
     type CompiledShape,
     type ConfigInputBase,
     type ContractsInput,
-    compiledScreen,
-    compileSurface,
-    mergeTheme,
     type Palette,
     type ScreenInputBase,
     type Surface,
     type SurfaceConfig,
     type SurfaceInput,
-    surfaceValidator,
     type Theme,
     type ThemeInput,
     transportIssues,

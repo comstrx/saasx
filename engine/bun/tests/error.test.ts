@@ -8,6 +8,7 @@ import {
     reference,
     settled,
     transient,
+    unreachable,
 } from "engine/error";
 
 describe("failure", () => {
@@ -25,6 +26,14 @@ describe("failure", () => {
         expect(transient(new Failure("http", { status: 429 }))).toBe(true);
         expect(transient(new Failure("http", { status: 404 }))).toBe(false);
         expect(settled(new Failure("missing"))).toBe(true);
+
+    });
+    test("an unreachable backend is a network or timeout failure, never an answer it gave", () => {
+
+        expect(unreachable(new Failure("network"))).toBe(true);
+        expect(unreachable(new Failure("timeout"))).toBe(true);
+        expect(unreachable(new Failure("http", { status: 503 }))).toBe(false);
+        expect(unreachable(new Error("network"))).toBe(false);
 
     });
     test("guarded wraps strangers and keeps failures", () => {

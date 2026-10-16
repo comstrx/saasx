@@ -82,9 +82,10 @@ export async function perf (): Promise<void> {
 
     const cold = await coldStart();
     const frames = await jank();
+    const share = `${frames.janky} of ${frames.frames} (${frames.percent}%, budget ${jankBudgetPercent}%)`;
     const lines = [
         `cold start to first frame, median of ${coldRuns}: ${cold} ms (budget ${coldBudgetMs} ms)`,
-        `janky frames while scrolling, median of ${jankRuns} [${frames.runs.join(", ")}]: ${frames.janky} of ${frames.frames} (${frames.percent}%, budget ${jankBudgetPercent}%)`,
+        `janky frames while scrolling, median of ${jankRuns} [${frames.runs.join(", ")}]: ${share}`,
     ];
 
     for ( const line of lines ) report(line);
@@ -230,7 +231,9 @@ export async function compare (): Promise<Measure[]> {
 
     const plans: Plan[] = process.env.PLAN
         ? (JSON.parse(await Bun.file(process.env.PLAN).text()) as Plan[])
-        : [app, ...(process.env.COMPARE ?? "com.whatsapp,org.telegram.messenger,com.airbnb.android,com.booking").split(",")].map(( name ) => ({ app: name.trim() })).filter(( plan ) => plan.app);
+        : [app, ...(process.env.COMPARE ?? "com.whatsapp,org.telegram.messenger,com.airbnb.android,com.booking").split(",")]
+            .map(( name ) => ({ app: name.trim() }))
+            .filter(( plan ) => plan.app);
     const rows: Measure[] = [];
 
     for ( const plan of plans ) rows.push(await measure(plan));
@@ -265,7 +268,13 @@ task(import.meta.url, async () => {
 
     if ( command === "flow" ) {
 
-        for ( const name of names ) await flow(name, Object.fromEntries(Object.entries(process.env).filter(( [key] ) => /^(ADMIN_EMAIL|ADMIN_PASSWORD|OTP|ROW_TEXT|LANDING)$/.test(key)).map(( [key, value] ) => [key, value ?? ""])));
+        const inputs = Object.fromEntries(
+            Object.entries(process.env)
+                .filter(( [key] ) => /^(ADMIN_EMAIL|ADMIN_PASSWORD|OTP|ROW_TEXT|LANDING)$/.test(key))
+                .map(( [key, value] ) => [key, value ?? ""]),
+        );
+
+        for ( const name of names ) await flow(name, inputs);
 
         return;
 

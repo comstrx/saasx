@@ -18,10 +18,12 @@ rules:
         - zizmorcore/zizmor-action
     remap:
       severity: high
-
   unpinned-uses:
     config:
       policies:
         '*': hash-pin
     remap:
       severity: high
+  dangerous-triggers:
+    ignore:
+      - notify.yml

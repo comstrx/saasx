@@ -1,7 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { Palette } from "@/styles/theme";
 
-type Props = { tone: "missing" | "failed"; message: string; action?: string | undefined; onAction?: (() => void) | undefined; palette: Palette };
+type Props = {
+    tone: "missing" | "failed";
+    message: string;
+    action?: string | undefined;
+    onAction?: (() => void) | undefined;
+    palette: Palette;
+};
 
 const styles = StyleSheet.create({
     notice: { padding: 24, alignItems: "center", gap: 12 },

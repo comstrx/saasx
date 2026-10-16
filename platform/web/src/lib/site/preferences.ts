@@ -3,7 +3,11 @@ import { preferences, routing } from "@/lib/spec/config";
 
 export type { Preferences };
 
-const jar = preferenceJar(preferences.cookies, routing.locales, preferences.choices.themes);
+const jar = preferenceJar(preferences.cookies, {
+    languages: routing.locales,
+    currencies: preferences.choices.currencies,
+    themes: preferences.choices.themes,
+});
 
 export const cookieOptions = {
     path: "/",

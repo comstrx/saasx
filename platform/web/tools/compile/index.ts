@@ -1,13 +1,16 @@
-import { relative, resolve } from "node:path";
-import { browserConfig } from "engine/api";
+import { resolve } from "node:path";
+import { browserConfig, connectionOrigins } from "engine/api";
+import { unique } from "engine/array";
 import { base64 } from "engine/base";
 import { mimeOf } from "engine/file";
 import { settingsResource } from "engine/spec";
-import { type Files, featureFacts, iconFont } from "engine/tooling";
+import { type Files, featureEntry, featureFacts, iconFont, registryModule } from "engine/tooling";
 import { emojis, iconAliases, iconNames } from "engine/world";
 import { root, tools } from "../core/index.ts";
 
 import { themeCss } from "./theme.ts";
+
+type Reach = { path: string; features: readonly string[] };
 
 function wellKnown ( assets: Files ): Record<string, { type: string; body: string }> {
 
@@ -17,17 +20,21 @@ function wellKnown ( assets: Files ): Record<string, { type: string; body: strin
     return Object.fromEntries(entries.map(( [name, bytes] ) => [name.slice(prefix.length), { type: mimeOf(name), body: base64(bytes) }]));
 
 }
-function mountModule ( folder: string, features: readonly string[] ): string {
+function mountModule ( folder: string, names: readonly string[] ): string {
 
-    const lines = features.map(( name ) => {
+    const views = names.map(( name ) => `    ${JSON.stringify(name)}: dynamic(() => import(${featureEntry(root, folder, name)})),`);
 
-        const entry = relative(resolve(root, folder), resolve(root, "src", "features", name, "index.tsx")).replaceAll("\\", "/");
+    return `import dynamic from "next/dynamic";\n\nexport default {\n${views.join("\n")}\n};\n`;
 
-        return `    ${JSON.stringify(name)}: dynamic(() => import(${JSON.stringify(entry)})),`;
+}
+function preloadModule ( folder: string, names: readonly string[], screens: readonly Reach[] ): string {
 
-    });
+    const owned = new Set(names);
+    const reach = screens
+        .map(( screen ) => ({ path: screen.path, features: screen.features.filter(( name ) => owned.has(name)) }))
+        .filter(( screen ) => screen.features.length);
 
-    return `import dynamic from "next/dynamic";\n\nexport default {\n${lines.join("\n")}\n};\n`;
+    return `export const screens = ${JSON.stringify(reach)};\n\n${registryModule(root, folder, names)}`;
 
 }
 
@@ -41,7 +48,7 @@ export const compileSpec = tools.build(import.meta.url, {
         const facts = await featureFacts(resolve(root, "src", "features"));
         const ownedBy = ( owner: string ) => spec.schema.features.filter(( name ) => facts[name]?.owner === owner);
         const site = spec.config.content.url;
-        const origins = Object.values(spec.config.api?.connections ?? {}).flatMap(( connection ) => (connection.baseUrl ? [new URL(connection.baseUrl).origin] : []));
+        const origins = connectionOrigins(spec.config.api);
 
         return {
             data: {
@@ -50,12 +57,16 @@ export const compileSpec = tools.build(import.meta.url, {
                 "well-known": wellKnown(assets),
             },
             registry: ownedBy("server"),
-            modules: { "mount.js": mountModule(folder, ownedBy("client")), "theme.css": themeCss(config, assets, icons.bytes) },
+            modules: {
+                "mount.js": mountModule(folder, ownedBy("client")),
+                "preload.js": preloadModule(folder, ownedBy("client"), spec.schema.screens),
+                "theme.css": themeCss(config, assets, icons.bytes),
+            },
             meta: {
                 delivery: spec.config.settings.delivery,
                 secure: typeof site === "string" && site.startsWith("https://"),
                 insecure: spec.config.insecure,
-                media: [...new Set([...origins, ...spec.config.settings.mediaOrigins])],
+                media: unique([...origins, ...spec.config.settings.mediaOrigins]),
             },
         };
 

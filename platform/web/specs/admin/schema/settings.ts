@@ -15,7 +15,10 @@ export default screen({
             feature("preferences", {
                 heading: true,
                 options: {
-                    title: t("preferences.title"), language: t("preferences.language"), currency: t("preferences.currency"), theme: t("preferences.theme"),
+                    title: t("preferences.title"),
+                    language: t("preferences.language"),
+                    currency: t("preferences.currency"),
+                    theme: t("preferences.theme"),
                     themes: { light: t("preferences.light"), dark: t("preferences.dark"), system: t("preferences.system") },
                     saved: t("preferences.saved"), failed: t("state.failed"),
                 },

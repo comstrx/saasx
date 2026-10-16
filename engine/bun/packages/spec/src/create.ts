@@ -18,15 +18,8 @@ import {
 import { sharedSettingsDefaults } from "./defaults.ts";
 import { defineSurface } from "./define.ts";
 import { key } from "./fields.ts";
-
-const tenantShape = z
-    .string()
-    .regex(/^[a-z0-9.-]+$/i)
-    .nullable()
-    .default(null);
-
 import { type CompiledSchemaBase, type Entities, entityRoute, screenShapes } from "./schema.ts";
-import type { Backend, CompiledScreen } from "./settings.ts";
+import type { Backend, CompiledScreen, ShellPart } from "./settings.ts";
 import { optionsShape } from "./shapes.ts";
 import {
     backendOf,
@@ -42,6 +35,8 @@ import {
 
 type Patch = Record<string, unknown>;
 type Kind = "web" | "native";
+
+const tenantShape = z.string().regex(/^[a-z0-9.-]+$/i).nullable().default(null);
 
 export type Brand = {
     images: string;
@@ -77,6 +72,7 @@ export type Vocabulary<
     settingsDefaults: Patch;
     themeDefaults: Theme;
     contracts: Contracts<CX>;
+    environment?: Readonly<Record<string, string | undefined>> | undefined;
 };
 
 export function createSpecSurface<
@@ -102,6 +98,7 @@ export function createSpecSurface<
         required = [],
         icons,
         contracts,
+        environment = {},
     } = vocabulary;
     const locale = z.enum(locales as [L, ...L[]]);
     const image = brandImage(brand.images, brand.imageFormats);
@@ -189,7 +186,10 @@ export function createSpecSurface<
         themeDefaults,
         entityRoute: ( screen: { entity?: Parameters<typeof entityRoute>[1]["entity"]; path: string } ) =>
             entityRoute(entities, screen),
-        define: defineSurface<z.input<typeof configInputShape>, z.input<typeof shapes.schema>, Block>(),
+        define: {
+            ...defineSurface<z.input<typeof configInputShape>, z.input<typeof shapes.schema>, Block>(),
+            env: ( name: string, fallback: string ): string => environment[name] || fallback,
+        },
         validator: <R extends object = Record<never, never>, E extends object = Record<never, never>>(
             hooks: Hooks<R, E>,
         ): Validator<Config, CompiledSchemaBase<CompiledShape<Screen, ScreenOptions, Block> & R, SH> & E> => {
@@ -224,11 +224,11 @@ export function createSpecSurface<
                 schema: (
                     screens: (CompiledShape<Screen, ScreenOptions, Block> & R)[],
                     facts: { features: string[]; operations: string[] },
-                    shellOptions: Record<string, Record<string, unknown>>,
+                    shell: Record<string, ShellPart>,
                 ) => ({
                     screens,
                     ...facts,
-                    shell: shellOptions as Record<SH, Record<string, unknown>>,
+                    shell: shell as Record<SH, ShellPart>,
                     ...(hooks.schema?.(screens) ?? ({} as E)),
                 }),
             };

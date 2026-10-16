@@ -1,4 +1,6 @@
-import type { CompiledPort, Localized, FeatureProps as Props, Route as Routed } from "engine/spec";
+import type { FeatureProps as Props, Route as Routed } from "engine/screen";
+import type { CompiledPort } from "engine/spec";
+import type { Localized } from "engine/translate";
 import type { ReactNode } from "react";
 import type { CompiledScreen } from "./surface.ts";
 

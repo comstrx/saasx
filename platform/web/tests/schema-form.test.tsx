@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createForm } from "engine/context";
+import { createForm } from "engine/client";
 import type { FieldFact } from "engine/validate";
 import { renderToString } from "react-dom/server";
 import SchemaForm from "../src/components/schema-form";
@@ -19,7 +19,10 @@ function render ( errors: Record<string, string> = {} ) {
 
     const store = createForm({ fields, locales: ["en", "ar"], submit: async () => null });
 
-    return renderToString(<SchemaForm name="t" form={{ ...store.getState(), errors }} labels={{ type: "Type", name: "Name", stock: "Stock", featured: "Featured", starts_at: "Starts", tags: "Tags", image: "Image" }} choices={{ type: { hotel: "Hotel", room: "Room" } }} submit="Save" />);
+    const labels = { type: "Type", name: "Name", stock: "Stock", featured: "Featured", starts_at: "Starts", tags: "Tags", image: "Image" };
+    const choices = { type: { hotel: "Hotel", room: "Room" } };
+
+    return renderToString(<SchemaForm name="t" form={{ ...store.getState(), errors }} labels={labels} choices={choices} submit="Save" />);
 
 }
 describe("schema form", () => {

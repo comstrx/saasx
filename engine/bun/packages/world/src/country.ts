@@ -26,9 +26,18 @@ type Row = Omit<Country, "region" | "subregion"> & { region: string | null; subr
 
 const regions = new Map((regionRows as Region[]).map(( region ) => [region.code, region]));
 
-export const everyCountry: readonly Country[] = (rows as Row[]).map(( row ) => ({ ...row, region: regions.get(row.region ?? "") ?? null, subregion: regions.get(row.subregion ?? "") ?? null }));
+export const everyCountry: readonly Country[] = (rows as Row[]).map(( row ) => ({
+    ...row,
+    region: regions.get(row.region ?? "") ?? null,
+    subregion: regions.get(row.subregion ?? "") ?? null,
+}));
 
-export function chosen<T> ( items: readonly T[], codeOf: ( item: T ) => string, wanted: readonly string[] | undefined, what: string ): readonly T[] {
+export function chosen<T> (
+    items: readonly T[],
+    codeOf: ( item: T ) => string,
+    wanted: readonly string[] | undefined,
+    what: string,
+): readonly T[] {
 
     if ( !wanted ) return items;
 
@@ -52,7 +61,16 @@ export function dialings ( key: string | null, areas: readonly string[] = [] ): 
 export function defineCountries ( codes?: readonly string[] ): Countries {
 
     const all = chosen(everyCountry, ( country ) => country.code, codes, "countries");
-    const found = catalog(all, ( country ) => country.code, ( country ) => [country.code, country.alpha3, country.numeric, ...dialings(country.key, country.areas), country.name.en, country.name.ar, country.name.native]);
+    const fields = ( country: Country ): string[] => [
+        country.code,
+        country.alpha3,
+        country.numeric,
+        ...dialings(country.key, country.areas),
+        country.name.en,
+        country.name.ar,
+        country.name.native,
+    ];
+    const found = catalog(all, ( country ) => country.code, fields);
 
     return {
         ...found,

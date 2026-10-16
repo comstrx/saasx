@@ -1,4 +1,4 @@
-use engine::process::{Provider, Service, Spec, State, System};
+use engine::process::{Provider, Service, Spec, System};
 use engine::error::Result;
 use engine::log::Outcome;
 use std::path::PathBuf;
@@ -14,7 +14,7 @@ impl Infra {
 
         match action {
             "show"      => Ok(self.spec(name)?.render(self.provider()?)),
-            "status"    => Ok(format!("{}\n", Self::state(Service::over(self.provider()?, System::is_root().await).status(name).await?))),
+            "status"    => Ok(format!("{}\n", Service::over(self.provider()?, System::is_root().await).status(name).await?)),
             "install"   => self.change(name, "install").await,
             "uninstall" => self.change(name, "uninstall").await,
             "start"     => self.change(name, "start").await,
@@ -31,11 +31,11 @@ impl Infra {
         let actor   = System::user();
 
         let outcome = match action {
-            "install" => manager.install(&self.spec(name)?).await,
+            "install"   => manager.install(&self.spec(name)?).await,
             "uninstall" => manager.uninstall(name).await,
-            "start"   => manager.start(name).await,
-            "stop"    => manager.stop(name).await,
-            _         => manager.restart(name).await,
+            "start"     => manager.start(name).await,
+            "stop"      => manager.stop(name).await,
+            _           => manager.restart(name).await,
         };
 
         self.log.audit(action).actor(&actor).outcome(if outcome.is_ok() { Outcome::Done } else { Outcome::Failed }).field("service", name).commit()?;
@@ -70,17 +70,6 @@ impl Infra {
             Some("windows") => Ok(Provider::Windows),
             Some(other)     => Err(Faults::UNKNOWN_PROVIDER.because(format!("{other} is not a provider: systemd, launchd or windows"))),
             None            => Provider::detect(),
-        }
-
-    }
-
-    const fn state ( state: State ) -> &'static str {
-
-        match state {
-            State::Running => "running",
-            State::Stopped => "stopped",
-            State::Missing => "missing",
-            _              => "unknown",
         }
 
     }

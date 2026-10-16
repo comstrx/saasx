@@ -5,7 +5,12 @@ import { usePalette } from "@/styles/palette";
 
 export type Column = { key: string; label: string; align?: "start" | "end" | undefined; width?: number | undefined };
 export type Row = { key: string; cells: Record<string, ReactNode> };
-type Props = { columns: readonly Column[]; rows: readonly Row[]; selected?: string | undefined; onSelect?: (( key: string ) => void) | undefined };
+type Props = {
+    columns: readonly Column[];
+    rows: readonly Row[];
+    selected?: string | undefined;
+    onSelect?: (( key: string ) => void) | undefined;
+};
 
 const styles = StyleSheet.create({
     table: { borderWidth: 1, borderRadius: 12, overflow: "hidden" },
@@ -51,13 +56,19 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
 
                         <View key={column.key} style={[styles.cell, { width: width(column) }, column.align === "end" && styles.end]}>
 
-                            {typeof row.cells[column.key] === "string" ? <Text style={[font, styles.text, { color: palette.ink }]}>{row.cells[column.key]}</Text> : row.cells[column.key]}
+                            {typeof row.cells[column.key] === "string"
+                                ? <Text style={[font, styles.text, { color: palette.ink }]}>{row.cells[column.key]}</Text>
+                                : row.cells[column.key]}
 
                         </View>
 
                     ));
 
-                    if ( !onSelect ) return <View key={row.key} style={[styles.row, { borderBottomColor: palette.line }]} testID="row">{cells}</View>;
+                    if ( !onSelect ) {
+
+                        return <View key={row.key} style={[styles.row, { borderBottomColor: palette.line }]} testID="row">{cells}</View>;
+
+                    }
 
                     return (
 
@@ -67,7 +78,12 @@ export default function Table ({ columns, rows, selected, onSelect }: Props) {
                             accessibilityRole="button"
                             accessibilityState={{ selected: chosen }}
                             onPress={() => onSelect(row.key)}
-                            style={({ pressed }) => [styles.row, { borderBottomColor: palette.line }, chosen && [styles.selected, { borderStartColor: palette.primary, backgroundColor: palette.body }], pressed && styles.pressed]}
+                            style={({ pressed }) => [
+                                styles.row,
+                                { borderBottomColor: palette.line },
+                                chosen && [styles.selected, { borderStartColor: palette.primary, backgroundColor: palette.body }],
+                                pressed && styles.pressed,
+                            ]}
                         >
 
                             {cells}

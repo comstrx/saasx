@@ -5,8 +5,8 @@ import EmojiPicker from "@/components/emoji-picker";
 import EmojiStage from "@/components/emoji-stage";
 import Titled from "@/components/titled";
 import { useLocale } from "@/hooks/use-locale";
-import { emoji } from "@/lib/spec/emoji";
 import type { FeatureProps } from "@/lib/spec/feature";
+import { world } from "@/lib/spec/world";
 
 export type Options = { title: string; placeholder: string; empty: string };
 
@@ -14,12 +14,18 @@ export default function Board ({ options, feature }: FeatureProps<Options>) {
 
     const language = useLocale() === "ar" ? "ar" : "en";
     const [query, setQuery] = useState("");
-    const [group, setGroup] = useState(emoji.groups[0]?.key ?? "");
+    const [group, setGroup] = useState(world.emojis.groups[0]?.key ?? "");
     const [chosen, setChosen] = useState("👍");
     const typed = useDeferredValue(query.trim());
-    const picks = useMemo(() => emoji.browse({ query: typed, group: typed ? undefined : group }).map(( entry ) => ({ glyph: entry.glyph, label: entry.name[language] })), [typed, group, language]);
-    const groups = useMemo(() => emoji.groups.map(( entry ) => ({ key: entry.key, label: entry.name[language] })), [language]);
-    const shown = emoji.get(chosen);
+    const picks = useMemo(() => {
+
+        const found = world.emojis.browse({ query: typed, group: typed ? undefined : group });
+
+        return found.map(( entry ) => ({ glyph: entry.glyph, label: entry.name[language] }));
+
+    }, [typed, group, language]);
+    const groups = useMemo(() => world.emojis.groups.map(( entry ) => ({ key: entry.key, label: entry.name[language] })), [language]);
+    const shown = world.emojis.get(chosen);
 
     return (
 
@@ -27,7 +33,17 @@ export default function Board ({ options, feature }: FeatureProps<Options>) {
 
             <EmojiStage glyph={chosen} name={shown?.name[language] ?? chosen} keywords={(shown?.keywords[language] ?? []).join(" · ")} />
 
-            <EmojiPicker placeholder={options.placeholder} empty={options.empty} query={query} onQuery={setQuery} groups={groups} group={group} onGroup={setGroup} picks={picks} onPick={setChosen} />
+            <EmojiPicker
+                placeholder={options.placeholder}
+                empty={options.empty}
+                query={query}
+                onQuery={setQuery}
+                groups={groups}
+                group={group}
+                onGroup={setGroup}
+                picks={picks}
+                onPick={setChosen}
+            />
 
         </Titled>
 

@@ -13,11 +13,23 @@ export default function Pager ({ page, pages, label, previous, next, onPage }: P
 
         <Stack direction="row" gap={2} align="between">
 
-            <Button label={previous} tone="ghost" disabled={page <= 1} icon={<Icon name="chevronStart" size="sm" tone="primary" />} onPress={() => onPage(page - 1)} />
+            <Button
+                label={previous}
+                tone="ghost"
+                disabled={page <= 1}
+                icon={<Icon name="chevronStart" size="sm" tone="primary" />}
+                onPress={() => onPage(page - 1)}
+            />
 
             <Text text={label} tone="muted" size="sm" />
 
-            <Button label={next} tone="ghost" disabled={page >= pages} icon={<Icon name="chevronEnd" size="sm" tone="primary" />} onPress={() => onPage(page + 1)} />
+            <Button
+                label={next}
+                tone="ghost"
+                disabled={page >= pages}
+                icon={<Icon name="chevronEnd" size="sm" tone="primary" />}
+                onPress={() => onPage(page + 1)}
+            />
 
         </Stack>
 

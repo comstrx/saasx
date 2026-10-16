@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createForm } from "engine/context";
+import { createForm, fieldLabel, formText, localizedTexts, withTranslations } from "engine/client";
 import { Failure } from "engine/error";
 import type { FieldFact } from "engine/validate";
 
@@ -246,6 +246,51 @@ describe("autosave", () => {
         expect(form.getState().dirty).toBe(false);
         await Bun.sleep(40);
         expect(sent).toHaveLength(1);
+
+    });
+
+});
+describe("form labels and texts", () => {
+
+    test("a field's label is its own entry, then its dotted path, then its name", () => {
+
+        const labels = { name: "Name", address: { city: "City" } };
+
+        expect(fieldLabel(labels, "name")).toBe("Name");
+        expect(fieldLabel(labels, "address.city")).toBe("City");
+        expect(fieldLabel(labels, "address")).toBe("address");
+        expect(fieldLabel(labels, "unknown")).toBe("unknown");
+
+    });
+    test("a text control shows only text values", () => {
+
+        expect(formText("tea")).toBe("tea");
+        expect(formText(true)).toBe("");
+        expect(formText(null)).toBe("");
+
+    });
+    test("only a plain per-language map counts as localized texts", () => {
+
+        expect(localizedTexts({ en: "Tea", ar: "شاي" })).toEqual({ en: "Tea", ar: "شاي" });
+        expect(localizedTexts("tea")).toEqual({});
+        expect(localizedTexts(["tea"])).toEqual({});
+        expect(localizedTexts({ uri: "file:///a", name: "a", type: "image/png" })).toEqual({});
+        expect(localizedTexts(new Blob(["x"]))).toEqual({});
+        expect(localizedTexts(null)).toEqual({});
+
+    });
+    test("translation rows fold into the localized fields of a record, one text per language", () => {
+
+        const fields: FieldFact[] = [
+            { name: "name", kind: "localized", required: true, nullable: false },
+            { name: "stock", kind: "integer", required: false, nullable: false },
+        ];
+        const record = { id: 1, name: "Tea", stock: 3 };
+        const translations = [{ locale: "en", name: "Tea" }, { locale: "ar", name: "شاي" }, { locale: "fr" }, { name: "x" }];
+
+        expect(withTranslations(record, translations, fields)).toEqual({ id: 1, name: { en: "Tea", ar: "شاي" }, stock: 3 });
+        expect(withTranslations(record, [], fields)).toBe(record);
+        expect(withTranslations(undefined, [{ locale: "en", name: "Tea" }], fields)).toEqual({ name: { en: "Tea" } });
 
     });
 

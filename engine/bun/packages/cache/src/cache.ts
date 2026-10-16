@@ -17,6 +17,7 @@ export type Lru<K, V> = {
     delete: ( key: K ) => void;
     clear: () => void;
     size: () => number;
+    keys: () => K[];
 };
 export type Dedupe<T> = ( key: string, load: () => Promise<T> ) => Promise<T>;
 export type Remember<T> = ( key: string, load: () => Promise<T> ) => Promise<T>;
@@ -117,6 +118,7 @@ export function lru<K, V> ( capacity: number ): Lru<K, V> {
 
         },
         size: () => entries.size,
+        keys: () => [...entries.keys()],
     };
 
 }

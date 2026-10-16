@@ -10,6 +10,8 @@ export {
     storageJar,
 } from "./cookie.ts";
 export {
+    acceptPreferences,
+    type PreferenceChoices,
     type PreferenceJar,
     type PreferenceNames,
     type PreferenceReader,

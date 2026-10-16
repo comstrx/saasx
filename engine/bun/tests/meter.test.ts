@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createMeter, createObserver, type Signal } from "engine/api";
+import { beaconOf, beaconShape, createMeter, createObserver, type Signal, surfaceOf } from "engine/api";
 import { Failure } from "engine/error";
 
 describe("meter", () => {
@@ -35,6 +35,62 @@ describe("meter", () => {
         expect(sent[0]?.kind === "report" && sent[0].report.event).toBe("api.slow");
         expect(sent[1]).toEqual({ kind: "error", name: "table", reason: "TypeError", trace: "t" });
         expect(sent[2]?.kind === "metrics" && sent[2].metrics[0]?.count).toBe(2);
+
+    });
+
+});
+describe("beacons", () => {
+
+    test("every signal becomes one beacon body the server accepts, and anything else is refused", () => {
+
+        const failure = new Failure("http", { status: 503, reason: "server_error" });
+        const report: Signal = {
+            kind: "report",
+            trace: "t",
+            outcome: { call: "a.list", ms: 12.6, request: "r" },
+            report: { level: "error", event: "api.failure", facts: { kind: "http", status: 503, reason: "server_error", error: failure } },
+        };
+        const metrics: Signal = { kind: "metrics", trace: "t", metrics: [{ call: "a.list", count: 2, failures: 0, ms: 30, max: 20 }] };
+        const error: Signal = { kind: "error", trace: "t", name: "table", reason: "TypeError" };
+
+        expect(beaconOf(report, "/x")).toEqual({
+            call: "a.list",
+            ms: 13,
+            trace: "t",
+            request: "r",
+            kind: "http",
+            status: 503,
+            reason: "server_error",
+            page: "/x",
+        });
+        expect(beaconOf(metrics, "/x")).toEqual({ trace: "t", metrics: metrics.metrics, page: "/x" });
+        expect(beaconOf(error, "/x")).toEqual({ call: "render.table", ms: 0, trace: "t", kind: "render", reason: "TypeError", page: "/x" });
+
+        for ( const signal of [report, metrics, error] ) expect(beaconShape.safeParse(beaconOf(signal, "/x")).success).toBe(true);
+
+        expect(beaconShape.safeParse({ call: "x".repeat(101), ms: 1 }).success).toBe(false);
+        expect(beaconShape.safeParse({ metrics: [{ call: "a", count: -1, failures: 0, ms: 0, max: 0 }] }).success).toBe(false);
+        expect(beaconShape.safeParse("junk").success).toBe(false);
+
+    });
+
+});
+describe("surfaces", () => {
+
+    test("a surface over any caller answers every catalogue operation through it", async () => {
+
+        const calls: unknown[] = [];
+        const surface = surfaceOf({ items: { list: {} as never, view: {} as never } }, async ( feature, operation, input ) => {
+
+            calls.push([feature, operation, input]);
+
+            return { resource: feature, message: null, meta: { source: "remote" } };
+
+        });
+
+        expect(Object.keys(surface.items ?? {})).toEqual(["list", "view"]);
+        expect((await surface.items?.view?.({ id: 1 }))?.resource).toBe("items");
+        expect(calls).toEqual([["items", "view", { id: 1 }]]);
 
     });
 

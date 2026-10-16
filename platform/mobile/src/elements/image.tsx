@@ -3,7 +3,12 @@ import { usePalette } from "@/styles/palette";
 
 type Props = { src: string | null | undefined; alt: string; ratio?: "square" | "wide" | undefined };
 
-const styles = StyleSheet.create({ frame: { width: "100%", borderRadius: 8 }, wide: { aspectRatio: 1.6 }, square: { aspectRatio: 1 }, image: { width: "100%", height: "100%", borderRadius: 8 } });
+const styles = StyleSheet.create({
+    frame: { width: "100%", borderRadius: 8 },
+    wide: { aspectRatio: 1.6 },
+    square: { aspectRatio: 1 },
+    image: { width: "100%", height: "100%", borderRadius: 8 },
+});
 
 export default function Image ({ src, alt, ratio = "wide" }: Props) {
 

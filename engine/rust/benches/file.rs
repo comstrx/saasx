@@ -14,7 +14,7 @@ fn bench_file ( harness: &mut Criterion ) {
     let mut group = harness.benchmark_group("file");
 
     let runtime = Executor::new().ok();
-    let dir     = temp_dir().join(format!("saasx-bench-file-{}", id()));
+    let dir     = temp_dir().join(format!("engine-bench-file-{}", id()));
     let path    = dir.join("small.txt");
 
     if let Some(runtime) = &runtime { drop(runtime.block_on(async { drop(Dir::ensure(&dir).await); File::write(&path, &[b'x'; 4096]).await })); }

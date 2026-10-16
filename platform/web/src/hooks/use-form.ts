@@ -1,6 +1,6 @@
 "use client";
 
-import { bindForm, isDeferred } from "engine/context";
+import { bindForm, isDeferred } from "engine/client";
 import { client } from "@/hooks/use-client";
 
 export { isDeferred };

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { applyPatch, createSignals, forgetPorts, onTouched, portKey, portMemory, touched } from "engine/context";
+import { applyPatch, createSignals, forgetPorts, onTouched, portKey, portMemory, touched } from "engine/client";
 import { memoryStore, typed } from "engine/storage";
 
 describe("signals and port memory", () => {
@@ -169,7 +169,11 @@ describe("bounded port memory", () => {
     });
     test("thousands of distinct answers never grow the memory past its ceiling", () => {
 
-        for ( let index = 0; index < 5000; index += 1 ) portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, `k${index}`).keep(index);
+        for ( let index = 0; index < 5000; index += 1 ) {
+
+            portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, `k${index}`).keep(index);
+
+        }
 
         expect(portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, "k4999").seed()).toBe(4999);
         expect(portMemory({ store: memoryStore(), ttl: 60_000, prefix: "flood" }, "k0").seed()).toBeInstanceOf(Promise);

@@ -3,7 +3,13 @@ import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
 export type Choice = { value: string; label: string };
-type Props = { name: string; value: string; choices: readonly Choice[]; disabled?: boolean | undefined; onChange: ( value: string ) => void };
+type Props = {
+    name: string;
+    value: string;
+    choices: readonly Choice[];
+    disabled?: boolean | undefined;
+    onChange: ( value: string ) => void;
+};
 
 const styles = StyleSheet.create({
     bar: { flexGrow: 0 },
@@ -34,7 +40,14 @@ export default function Select ({ name, value, choices, disabled = false, onChan
                         accessibilityState={{ selected: chosen, disabled }}
                         disabled={disabled}
                         onPress={() => onChange(choice.value)}
-                        style={({ pressed }) => [styles.chip, { backgroundColor: chosen ? palette.primary : palette.panel, borderColor: chosen ? palette.primary : palette.line }, pressed && styles.pressed]}
+                        style={({ pressed }) => [
+                            styles.chip,
+                            {
+                                backgroundColor: chosen ? palette.primary : palette.panel,
+                                borderColor: chosen ? palette.primary : palette.line,
+                            },
+                            pressed && styles.pressed,
+                        ]}
                     >
 
                         <Text style={[font, styles.label, { color: chosen ? palette.panel : palette.ink }]}>{choice.label}</Text>

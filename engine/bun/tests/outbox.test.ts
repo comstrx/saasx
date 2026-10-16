@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createOutbox } from "engine/context";
+import { createOutbox } from "engine/client";
 import { Failure } from "engine/error";
 import { memoryStore, type Store } from "engine/storage";
 

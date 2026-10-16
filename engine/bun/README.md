@@ -3,7 +3,7 @@
 [![Bun 1.4+](https://img.shields.io/badge/bun-1.4%2B-f9f1e1.svg)](https://bun.com)
 [![TypeScript 7](https://img.shields.io/badge/typescript-7-blue.svg)](https://www.typescriptlang.org)
 
-A curated TypeScript foundation: the chosen libraries of the ecosystem behind one unified, predictable surface, shared by every web and mobile workspace in this repository.
+A curated TypeScript foundation: the chosen libraries of the ecosystem behind one unified, predictable surface, shared by every web and mobile surface built on it.
 
 ## Overview
 
@@ -26,9 +26,9 @@ tests/             contract tests, flat files, importing members the way a consu
 benches/           mitata benchmarks, flat files
 ```
 
-A consumer depends on the one package and imports a member by subpath, `import { defineClient } from "engine/context"`; members import each other the same way. A library both web and mobile use lives here once; a library only one of them uses (its framework, or something native to it) lives in that part.
+A consumer depends on the one package and imports a member by subpath, `import { defineClient } from "engine/client"`; members import each other the same way. A library both web and mobile use lives here once; a library only one of them uses (its framework, or something native to it) lives in that part.
 
-Inside this repository a part depends on the engine with `"engine": "link:engine"`, a live symlink to this folder that `bun link` registers; a distributed part swaps that one value for a git tag of this package.
+A part depends on the engine through one value in its `package.json`: `"engine": "link:engine"` follows a live symlink to this folder that `bun link` registers in this folder's own `.bun` (every checkout links its own engine, nothing global), which keeps the engine and a part developed side by side in step, and a released part pins a git tag of this package instead.
 
 | Member             | Concern                                                                                                                                                                                                                                                                                                      |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -36,7 +36,7 @@ Inside this repository a part depends on the engine with `"engine": "link:engine
 | `engine/array`     | Lists as data: keyed lookups, grouping, ordering, chunking and the row operations a cached list needs (upsert, remove, move) — pure, allocation-light, no runtime assumptions.                                                                                                                               |
 | `engine/base`      | The shared substrate every other package in the engine is built on.                                                                                                                                                                                                                                          |
 | `engine/cache`     | In-memory caching primitives: expiring entries, LRU, in-flight deduplication and stale-while-revalidate.                                                                                                                                                                                                     |
-| `engine/context`   | Application state as one DSL over zustand: defined stores, selectors, persistence through storage and React bindings.                                                                                                                                                                                        |
+| `engine/client`    | A surface's runtime over its backend: the client DSL (session, access, gates, ports, writes, outbox, signals, touches, realtime), forms, port readers and cache, and the note a device ask and its write speak.                                                                                              |
 | `engine/cookie`    | Cookies as one jar contract: parse and serialize, server headers, the browser document and a storage-backed jar for hosts without cookies.                                                                                                                                                                   |
 | `engine/device`    | What the device is and what it allows, as one DSL: facts about platform, screen, locale and connectivity, permissions asked under one vocabulary, and watchers over the facts that change. A browser adapter is built in; a native surface injects its own.                                                  |
 | `engine/error`     | A single failure model: kinds, HTTP status, codes, field errors, cause chains and the questions every caller asks of a failure.                                                                                                                                                                              |
@@ -45,8 +45,10 @@ Inside this repository a part depends on the engine with `"engine": "link:engine
 | `engine/log`       | Structured logging: one JSON line per signal, levels, bound facts, redaction and pluggable sinks.                                                                                                                                                                                                            |
 | `engine/net`       | HTTP transport: timeouts, retries with backoff, bounded body reading, URL and header helpers.                                                                                                                                                                                                                |
 | `engine/parse`     | Parsers and formatters for the small grammars every surface meets: path patterns, query strings, templates, scalars, durations and byte sizes.                                                                                                                                                               |
+| `engine/screen`    | A surface's runtime over its compiled spec: screen matching, routes and feature placement, menus, shell parts, the features a page's links lead to, and error boundaries.                                                                                                                                    |
 | `engine/socket`    | Realtime over WebSocket as one DSL: a connection with reconnect and heartbeat, named channels, typed events, and the pusher-style wire adapter.                                                                                                                                                              |
-| `engine/spec`      | The spec language shared by every surface: manifests, ports, bindings and the compiler core.                                                                                                                                                                                                                 |
+| `engine/spec`      | The spec language every surface compiles: manifests, ports, bindings, shapes and the compiler; a running surface reads only its types.                                                                                                                                                                       |
+| `engine/state`     | State as one DSL over zustand: defined stores with persistence through storage, React bindings, async resources and actions.                                                                                                                                                                                 |
 | `engine/storage`   | One key-value store contract over memory, web storage and any async driver, with namespaces and JSON codecs.                                                                                                                                                                                                 |
 | `engine/string`    | Text as data: unicode-aware slugs, case conversions, word splitting, truncation, masking and escaping — pure functions with no locale or runtime assumptions.                                                                                                                                                |
 | `engine/tooling`   | Build-time tooling every surface runs under Bun: files, spec loading, feature manifests, message composition, brand assets and the architecture analyzer.                                                                                                                                                    |
@@ -60,7 +62,7 @@ Members are runtime-agnostic: a lint rejects `Bun`, `process`, `Buffer`, `requir
 
 ```bash
 bun install --frozen-lockfile
-bun link         # registers this folder as `engine` for the parts' `link:engine`
+bun link         # registers this folder as `engine` in ./.bun for the parts' `link:engine`
 bun run gates    # check (tsc) · lint (biome) · test (bun test) · audit (bun audit)
 bun run bench    # mitata benchmarks
 bun run fmt      # biome assists (imports); no formatter runs here
@@ -77,3 +79,9 @@ TypeScript `strict` plus the exactness flags (`exactOptionalPropertyTypes`, `noU
 ## Style
 
 No comments anywhere: a name that needs one is renamed. Functions and control statements space their parens (`function name ( a, b )`, `if ( x )`), bodies open and close on a blank line, declarations group together and a blank line precedes the return. The formatter is off; the linter is the only gate on form.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

@@ -2,7 +2,11 @@ import { Text as Native, StyleSheet } from "react-native";
 import { useFont } from "@/styles/font";
 import { usePalette } from "@/styles/palette";
 
-type Props = { text: string; tone?: "default" | "muted" | "danger" | "success" | "inverse" | undefined; size?: "sm" | "md" | "lg" | undefined };
+type Props = {
+    text: string;
+    tone?: "default" | "muted" | "danger" | "success" | "inverse" | undefined;
+    size?: "sm" | "md" | "lg" | undefined;
+};
 
 const styles = StyleSheet.create({
     sm: { fontSize: 13, lineHeight: 18 },

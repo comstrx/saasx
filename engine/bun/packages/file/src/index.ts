@@ -1,13 +1,1 @@
-export {
-    checkFile,
-    dataUri,
-    extensionOf,
-    type FileRef,
-    isFileRef,
-    isImage,
-    type Limits,
-    mimeOf,
-    type Part,
-    toFormData,
-    uploadLimits,
-} from "./file.ts";
+export { checkFile, dataUri, extensionOf, type FileRef, isFileRef, type Limits, mimeOf, type Part, toFormData } from "./file.ts";

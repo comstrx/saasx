@@ -3,7 +3,7 @@
 [![Rust 1.99+](https://img.shields.io/badge/rust-1.99%2B-orange.svg)](https://www.rust-lang.org)
 [![edition 2024](https://img.shields.io/badge/edition-2024-green.svg)](https://doc.rust-lang.org/edition-guide/)
 
-A coherent Rust foundation: an extended standard library of focused, composable crates that every Rust workspace in this repository builds on, and the only door those workspaces have to the ecosystem.
+A coherent Rust foundation: an extended standard library of focused, composable crates that every Rust consumer builds on, and the only door those consumers have to the ecosystem.
 
 ## Overview
 
@@ -25,7 +25,7 @@ The engine grows only by pull: a crate exists because a consumer needed it, and 
 ```text
 Cargo.toml · Cargo.lock                         the workspace root
 .clippy.toml · .deny.toml · .config/nextest.toml   governance, applies to every crate
-xtask/             the gate runner
+xtask/             the gate runner, `cargo xtask <task>` through `.cargo/config.toml`
 crates/<name>/     member crates, one layer each, lowest first: log, error, memory, parse, validate, thread, rand, crypto, file, net, http, process; `engine` is the facade
 tests/             public-API contract tests, flat files, linked the way a consumer links
 benches/           criterion benchmarks, flat files
@@ -78,13 +78,13 @@ The code is written by hand, in one house style, and no formatter runs over it. 
 Run from the workspace root:
 
 ```bash
-cargo run -q --manifest-path xtask/Cargo.toml -- setup    # install every missing gate tool and the nightly toolchain; gates runs it first
-cargo run -q --manifest-path xtask/Cargo.toml -- gates    # clippy · test · doc · audit · vet · udeps · hack · semver · fuzz (one minute per target)
-cargo run -q --manifest-path xtask/Cargo.toml -- bloat    # release binary size per crate, every binary
-cargo run -q --manifest-path xtask/Cargo.toml -- fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each, --run --budget 3600 shares an hour
-cargo run -q --manifest-path xtask/Cargo.toml -- miri     # the pure suites (log error memory parse validate rand crypto engine) under Miri on nightly
-cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer tsan   # the test suite under asan (default), tsan, msan or lsan
-cargo run -q --manifest-path xtask/Cargo.toml -- doctor   # toolchains and tools present, then a compile check
+cargo xtask setup    # install every missing gate tool and the nightly toolchain; gates runs it first
+cargo xtask gates    # clippy · test · doc · audit · vet · udeps · hack · semver · fuzz (one minute per target)
+cargo xtask bloat    # release binary size per crate, every binary
+cargo xtask fuzz     # build the fuzz targets on nightly; --run --time 600 fuzzes each, --run --budget 3600 shares an hour
+cargo xtask miri     # the pure suites (log error memory parse validate rand crypto engine) under Miri on nightly
+cargo xtask sanitizer --sanitizer tsan   # the test suite under asan (default), tsan, msan or lsan
+cargo xtask doctor   # toolchains and tools present, then a compile check
 ```
 
 The runner lists every task when called without one. CI runs `gates` on Linux, macOS and Windows on every change (fuzzing is skipped on Windows, where libFuzzer does not run); the daily workflow runs `sanitizer`, `miri` and an hour of fuzzing shared by every target (`fuzz --run --budget 3600`). A test running past three minutes is killed (`.config/nextest.toml`). `semver` compares every library crate with its merge base against `--baseline`: the commit before the push on `main`, the base of a pull request, `main` locally; a breaking change needs a version that says so, and a crate absent from the baseline is reported, not compared. Items are compared in the crate that defines them, so the facade's re-exports are guarded there.
@@ -96,3 +96,9 @@ The minimum supported Rust version is <code>1.99.0</code>. `cargo udeps`, `cargo
 The workspace denies `clippy::{all, cargo, nursery, pedantic}` plus a curated restriction set, and treats warnings as errors. Every crate opts in with `[lints] workspace = true`; a crate outside the policy is a hole in it. `allow` attributes are denied, so an escape hatch must be `#[expect(..., reason = "...")]` — scoped, justified, and failing the build once it stops being needed.
 
 `unsafe` is sanctioned under proof discipline: it enters through such an expectation on the smallest item that needs it, with a `// SAFETY:` note per block and one unsafe operation per block, and is exercised under Miri and the sanitizers once it exists.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

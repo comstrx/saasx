@@ -1,4 +1,4 @@
-//! The gate runner: `cargo run -q --manifest-path xtask/Cargo.toml -- <task> [flags]`
+//! The gate runner: `cargo xtask <task> [flags]`
 //! from the workspace root, and the only thing CI calls.
 
 #![expect(
@@ -237,7 +237,11 @@ impl Gate {
 
         }
 
-        if !missing.is_empty() { self.cargo(&[&["binstall", "--no-confirm"], &*missing].concat())?; }
+        if !missing.is_empty() {
+
+            self.cargo(&[&["binstall", "--no-confirm"], &*missing].concat())?;
+
+        }
 
         if Self::available(&nightly) {
 
@@ -614,7 +618,16 @@ impl Gate {
         let toolchain = format!("+{NIGHTLY}");
         let plugin = tool.strip_prefix("cargo-").unwrap_or(tool);
 
-        if Self::present(&[&toolchain, plugin]) { Ok(()) } else { Err(Failure::Missing { tool, install, root: self.root.clone().into_boxed_path() }) }
+        if Self::present(&[&toolchain, plugin]) {
+
+            Ok(())
+
+        }
+        else {
+
+            Err(Failure::Missing { tool, install, root: self.root.clone().into_boxed_path() })
+
+        }
 
     }
 
@@ -657,7 +670,8 @@ impl Gate {
 
         ["-V", "--version"].iter().any(|flag| {
 
-            Command::new(program).args(arguments).arg(flag).output().is_ok_and(|output| output.status.success())
+            Command::new(program).args(arguments).arg(flag)
+                .output().is_ok_and(|output| output.status.success())
 
         })
 
@@ -692,7 +706,7 @@ fn main () -> ExitCode {
 
     let Some(( _, _, step )) = TASKS.iter().find(|( task, .. )| *task == name) else {
 
-        eprintln!("usage: xtask <task> [--run] [--time <secs>] [--sanitizer <name>] [--baseline <rev>]  (run from a workspace root)\n");
+        eprintln!("usage: cargo xtask <task> [--run] [--time <secs>] [--sanitizer <name>] [--baseline <rev>]  (run from a workspace root)\n");
 
         for ( task, help, _ ) in TASKS {
 

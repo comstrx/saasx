@@ -1,4 +1,5 @@
 import { apiInputShape, apiShape, contractShape, overridesShape, resourceShapes } from "engine/api";
+import { mapValues } from "engine/base";
 import { isOrigin } from "engine/net";
 import { isTimeZone } from "engine/translate";
 import { currency, fluent, z } from "engine/validate";
@@ -98,15 +99,13 @@ export const backendOptionFields = {
 export function settingsInput<S extends z.ZodObject> ( settings: S, required: readonly string[] = [] ) {
 
     const shape = settings.shape as Shapes;
-    const loosened = Object.fromEntries(
-        Object.entries(shape).map(( [name, value] ) => {
+    const loosened = mapValues(shape, ( value, name ) => {
 
-            if ( required.includes(name) ) return [name, value];
+        if ( required.includes(name) ) return value;
 
-            return [name, fluent(value instanceof z.ZodObject ? fluent(value).partial() : value).optional()];
+        return fluent(value instanceof z.ZodObject ? fluent(value).partial() : value).optional();
 
-        }),
-    );
+    });
     const input = z.strictObject(loosened);
 
     return required.length ? input : input.default({});

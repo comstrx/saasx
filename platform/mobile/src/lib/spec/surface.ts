@@ -1,4 +1,13 @@
-import { type Children, type CompiledBlock, type CompiledFeature, countShape, createSpecSurface, key, specText, stepShape } from "engine/spec";
+import {
+    type Children,
+    type CompiledBlock,
+    type CompiledFeature,
+    countShape,
+    createSpecSurface,
+    key,
+    specText,
+    stepShape,
+} from "engine/spec";
 import { z } from "engine/validate";
 import { iconNames } from "engine/world";
 import { core } from "../../api/core/index.ts";
@@ -11,7 +20,12 @@ export const surface = createSpecSurface({
     locales: supportedLocales,
     entities,
     icons: iconNames,
-    brand: { images: "/images/brand", imageFormats: ["png", "webp", "jpg", "jpeg", "svg"], fontFormats: ["ttf", "otf"], fontWeight: /^[1-9]00$/ },
+    brand: {
+        images: "/images/brand",
+        imageFormats: ["png", "webp", "jpg", "jpeg", "svg"],
+        fontFormats: ["ttf", "otf"],
+        fontWeight: /^[1-9]00$/,
+    },
     screenOptions: z.strictObject({
         presentation: z.enum(["stack", "modal", "tab"]),
         title: z.boolean(),
@@ -42,17 +56,38 @@ export const surface = createSpecSurface({
         block: { width: "full", height: "auto", grid: 1, gap: 4, padding: 4, align: "stretch", tone: "default", radius: "none" },
         shell: { header: null, tabs: null, loader: null },
     },
+    environment: process.env,
     contracts: { browser: false, options: {}, dropped: ["baseUrl", "browserBaseUrl", "browser", "development"] },
 });
 
-export const { configShape, configInputShape, schemaShape, screenOptions, blockOptions, shellShape, settingsShape, contentShape, entityRoute } = surface;
-export const { defineConfig, defineSchema, screen, block, feature, t, read, write, data, site, param, query, signal, live } = surface.define;
-
-export function env ( name: string, fallback: string ): string {
-
-    return process.env[name] || fallback;
-
-}
+export const {
+    configShape,
+    configInputShape,
+    schemaShape,
+    screenOptions,
+    blockOptions,
+    shellShape,
+    settingsShape,
+    contentShape,
+    entityRoute,
+} = surface;
+export const {
+    defineConfig,
+    defineSchema,
+    screen,
+    block,
+    feature,
+    t,
+    read,
+    write,
+    data,
+    site,
+    param,
+    query,
+    signal,
+    live,
+    env,
+} = surface.define;
 
 export const validateSpec = surface.validator({
     reserved: /^\/(?:_|\+|\(|api(?:\/|$))/,
@@ -61,13 +96,24 @@ export const validateSpec = surface.validator({
     walk: () => ({ client: true, session: true }),
     screen: ( screen, options, _config, compiled, issues ) => {
 
-        if ( options.presentation === "tab" && compiled.walk.params.length ) issues.push(`${screen.contents.name}: a tab screen has no path parameters.`);
+        if ( options.presentation === "tab" && compiled.walk.params.length ) {
+
+            issues.push(`${screen.contents.name}: a tab screen has no path parameters.`);
+
+        }
 
         return {};
 
     },
-    featureIssues: ( features ) => Object.entries(features).flatMap(( [name, manifest] ) => (manifest.owner === "client" ? [] : [`features/${name}: a mobile feature is client-owned.`])),
-    schema: ( screens ) => ({ tabs: screens.filter(( item ) => item.options.presentation === "tab").sort(( a, b ) => a.options.order - b.options.order).map(( item ) => item.name) }),
+    featureIssues: ( features ) => Object.entries(features)
+        .filter(( [, manifest] ) => manifest.owner !== "client")
+        .map(( [name] ) => `features/${name}: a mobile feature is client-owned.`),
+    schema: ( screens ) => ({
+        tabs: screens
+            .filter(( item ) => item.options.presentation === "tab")
+            .sort(( a, b ) => a.options.order - b.options.order)
+            .map(( item ) => item.name),
+    }),
 });
 
 export type SiteConfig = z.input<typeof configInputShape>;

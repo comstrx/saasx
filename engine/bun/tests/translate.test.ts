@@ -1,6 +1,35 @@
 import { describe, expect, test } from "bun:test";
 import { Failure } from "engine/error";
-import { dictionary, directionOf, failureMessages, formatDate, formatMoney, formatNumber, formatPercent, formatRange, isolate, isTimeZone, languageFacts, languageName, localePath, mergeMessages, messageTree, missingKeys, negotiate, plural, preferredPath, prefixed, regionOf, splitLocale, translator } from "engine/translate";
+import {
+    dictionary,
+    directionOf,
+    failureMessage,
+    failureMessages,
+    formatDate,
+    formatMoney,
+    formatNumber,
+    formatPercent,
+    formatRange,
+    isMessageKey,
+    isolate,
+    isTimeZone,
+    languageFacts,
+    languageName,
+    languagesOf,
+    localePath,
+    localizeTree,
+    mergeMessages,
+    messageText,
+    messageTree,
+    missingKeys,
+    negotiate,
+    plural,
+    preferredPath,
+    prefixed,
+    regionOf,
+    splitLocale,
+    translator,
+} from "engine/translate";
 
 const routing = { locales: ["en", "ar"], defaultLocale: "en" };
 
@@ -147,6 +176,15 @@ describe("failure messages", () => {
         expect(failureMessages(new Failure("timeout"), dictionary, "Failed")).toEqual({ _form: "Failed" });
 
     });
+    test("one message speaks for the whole failure: the first field's, else the form's, else the fallback", () => {
+
+        const refusal = new Failure("input", { errors: { title: ["Too short"], stock: ["Not a number"] } });
+
+        expect(failureMessage(refusal, dictionary, "Failed")).toBe("Too short");
+        expect(failureMessage(new Failure("conflict", { reason: "key_reused" }), dictionary, "Failed")).toBe("Already sent");
+        expect(failureMessage(new Error("boom"), dictionary, "Failed")).toBe("Failed");
+
+    });
 
 });
 describe("dictionaries", () => {
@@ -165,7 +203,11 @@ describe("dictionaries", () => {
 
         const base = { nav: { home: "Home", back: "Back" }, title: "T" };
 
-        expect(mergeMessages(base, { nav: { home: "Start" }, extra: "E" })).toEqual({ nav: { home: "Start", back: "Back" }, title: "T", extra: "E" });
+        expect(mergeMessages(base, { nav: { home: "Start" }, extra: "E" })).toEqual({
+            nav: { home: "Start", back: "Back" },
+            title: "T",
+            extra: "E",
+        });
         expect(() => mergeMessages(base, { nav: "flat" })).toThrow("change the message shape");
         expect(missingKeys(base, { nav: { home: "x" } })).toEqual(["nav.back", "title"]);
         expect(messageTree(base, "nav")).toEqual({ home: "Home", back: "Back" });
@@ -218,6 +260,52 @@ describe("locales and paths", () => {
         expect(formatRange("en", at, new Date(Date.UTC(2026, 9, 15)), "UTC")).toBe("Oct 13 – 15");
         expect(isolate("$")).toBe("⁨$⁩");
         expect(formatPercent("en", 0.256, 1)).toBe("25.6%");
+
+    });
+
+});
+describe("message keys", () => {
+
+    test("a message key is exactly one dotted key and nothing else", () => {
+
+        expect(isMessageKey({ key: "nav.home" })).toBe(true);
+        expect(isMessageKey({ key: "nav..home" })).toBe(false);
+        expect(isMessageKey({ key: "nav home" })).toBe(false);
+        expect(isMessageKey({ key: "nav.home", extra: 1 })).toBe(false);
+        expect(isMessageKey("nav.home")).toBe(false);
+
+    });
+    test("trees localize and missing keys fail loudly", () => {
+
+        expect(
+            localizeTree(
+                { title: { key: "nav.home" }, list: [{ key: "nav.home" }], n: 1 },
+                { nav: { home: "Home" } },
+                "en",
+            ),
+        ).toEqual({ title: "Home", list: ["Home"], n: 1 });
+        expect(
+            localizeTree({ labels: { key: "form" }, one: { key: "form.name" } }, { form: { name: "Name" } }, "en"),
+        ).toEqual({
+            labels: { name: "Name" },
+            one: "Name",
+        } as unknown as { labels: string; one: string });
+        expect(() => localizeTree({ key: "nav.nope" }, {}, "en")).toThrow("nav.nope");
+        expect(messageText("plain", {}, "en")).toBe("plain");
+        expect(() => messageText({ key: "nav.nope" }, {}, "ar")).toThrow("Missing ar message: nav.nope");
+
+    });
+
+});
+describe("language maps", () => {
+
+    test("a surface's languages map each locale to its facts", () => {
+
+        const languages = languagesOf(["en", "ar"] as const);
+
+        expect(Object.keys(languages)).toEqual(["en", "ar"]);
+        expect(languages.ar.direction).toBe("rtl");
+        expect(languages.en.direction).toBe("ltr");
 
     });
 

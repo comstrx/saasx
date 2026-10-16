@@ -1,3 +1,4 @@
+import { unique } from "engine/array";
 import { currency, z } from "engine/validate";
 import { nameShape, url } from "./wire.ts";
 
@@ -45,3 +46,12 @@ export const apiInputShape = apiShape.extend({
 export type ApiInput = z.input<typeof apiInputShape>;
 export type ApiConfig = z.output<typeof apiShape>;
 export type Connection = ApiConfig["connections"][string];
+export type Connected = { connections: Readonly<Record<string, { baseUrl?: string | null | undefined }>> } | null | undefined;
+
+export function connectionOrigins ( api: Connected ): string[] {
+
+    const addresses = Object.values(api?.connections ?? {}).flatMap(( connection ) => (connection.baseUrl ? [connection.baseUrl] : []));
+
+    return unique(addresses.map(( address ) => new URL(address).origin));
+
+}

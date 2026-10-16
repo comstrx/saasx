@@ -20,7 +20,6 @@ export const phone: z.ZodString = z
 export const password: z.ZodString = z.string().min(8).max(255).meta({ kind: "password" });
 export const color: z.ZodString = z.string().regex(hex);
 export const path: z.ZodString = z.string().regex(/^\/(?:[\p{L}\p{N}_:-]+(?:\/[\p{L}\p{N}_:-]+)*)?$/u);
-export const isoDate: z.ZodISODateTime = z.iso.datetime({ offset: true });
 export const money: z.ZodString = z.string().regex(/^-?\d+(?:\.\d{1,6})?$/);
 export const ack = z.object({}).passthrough();
 

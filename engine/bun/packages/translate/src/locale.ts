@@ -193,6 +193,11 @@ export function languageFacts ( code: string ): Language {
     };
 
 }
+export function languagesOf<L extends string> ( locales: readonly L[] ): Record<L, Language> {
+
+    return Object.fromEntries(locales.map(( locale ) => [locale, languageFacts(locale)])) as Record<L, Language>;
+
+}
 function likelyRegion ( code: string ): string | undefined {
 
     const host = globalThis.Intl as {

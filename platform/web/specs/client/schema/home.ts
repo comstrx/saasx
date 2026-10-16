@@ -12,7 +12,13 @@ export default screen({
         block({ width: "wide", padding: 6, gap: 6 }, [
             feature("search", { options: { placeholder: t("search.placeholder"), go: t("search.go"), mode: "query" } }),
             feature("account", {
-                options: { hello: t("account.hello"), logout: t("account.logout"), loading: t("account.loading"), failed: t("state.failed"), offline: t("account.offline"), cached: t("account.cached"), errors: t("errors") },
+                options: {
+                    hello: t("account.hello"),
+                    logout: t("account.logout"),
+                    loading: t("account.loading"),
+                    offline: t("account.offline"),
+                    cached: t("account.cached"),
+                },
                 ports: { me: read("account.me"), leave: write("account.logout") },
             }),
             feature("catalogue", {

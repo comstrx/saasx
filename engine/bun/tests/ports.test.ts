@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { field, fillInput, portAnswer, portValue, row, rows } from "engine/spec";
+import { field, fillInput, moneyText, portAnswer, portValue, row, rows } from "engine/client";
+import { formatMoney } from "engine/translate";
 
 const route = { parameters: { id: "7" }, query: { q: "tea", tags: ["a", "b"] } };
 
@@ -63,6 +64,16 @@ describe("ports", () => {
         expect(row([{ a: 1 }])).toEqual({ a: 1 });
         expect(field({ meta: { count: 3 } }, "meta.count")).toBe("3");
         expect(field({ meta: {} }, "meta.count")).toBeUndefined();
+
+    });
+    test("money speaks from the first field that holds an amount and a currency", () => {
+
+        const item = { sale_price: { amount: "0.00", currency: "USD" }, min_price: { amount: "12.50", currency: "EGP" } };
+
+        expect(moneyText("en", item, "sale_price", "min_price")).toBe(formatMoney("en", 12.5, "EGP").text);
+        expect(moneyText("en", item, "sale_price")).toBeUndefined();
+        expect(moneyText("en", { price: { amount: "5" } }, "price")).toBeUndefined();
+        expect(moneyText("en", null, "price")).toBeUndefined();
 
     });
 

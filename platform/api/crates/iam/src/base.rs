@@ -35,26 +35,29 @@ impl Iam {
         form.finish().map_err(|failure| failure.coded(Code::Config))?;
 
         let operator = Arc::new(Operator { email: email.into(), password: password.into() });
+        let service  = Service { log: Boot::log(env, "IAM", "iam")?, store: Arc::new(Store::new(10_000)), operator };
 
-        Ok(Self { address, workers, operator, log: Boot::log(env, "IAM", "iam")?, store: Arc::new(Store::new(10_000)) })
+        Ok(Self { address, workers, service })
 
     }
 
     fn serve ( self ) -> Result<()> {
 
+        let Self { address, workers, service } = self;
         let stop = Boot::stop();
+        let log  = &service.log;
 
-        self.log.info("starting").field("addr", &self.address.to_string()).field("workers", self.workers).emit();
-        self.log.audit("start").actor("operator").commit()?;
+        log.info("starting").field("addr", &address.to_string()).field("workers", workers).emit();
+        log.audit("start").actor("operator").commit()?;
 
-        let service = Service { log: self.log.clone(), store: Arc::clone(&self.store), operator: Arc::clone(&self.operator) };
-        let outcome = Server::bind(self.address.clone()).workers(self.workers).run(move |worker| service.router(worker), stop.clone(), |local| self.log.info("listening").field("addr", &local.to_string()).emit());
+        let routes  = service.clone();
+        let outcome = Server::bind(address).workers(workers).run(move |worker| routes.router(worker), stop.clone(), |local| log.info("listening").field("addr", &local.to_string()).emit());
 
         stop.raise();
 
-        self.log.info("stopped").field("sessions", self.store.len()).emit();
-        self.log.audit("stop").actor("operator").commit()?;
-        self.log.flush()?;
+        log.info("stopped").field("sessions", service.store.len()).emit();
+        log.audit("stop").actor("operator").commit()?;
+        log.flush()?;
 
         outcome
 
@@ -78,16 +81,6 @@ impl Service {
             .layer(Trace::new(self.log.clone()))
             .layer(Timeout::secs(10))
             .layer(Limit::bytes(64 * 1024))
-
-    }
-
-}
-
-impl Clone for Service {
-
-    fn clone ( &self ) -> Self {
-
-        Self { log: self.log.clone(), store: Arc::clone(&self.store), operator: Arc::clone(&self.operator) }
 
     }
 

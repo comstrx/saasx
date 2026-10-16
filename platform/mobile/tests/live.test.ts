@@ -17,7 +17,8 @@ describe("the app's compiled client against the backend behind the spec", () => 
 
         if ( !client ) return;
 
-        const api = createApi(endpoints, client.api, client.contract, () => requestContext(client.api.context, { language: "ar", requestId: "app-live-1" }), { execution: "client" });
+        const context = () => requestContext(client.api.context, { language: "ar", requestId: "app-live-1" });
+        const api = createApi(endpoints, client.api, client.contract, context, { execution: "client" });
         const result = await api.catalogs.list({ limit: 2, search: "hotel" });
 
         expect(result.resource.length).toBe(2);

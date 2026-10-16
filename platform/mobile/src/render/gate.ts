@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect } from "react";
-import { useAccess, useSession } from "@/hooks/use-client";
+import { useGate } from "@/hooks/use-client";
 import { useRouter } from "@/hooks/use-router";
 
 type Props = { access: readonly string[]; guest?: boolean; redirect?: string | null; children: ReactNode };
@@ -7,10 +7,7 @@ type Props = { access: readonly string[]; guest?: boolean; redirect?: string | n
 export function Gate ({ access, guest = false, redirect = null, children }: Props) {
 
     const router = useRouter();
-    const session = useSession();
-    const state = useAccess(access);
-    const allowed = guest ? !session.ready || session.user === null : state === "granted";
-    const refused = session.ready && !allowed;
+    const { allowed, refused } = useGate(access, guest);
 
     useEffect(() => {
 

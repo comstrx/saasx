@@ -1,4 +1,4 @@
-import { createDevice, type Device, type Grant, type Info, type Permission, type Picked, unknownInfo } from "engine/device";
+import { createDevice, type Device, type Grant, type Info, type Permission, type Picked, type Position, unknownInfo } from "engine/device";
 import Constants from "expo-constants";
 import * as ImagePicker from "expo-image-picker";
 import * as Localization from "expo-localization";
@@ -9,7 +9,19 @@ import { AccessibilityInfo, Appearance, Dimensions, Linking, PixelRatio, Platfor
 let reduced = false;
 
 const scheme = ( value: string | null | undefined ): "light" | "dark" | null => (value === "dark" || value === "light" ? value : null);
-const grant = ( status: string, canAskAgain = true ): Grant => (status === "granted" ? "granted" : status === "denied" && !canAskAgain ? "denied" : status === "denied" ? "denied" : "prompt");
+const grant = ( status: string, canAskAgain = true ): Grant => {
+
+    if ( status === "granted" ) return "granted";
+
+    return status === "denied" && !canAskAgain ? "denied" : "prompt";
+
+};
+const located = ( found: Location.LocationObject ): Position => ({
+    latitude: found.coords.latitude,
+    longitude: found.coords.longitude,
+    accuracy: found.coords.accuracy ?? 0,
+    at: found.timestamp,
+});
 
 void AccessibilityInfo.isReduceMotionEnabled().then(( value ) => { reduced = value; });
 
@@ -67,16 +79,18 @@ async function pick ( source: "camera" | "library" ): Promise<Picked | null> {
 
     if ( !asset ) return null;
 
-    return { uri: asset.uri, name: asset.fileName ?? `photo.${(asset.mimeType ?? "image/jpeg").split("/")[1] ?? "jpg"}`, type: asset.mimeType ?? "image/jpeg" };
+    return {
+        uri: asset.uri,
+        name: asset.fileName ?? `photo.${(asset.mimeType ?? "image/jpeg").split("/")[1] ?? "jpg"}`,
+        type: asset.mimeType ?? "image/jpeg",
+    };
 
 }
-async function position (): Promise<{ latitude: number; longitude: number; accuracy: number; at: number } | null> {
+async function position (): Promise<Position | null> {
 
     try {
 
-        const found = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-
-        return { latitude: found.coords.latitude, longitude: found.coords.longitude, accuracy: found.coords.accuracy ?? 0, at: found.timestamp };
+        return located(await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }));
 
     }
     catch { return null; }
@@ -86,7 +100,13 @@ async function pushToken (): Promise<string | null> {
 
     const projectId = (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId;
 
-    try { return projectId ? (await Notifications.getExpoPushTokenAsync({ projectId })).data : (await Notifications.getDevicePushTokenAsync()).data as string; }
+    try {
+
+        if ( projectId ) return (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+
+        return (await Notifications.getDevicePushTokenAsync()).data as string;
+
+    }
     catch { return null; }
 
 }
@@ -103,14 +123,25 @@ export const device: Device = createDevice({
 
         if ( fact === "colorScheme" ) return Appearance.addChangeListener(({ colorScheme }) => emit(scheme(colorScheme))).remove;
         if ( fact === "screen" ) return Dimensions.addEventListener("change", () => emit(screen())).remove;
-        if ( fact === "reducedMotion" ) return AccessibilityInfo.addEventListener("reduceMotionChanged", ( value ) => { reduced = value; emit(value); }).remove;
+        if ( fact === "reducedMotion" ) {
+
+            return AccessibilityInfo.addEventListener("reduceMotionChanged", ( value ) => {
+
+                reduced = value;
+                emit(value);
+
+            }).remove;
+
+        }
 
         if ( fact === "location" ) {
 
             let stopped = false;
             let off: (() => void) | undefined;
 
-            void Location.watchPositionAsync({ accuracy: Location.Accuracy.Balanced }, ( position ) => emit({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy ?? 0, at: position.timestamp })).then(( subscription ) => {
+            const watching = Location.watchPositionAsync({ accuracy: Location.Accuracy.Balanced }, ( found ) => emit(located(found)));
+
+            void watching.then(( subscription ) => {
 
                 if ( stopped ) subscription.remove();
                 else off = () => subscription.remove();

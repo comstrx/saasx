@@ -2,7 +2,13 @@ import type { KeyboardEvent, ReactNode } from "react";
 
 export type Column = { key: string; label: string; align?: "start" | "end" | undefined };
 export type Row = { key: string; cells: Record<string, ReactNode> };
-type Props = { columns: readonly Column[]; rows: readonly Row[]; caption?: string | undefined; selected?: string | undefined; onSelect?: (( key: string ) => void) | undefined };
+type Props = {
+    columns: readonly Column[];
+    rows: readonly Row[];
+    caption?: string | undefined;
+    selected?: string | undefined;
+    onSelect?: (( key: string ) => void) | undefined;
+};
 
 export default function Table ({ columns, rows, caption, selected, onSelect }: Props) {
 
@@ -25,7 +31,15 @@ export default function Table ({ columns, rows, caption, selected, onSelect }: P
 
                 <thead>
 
-                    <tr>{columns.map(( column ) => <th key={column.key} scope="col" className="table-head" data-align={column.align ?? "start"}>{column.label}</th>)}</tr>
+                    <tr>
+
+                        {columns.map(( column ) => (
+
+                            <th key={column.key} scope="col" className="table-head" data-align={column.align ?? "start"}>{column.label}</th>
+
+                        ))}
+
+                    </tr>
 
                 </thead>
 
@@ -42,7 +56,15 @@ export default function Table ({ columns, rows, caption, selected, onSelect }: P
                             onKeyDown={onSelect ? ( event ) => pick(event, row.key) : undefined}
                         >
 
-                            {columns.map(( column ) => <td key={column.key} className="table-cell" data-align={column.align ?? "start"}>{row.cells[column.key]}</td>)}
+                            {columns.map(( column ) => (
+
+                                <td key={column.key} className="table-cell" data-align={column.align ?? "start"}>
+
+                                    {row.cells[column.key]}
+
+                                </td>
+
+                            ))}
 
                         </tr>
 

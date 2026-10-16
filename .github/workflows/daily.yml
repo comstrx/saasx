@@ -46,12 +46,12 @@ jobs:
       - name: Setup
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- setup
+        run: cargo xtask setup
 
       - name: Sanitizer
         env:
           SANITIZER: ${{ matrix.sanitizer }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- sanitizer --sanitizer "${SANITIZER}"
+        run: cargo xtask sanitizer --sanitizer "${SANITIZER}"
 
   miri:
     name: miri
@@ -72,10 +72,10 @@ jobs:
       - name: Setup
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- setup
+        run: cargo xtask setup
 
       - name: Miri
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- miri
+        run: cargo xtask miri
 
   fuzz:
     name: fuzz
@@ -96,7 +96,7 @@ jobs:
       - name: Setup
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- setup
+        run: cargo xtask setup
 
       - name: Fuzz
-        run: cargo run -q --manifest-path xtask/Cargo.toml -- fuzz --run --budget 3600
+        run: cargo xtask fuzz --run --budget 3600

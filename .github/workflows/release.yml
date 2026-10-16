@@ -1,0 +1,172 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+  release:
+    types: [published]
+
+concurrency:
+  group: release-${{ github.event.release.tag_name || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  plan:
+    name: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      engines: ${{ steps.tools.outputs.engines }}
+      parts: ${{ steps.tools.outputs.parts }}
+      distributed: ${{ steps.tools.outputs.distributed }}
+
+    steps:
+      - name: Tools
+        id: tools
+        env:
+          ENGINES: rustx bunx
+          PARTS: apix infrax skillx webx mobilex
+          TAG: ${{ github.event.release.tag_name || github.ref_name }}
+          GIT_TERMINAL_PROMPT: 0
+        run: |
+          distributed=true
+          for repo in ${ENGINES} ${PARTS}; do
+            git ls-remote --exit-code --tags "https://github.com/comstrx/${repo}.git" "refs/tags/${TAG}" >/dev/null || distributed=false
+          done
+          {
+            echo "engines=$(jq -cn --arg list "${ENGINES}" '$list | split(" ")')"
+            echo "parts=$(jq -cn --arg list "${PARTS}" '$list | split(" ")')"
+            echo "distributed=${distributed}"
+          } >> "${GITHUB_OUTPUT}"
+
+  global:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/global.yml
+
+  rust:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/rust.yml
+
+  bun:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/bun.yml
+
+  api:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/api.yml
+
+  infra:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/infra.yml
+
+  skill:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/skill.yml
+
+  web:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/web.yml
+
+  mobile:
+    needs: plan
+    if: needs.plan.outputs.distributed != 'true'
+    uses: $/.github/workflows/mobile.yml
+
+  engines:
+    name: ${{ matrix.repo }}
+    needs: [plan, global, rust, bun, api, infra, skill, web, mobile]
+    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.plan.outputs.engines) }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.3
+          no-cache: true
+
+      - name: Tag
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.TOOLX_TOKEN }}
+          REPO: comstrx/${{ matrix.repo }}
+          TAG: ${{ github.ref_name }}
+        run: bash aliasx.sh distribute --path "${GITHUB_WORKSPACE}" --repo "${REPO}" --tag "${TAG}"
+
+      - name: Release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.TOOLX_TOKEN }}
+          REPO: comstrx/${{ matrix.repo }}
+          TAG: ${{ github.event.release.tag_name }}
+          NAME: ${{ github.event.release.name }}
+        run: bash aliasx.sh distribute --path "${GITHUB_WORKSPACE}" --repo "${REPO}" --tag "${TAG}" --release "${NAME:-${TAG}}"
+
+  parts:
+    name: ${{ matrix.repo }}
+    needs: [plan, engines]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.plan.outputs.parts) }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        with:
+          cache: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.3
+          no-cache: true
+
+      - name: Tag
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.TOOLX_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO: comstrx/${{ matrix.repo }}
+          TAG: ${{ github.ref_name }}
+        run: bash aliasx.sh distribute --path "${GITHUB_WORKSPACE}" --repo "${REPO}" --tag "${TAG}"
+
+      - name: Release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.TOOLX_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO: comstrx/${{ matrix.repo }}
+          TAG: ${{ github.event.release.tag_name }}
+          NAME: ${{ github.event.release.name }}
+        run: bash aliasx.sh distribute --path "${GITHUB_WORKSPACE}" --repo "${REPO}" --tag "${TAG}" --release "${NAME:-${TAG}}"

@@ -1,8 +1,8 @@
 "use client";
 
-import { useAction } from "engine/context";
-import { field, row } from "engine/spec";
-import { failureMessages, type Messages } from "engine/translate";
+import { field, row } from "engine/client";
+import { useAction } from "engine/state";
+import { failureMessage, type Messages } from "engine/translate";
 import { useState } from "react";
 import AvatarCard from "@/components/avatar-card";
 import Status from "@/components/status";
@@ -10,7 +10,18 @@ import { usePort, useWrite } from "@/hooks/use-client";
 import { useDevice } from "@/hooks/use-device";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; pick: string; camera: string; saved: string; failed: string; loading: string; offline: string; cached: string; empty: string; errors: Messages };
+export type Options = {
+    title: string;
+    pick: string;
+    camera: string;
+    saved: string;
+    failed: string;
+    loading: string;
+    offline: string;
+    cached: string;
+    empty: string;
+    errors: Messages;
+};
 
 export default function Picker ({ options, ports, route, feature }: FeatureProps<Options>) {
 
@@ -32,8 +43,20 @@ export default function Picker ({ options, ports, route, feature }: FeatureProps
 
     });
     const image = uploaded ?? (me.status === "ready" ? field(row(me.value), "image") : undefined);
-    const note = save.status === "done" ? { text: options.saved, tone: "success" as const } : save.status === "failed" ? { text: Object.values(failureMessages(save.error, options.errors, options.failed))[0] ?? options.failed, tone: "danger" as const } : pick.status === "failed" ? { text: options.failed, tone: "danger" as const } : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const } : undefined;
-    const status = me.status === "ready" ? undefined : <Status status={me.status} loading={options.loading} failed={options.failed} offline={options.offline} error={me.status === "failed" ? me.error : undefined} />;
+    const note = save.status === "done" ? { text: options.saved, tone: "success" as const }
+        : save.status === "failed" ? { text: failureMessage(save.error, options.errors, options.failed), tone: "danger" as const }
+        : pick.status === "failed" ? { text: options.failed, tone: "danger" as const }
+        : me.status === "ready" && !image ? { text: options.empty, tone: "muted" as const }
+        : undefined;
+    const status = me.status === "ready"
+        ? undefined
+        : <Status
+            status={me.status}
+            loading={options.loading}
+            failed={options.failed}
+            offline={options.offline}
+            error={me.status === "failed" ? me.error : undefined}
+        />
 
     return (
 

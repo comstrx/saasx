@@ -68,6 +68,7 @@
         "src/app/\\[locale\\]/layout.tsx",
         "src/app/\\[locale\\]/\\[\\[...path\\]\\]/blocks.tsx",
         "src/app/\\[locale\\]/\\[\\[...path\\]\\]/mount.ts",
+        "src/app/\\[locale\\]/\\[\\[...path\\]\\]/warm.ts",
         "src/app/.well-known/\\[...path\\]/route.ts"
       ],
       "linter": {

@@ -20,15 +20,36 @@ export default function TabBar ({ label, tabs }: Props) {
 
     return (
 
-        <View accessibilityRole="tablist" accessibilityLabel={label} style={[styles.bar, { borderTopColor: palette.line, backgroundColor: palette.panel }]}>
+        <View
+            accessibilityRole="tablist"
+            accessibilityLabel={label}
+            style={[styles.bar, { borderTopColor: palette.line, backgroundColor: palette.panel }]}
+        >
 
             {tabs.map(( tab ) => (
 
-                <Pressable key={tab.key} testID={`tab-${tab.key}`} accessibilityRole="tab" accessibilityState={{ selected: tab.current }} onPress={tab.onPress} style={({ pressed }) => [styles.tab, pressed && styles.pressed]}>
+                <Pressable
+                    key={tab.key}
+                    testID={`tab-${tab.key}`}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: tab.current }}
+                    onPress={tab.onPress}
+                    style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
+                >
 
                     {tab.icon}
 
-                    <Text style={[font, styles.label, { color: tab.current ? palette.primary : palette.muted, fontWeight: tab.current ? "700" : "400" }]}>{tab.label}</Text>
+                    <Text
+                        style={[
+                            font,
+                            styles.label,
+                            { color: tab.current ? palette.primary : palette.muted, fontWeight: tab.current ? "700" : "400" },
+                        ]}
+                    >
+
+                        {tab.label}
+
+                    </Text>
 
                 </Pressable>
 

@@ -13,7 +13,6 @@ extend-exclude = [
     "**/coverage/**",
     "**/storage/**",
     "**/generated/**",
-    "engine/bun/packages/world/data/**",
     "**/Pods/**",
     "**/android/**",
     "**/ios/**",
@@ -33,7 +32,9 @@ extend-exclude = [
     "**/.terraform/**",
     "**/fuzz/corpus/**",
     "**/fuzz/artifacts/**",
+    "engine/bun/packages/world/data/**",
 ]
+
 ignore-files = true
 ignore-dot = true
 ignore-vcs = true
@@ -47,6 +48,7 @@ check-filename = true
 check-file = true
 unicode = true
 locale = "en-us"
+
 extend-ignore-words-re = ["(?i)^fpr$"]
 extend-ignore-re = [
     "(?s)-----BEGIN PGP SIGNATURE-----.*?-----END PGP SIGNATURE-----",
@@ -69,6 +71,7 @@ extend-glob = [
     "**/*.woff2",
     "**/*.ttf",
 ]
+
 check-file = false
 check-filename = false
 

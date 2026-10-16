@@ -1,5 +1,24 @@
 import { describe, expect, test } from "bun:test";
-import { camelCase, catalog, collapse, digits, escapeHtml, escapeRegExp, fold, initials, isBlank, kebabCase, mask, pascalCase, rank, slugify, snakeCase, titleCase, truncate, words } from "engine/string";
+import {
+    camelCase,
+    catalog,
+    collapse,
+    digits,
+    escapeHtml,
+    escapeRegExp,
+    fold,
+    initials,
+    isBlank,
+    kebabCase,
+    mask,
+    pascalCase,
+    rank,
+    slugify,
+    snakeCase,
+    titleCase,
+    truncate,
+    words,
+} from "engine/string";
 
 describe("string", () => {
 
@@ -29,7 +48,7 @@ describe("string", () => {
     });
     test("mask hides the middle and keeps an address domain", () => {
 
-        expect(mask("walk.saasx@example.test")).toBe("w*********@example.test");
+        expect(mask("walk.users@example.test")).toBe("w*********@example.test");
         expect(mask("01099188572", 3, 2)).toBe("010******72");
         expect(mask("ab", 1, 1)).toBe("ab");
 
@@ -94,7 +113,8 @@ describe("search", () => {
         expect(rank("ab", ["xab"])).toBe(3);
         expect(rank("ab", ["zz"])).toBe(-1);
 
-        const items = catalog([{ code: "A", words: ["apple", "تفاح"] }, { code: "B", words: ["pineapple"] }, { code: "C", words: ["app"] }], ( item ) => item.code, ( item ) => item.words);
+        const fruits = [{ code: "A", words: ["apple", "تفاح"] }, { code: "B", words: ["pineapple"] }, { code: "C", words: ["app"] }];
+        const items = catalog(fruits, ( item ) => item.code, ( item ) => item.words);
 
         expect(items.search("app").map(( item ) => item.code)).toEqual(["C", "A", "B"]);
         expect(items.search("تُفاح").map(( item ) => item.code)).toEqual(["A"]);

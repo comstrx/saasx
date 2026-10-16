@@ -1,6 +1,6 @@
 "use client";
 
-import { granted } from "engine/spec";
+import { granted } from "engine/client";
 import Menu, { type MenuEntry } from "@/elements/menu";
 import { useSession } from "@/hooks/use-client";
 import Icon from "@/icons";

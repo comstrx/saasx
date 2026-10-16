@@ -18,11 +18,25 @@ const backend = {
 };
 const home = screen({
     contents: { name: "home", path: "/", title: t("nav.home"), description: t("home.description") },
-    blocks: [block({}, [feature("catalogue", { heading: true, options: { title: t("catalogue.title"), empty: t("catalogue.empty"), from: t("catalogue.from"), columns: 3 }, ports: { items: read("catalogs.list", { limit: 12 }) } })])],
+    blocks: [block({}, [feature("catalogue", {
+        heading: true,
+        options: { title: t("catalogue.title"), empty: t("catalogue.empty"), from: t("catalogue.from"), columns: 3 },
+        ports: { items: read("catalogs.list", { limit: 12 }) },
+    })])],
 });
 const catalog = screen({
-    contents: { name: "catalog", path: "/catalog/:id", title: t("catalog.title"), description: t("catalog.description"), entity: "catalog" },
-    blocks: [block({}, [feature("detail", { heading: true, options: { from: t("catalogue.from"), missing: t("state.missing"), back: t("catalog.back") }, ports: { item: read("catalogs.view", { id: param("id") }) } })])],
+    contents: {
+        name: "catalog",
+        path: "/catalog/:id",
+        title: t("catalog.title"),
+        description: t("catalog.description"),
+        entity: "catalog",
+    },
+    blocks: [block({}, [feature("detail", {
+        heading: true,
+        options: { from: t("catalogue.from"), missing: t("state.missing"), back: t("catalog.back") },
+        ports: { item: read("catalogs.view", { id: param("id") }) },
+    })])],
 });
 const quiet = screen({
     contents: { name: "home", path: "/", title: t("nav.home"), description: t("home.description") },
@@ -33,14 +47,23 @@ type Variant = Partial<SiteConfig>;
 
 function compile ( variant: Variant, screens: readonly unknown[] = [home, catalog] ) {
 
-    const config = { ...base, settings: { ...base.settings, delivery: "server", screen: { render: "server" } }, contracts: backend, ...variant, contents: { ...base.contents, ...(variant.contents ?? {}) } };
+    const config = {
+        ...base,
+        settings: { ...base.settings, delivery: "server", screen: { render: "server" } },
+        contracts: backend,
+        ...variant,
+        contents: { ...base.contents, ...(variant.contents ?? {}) },
+    };
 
     return validateSpec(identity, config, { screens }, messages, facts, catalogue);
 
 }
 function crawlers ( allow: string[], sitemap: string[] ): Variant {
 
-    return { contents: { ...base.contents, seo: { title: null, description: null, keywords: [], image: null, twitter: null, robots: { allow, disallow: allow.length ? [] : ["/"] }, sitemap, verification: {} } } };
+    const robots = { allow, disallow: allow.length ? [] : ["/"] };
+    const seo = { title: null, description: null, keywords: [], image: null, twitter: null, robots, sitemap, verification: {} };
+
+    return { contents: { ...base.contents, seo } };
 
 }
 describe("one surface, many modes, by values alone", () => {

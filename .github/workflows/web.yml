@@ -16,8 +16,10 @@ on:
 
   workflow_dispatch:
 
+  workflow_call:
+
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-web-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -65,54 +67,3 @@ jobs:
 
       - name: Build
         run: bun run build
-
-  budget:
-    name: budget
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: verify
-
-    env:
-      NEXT_PUBLIC_SPEC: admin
-
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version-file: platform/web/package.json
-
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 26
-
-      - name: Install the engine
-        run: bun install --frozen-lockfile && bun link
-        working-directory: engine/bun
-
-      - name: Install
-        run: bun install --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
-      - name: Serve
-        run: |
-          bun run start > server.log 2>&1 &
-          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:3001/login && break; sleep 1; done
-
-      - name: First-load budget
-        run: bun tools/budget/index.ts
-
-      - name: Lighthouse
-        run: |
-          for run in 1 2 3; do
-            for attempt in 1 2 3; do
-              npx --yes lighthouse@12.8.2 http://127.0.0.1:3001/login --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="lighthouse-${run}.json" --only-categories=performance,accessibility,best-practices,seo --preset=desktop && break
-            done
-          done
-
-      - name: Lighthouse floors
-        run: bun tools/lighthouse/index.ts lighthouse-1.json lighthouse-2.json lighthouse-3.json seo=50

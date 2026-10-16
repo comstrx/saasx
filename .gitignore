@@ -8,6 +8,12 @@
 **/.claude/
 **/.codex/
 **/.agents/
+**/.infra/
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/*.plan
 **/.idea/
 **/.vscode/
 **/.vs/
@@ -39,7 +45,6 @@
 **/*.pid.lock
 **/.cache/
 **/*lighthouse.*/
-**/.infra*/
 **/CACHEDIR.TAG
 
 **/target/
@@ -58,16 +63,42 @@
 **/*.profraw
 **/*.profdata
 
+**/vendor/
+**/.phpunit.cache/
+**/.phpunit.result.cache
+**/public/build/
+**/public/storage
+**/public/hot
+**/bootstrap/cache/*.php
+**/storage/geo/
+**/storage/logs/*
+**/storage/app/livewire-tmp/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*
+**/storage/app/private/*
+**/storage/app/public/*
+!**/storage/logs/.gitignore
+!**/storage/app/livewire-tmp/.gitignore
+!**/storage/framework/sessions/.gitignore
+!**/storage/framework/views/.gitignore
+!**/storage/app/private/.gitignore
+!**/storage/app/public/.gitignore
+**/.phpactor.json
+**/Homestead.json
+**/Homestead.yaml
+**/frankenphp
+**/frankenphp-worker.php
+
 **/node_modules/
 **/.pnpm-store/
 **/.npm/
 **/.yarn/*
+**/.pnp.*
 !**/.yarn/patches
 !**/.yarn/plugins
 !**/.yarn/releases
 !**/.yarn/sdks
 !**/.yarn/versions
-**/.pnp.*
 **/.yarn-integrity
 **/.eslintcache
 **/.stylelintcache
@@ -96,6 +127,9 @@
 
 **/.expo/
 **/.expo-shared/
+**/expo-env.d.ts
+**/google-services.json
+**/GoogleService-Info.plist
 **/web-build/
 **/android/
 **/ios/
@@ -103,6 +137,7 @@
 **/*.jsbundle
 **/*.hprof
 **/*.orig.*
+**/*.p8
 
 **/coverage/
 **/.nyc_output/
@@ -115,6 +150,7 @@
 **/playwright/.cache/
 **/criterion/
 **/.benchmarks/
+
 **/__pycache__/
 **/*.py[codz]
 **/.venv/

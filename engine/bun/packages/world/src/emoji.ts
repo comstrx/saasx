@@ -5,7 +5,13 @@ import rows from "../data/emojis.json" with { type: "json" };
 import { type FlagPlace, flagCode, flagOf } from "./flag.ts";
 
 export type EmojiGroup = { key: string; name: { en: string; ar: string } };
-export type Emoji = { glyph: string; code: string; group: string; name: { en: string; ar: string }; keywords: { en: readonly string[]; ar: readonly string[] } };
+export type Emoji = {
+    glyph: string;
+    code: string;
+    group: string;
+    name: { en: string; ar: string };
+    keywords: { en: readonly string[]; ar: readonly string[] };
+};
 export type EmojiOptions = { folder?: string | undefined; flags?: FlagPlace | undefined };
 export type Browse = { query?: string | undefined; group?: string | undefined; limit?: number | undefined };
 export type Emojis = Catalog<Emoji> & {
@@ -34,7 +40,8 @@ export function emojiCode ( glyph: string ): string {
 }
 export function defineEmoji ({ folder = emojiFolder, flags }: EmojiOptions = {}): Emojis {
 
-    const found = catalog(everyEmoji, ( emoji ) => plainEmoji(emoji.glyph), ( emoji ) => [emoji.glyph, emoji.name.en, emoji.name.ar, ...emoji.keywords.en, ...emoji.keywords.ar]);
+    const fields = ( emoji: Emoji ): string[] => [emoji.glyph, emoji.name.en, emoji.name.ar, ...emoji.keywords.en, ...emoji.keywords.ar];
+    const found = catalog(everyEmoji, ( emoji ) => plainEmoji(emoji.glyph), fields);
     const get = ( glyph: string ): Emoji | undefined => found.get(plainEmoji(glyph));
     const of = ( group: string ): Emoji[] => everyEmoji.filter(( emoji ) => emoji.group === group);
 

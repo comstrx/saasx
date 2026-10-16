@@ -9,7 +9,11 @@ export const everyLanguage = rows as Language[];
 
 export function defineLanguages ( codes?: readonly string[] ): Languages {
 
-    return catalog(chosen(everyLanguage, ( language ) => language.code, codes, "languages"), ( language ) => language.code, ( language ) => [language.code, language.name.en, language.name.ar, language.name.native]);
+    const picked = chosen(everyLanguage, ( language ) => language.code, codes, "languages");
+
+    const fields = ( language: Language ): string[] => [language.code, language.name.en, language.name.ar, language.name.native];
+
+    return catalog(picked, ( language ) => language.code, fields);
 
 }
 

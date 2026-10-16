@@ -1,10 +1,17 @@
-import { granted } from "engine/spec";
+import { granted } from "engine/client";
 import TabBar from "@/elements/tab-bar";
 import { useSession } from "@/hooks/use-client";
 import { useRouter } from "@/hooks/use-router";
 import Icon from "@/icons";
 
-export type TabEntry = { name: string; path: string; label: string; icon?: string | null | undefined; current: boolean; access: readonly string[] };
+export type TabEntry = {
+    name: string;
+    path: string;
+    label: string;
+    icon?: string | null | undefined;
+    current: boolean;
+    access: readonly string[];
+};
 type Props = { label: string; entries: readonly TabEntry[] };
 
 export default function TabMenu ({ label, entries }: Props) {

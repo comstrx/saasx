@@ -1,4 +1,5 @@
-import { bind, defineStore } from "engine/context";
+import { acceptPreferences } from "engine/cookie";
+import { bind, defineStore } from "engine/state";
 import { negotiate } from "engine/translate";
 import { device } from "@/lib/providers/device";
 import { store } from "@/lib/providers/storage";
@@ -14,24 +15,18 @@ const detected = negotiate(device.info().languages.join(","), routing.locales) a
 
 export const preferencesStore = defineStore({
     name: storage.preferences,
-    initial: { language: detected ?? routing.defaultLocale, currency: config.settings.currency.default, theme: config.settings.theme.default } as Preferences,
+    initial: {
+        language: detected ?? routing.defaultLocale,
+        currency: config.settings.currency.default,
+        theme: config.settings.theme.default,
+    } as Preferences,
     actions: ( set ) => ({
         choose: ( change: Partial<Preferences> ) => set(( state ) => ({ ...state, ...change })),
     }),
     persist: {
         store,
         keys: ["language", "currency", "theme"],
-        parse: ( saved ) => {
-
-            const given = saved as Partial<Preferences>;
-
-            return {
-                ...(given.language && routing.locales.includes(given.language) ? { language: given.language } : {}),
-                ...(given.currency && currencies.includes(given.currency) ? { currency: given.currency } : {}),
-                ...(given.theme && themes.includes(given.theme) ? { theme: given.theme } : {}),
-            };
-
-        },
+        parse: ( saved ) => acceptPreferences(saved, { languages: routing.locales, currencies, themes }) as Partial<Preferences>,
     },
 });
 export const preferences = bind(preferencesStore);

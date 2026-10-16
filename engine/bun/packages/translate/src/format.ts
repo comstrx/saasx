@@ -71,7 +71,8 @@ export function formatPercent ( locale: string, ratio: number, digits = 0, numer
 export function formatMoney ( locale: string, amount: number, currency: string, numerals: Numerals = "latn" ): MoneyParts {
 
     const name = tag(locale, numerals);
-    const parts = kept(numbers, `${name}|money|${currency}`, () => new Intl.NumberFormat(name, { style: "currency", currency, currencyDisplay: "narrowSymbol" })).formatToParts(amount);
+    const style: Intl.NumberFormatOptions = { style: "currency", currency, currencyDisplay: "narrowSymbol" };
+    const parts = kept(numbers, `${name}|money|${currency}`, () => new Intl.NumberFormat(name, style)).formatToParts(amount);
     const symbol = parts.find(( part ) => part.type === "currency")?.value ?? currency;
     const text = parts
         .map(( part ) => (part.type === "currency" ? `${isolateStart}${part.value}${isolateEnd}` : part.value))
@@ -103,7 +104,9 @@ export function formatDate (
 }
 export function formatRange ( locale: string, from: Date, to: Date, timeZone?: string ): string {
 
-    return dateFormat(locale, `range|${timeZone ?? ""}`, () => ({ day: "numeric", month: "short", ...(timeZone ? { timeZone } : {}) })).formatRange(from, to);
+    const options = (): Intl.DateTimeFormatOptions => ({ day: "numeric", month: "short", ...(timeZone ? { timeZone } : {}) });
+
+    return dateFormat(locale, `range|${timeZone ?? ""}`, options).formatRange(from, to);
 
 }
 export function plural ( locale: string, count: number, forms: Partial<Record<Intl.LDMLPluralRule, string>> ): string {

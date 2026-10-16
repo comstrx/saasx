@@ -79,18 +79,14 @@ export function specAliases (
     };
 
 }
+export function featureEntry ( root: string, folder: string, name: string ): string {
+
+    return JSON.stringify(relative(resolve(root, folder), resolve(root, "src", "features", name, "index.tsx")).replaceAll("\\", "/"));
+
+}
 export function registryModule ( root: string, folder: string, features: readonly string[] ): string {
 
-    const lines = features.map(( name ) => {
-
-        const entry = relative(resolve(root, folder), resolve(root, "src", "features", name, "index.tsx")).replaceAll(
-            "\\",
-            "/",
-        );
-
-        return `    ${JSON.stringify(name)}: () => import(${JSON.stringify(entry)}),`;
-
-    });
+    const lines = features.map(( name ) => `    ${JSON.stringify(name)}: () => import(${featureEntry(root, folder, name)}),`);
 
     return `export default {\n${lines.join("\n")}\n};\n`;
 
@@ -98,7 +94,11 @@ export function registryModule ( root: string, folder: string, features: readonl
 export const worldAssets: string = resolve(import.meta.dir, "../../world/asset");
 export const generatedRoot = `public${generatedPath}`;
 
-export type EngineAssets = { flags?: readonly string[] | true | undefined; emoji?: readonly string[] | undefined; fonts?: boolean | undefined };
+export type EngineAssets = {
+    flags?: readonly string[] | true | undefined;
+    emoji?: readonly string[] | undefined;
+    fonts?: boolean | undefined;
+};
 
 function copyAssets ( root: string, from: string, to: string, files: readonly string[] ): number {
 
@@ -133,7 +133,9 @@ export function syncEngineAssets ( root: string, assets: EngineAssets ): number 
     const flags = assets.flags === true ? flagFiles("svg") : (assets.flags ?? []).map(( code ) => `${code.toLowerCase()}.svg`);
     const faces = assets.fonts ? fonts.flatMap(( font ) => font.files.map(( face ) => face.file)) : [];
 
-    return copyAssets(root, "flag", flagFolder, flags) + copyAssets(root, "emoji", emojiFolder, assets.emoji ?? []) + copyAssets(root, "font", fontFolder, faces);
+    return copyAssets(root, "flag", flagFolder, flags)
+        + copyAssets(root, "emoji", emojiFolder, assets.emoji ?? [])
+        + copyAssets(root, "font", fontFolder, faces);
 
 }
 export function publishedUrls<T> ( value: T, files: ReadonlyMap<string, Uint8Array> ): T {

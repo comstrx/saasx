@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
 export default function Illustration ({ scene, label }: Props) {
 
     const palette = usePalette();
-    const color = (scene === "failed" || scene === "denied" ? palette.danger : scene === "done" ? palette.success : palette.primary) ?? palette.ink;
+    const tone = scene === "failed" || scene === "denied" ? palette.danger : scene === "done" ? palette.success : palette.primary;
+    const color = tone ?? palette.ink;
 
     return (
 

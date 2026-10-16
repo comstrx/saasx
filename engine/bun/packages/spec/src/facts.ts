@@ -1,10 +1,10 @@
 import type { Catalogue as Endpoints } from "engine/api";
 import { factsOf } from "engine/api";
+import { unique } from "engine/array";
 import { mapValues } from "engine/base";
-import { type Messages, messageAt, messageTree } from "engine/translate";
+import { isMessageKey, type Messages, messageAt, messageTree } from "engine/translate";
 import { fieldFacts, shapeKeys } from "engine/validate";
 import type { Catalogue } from "./compile.ts";
-import { isSpecKey } from "./fields.ts";
 
 export function translationIssues (
     value: unknown,
@@ -13,7 +13,7 @@ export function translationIssues (
     path: string,
 ): string[] {
 
-    if ( isSpecKey(value) ) {
+    if ( isMessageKey(value) ) {
 
         return locales.flatMap(( locale ) => {
 
@@ -48,7 +48,7 @@ export function catalogueFacts ( endpoints: Endpoints ): Catalogue {
                 method: endpoint.method,
                 path: endpoint.path,
                 many: endpoint.many,
-                input: [...new Set([...shapeKeys(endpoint.input), ...fields.map(( field ) => field.name)])],
+                input: unique([...shapeKeys(endpoint.input), ...fields.map(( field ) => field.name)]),
                 fields,
                 output: shapeKeys(endpoint.output),
                 permissions: [...endpoint.permissions],

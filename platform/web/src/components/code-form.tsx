@@ -26,7 +26,15 @@ export default function CodeForm ({ labels, busy, error, onSubmit, onBack }: Pro
 
                 <Field id={`${id}-code`} label={labels.code} error={error}>
 
-                    <Input id={`${id}-code`} name="otp" kind="text" value={code} autoComplete="one-time-code" invalid={Boolean(error)} onChange={setCode} />
+                    <Input
+                        id={`${id}-code`}
+                        name="otp"
+                        kind="text"
+                        value={code}
+                        autoComplete="one-time-code"
+                        invalid={Boolean(error)}
+                        onChange={setCode}
+                    />
 
                 </Field>
 

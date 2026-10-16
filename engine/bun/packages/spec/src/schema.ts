@@ -1,5 +1,6 @@
 import { z } from "engine/validate";
 import { key, path, specText } from "./fields.ts";
+import type { ShellPart } from "./settings.ts";
 import { accessShape, type CompiledBlock, treeShapes } from "./shapes.ts";
 
 export type Entities = Readonly<Record<string, { parameter: string; list?: string | undefined }>>;
@@ -17,7 +18,7 @@ export type CompiledSchemaBase<S, K extends string> = {
     screens: S[];
     features: string[];
     operations: string[];
-    shell: Record<K, Record<string, unknown>>;
+    shell: Record<K, ShellPart>;
 };
 
 export function countShape ( max: number ) {

@@ -7,7 +7,7 @@
   <br/>
 </div>
 
-[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](#license)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](#license)
 [![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)](https://github.com/comstrx/saasx/releases/latest)
 
 `saasx` is a production-grade multi-tenant, multi-role, multi-product enterprise SaaS and the proving ground from which [ToolX](https://github.com/comstrx/toolx) is extracted.
@@ -83,4 +83,4 @@ Extraction is a packaging step, not a rewrite. SaasX stays the permanent source 
 
 Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Licensed under the [GNU Affero General Public License v3.0](./LICENSE).
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

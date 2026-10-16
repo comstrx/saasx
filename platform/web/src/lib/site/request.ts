@@ -1,24 +1,19 @@
 import "server-only";
 
 import { choose, trace } from "engine/base";
-import { forwardedFor, originOf } from "engine/net";
+import { forwarded, forwardedFor, originOf } from "engine/net";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { readPreferences } from "@/lib/site/preferences";
 import { config, routing } from "@/lib/spec/server";
 
-const proxies = config.api?.context.proxies ?? 0;
+export const proxies = config.api?.context.proxies ?? 0;
 
-function forwarded ( request: Headers, name: string ): string | undefined {
-
-    return (proxies > 0 && request.get(name)?.split(",")[0]?.trim()) || undefined;
-
-}
 export const requestHost = cache(async () => {
 
     const request = await headers();
 
-    return forwarded(request, "x-forwarded-host") || request.get("host") || undefined;
+    return forwarded(request, "x-forwarded-host", proxies) || request.get("host") || undefined;
 
 });
 export const requestOrigin = cache(async () => {
@@ -27,7 +22,7 @@ export const requestOrigin = cache(async () => {
 
     const request = await headers();
     const host = await requestHost();
-    const secure = forwarded(request, "x-forwarded-proto") === "https" || process.env.NODE_ENV === "production";
+    const secure = forwarded(request, "x-forwarded-proto", proxies) === "https" || process.env.NODE_ENV === "production";
     const origin = host ? originOf(host, secure) : undefined;
 
     if ( !origin ) throw new Error("The request carries no usable host.");

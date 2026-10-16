@@ -24,7 +24,10 @@ export const compileSpec = tools.build(import.meta.url, {
             meta: {
                 insecure: spec.config.insecure,
                 icons: `${generatedRoot}/fonts/lucide.ttf`,
-                fonts: [...Map.groupBy(faces, ( face ) => face.family)].map(( [family, list] ) => ({ fontFamily: family, fontDefinitions: list.map(( face ) => ({ path: `${generatedRoot}/fonts/${face.file}`, weight: face.weight })) })),
+                fonts: [...Map.groupBy(faces, ( face ) => face.family)].map(( [family, list] ) => ({
+                    fontFamily: family,
+                    fontDefinitions: list.map(( face ) => ({ path: `${generatedRoot}/fonts/${face.file}`, weight: face.weight })),
+                })),
                 app: {
                     name: config.content.name,
                     slug: config.settings.app.slug,

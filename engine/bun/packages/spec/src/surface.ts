@@ -16,14 +16,15 @@ import {
     claimShell,
     compileApi,
     compileScreen,
+    compileShell,
     iconIssues,
     mergeSettings,
     type Settings,
+    type ShellPart,
     schemaFacts,
     screenIssues,
     settingsResource,
     shellIssues,
-    shellOptions,
 } from "./settings.ts";
 import type { Access, CompiledBlock, SiteBlock } from "./shapes.ts";
 
@@ -111,7 +112,7 @@ export type Surface<
     schema: (
         screens: O[],
         facts: { features: string[]; operations: string[] },
-        shell: Record<string, Record<string, unknown>>,
+        shell: Record<string, ShellPart>,
     ) => M;
 };
 export type SurfaceInput = {
@@ -310,7 +311,7 @@ export function compileSurface<
         return surface.screen(screen, options, config, compiled, issues);
 
     });
-    const shell = shellOptions(config.settings.shell, features);
+    const shell = compileShell(config.settings.shell, features);
     const schema = surface.schema(screens, schemaFacts(screens), shell);
 
     issues.push(...translationIssues(screens, config.settings.locale.enabled, messages, "schema"));

@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
+import { unique } from "engine/array";
 import { walk } from "./core.ts";
 
 export type Rules = {
@@ -133,9 +134,9 @@ function markupIssues ( { element, api }: Scope, code: string, compiled: string,
     if ( fetching.test(code) && !api ) issues.push("Backend transport belongs in src/api.");
     if ( element ) return issues;
 
-    const tags = rules.html ? [...new Set([...compiled.matchAll(tag)].map(( match ) => match[1] ?? ""))] : [];
+    const tags = rules.html ? unique([...compiled.matchAll(tag)].map(( match ) => match[1] ?? "")) : [];
     const attributes = rendering.test(compiled)
-        ? [...new Set([...compiled.matchAll(styled)].map(( match ) => match[1] ?? ""))]
+        ? unique([...compiled.matchAll(styled)].map(( match ) => match[1] ?? ""))
         : [];
 
     if ( tags.length ) issues.push(`HTML belongs in elements: ${tags.join(", ")}`);
@@ -155,7 +156,7 @@ function specIssues ( { spec }: Scope, compiled: string, rules: Rules ): string[
 
     return [
         ...(branching.test(body) ? ["Specs are declarative data; execution and branching belong in src."] : []),
-        ...(calls.length ? [`Specs may call typed definition helpers only: ${[...new Set(calls)].join(", ")}`] : []),
+        ...(calls.length ? [`Specs may call typed definition helpers only: ${unique(calls).join(", ")}`] : []),
     ];
 
 }

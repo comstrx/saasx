@@ -4,7 +4,7 @@
 mod tests {
 
     use std::path::{Path as StdPath, PathBuf};
-    use engine::file::{Dir, File, Kind, Path};
+    use engine::file::{Dir, Entry, File, Kind, Path};
     use engine::memory::{Space as _, Stack};
     use engine::error::{Code, Result};
     use std::env::temp_dir;
@@ -13,7 +13,7 @@ mod tests {
 
     fn scratch ( name: &str ) -> PathBuf {
 
-        temp_dir().join(format!("saasx-file-{}-{name}", id()))
+        temp_dir().join(format!("engine-file-{}-{name}", id()))
 
     }
 
@@ -105,28 +105,30 @@ mod tests {
 
     }
 
-    async fn walked ( dir: &StdPath ) -> Result<( Vec<String>, usize, usize )> {
+    async fn walked ( dir: &StdPath ) -> Result<( Vec<String>, bool, usize, usize )> {
 
         Dir::ensure(dir.join("b").join("deep")).await?;
         File::write(dir.join("c.txt"), b"c").await?;
         File::write(dir.join("a.txt"), b"a").await?;
         File::write(dir.join("b").join("deep").join("d.txt"), b"d").await?;
 
-        let listed: Vec<String> = Dir::list(dir).await?.iter().map(|entry| entry.name().to_owned()).collect();
+        let entries = Dir::list(dir).await?;
+        let listed: Vec<String> = entries.iter().map(|entry| entry.name().to_owned()).collect();
+        let first   = entries.into_iter().next().map(Entry::into_path) == Some(dir.join("a.txt"));
         let shallow = Dir::walk(dir, 0).await?.len();
         let deep    = Dir::walk(dir, 5).await?.len();
 
         Dir::remove(dir).await?;
         Dir::remove(dir).await?;
 
-        Ok(( listed, shallow, deep ))
+        Ok(( listed, first, shallow, deep ))
 
     }
 
     #[test]
     fn directories_list_sorted_and_walk_to_a_depth () {
 
-        assert_eq!(Runtime::block_on(walked(&scratch("walk"))).ok().and_then(Result::ok), Some(( vec!["a.txt".to_owned(), "b".to_owned(), "c.txt".to_owned()], 3, 5 )));
+        assert_eq!(Runtime::block_on(walked(&scratch("walk"))).ok().and_then(Result::ok), Some(( vec!["a.txt".to_owned(), "b".to_owned(), "c.txt".to_owned()], true, 3, 5 )));
 
     }
 

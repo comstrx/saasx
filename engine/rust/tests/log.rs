@@ -12,6 +12,7 @@ mod tests {
     use std::thread::scope;
     use std::process::id;
     use engine::error::Result;
+    use core::time::Duration;
 
     struct Broken;
 
@@ -87,7 +88,7 @@ mod tests {
 
     fn unique ( name: &str ) -> PathBuf {
 
-        temp_dir().join(format!("saasx-log-{}-{name}.log", id()))
+        temp_dir().join(format!("engine-log-{}-{name}.log", id()))
 
     }
 
@@ -120,6 +121,7 @@ mod tests {
         assert_eq!(Stamp::from_unix(4_107_542_400, 0).to_string(), "2100-03-01T00:00:00.000000Z");
         assert_eq!(Stamp::from_unix(253_402_300_799, 0).to_string(), "9999-12-31T23:59:59.000000Z");
         assert_eq!(Stamp::from_unix(86_399, 0).secs(), 86_399);
+        assert_eq!(Stamp::from_unix(1, 500).since_epoch(), Duration::new(1, 500));
         assert!(Stamp::now().secs() > 1_780_000_000);
         assert!(Stamp::now() >= Stamp::from_unix(1_780_000_000, 0));
 
@@ -438,7 +440,7 @@ mod tests {
     #[test]
     fn a_missing_directory_fails_to_open_rather_than_panicking () {
 
-        assert_eq!(Logfile::json(temp_dir().join("saasx-no-such-dir").join("x.log")).err().map(|error| error.kind()), Some(ErrorKind::NotFound));
+        assert_eq!(Logfile::json(temp_dir().join("no-such-dir").join("x.log")).err().map(|error| error.kind()), Some(ErrorKind::NotFound));
 
     }
 

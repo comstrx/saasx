@@ -1,3 +1,5 @@
+import { unique } from "engine/array";
+
 const marks = /[̀-ًͯ-ٰٕـ]/g;
 const directions = /[‎‏؜‪-‮⁦-⁩]/g;
 const easternDigits = /[٠-٩۰-۹]/g;
@@ -44,7 +46,7 @@ function index<T> ( item: T, fields: readonly string[], weight: number ): Entry<
     const folded = fields.map(fold).filter(Boolean);
     const words = folded.flatMap(( field ) => field.split(separators)).filter(Boolean);
 
-    return { item, fields: [...new Set([...folded, ...folded.map(bare)])], words: [...new Set([...words, ...words.map(bare)])], weight };
+    return { item, fields: unique([...folded, ...folded.map(bare)]), words: unique([...words, ...words.map(bare)]), weight };
 
 }
 function score ( query: string, tokens: readonly string[], entry: { fields: readonly string[]; words: readonly string[] } ): number {

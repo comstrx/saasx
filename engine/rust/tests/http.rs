@@ -3,9 +3,9 @@
 #[cfg(test)]
 mod tests {
 
-    use engine::http::{Client, Header, Limit, Message, Method, Request, Response, Router, Server, Settings, Socket, Timeout, Trace, Version};
+    use engine::http::{Body, Client, Header, Limit, Message, Method, Request, Response, Router, Server, Settings, Socket, Timeout, Trace, Version};
     use engine::crypto::Digest;
-    use engine::net::{Address, Dial, Protocol};
+    use engine::net::{Address, Bind, Dial, Protocol};
     use engine::thread::{Runtime, Stop, Task, Time};
     use core::net::{IpAddr, Ipv4Addr, SocketAddr};
     use std::sync::mpsc::channel;
@@ -15,6 +15,7 @@ mod tests {
     use std::collections::HashSet;
     use core::time::Duration;
     use std::time::Instant;
+    use core::mem::replace;
 
     const NOT_OWNER: Fault = Fault::new("not_owner", Code::Forbidden, "not yours");
 
@@ -294,6 +295,45 @@ mod tests {
 
         assert!(server.join().is_ok_and(|outcome| outcome.is_ok()));
         assert!(seen.len() >= 2, "{seen:?}");
+
+    }
+
+    fn strays ( worker: u16 ) -> Router {
+
+        Router::new()
+            .worker(worker)
+            .get("/health", |_request| async { Ok(Response::text("ok")) })
+            .fallback(|request: Request| async move { Ok(Response::text(format!("no {}", request.path())).with_status(404)) })
+
+    }
+
+    async fn outskirts ( base: &str ) -> Result<( u16, String, Option<&'static str> )> {
+
+        let client     = Client::new().timeout(Duration::from_secs(5));
+        let mut stray  = client.get(&format!("{base}/nowhere")).await?;
+        let mut health = client.get(&format!("{base}/health")).await?;
+        let text       = stray.text_body(1024).await?;
+        let capped     = replace(health.body_mut(), Body::empty()).limited(1).gather(1024).await.err().map(|failure| failure.key());
+
+        Ok(( stray.code(), text, capped ))
+
+    }
+
+    #[test]
+    fn a_fallback_answers_strays_and_a_limited_body_refuses_excess () {
+
+        let stop = Stop::new();
+        let halt = stop.clone();
+        let ( tell, hear ) = channel::<Address>();
+
+        let server = spawn(move || Server::bind(LOOPBACK).workers(1).binding(Bind::new().backlog(64)).run(strays, halt, |local| tell.send(local.clone()).unwrap_or_default()));
+        let local  = hear.recv_timeout(Duration::from_secs(5)).unwrap_or(LOOPBACK);
+        let seen   = Runtime::block_on(outskirts(&format!("http://{local}"))).ok().and_then(Result::ok);
+
+        stop.raise();
+
+        assert!(server.join().is_ok_and(|outcome| outcome.is_ok()));
+        assert_eq!(seen, Some(( 404, "no /nowhere".to_owned(), Some("body_too_large") )));
 
     }
 

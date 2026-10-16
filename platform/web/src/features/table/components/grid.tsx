@@ -1,7 +1,7 @@
 "use client";
 
+import { fillInput, rows } from "engine/client";
 import { interpolate } from "engine/parse";
-import { fillInput, rows } from "engine/spec";
 import { useEffect, useRef } from "react";
 import DataTable, { type Column } from "@/components/data-table";
 import Note from "@/components/note";
@@ -46,9 +46,25 @@ export default function Grid ({ options, ports, route, feature }: FeatureProps<O
     const pagination = port.status === "ready" ? port.meta : undefined;
     const current = pagination?.page ?? page ?? 1;
     const pages = pagination?.pages ?? 1;
-    const toolbar = options.sorts.length ? <SortSelect label={options.labels.sort} value={sort ?? options.sorts[0]?.value ?? ""} choices={options.sorts} onChange={setSort} /> : null;
+    const toolbar = options.sorts.length
+        ? <SortSelect
+            label={options.labels.sort}
+            value={sort ?? options.sorts[0]?.value ?? ""}
+            choices={options.sorts}
+            onChange={setSort}
+        />
+        : null;
     const note = port.status === "ready" && port.error !== undefined ? <Note text={options.cached} /> : null;
-    const pager = options.paging && port.status === "ready" ? <Pager page={current} pages={pages} label={interpolate(options.labels.page, { page: current, pages })} previous={options.labels.previous} next={options.labels.next} onPage={setPage} /> : null;
+    const pager = options.paging && port.status === "ready"
+        ? <Pager
+            page={current}
+            pages={pages}
+            label={interpolate(options.labels.page, { page: current, pages })}
+            previous={options.labels.previous}
+            next={options.labels.next}
+            onPage={setPage}
+        />
+        : null;
 
     return (
 
@@ -57,8 +73,22 @@ export default function Grid ({ options, ports, route, feature }: FeatureProps<O
             <TableFrame toolbar={toolbar} note={note} pager={pager}>
 
                 {port.status === "ready"
-                    ? <DataTable locale={locale} columns={options.columns} rows={rows(port.value)} keyField={options.key} empty={options.empty} selected={selected} onSelect={options.select ? select : undefined} />
-                    : <Status status={port.status} loading={options.loading} failed={options.failed} offline={options.offline} error={port.status === "failed" ? port.error : undefined} />}
+                    ? <DataTable
+                        locale={locale}
+                        columns={options.columns}
+                        rows={rows(port.value)}
+                        keyField={options.key}
+                        empty={options.empty}
+                        selected={selected}
+                        onSelect={options.select ? select : undefined}
+                    />
+                    : <Status
+                        status={port.status}
+                        loading={options.loading}
+                        failed={options.failed}
+                        offline={options.offline}
+                        error={port.status === "failed" ? port.error : undefined}
+                    />}
 
             </TableFrame>
 

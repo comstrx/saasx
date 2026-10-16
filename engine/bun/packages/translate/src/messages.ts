@@ -60,7 +60,7 @@ export function messageTree ( messages: Messages, key: string ): Messages | unde
 
     const value = pathGet(messages, key);
 
-    return value !== null && typeof value === "object" && !Array.isArray(value) ? (value as Messages) : undefined;
+    return isRecord(value) ? (value as Messages) : undefined;
 
 }
 export function mergeMessages ( base: Messages, overrides: Messages, path = "messages" ): Messages {

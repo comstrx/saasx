@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "bun tools/compile/index.ts development && next dev --hostname 0.0.0.0 --port 3001",
     "build": "bun tools/compile/index.ts production && next build",
-    "start": "next start --hostname 0.0.0.0 --port 3001",
+    "start": "bun tools/serve/index.ts",
     "check": "biome ci . && bun tools/core/index.ts",
     "fmt": "biome check --write .",
     "typecheck": "bun tools/compile/index.ts production && next typegen && tsc --noEmit",

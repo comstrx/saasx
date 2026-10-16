@@ -1,4 +1,4 @@
-import { field, row } from "engine/spec";
+import { field, row } from "engine/client";
 import { formatMoney } from "engine/translate";
 import { notFound } from "next/navigation";
 import { portOf } from "@/api/workflow/ports";
@@ -29,7 +29,13 @@ export default async function View ({ options, ports, route, feature }: FeatureP
         <Titled id={feature?.slug ?? "detail"} title={field(item, "name") ?? options.missing} primary={feature?.heading ?? false}>
 
             <DetailCard
-                item={{ name: field(item, "name") ?? "", image: field(item, "image"), type: field(item, "type"), price: amount > 0 && currency ? `${options.from} ${formatMoney(locale, amount, currency).text}` : undefined, facts }}
+                item={{
+                    name: field(item, "name") ?? "",
+                    image: field(item, "image"),
+                    type: field(item, "type"),
+                    price: amount > 0 && currency ? `${options.from} ${formatMoney(locale, amount, currency).text}` : undefined,
+                    facts,
+                }}
                 back={{ href: `/${locale}`, label: options.back }}
             />
 

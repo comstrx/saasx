@@ -1,9 +1,9 @@
 "use client";
 
+import { field, row } from "engine/client";
 import { interpolate } from "engine/parse";
-import { field, row } from "engine/spec";
 import type { Messages } from "engine/translate";
-import { failureMessages } from "engine/translate";
+import { failureMessage, failureMessages } from "engine/translate";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,7 +14,18 @@ import { useSession, useWrite } from "@/hooks/use-client";
 import { useLocale } from "@/hooks/use-locale";
 import type { FeatureProps } from "@/lib/spec/feature";
 
-export type Options = { title: string; email: string; password: string; continue: string; otp: string; verify: string; sent: string; back: string; failed: string; errors: Messages };
+export type Options = {
+    title: string;
+    email: string;
+    password: string;
+    continue: string;
+    otp: string;
+    verify: string;
+    sent: string;
+    back: string;
+    failed: string;
+    errors: Messages;
+};
 
 type Challenge = { token: string; destination: string };
 
@@ -60,9 +71,14 @@ export default function Flow ({ options, ports, feature }: FeatureProps<Options>
             {challenge ? (
 
                 <CodeForm
-                    labels={{ code: options.otp, submit: options.verify, back: options.back, sent: interpolate(options.sent, { destination: challenge.destination }) }}
+                    labels={{
+                        code: options.otp,
+                        submit: options.verify,
+                        back: options.back,
+                        sent: interpolate(options.sent, { destination: challenge.destination }),
+                    }}
                     busy={verify.status === "pending"}
-                    error={verify.status === "failed" ? failureMessages(verify.error, options.errors, options.failed)._form ?? failureMessages(verify.error, options.errors, options.failed).otp : undefined}
+                    error={verify.status === "failed" ? failureMessage(verify.error, options.errors, options.failed) : undefined}
                     onSubmit={submitCode}
                     onBack={() => { setChallenge(null); verify.reset(); }}
                 />

@@ -9,6 +9,19 @@ export default function Flag ({ code, size = "md" }: Props) {
 
     if ( !country ) return <span className="flag" data-size={size} aria-hidden>{flagEmoji(code)}</span>;
 
-    return <img className="flag" data-size={size} src={flagOf(code)} alt={country.name.en} width={24} height={18} loading="lazy" decoding="async" />;
+    return (
+
+        <img
+            className="flag"
+            data-size={size}
+            src={flagOf(code)}
+            alt={country.name.en}
+            width={24}
+            height={18}
+            loading="lazy"
+            decoding="async"
+        />
+
+    );
 
 }

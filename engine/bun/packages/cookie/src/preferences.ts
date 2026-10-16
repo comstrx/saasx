@@ -3,6 +3,11 @@ import { negotiate } from "engine/translate";
 import { currency as currencyShape } from "engine/validate";
 
 export type Preferences = { language?: string | undefined; currency?: string | undefined; theme?: string | undefined };
+export type PreferenceChoices = {
+    languages: readonly string[];
+    currencies?: readonly string[] | undefined;
+    themes?: readonly string[] | undefined;
+};
 export type PreferenceNames = { language: string; currency: string; theme?: string | undefined };
 export type PreferenceReader = ( name: string ) => string | undefined;
 export type PreferenceJar = {
@@ -12,32 +17,44 @@ export type PreferenceJar = {
     accept: ( input: unknown ) => Preferences;
 };
 
-export function preferenceJar (
-    names: PreferenceNames,
-    locales: readonly string[],
-    themes: readonly string[] = [],
-): PreferenceJar {
+function text ( value: unknown ): string | undefined {
 
-    const themed = names.theme !== undefined && themes.length > 0;
-    const valid = ( given: Preferences ): Preferences => ({
-        ...(given.language && locales.includes(given.language) ? { language: given.language } : {}),
-        ...(currencyShape.safeParse(given.currency).success ? { currency: given.currency } : {}),
-        ...(themed && given.theme && themes.includes(given.theme) ? { theme: given.theme } : {}),
-    });
-    const text = ( value: unknown ): string | undefined => (typeof value === "string" ? value : undefined);
+    return typeof value === "string" ? value : undefined;
+
+}
+export function acceptPreferences ( input: unknown, { languages, currencies, themes = [] }: PreferenceChoices ): Preferences {
+
+    if ( !isRecord(input) ) return {};
+
+    const language = text(input.language);
+    const currency = text(input.currency);
+    const theme = text(input.theme);
+    const known = currencies ? currencies.some(( code ) => code === currency) : currencyShape.safeParse(currency).success;
 
     return {
-        read: ( get ) =>
-            valid({
-                language: get(names.language),
-                currency: get(names.currency),
-                theme: names.theme === undefined ? undefined : get(names.theme),
-            }),
+        ...(language && languages.includes(language) ? { language } : {}),
+        ...(currency && known ? { currency } : {}),
+        ...(theme && themes.includes(theme) ? { theme } : {}),
+    };
+
+}
+export function preferenceJar ( names: PreferenceNames, choices: PreferenceChoices ): PreferenceJar {
+
+    const allowed = names.theme === undefined ? { ...choices, themes: [] } : choices;
+    const accept = ( input: unknown ): Preferences => acceptPreferences(input, allowed);
+
+    return {
+        accept,
+        read: ( get ) => accept({
+            language: get(names.language),
+            currency: get(names.currency),
+            theme: names.theme === undefined ? undefined : get(names.theme),
+        }),
         detect: ( acceptLanguage, saved ) => {
 
             if ( saved.language ) return {};
 
-            const language = negotiate(acceptLanguage, locales);
+            const language = negotiate(acceptLanguage, choices.languages);
 
             return language ? { language } : {};
 
@@ -47,13 +64,9 @@ export function preferenceJar (
                 [
                     [names.language, preferences.language],
                     [names.currency, preferences.currency],
-                    [names.theme, themed ? preferences.theme : undefined],
+                    [names.theme, allowed.themes?.length ? preferences.theme : undefined],
                 ] as [string | undefined, string | undefined][]
             ).filter(( entry ): entry is [string, string] => entry[0] !== undefined && entry[1] !== undefined),
-        accept: ( input ) =>
-            isRecord(input)
-                ? valid({ language: text(input.language), currency: text(input.currency), theme: text(input.theme) })
-                : {},
     };
 
 }

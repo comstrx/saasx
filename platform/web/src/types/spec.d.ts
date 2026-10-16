@@ -15,7 +15,9 @@ declare module "@spec/routing" {
     export default routing;
 }
 declare module "@spec/settings" {
-    const settings: { language: string; languages: string[]; currency: string; currencies: string[]; theme: string; themes: string[]; maintenance: boolean; maintenance_message: string };
+    import type { SettingsResource } from "engine/spec";
+
+    const settings: SettingsResource;
 
     export default settings;
 }
@@ -39,6 +41,13 @@ declare module "@spec/mount" {
     const views: Readonly<Record<string, ComponentType<never>>>;
 
     export default views;
+}
+declare module "@spec/preload" {
+    export const screens: readonly { path: string; features: readonly string[] }[];
+
+    const loads: Readonly<Record<string, () => Promise<unknown>>>;
+
+    export default loads;
 }
 declare module "@spec/messages" {
     import type { Messages } from "engine/translate";

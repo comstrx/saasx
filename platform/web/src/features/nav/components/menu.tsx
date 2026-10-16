@@ -16,6 +16,7 @@ export default function Menu ({ options }: FeatureProps<Options>) {
     const pathname = usePathname();
     const { ready, user } = useSession();
     const home = localePath(locale, "/", routing);
+    const login = localePath(locale, "/login", routing);
     const signedIn = ready && user !== null;
 
     return (
@@ -23,7 +24,7 @@ export default function Menu ({ options }: FeatureProps<Options>) {
         <NavBar
             brand={options.brand}
             items={[{ href: home, label: options.home, current: pathname === home }]}
-            action={signedIn ? { href: home, label: options.account } : { href: localePath(locale, "/login", routing), label: options.login }}
+            action={signedIn ? { href: home, label: options.account } : { href: login, label: options.login }}
         />
 
     );

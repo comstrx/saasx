@@ -32,6 +32,7 @@ export const tools = createTools<Compiled, Locale>({
             "app/[locale]/layout.tsx": ["@spec/theme.css"],
             "app/[locale]/[[...path]]/blocks.tsx": ["@spec/registry"],
             "app/[locale]/[[...path]]/mount.ts": ["@spec/mount"],
+            "app/[locale]/[[...path]]/warm.ts": ["@spec/preload"],
             "app/.well-known/[...path]/route.ts": ["@spec/well-known"],
         },
         layers: [

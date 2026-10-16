@@ -8,7 +8,12 @@ import Text from "@/elements/text";
 
 export type PreferenceName = "language" | "currency" | "theme";
 export type PreferenceField = { name: PreferenceName; label: string; value: string; choices: readonly Choice[] };
-type Props = { fields: readonly PreferenceField[]; busy: boolean; note?: { text: string; tone: "muted" | "success" | "danger" } | undefined; onChange: ( name: PreferenceName, value: string ) => void };
+type Props = {
+    fields: readonly PreferenceField[];
+    busy: boolean;
+    note?: { text: string; tone: "muted" | "success" | "danger" } | undefined;
+    onChange: ( name: PreferenceName, value: string ) => void;
+};
 
 export default function PreferenceForm ({ fields, busy, note, onChange }: Props) {
 
@@ -22,7 +27,14 @@ export default function PreferenceForm ({ fields, busy, note, onChange }: Props)
 
                 <Field key={field.name} id={`${id}-${field.name}`} label={field.label}>
 
-                    <Select id={`${id}-${field.name}`} name={field.name} value={field.value} choices={field.choices} disabled={busy} onChange={( value ) => onChange(field.name, value)} />
+                    <Select
+                        id={`${id}-${field.name}`}
+                        name={field.name}
+                        value={field.value}
+                        choices={field.choices}
+                        disabled={busy}
+                        onChange={( value ) => onChange(field.name, value)}
+                    />
 
                 </Field>
 

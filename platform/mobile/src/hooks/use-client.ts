@@ -1,4 +1,4 @@
-import { defineClient } from "engine/context";
+import { defineClient } from "engine/client";
 import { createElement, type ReactNode } from "react";
 import { endpoints } from "@/api/features";
 import { useLocale } from "@/hooks/use-locale";
@@ -23,7 +23,7 @@ export const client = defineClient({
     observe: observeCall,
 });
 
-export const { useOutbox, useSession, useApi, useAccess, usePermission, usePort, useWrite } = client;
+export const { useOutbox, useSession, useApi, useAccess, useGate, usePermission, usePort, useWrite } = client;
 export const { useSignal, useSignals, Provider: SignalsProvider } = client.signals;
 
 export function SessionProvider ({ children }: { children: ReactNode }) {

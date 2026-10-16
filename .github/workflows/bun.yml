@@ -14,8 +14,10 @@ on:
 
   workflow_dispatch:
 
+  workflow_call:
+
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-bun-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:

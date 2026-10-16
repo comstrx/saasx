@@ -1,5 +1,8 @@
 # ✨ Skill
 
+[![Rust 1.99+](https://img.shields.io/badge/rust-1.99%2B-orange.svg)](https://www.rust-lang.org)
+[![edition 2024](https://img.shields.io/badge/edition-2024-green.svg)](https://doc.rust-lang.org/edition-guide/)
+
 An engineering knowledge runtime for AI agents: a Rust engine that serves a structured knowledge graph over MCP.
 
 ## Overview
@@ -24,7 +27,7 @@ Knowledge is data fed into it, and it is not a pile of markdown. Every knowledge
 
 ## Scope
 
-One opinionated vertical stack: Rust and its chosen crates; TypeScript, Node, React and Next.js; one database, cache and infrastructure pattern; the commerce, business and finance logic of high-performance SaaS; and the tools of this repository themselves. Depth over breadth, by design.
+One opinionated vertical stack: Rust and its chosen crates; TypeScript, Node, React and Next.js; one database, cache and infrastructure pattern; the commerce, business and finance logic of high-performance SaaS; and the companion tools themselves. Depth over breadth, by design.
 
 ## Layout
 
@@ -36,7 +39,7 @@ packs/<project>    a project's own knowledge, read by the engine, never owned by
 
 ## Tool
 
-`skill` is the second consumer of the engine's `process` crate:
+`skill` drives the engine's `process` capability:
 
 ```text
 skill doctor                                            the machine and which tools are on the PATH
@@ -44,4 +47,19 @@ skill env [--file <path>] <NAME>...                     variables, typed and lay
 skill exec [--deadline <duration>] [--cwd <dir>] -- <program> [args]...   runs a program; its exit status is the tool's, 75 on the deadline
 ```
 
-`SKILL_LOG`, `SKILL_LOG_FILE` and `SKILL_AUDIT` work as in `iam`.
+`SKILL_LOG=<level>` writes text to standard error, `SKILL_LOG_FILE` JSON lines and `SKILL_AUDIT` the audit journal.
+
+## Development
+
+```bash
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
+```
+
+Plain Cargo, no runner: the engine owns the deep gates, a consumer only has to lint and pass its tests. CI runs these two commands and nothing else.
+
+## License
+
+Copyright © 2026 Abdulrahman Yasser (comstrx).
+
+Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).

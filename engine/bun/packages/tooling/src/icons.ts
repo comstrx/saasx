@@ -9,7 +9,12 @@ export type IconFont = { codepoints: Record<string, number>; bytes: Uint8Array }
 
 const fontFolder = resolve(dirname(Bun.resolveSync("lucide-static/package.json", import.meta.dir)), "font");
 
-export async function iconFont ( names: readonly string[], aliases: Readonly<Record<string, string>>, format: IconFormat ): Promise<IconFont> {
+export async function iconFont (
+    names: readonly string[],
+    aliases: Readonly<Record<string,
+    string>>,
+    format: IconFormat,
+): Promise<IconFont> {
 
     const known = JSON.parse(readFileSync(resolve(fontFolder, "codepoints.json"), "utf8")) as Record<string, number>;
     const missing = names.filter(( name ) => known[aliases[name] ?? name] === undefined);

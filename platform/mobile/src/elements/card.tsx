@@ -11,7 +11,19 @@ export default function Card ({ children, onPress }: Props) {
     const palette = usePalette();
     const look = { backgroundColor: palette.panel, borderColor: palette.line };
 
-    if ( onPress ) return <Pressable testID="card" onPress={onPress} style={({ pressed }) => [styles.card, look, pressed && styles.pressed]}>{children}</Pressable>;
+    if ( onPress ) {
+
+        return (
+
+            <Pressable testID="card" onPress={onPress} style={({ pressed }) => [styles.card, look, pressed && styles.pressed]}>
+
+                {children}
+
+            </Pressable>
+
+        );
+
+    }
 
     return <View testID="card" style={[styles.card, look]}>{children}</View>;
 

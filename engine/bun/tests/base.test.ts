@@ -1,5 +1,22 @@
 import { describe, expect, test } from "bun:test";
-import { base64, choose, compact, deepMerge, identifier, includes, kindOf, mapValues, pathGet, pathSet, safeKey, trace, uuid } from "engine/base";
+import {
+    base64,
+    choose,
+    compact,
+    deepMerge,
+    identifier,
+    includes,
+    kindOf,
+    lanes,
+    mapValues,
+    pathGet,
+    pathSet,
+    pick,
+    safeKey,
+    sleep,
+    trace,
+    uuid,
+} from "engine/base";
 
 describe("object", () => {
 
@@ -77,6 +94,70 @@ describe("values", () => {
         expect(pathGet({ a: 1 }, "a.b")).toBeUndefined();
         expect(pathGet({}, "toString")).toBeUndefined();
         expect(pathGet({ x: 1 }, "$")).toEqual({ x: 1 });
+
+    });
+
+});
+describe("lanes", () => {
+
+    test("work on one lane runs in order, one at a time, and a failure neither stops the lane nor reaches the next caller", async () => {
+
+        const lane = lanes();
+        const order: string[] = [];
+        const slow = lane("box", async () => {
+
+            await sleep(20);
+            order.push("first");
+
+            return 1;
+
+        });
+        const broken = lane("box", async () => {
+
+            order.push("second");
+
+            throw new Error("refused");
+
+        });
+        const last = lane("box", async () => {
+
+            order.push("third");
+
+            return 3;
+
+        });
+
+        expect(await slow).toBe(1);
+        await expect(broken).rejects.toThrow("refused");
+        expect(await last).toBe(3);
+        expect(order).toEqual(["first", "second", "third"]);
+
+    });
+    test("separate lanes never wait for each other", async () => {
+
+        const lane = lanes();
+        const order: string[] = [];
+        const held = lane("a", async () => {
+
+            await sleep(20);
+            order.push("a");
+
+        });
+
+        await lane("b", async () => { order.push("b"); });
+        await held;
+
+        expect(order).toEqual(["b", "a"]);
+
+    });
+
+});
+describe("pick", () => {
+
+    test("pick keeps only the named keys that the value holds", () => {
+
+        expect(pick({ a: 1, b: 2, c: 3 }, ["a", "c"])).toEqual({ a: 1, c: 3 });
+        expect(pick({ a: 1 } as { a: number; b?: number }, ["b"])).toEqual({});
 
     });
 
