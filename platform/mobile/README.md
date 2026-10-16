@@ -1,67 +1,127 @@
-# Mobile
+# ✨ Mobile Forge
 
-A spec-driven Expo / React Native engine over the `engine` package, speaking the same language as the web engine: screens → blocks → features, manifests with options, ports, signals and access, the same bindings (`read`, `write`, `data`, `site`, `live`, `param`, `query`, `signal`) and the same compiler rules (states contract, permissions on write ports, icon set, translations in every language).
+[![React Native](https://img.shields.io/badge/React_Native-Mobile_Engineering-0B1726?logo=react&logoColor=61DAFB)](https://reactnative.dev)
+[![CI](https://github.com/comstrx/saasx/actions/workflows/mobile.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/mobile.yml)
+[![Release](https://img.shields.io/github/v/release/comstrx/mobilex?sort=semver)](https://github.com/comstrx/mobilex/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache_2.0-007EC6)](https://www.apache.org/licenses/LICENSE-2.0)
 
-## What differs
+> **One Spec. Every Role. Native Power Without the Chaos.**
 
-- Every feature is client-owned; a screen carries `presentation: stack | modal | tab`, `tabs`, `header`, `order` and `scroll` (`false` hands the scrolling to a feature that owns a virtualized list, with a `height: "screen"` block filling the frame).
-- Navigation needs no router package: the engine's `engine/history` keeps the stack as data (push, replace, navigate, back, leave guards, native dismissal), `render/navigator.tsx` draws it as a native stack on `react-native-screens`, and the hardware back button and deep links (`settings.app.scheme`) feed it. A tab press is `history.tab`: the root swaps in place under the same native screen, and every tab already opened stays mounted and laid out off screen (`elements/panes.tsx`), so switching back neither remounts, refetches nor relayouts; `<Activity>` was measured slower, its `display: none` relayouts and re-records the whole screen on every reveal.
-- The React Compiler is on (`experiments.reactCompiler`). Every hook the engine hands out is named `use<Name>`; a hook named plain `use` is read by the compiler as React's `use()` and memoized away, which once emptied the release login form.
-- Shell parts are `header`, `tabs` (a tab bar derived from the screens that opt in with `options.tabs: true`) and `loader`.
-- Storage is a platform door: AsyncStorage for ports and the outbox, SecureStore for the session (`lib/providers/secure.native.ts`).
-- The device adapter (`lib/providers/device.native.ts`) doors expo-location, expo-image-picker, expo-notifications and expo-localization behind the engine's Device DSL.
-- Preferences (language, currency, theme) live in a persisted store; the first language is negotiated from the device locales.
-- Failures are spoken through the same `errors` dictionaries; undeliverable writes wait in the outbox and replay when the device is online again.
+A spec-driven React Native and Expo system built to forge **enterprise mobile apps, multi-role experiences, and native workflows** from one coherent foundation.
 
-## Setup
+**Stop rebuilding apps for every role. Start delivering complete mobile experiences.**
 
-With `"engine": "link:engine"` in `package.json`, run `bun link` once inside the `engine` package, then `bun install --frozen-lockfile` here; a part that pins a git tag of the engine installs it directly.
+---
 
-## Gates
+## 🎯 Overview
 
-```text
-bun run check       biome · architecture · messages · specs
-bun run typecheck   app and tools projects
-bun run bench       spec compile and message composition
-bun test            compiler rules · Expo-bundled versions
-bun run export      the Android JavaScript bundle of the selected spec
-```
+**One architecture. Every role. A truly native experience.**
 
-## Lab builds
+Mobile products often fragment into separate apps, duplicated business logic, inconsistent screens, and platform-specific workarounds that grow harder to maintain with every release.
 
-`EXPO_PUBLIC_SPEC=<spec> bun tools/compile/index.ts production`, then `APP_LAB=1 NODE_ENV=production bunx expo prebuild --platform android --clean --no-install` and `./gradlew assembleRelease` in `android/`. With a `google-services.json` beside `app.config.ts`, the lab build takes that project's package name so push tokens can be proven on a device.
+Mobile Forge replaces that fragmentation with **declarative specifications and a reusable, brand-neutral core**. Screens, features, access, and navigation follow shared contracts, while each product retains its own identity and native capabilities.
 
-Android's cleartext permission follows the spec: `contracts.options.insecure` in the compiled meta becomes `usesCleartextTraffic`, so a production spec with `https` URLs builds without it.
+The ambition: **build once where logic is shared, specialize where the device demands it, and never sacrifice the experience.**
 
-## Release weight
+---
 
-Metro bundles whatever a module reaches and does not tree-shake, so weight is decided by what the app imports:
+## 🧩 Capabilities
 
-- No router, animation or SVG runtime: the native stack is `react-native-screens` alone, icons and state illustrations are glyphs of a font the compile subsets from the lucide set to exactly the icons the engine names (`fonts/lucide.ttf`, embedded by `expo-font` at build time), and images use React Native's own `Image` (Fresco).
-- Emoji, flags and their names come from `engine/world`: every 3D still (256 px WebP, about 11 MB) and every flag (WebP) is bundled into the app through `@spec/emoji` and `@spec/flags`, so the picker works offline; an image that fails to load falls back to the system glyph.
-- Text is set in the world's fonts, Readex Pro for Arabic and Figtree otherwise: the compile pins each variable font to static 400, 600 and 700 weights (`fonts/<family>-<weight>.ttf`, about 22 KB each) that `expo-font` registers as Android font families, so `fontWeight` picks a real weight; Latin inside Arabic text falls back to the system face.
-- `metro.config.cjs` resolves zod's locale table, compiler and JSON Schema writers to nothing.
-- Release builds run R8 with resource shrinking and keep the bundle uncompressed for a faster start (`expo-build-properties` in `app.config.ts`).
-- Every native component carries a static view config (React Native core, react-native-screens, safe-area, Expo views), so `MainApplication` turns React Native's native view config interop off (`nativeFlags` in `app.config.ts`, which also turns on React Native's prepared text layout, Android text measurement optimizations, the optimized view registry and differentiator preallocation; view culling and view recycling crash the ScrollView state on 0.86 and stay off): start-up no longer reflects over every registered view manager on the JavaScript thread. A dependency that still calls `requireNativeComponent` fails loudly on first render.
-- Metro's `inlineRequires` defers every module's evaluation to its first use (the emoji catalog costs nothing until the emoji screen opens), and the Android theme draws no window background (`bareWindow` in `app.config.ts`): the app's own frame is the only full-screen layer.
+**A continuously evolving system for demanding mobile applications.**
 
-Measure with `bun run export` (bundle size) and `bun run perf` (cold start, jank).
+**Spec-Driven Screens & Features** · **Multi-Role Navigation** · **Authentication & Secure Sessions** · **Typed APIs & Realtime** · **Offline Storage & Synchronization** · **Forms, Validation & UI States** · **Maps, Media & Device APIs** · **Notifications & Deep Links** · **Localization, RTL & Themes** · **Native Performance & Release Optimization**
 
-## Device gates
+From customer storefronts to operational dashboards and delivery workflows, every experience follows the same engineering language.
 
-With a lab build installed and a phone over `adb`, Maestro flows under `flows/` drive the real app and `perf` measures what a user feels:
+**One vocabulary. Every role. Endless possibilities.**
+
+---
+
+## 🏗️ Architecture
+
+**Declare the experience. Share the intelligence. Respect the platform.**
 
 ```text
-ADMIN_EMAIL=… ADMIN_PASSWORD=… OTP=… bun run flow login   # credentials, code, then LANDING (a test id, default dashboard-table)
-ROW_TEXT="…" bun run flow row                                   # a row by its text, e.g. after a broadcast
-bun run perf                                                    # cold start to first frame ≤ COLD_MS (1500), janky frames while scrolling ≤ JANK_PERCENT (1)
-bun run compare                                                 # the same two numbers for this app and the phone's own apps (COMPARE=pkg,pkg…), one method for all
+          Product Specs · Identity · Roles
+                        │
+                  Spec Compiler
+                        │
+              Screens · Blocks · Features
+                        │
+               React Native · Expo
+                        │
+               Shared Bun Foundation
+                        │
+          Native Adapters · APIs · Storage
 ```
 
-`MAESTRO` names the Maestro binary when it is not on the path; `APP_ID` names the installed package.
+**Single Responsibility** · **Unidirectional Dependencies** · **Typed Contracts** · **Brand-Neutral Core** · **Native Independence**
 
-## License
+Specifications own product configuration. Mobile Forge owns navigation, rendering, and native interactions. Shared TypeScript logic lives in the Bun foundation; device-specific behavior stays behind explicit adapters.
+
+**No duplicated business logic. No tangled screens. No forced browser abstractions.**
+
+---
+
+## 🧠 Engineering
+
+**Not another collection of screens. One coherent mobile system.**
+
+Every feature has a clear owner, declared inputs and outputs, predictable error states, and a focused public interface. Navigation, data access, offline behavior, and UI composition remain separate concerns—not one giant component.
+
+Common contracts are reused across web and mobile without pretending that native views are DOM elements. The mobile layer stays free to exploit platform capabilities while preserving consistent data, validation, localization, and design language.
+
+**Maximum reuse. Minimum coupling. Absolute architectural discipline.**
+
+---
+
+## ⚡ Performance
+
+**Launch fast. Scroll smoothly. Ship lean.**
+
+Lazy Module Loading · Lean Native Dependencies · Virtualized Lists · Efficient Assets · Image Caching · Render Isolation · Memory Discipline · Minimal Bundle Weight · Responsive Navigation
+
+Performance is measured where users feel it: **cold start, frame drops, memory, application size, battery impact, and real interaction latency**—on actual devices, not just simulators or synthetic benchmarks.
+
+Every optimization must earn its complexity through repeatable evidence and preserve a complete, reliable experience.
+
+**Fewer wasted bytes. Fewer dropped frames. More native speed.**
+
+---
+
+## 🛡️ Security
+
+**Every session isolated. Every permission intentional. Every boundary enforced.**
+
+Secure session storage, scoped offline data, controlled background work, explicit device permissions, protected transport, and validated input shape the application from the start.
+
+Queued operations must never cross user identities. Sensitive values stay out of bundled configuration, and presentation-level access rules never replace authorization by the owning backend.
+
+**No leaked sessions. No cross-user replay. No security by appearance.**
+
+---
+
+## 🧪 Development
+
+**Build with discipline. Verify on devices. Evolve with confidence.**
+
+Strict linting, type safety, spec validation, contract tests, production exports, and targeted device measurements protect the reusable core without turning every change into an expensive rebuild.
+
+```bash
+bun run check
+bun run typecheck
+bun test
+bun run export
+```
+
+Device performance: `bun run perf` · `bun run compare`.
+
+**Engineering excellence isn't a milestone. It's the standard.**
+
+---
+
+## 📜 License
 
 Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

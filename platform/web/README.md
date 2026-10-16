@@ -1,68 +1,125 @@
-# Web
+# ✨ Web Forge
 
-A spec-driven Next.js engine over the `engine` package. The engine (`src/`, `tools/`, `messages/`, `tests/`) holds no product; a site or a panel is a spec under `specs/<name>` and the build selects it with `NEXT_PUBLIC_SPEC`.
+[![Next.js](https://img.shields.io/badge/Next.js-Web_Engineering-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![CI](https://github.com/comstrx/saasx/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/web.yml)
+[![Release](https://img.shields.io/github/v/release/comstrx/webx?sort=semver)](https://github.com/comstrx/webx/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache_2.0-007EC6)](https://www.apache.org/licenses/LICENSE-2.0)
 
-## The language
+> **One Spec. Every Surface. Uncompromising Experience.**
 
-One system at every depth — `{ options, children }`:
+A spec-driven Next.js and React system engineered to forge **SEO websites, enterprise dashboards, storefronts, and multi-tenant experiences** from one coherent web foundation.
 
-```text
-screen   contents (name, path, title, description, icon, entity)  ·  options (render, title, seo, nav, footer, sidebar, loader)  ·  access  ·  redirect  ·  blocks
-block    options (width, height, grid, sizes, gap, padding, align, tone, radius, shadow)  ·  features  ·  blocks
-feature  name  ·  heading  ·  options  ·  ports  ·  access
-```
+**Stop rebuilding interfaces. Start creating complete experiences.**
 
-A feature is generic. `src/features/<name>/feature.ts` declares its `owner` (`server` or `client`), the `options` it understands (literal defaults), the `ports` it needs (`list`, `one`, `write`; `required: false` for optional ones) and the `signals` it emits. The spec binds every port:
+---
 
-| Binding                                              | Meaning                                                                                                                             |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `read("feature.operation", input?, live?)`           | a GET from the catalogue; `input` may hold `param("id")`, `query("page")`, `signal("search")`, `signal("selected", { wait: true })` |
-| `write("feature.operation", input?, fields?)`        | a mutation; `fields` names and orders what a form edits (bound inputs are never edited)                                             |
-| `data([...])` / `site("links")`                      | inline rows or the site document; the spec runs without a backend on these alone                                                    |
-| `live("channel", ["event"], { path, key, version })` | a realtime subscription; a payload patches the shown rows, every event schedules one reconciling read                               |
+## 🎯 Overview
 
-Signals let features talk on one screen: `search` emits `search`, `table` emits `selected`, `sort`, `page`; a port bound to `signal(name)` reloads when it changes and `wait: true` keeps it idle until a value exists. The compiler refuses a consumed signal no feature emits.
+**One design language. Every web surface. Total consistency.**
 
-## What the compiler enforces
+Web applications often repeat the same foundations across storefronts, admin panels, tenant sites, and internal tools—until every new surface becomes another codebase to maintain.
 
-- Every `t("key")` exists in every enabled language; `t("catalog.fields")` may name a whole dictionary branch (labels, choices, errors).
-- Ports match their operation (list/one/write), inputs are known, path parameters are bound, patch keys exist in the output.
-- **States contract:** a client feature that reads speaks `loading`, `failed`, `offline`, `cached` (a list also `empty`); one that writes speaks `failed` and an `errors` dictionary. A text the spec leaves out is the surface's own `state.<name>` (and `errors`) message, so a spec names only the texts it changes; it may never leave one empty.
-- **Permissions:** an operation declared with `need(["delete_x"], …)` carries its permissions into the compiled write port; the feature itself is gated only by what it reads. `usePermission(port)` / `<Permission port>` hide what the session may not run.
-- **Icons:** `contents.icon` must exist in the surface's icon set.
-- SEO is behavioral: `content.seo.robots` and `sitemap` lists drive robots.txt, the sitemap and page metadata; there is no flag.
+Web Forge replaces that fragmentation with **declarative specifications and a reusable, brand-neutral core**. Product identity and behavior are described at the edges; shared architecture powers every experience.
 
-## Runtime pieces
+The ambition: **make enterprise-grade web development expressive, predictable, and endlessly reusable.**
 
-- `usePort` (`hooks/use-client`, from `defineClient` in `engine/client`) — any port as a resource (idle · loading · ready · failed) with a persistent cache, stale answers kept offline, live patches, and `meta.pagination`.
-- `useWrite` — a write port as an action; bound inputs ride along; `{ queue: true }` parks an undeliverable write in the outbox and replays it when the device is back online (same idempotency key).
-- `useForm` — a form over a write port: fields from the catalogue, one idempotency key per unchanged values, failures spoken through `errors` (`reasons`, `rules`, `fields`), never a backend sentence as a key.
-- `components/schema-form` — one control per field kind: text/email/phone/password/number/date, choice, boolean, localized (one input per language), list, file.
-- Device DSL (`engine/device`): `require(permission)`, `locate()`, `pick(source)`, `pushToken()`; `location`, `avatar`, `notifications` features are the reference consumers.
-- Boundaries: every feature and every screen is wrapped; a screen failure shows a retry and is reported through `/api/report` (same beacon failed and slow calls use).
-- Code splitting: a page ships only its own client features (`next/dynamic`); at idle it preloads the features of the screens it links to (skipped under Save-Data), so a first navigation renders at once instead of behind a loader.
+---
 
-## Setup
+## 🧩 Capabilities
 
-With `"engine": "link:engine"` in `package.json`, run `bun link` once inside the `engine` package, then `bun install --frozen-lockfile` here; a part that pins a git tag of the engine installs it directly.
+**A continuously evolving system for the complete web experience.**
 
-## Gates
+**Spec-Driven Screens & Features** · **Server Rendering, Streaming & SEO** · **Typed APIs & Realtime** · **Authentication & Access Control** · **Forms, Validation & UI States** · **Caching, Deduplication & Prefetching** · **Responsive Layouts & Accessibility** · **Localization & RTL** · **Design Tokens, Themes & Motion** · **Multi-Tenant Sites & Admin Panels**
+
+From a search-friendly storefront to a complex operational dashboard, every surface speaks the same architectural language.
+
+**One vocabulary. Every experience. Endless possibilities.**
+
+---
+
+## 🏗️ Architecture
+
+**Declare the experience. Let the system assemble it.**
 
 ```text
-bun run check       biome · architecture layers · messages (every reason and rule speaks) · specs
-bun run typecheck   compile the selected spec · next typegen · tsc
-bun run bench       spec compile and message composition
-bun test            compiler rules · modes · forms · components · live backend (skips when down)
-bun run build       compile · next build
-bun run start       the standalone server under Bun, as it ships (public and static copied beside it)
+          Product Specs · Brand · Content
+                       │
+                Spec Compiler
+                       │
+             Screens · Blocks · Features
+                       │
+               Next.js · React
+                       │
+              Shared Bun Foundation
+                       │
+              APIs · Data · Realtime
 ```
 
-## Modes, by values alone
+**Single Responsibility** · **Unidirectional Dependencies** · **Typed Contracts** · **Brand-Neutral Core** · **Composable Features**
 
-The same engine answers six shapes from one spec folder: SEO site (robots allow + sitemap), non-SEO panel (empty lists), with backend (`contracts.urls`), without backend (`contracts: null`, data/site ports only), single tenant (`contracts.options.tenant`) and multi tenant (tenant from the request host). `tests/modes.test.ts` proves each from the real specs.
+Specifications own product identity and configuration. The web core owns rendering, composition, navigation, and interaction. Shared TypeScript capabilities live beneath both web and mobile; business rules stay with the product that owns them.
 
-## License
+**No duplicated features. No business logic buried in components. No tangled dependencies.**
+
+---
+
+## 🧠 Engineering
+
+**Not another collection of pages. One coherent web system.**
+
+Every screen is assembled from focused features with explicit contracts, clear ownership, predictable data flow, and consistent behavior across loading, empty, offline, error, and success states.
+
+Server and client responsibilities remain deliberate. Reusable primitives have one owner, and platform-specific rendering stays in the web layer—without duplicating the shared foundation or forcing unrelated features together.
+
+**Maximum reuse. Minimum coupling. Absolute architectural discipline.**
+
+---
+
+## ⚡ Performance
+
+**Render what matters. Fetch what is needed. Ship nothing extra.**
+
+Server Components · Streaming · Selective Hydration · Code Splitting · Request Deduplication · Smart Caching · Intent-Driven Preloading · Virtualization · Lean Assets
+
+Every optimization is judged through real user journeys and measurable outcomes: **LCP, INP, CLS, TTFB, JavaScript weight, rendering cost, and memory use**.
+
+The objective is **exceptional responsiveness without trading away accessibility, reliability, or clarity**.
+
+**Less overhead. Faster interactions. Better experiences.**
+
+---
+
+## 🛡️ Security
+
+**Every boundary matters. Every permission must be earned.**
+
+Typed request contracts, input validation, guarded mutations, safe rendering, strict origin policies, and secure defaults shape the system from the start.
+
+Sensitive values never belong in client bundles or product specs. UI permissions improve the experience, but **real authorization remains enforceable by the backend**. Tenant context and server/client boundaries must never become trust shortcuts.
+
+**No accidental exposure. No cross-tenant shortcuts. No security by appearance.**
+
+---
+
+## 🧪 Development
+
+**Build with discipline. Verify with evidence. Evolve with confidence.**
+
+Strict linting, architecture checks, type safety, spec validation, focused tests, and production builds protect the reusable core while allowing every product to develop its own identity.
+
+```bash
+bun run check
+bun run typecheck
+bun test
+bun run build
+```
+
+**Engineering excellence isn't a milestone. It's the standard.**
+
+---
+
+## 📜 License
 
 Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

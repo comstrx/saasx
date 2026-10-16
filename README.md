@@ -1,86 +1,144 @@
-# ✨ SaasX
+# ✨ SaaSX
 
 <div align="center">
-  <br/>
-  <img height="130" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" />
-  <br/>
-  <br/>
+  <img height="130" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" alt="SaaSX" />
 </div>
 
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](#license)
+[![Rust + Bun](https://img.shields.io/badge/Rust_%2B_Bun-Enterprise_SaaS-0D9488?logo=rust&logoColor=white)](https://github.com/comstrx/saasx)
+[![CI](https://github.com/comstrx/saasx/actions/workflows/global.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/global.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/saasx?sort=semver)](https://github.com/comstrx/saasx/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache_2.0-007EC6)](https://www.apache.org/licenses/LICENSE-2.0)
 
-`saasx` is a production-grade multi-tenant, multi-role, multi-product enterprise SaaS and the proving ground from which [ToolX](https://github.com/comstrx/toolx) is extracted.
+> **One Enterprise SaaS. Seven Engineering Tools. One Uncompromising Vision.**
 
-## Overview
+SaaSX is a real **multi-tenant, multi-role, multi-product enterprise SaaS** and the proving ground where seven reusable tools are forged into [ToolX](https://github.com/comstrx/toolx).
 
-SaasX is one product with two jobs.
+**Build the hard system once. Make every system after it radically easier.**
 
-**A real enterprise SaaS.** Multi-tenant, multi-role and multi-product on a single unified catalog: super, admin, vendor and delivery panels; SEO client and tenant sites; one mobile app that switches role after login. Built to serve a serious SaaS business on its own — it must stay useful even if every tool around it disappeared.
+---
 
-**The proving ground for ToolX.** Every reusable system is built inside SaasX, hardened against real requirements, benchmarks and production, and only then extracted as a standalone tool.
+## 🎯 Overview
 
-```text
-SaasX builds the evidence.
-ToolX captures the engineering and knowledge.
-```
+**One product. Two missions. An entire engineering ecosystem.**
 
-Stack: Rust for the backend, infrastructure and knowledge runtime; TypeScript on Bun for the web and mobile foundation; Next.js for every web surface; React Native for mobile.
+**Build a real enterprise SaaS:** one unified catalog powering commerce and services across customer experiences, tenant websites, operational panels, and role-aware mobile applications.
 
-## Layout
+**Forge ToolX through reality:** develop the foundations and specialized tools inside SaaSX, challenge them with real requirements, and extract them into independent releases. No parallel implementations. No throwaway architecture.
 
-One repository, two layers. `engine/` holds the two generic foundations; `platform/` holds the five parts built on them. Every part is a real product component and the incubator of exactly one ToolX tool.
+The ambition is clear: **prove advanced engineering in a working product, then make that engineering reusable everywhere.**
 
-```text
-engine/
-  rust/      the Rust foundation
-  bun/       the TypeScript foundation
-platform/
-  api/       backend services
-  infra/     infrastructure engine
-  skill/     knowledge runtime
-  web/       web engine
-  mobile/    mobile engine
-```
+---
 
-| Part                                    | What it is                                                                                                                                                           | Becomes     |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [`engine/rust/`](./engine/rust)         | The Rust foundation: an extended standard library every Rust part builds on, and the only door to the ecosystem. Generic by construction.                            | **RustX**   |
-| [`engine/bun/`](./engine/bun)           | The TypeScript foundation: the chosen libraries behind one unified surface, shared by the web and mobile parts.                                                      | **NodeX**   |
-| [`platform/api/`](./platform/api)       | The backend services: thin, opinionated crates over the Rust engine — tenancy, identity, authorization, idempotency, outbox, audit — plus the contracts they expose. | **ApiX**    |
-| [`platform/infra/`](./platform/infra)   | A self-contained infrastructure engine on the Rust engine: providers, resources, state, plan, apply, deploy, rollback, health. Intent lives only in manifests.       | **InfraX**  |
-| [`platform/skill/`](./platform/skill)   | A knowledge-graph runtime served over MCP to AI agents: engineering, framework, infrastructure and business knowledge. Product knowledge is a separate pack.         | **SkillX**  |
-| [`platform/web/`](./platform/web)       | A spec-driven Next.js + React engine on the Node engine. Every surface — SEO sites and non-SEO panels — is declared in `specs/` and compiled by the engine.          | **WebX**    |
-| [`platform/mobile/`](./platform/mobile) | A spec-driven React Native engine on the Node engine. One multi-role app or one build per role, from the same core and the same `specs/`.                            | **MobileX** |
+## 🧩 Capabilities
 
-Dependencies flow one way, down: a part depends on an engine by local path, never on the ecosystem directly and never on another part. When a part needs a capability, the engine learns it. Each engine and each part owns its own setup, tooling and gate; CI runs only the gates of what changed.
+**A continuously evolving system spanning the complete enterprise lifecycle.**
 
-## From SaasX to ToolX
+**Multi-Tenancy & Role-Based Access** · **Unified Catalog & Commerce** · **Identity & Authorization** · **Orders, Payments & Financial Integrity** · **APIs, Realtime & Events** · **SEO Websites & Enterprise Panels** · **Cross-Platform Mobile Experiences** · **Infrastructure & Operations** · **Security & Observability** · **Engineering Knowledge & AI Integration**
 
-Product-specific logic — business rules, branding, roles, products, messages — stays in environment files, specs, manifests and knowledge packs. The engines and parts stay generic, and that boundary is enforced by tests and lints, not by convention.
+Every capability serves a real product requirement while strengthening the reusable tools beneath it.
+
+**One product. Seven tools. Endless possibilities.**
+
+---
+
+## 🏗️ Architecture
+
+**Two foundations. Five specialized forges. Strict ownership.**
 
 ```text
-saasx/engine/rust      → RustX
-saasx/engine/bun       → NodeX
-saasx/platform/api     → ApiX
-saasx/platform/infra   → InfraX
-saasx/platform/skill   → SkillX
-saasx/platform/web     → WebX     (minus specs/)
-saasx/platform/mobile  → MobileX  (minus specs/)
+┌──────────────────────────────────────────────────────────────┐
+│                            SaaSX                             │
+│              Enterprise Product + ToolX Lab                  │
+└──────────────────────────────────────────────────────────────┘
+                               │
+               ┌───────────────┴───────────────┐
+               │                               │
+     ┌─────────────────────┐         ┌─────────────────────┐
+     │     Rust Engine     │         │      Bun Engine     │
+     │        RustX        │         │        BunX         │
+     └─────────────────────┘         └─────────────────────┘
+               │                               │
+     ┌─────────┼─────────┐           ┌─────────┴─────────┐
+     │         │         │           │                   │
+┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐     ┌─────────┐
+│   API   │ │  Infra  │ │  Skill  │ │   Web   │     │ Mobile  │
+│  Forge  │ │  Forge  │ │  Forge  │ │  Forge  │     │  Forge  │
+│  APIX   │ │ InfraX  │ │ SkillX  │ │  WebX   │     │ MobileX │
+└─────────┘ └─────────┘ └─────────┘ └─────────┘     └─────────┘
+     │         │         │           │                   │
+     └─────────┴─────────┴───────────┴───────────────────┘
+                               │
+                    ┌─────────────────────┐
+                    │    ToolX Releases   │
+                    └─────────────────────┘
 ```
 
-Extraction is a packaging step, not a rewrite. SaasX stays the permanent source of every tool; the ToolX repositories are where releases land.
+**Rust foundation:** [RustX](./engine/rust) → [APIX](./platform/api) · [InfraX](./platform/infra) · [SkillX](./platform/skill)  
+**Bun foundation:** [BunX](./engine/bun) → [WebX](./platform/web) · [MobileX](./platform/mobile)
 
-## Community
+Each foundation owns generic capabilities. Each forge owns a specialized concern. SaaSX owns product-specific business logic, specs, manifests, and knowledge packs.
 
-- [Issues](https://github.com/comstrx/saasx/issues)
-- [Discussions](https://github.com/comstrx/saasx/discussions)
-- [Contributing](https://github.com/comstrx/saasx/blob/main/CONTRIBUTING.md)
-- [Security](https://github.com/comstrx/saasx/blob/main/SECURITY.md)
-- [Support](https://github.com/comstrx/saasx/blob/main/SUPPORT.md)
+**One-way dependencies. One owner per responsibility. No duplicated foundations.**
 
-## License
+---
+
+## 🧠 Engineering
+
+**Not seven disconnected projects. One disciplined engineering system.**
+
+Shared capabilities are developed once in the right foundation. Specialized tools provide opinionated workflows without leaking product rules into reusable code. Explicit contracts, cohesive modules, provider boundaries, and independent workspaces preserve clarity at every layer.
+
+The independent ToolX repositories are **one-way release destinations**. SaaSX remains the single source of development; extraction is packaging, never a rewrite.
+
+**Maximum reuse. Minimum coupling. No architectural shortcuts.**
+
+---
+
+## ⚡ Performance
+
+**Push the hardware. Challenge the assumptions. Prove every gain.**
+
+Memory-Safe Systems · Async I/O · Efficient Concurrency · SIMD · Zero-Copy · Buffer Reuse · Lean Bundles · Fast Rendering · Resource-Aware Infrastructure
+
+Real workloads—not marketing benchmarks—determine what stays. Throughput, tail latency, CPU, RAM, allocation costs, startup time, app size, and responsiveness are measured where they matter.
+
+**Maximum practical efficiency. Zero performance theater.**
+
+---
+
+## 🛡️ Security
+
+**Enterprise trust starts at the boundaries.**
+
+Memory safety, tenant isolation, least privilege, resource-level authorization, secure transport, financial integrity, and auditable operations are design requirements across the stack.
+
+Security is reinforced through explicit contracts, bounded resources, defensive defaults, dependency auditing, supply-chain controls, and verification suited to each component.
+
+**No cross-tenant shortcuts. No silent trust. No compromise on integrity.**
+
+---
+
+## 🧪 Development
+
+**Build with discipline. Verify with evidence. Release with confidence.**
+
+Each part owns its linting, tests, audits, and benchmarks. Central GitHub Actions governs security and releases, while targeted checks avoid unnecessary builds and wasted resources.
+
+```bash
+cd engine/rust && cargo xtask gates
+cd engine/bun && bun run gates
+```
+
+**Build in SaaSX → prove in SaaSX → release through ToolX.**
+
+[Contributing](./CONTRIBUTING.md) · [Security](./SECURITY.md) · [Support](./SUPPORT.md) · [Issues](https://github.com/comstrx/saasx/issues)
+
+**Engineering excellence isn't a milestone. It's the standard.**
+
+---
+
+## 📜 License
 
 Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

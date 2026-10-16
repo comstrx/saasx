@@ -1,52 +1,125 @@
-# ✨ Infra
+# ✨ Infra Forge
 
-[![Rust 1.99+](https://img.shields.io/badge/rust-1.99%2B-orange.svg)](https://www.rust-lang.org)
-[![edition 2024](https://img.shields.io/badge/edition-2024-green.svg)](https://doc.rust-lang.org/edition-guide/)
+[![Rust](https://img.shields.io/badge/Rust-Infrastructure_Automation-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![CI](https://github.com/comstrx/saasx/actions/workflows/infra.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/infra.yml)
+[![Release](https://img.shields.io/github/v/release/comstrx/infrax?sort=semver)](https://github.com/comstrx/infrax/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache_2.0-007EC6)](https://www.apache.org/licenses/LICENSE-2.0)
 
-A Rust infrastructure engine for defining, provisioning, deploying, operating and rolling back infrastructure.
+> **Declare the State. Command the Lifecycle. Own the Infrastructure.**
 
-## Overview
+A Rust-powered infrastructure system engineered to bring **provisioning, deployment, operations, and recovery** under one coherent language of automation, reliability, and control.
 
-Infrastructure as a programmable operational system. The engine owns the reusable concerns; a project's intent lives in manifests and never in the engine.
+**Stop juggling scripts. Start commanding complete environments.**
+
+---
+
+## 🎯 Overview
+
+**One source of intent. Every environment. Total control.**
+
+Modern infrastructure is scattered across scripts, providers, deployment tools, and operational dashboards. The result is fragmented state, unpredictable changes, and costly recovery.
+
+Infra Forge brings the entire lifecycle into **one deliberate operating model**: declare what should exist, inspect the plan, execute safely, and continuously reason about the result.
+
+The ambition: **make complex infrastructure feel programmable without hiding its consequences.**
+
+---
+
+## 🧩 Capabilities
+
+**A continuously evolving foundation for infrastructure operations.**
+
+**Declarative Manifests & Environments** · **Resource Graphs & Planning** · **Provisioning & Reconciliation** · **Deployments & Rollbacks** · **State & Drift Detection** · **Services & Package Management** · **Cloud & Container Integration** · **Networking & Storage** · **Secrets & Policy Controls** · **Health, Audit & Observability**
+
+From a single machine to distributed environments, each capability is designed to belong to the same operational lifecycle.
+
+**One vocabulary. Every resource. Endless possibilities.**
+
+---
+
+## 🏗️ Architecture
+
+**Intent above. Execution below. Nothing hidden between.**
 
 ```text
-engine        providers · resources · dependency graph · state · plan · apply · destroy
-              deployment · health · rollback · environments · secret references · observability hooks
-
-manifests     Infra.lua · environment contracts · secret references — the project's desired state
+       Applications · Services · Environments
+                       │
+             Declarative Manifests
+                       │
+             Validation · Plan · Diff
+                       │
+          State · Dependency Graph · Policy
+                       │
+           Execution · Reconciliation
+                       │
+                Provider Adapters
+                       │
+          Cloud · Containers · Machines
 ```
 
-The engine never says "create this project's cluster"; the manifests do. Separating the two keeps the engine generic and makes a project's infrastructure a set of files that can be read, reviewed and diffed.
+**Single Responsibility** · **Desired-State Control** · **Explicit Plans** · **Provider Independence** · **Recoverable Operations**
 
-Every mutating operation plans before it applies, keeps state with locking, keeps secrets out of state and out of manifests (references only), and leaves a rollback path.
+Manifests own product-specific intent. The reusable system owns resource planning, execution, state, and verification. Providers implement the external operations behind explicit contracts.
 
-## Engine
+**No hardcoded environments. No tangled deployment scripts. No invisible changes.**
 
-The engine is one crate on the Rust engine, reached by path and never through the registry directly. It is a pure library at heart: it builds and runs on a bare machine before anything it manages exists.
+---
 
-## Tool
+## 🧠 Engineering
 
-`infra` drives the engine's `process` capability:
+**Infrastructure isn't a collection of commands. It's a controlled system.**
 
-```text
-infra doctor                                                  the machine: platform, distro, host, memory, uptime, package and service managers
-infra service show|install|uninstall|start|stop|restart|status <name> [--command <path>] [--arg=<x>]... [--env K=V]... [--provider systemd|launchd|windows]
-infra package install|uninstall|check <name>                  through apt, dnf, pacman, apk, zypper, nix, brew, winget, scoop or choco
-```
+Every operation has an owner, a declared target, known dependencies, and a verifiable outcome. Planning and execution remain separate; state is managed deliberately, and partial failures are treated as recoverable conditions rather than afterthoughts.
 
-A unit is rendered for the machine's provider (or the named one) from one description; nothing escalates privileges on its own. `INFRA_LOG=<level>` writes text to standard error, `INFRA_LOG_FILE` JSON lines and `INFRA_AUDIT` the audit journal; every change to a service or a package is audited with the user as actor.
+Mature infrastructure tools remain valuable integration points. Custom engineering is justified only when it strengthens control, reliability, portability, or the operator's experience.
 
-## Development
+**Less orchestration chaos. More deterministic engineering.**
+
+---
+
+## ⚡ Performance
+
+**Converge efficiently. Operate predictably. Waste nothing.**
+
+Dependency-Aware Scheduling · Incremental Planning · Bounded Concurrency · Efficient State Access · Reusable Connections · Minimal Runtime Overhead · Targeted Reconciliation
+
+Optimization is evaluated against real infrastructure workloads: planning time, reconciliation latency, resource consumption, provider calls, and recovery behavior.
+
+The objective is **fast, resource-conscious operations without sacrificing correctness or operational clarity**.
+
+**Efficiency is measured. Reliability is non-negotiable.**
+
+---
+
+## 🛡️ Security
+
+**Every change must be intentional. Every privilege must be earned.**
+
+Least privilege, explicit approvals for destructive operations, secret references instead of embedded credentials, controlled state access, and auditable actions shape the design.
+
+Locking, atomic state updates, bounded retries, failure recovery, and reviewable plans protect infrastructure from accidental drift, conflicting operations, and partial execution.
+
+**No blind applies. No silent escalation. No secrets in state.**
+
+---
+
+## 🧪 Development
+
+**Build with discipline. Verify with evidence. Evolve with confidence.**
+
+A focused Rust codebase backed by strict linting, tests, operational safety checks, and targeted benchmarks. Every capability must have clear contracts and observable failure behavior.
 
 ```bash
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 cargo test --workspace --all-features --locked
 ```
 
-Plain Cargo, no runner: the engine owns the deep gates, a consumer only has to lint and pass its tests. CI runs these two commands and nothing else.
+**Engineering excellence isn't a milestone. It's the standard.**
 
-## License
+---
+
+## 📜 License
 
 Copyright © 2026 Abdulrahman Yasser (comstrx).
 
-Licensed under the [Apache License 2.0](https://github.com/comstrx/saasx/blob/main/LICENSE).
+Licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
