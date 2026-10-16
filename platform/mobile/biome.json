@@ -43,6 +43,9 @@
       "suspicious": {
         "noExplicitAny": "error",
         "noConsole": "off"
+      },
+      "performance": {
+        "noJsxPropsBind": "off"
       }
     }
   },
