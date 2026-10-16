@@ -7,6 +7,9 @@ impl Faults {
     /// A required flag left out.
     pub const FLAG_MISSING: Fault = Fault::new("flag_missing", Code::Usage, "a required flag is missing");
 
+    /// A tool started without a command word.
+    pub const NO_COMMAND: Fault = Fault::new("no_command", Code::Usage, "a command is required");
+
     /// A command word the tool does not know.
     pub const UNKNOWN_COMMAND: Fault = Fault::new("unknown_command", Code::Usage, "the command is not known");
 
@@ -52,6 +55,7 @@ impl Faults {
     /// Every failure above.
     pub const ALL: &[Fault] = &[
         Self::FLAG_MISSING,
+        Self::NO_COMMAND,
         Self::UNKNOWN_COMMAND,
         Self::ENV_MISSING,
         Self::NOT_LEVEL,

@@ -3,7 +3,7 @@
 #[cfg(test)]
 mod tests {
 
-    use engine::process::{Args, Boot, Cargo, Env, Manager, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System};
+    use engine::process::{Args, Boot, Cargo, Env, Faults, Manager, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Tool};
     use std::path::{Path, PathBuf};
     use engine::error::{Code, Result};
     use core::time::Duration;
@@ -11,7 +11,7 @@ mod tests {
     use std::process::id;
     use engine::thread::Runtime;
     use engine::file::File;
-    use engine::log::Level;
+    use engine::log::{Level, Log};
 
     fn scratch ( name: &str ) -> PathBuf {
 
@@ -34,6 +34,23 @@ mod tests {
         assert_eq!(args.need("port").ok(), Some("8080"));
         assert_eq!(args.need("missing").err().map(|failure| ( failure.code(), failure.key(), failure.field().map(str::to_owned) )), Some(( Code::Usage, "flag_missing", Some("missing".to_owned()) )));
         assert_eq!(args.unknown().key(), "unknown_command");
+
+    }
+
+    #[test]
+    fn a_tool_names_what_is_missing_with_its_usage () {
+
+        let usage = "tool <go|stop> <name>";
+        let tool  = |words: &[&str]| Tool::new(Args::from_words(words), Log::quiet("tool"), usage);
+        let named = tool(&["tool", "go", "now"]);
+
+        assert_eq!(tool(&["tool"]).command().err().map(|failure| ( failure.key(), failure.to_string().starts_with(usage) )), Some(( "no_command", true )));
+        assert_eq!(tool(&["tool", "fly"]).unknown().key(), "unknown_command");
+        assert_eq!(named.command().ok(), Some("go"));
+        assert_eq!(named.positional(0, Faults::FLAG_MISSING).ok(), Some("now"));
+        assert_eq!(named.positional(1, Faults::FLAG_MISSING).err().map(|failure| failure.key()), Some("flag_missing"));
+        assert_eq!(named.args().program(), "tool");
+        assert_eq!(named.answer("").ok(), Some(()));
 
     }
 
@@ -261,7 +278,12 @@ mod tests {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
         let path = Cargo::binary(&root, "xtask", false).ok();
 
+        let command = Cargo::command(&root, "xtask", false, "PATH").ok();
+        let leaked  = command.as_ref().map(|command| command.get_envs().filter(|( key, _ )| key.to_string_lossy().starts_with("PATH")).count());
+
         assert!(path.as_ref().is_some_and(|path| path.is_file() && path.file_stem().is_some_and(|stem| stem == "xtask")));
+        assert_eq!(command.as_ref().map(|command| command.get_program().to_owned()), path.map(PathBuf::into_os_string));
+        assert_eq!(leaked, Some(0));
         assert_eq!(Cargo::binary(&root, "no-such-package", false).err().map(|failure| failure.key()), Some("build_failed"));
 
     }

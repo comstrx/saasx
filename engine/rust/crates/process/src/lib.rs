@@ -19,6 +19,7 @@ mod pid;
 mod run;
 mod service;
 mod system;
+mod tool;
 mod unit;
 
-pub use crate::arch::{Args, Boot, Cargo, Env, Faults, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Var};
+pub use crate::arch::{Args, Boot, Cargo, Env, Faults, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Tool, Var};

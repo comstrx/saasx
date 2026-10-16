@@ -35,7 +35,7 @@ const TASKS: &[Entry] = &[
     ( "vet",        "cargo vet, offline against supply-chain/",                                       Gate::vet ),
     ( "udeps",      "unused dependencies on nightly",                                                 Gate::udeps ),
     ( "hack",       "feature powerset compiles",                                                      Gate::hack ),
-    ( "semver",     "every library's public API against the merge base of --baseline <rev> (main)",   Gate::semver ),
+    ( "semver",     "every library's public API against the newest earlier release tag (v*)",        Gate::semver ),
     ( "fuzz",       "libFuzzer targets on nightly (--run, --time <secs> each or --budget in all)",    Gate::fuzz ),
     ( "miri",       "the pure suites under Miri on nightly, from log up to the facade contract",      Gate::miri ),
     ( "sanitizer",  "the test suite under a sanitizer on nightly (--sanitizer asan|tsan|msan|lsan)",  Gate::sanitizer ),
@@ -82,7 +82,6 @@ struct Node {
 struct Gate {
     root:      PathBuf,
     execute:   bool,
-    baseline:  String,
     time:      String,
     budget:    Option<String>,
     sanitizer: String,
@@ -181,7 +180,6 @@ impl Gate {
         Ok(Self {
             root: current_dir().map_err(Failure::Root)?,
             execute: has("--run"),
-            baseline: after("--baseline").cloned().unwrap_or_else(|| "main".to_owned()),
             time: after("--time").cloned().unwrap_or_else(|| "60".to_owned()),
             budget: after("--budget").cloned(),
             sanitizer: after("--sanitizer").cloned().unwrap_or_else(|| "asan".to_owned()),
@@ -217,7 +215,6 @@ impl Gate {
         Self {
             root: self.root.clone(),
             execute: true,
-            baseline: self.baseline.clone(),
             time: self.time.clone(),
             budget: self.budget.clone(),
             sanitizer: self.sanitizer.clone(),
@@ -360,15 +357,17 @@ impl Gate {
 
         }
 
-        if self.baseline.bytes().all(|byte| byte == b'0') {
+        let tags = self.capture("git", &["tag", "--list", "v*", "--merged", "HEAD", "--no-contains", "HEAD", "--sort=-v:refname"])?;
+        let base = tags.lines().next().unwrap_or_default().to_owned();
 
-            println!("semver: no commit before this push; nothing to compare");
+        if base.is_empty() {
+
+            println!("semver: no earlier release tag; nothing to compare");
 
             return Ok(());
 
         }
 
-        let base  = self.capture("git", &["merge-base", &self.baseline, "HEAD"])?.trim().to_owned();
         let store = self.root.join("target").join("semver").join(&base);
         let tar   = store.join("baseline.tar");
 
@@ -706,7 +705,7 @@ fn main () -> ExitCode {
 
     let Some(( _, _, step )) = TASKS.iter().find(|( task, .. )| *task == name) else {
 
-        eprintln!("usage: cargo xtask <task> [--run] [--time <secs>] [--sanitizer <name>] [--baseline <rev>]  (run from a workspace root)\n");
+        eprintln!("usage: cargo xtask <task> [--run] [--time <secs>] [--sanitizer <name>]  (run from a workspace root)\n");
 
         for ( task, help, _ ) in TASKS {
 

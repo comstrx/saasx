@@ -17,7 +17,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: ci-rust-${{ github.event_name == 'pull_request' && github.ref || format('{0}@{1}', github.ref, github.sha) }}
+  group: ci-rust-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -56,6 +56,5 @@ jobs:
 
       - name: Gates
         env:
-          BASELINE: ${{ github.event.pull_request.base.sha || github.event.before }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: cargo xtask gates --baseline "${BASELINE:-origin/main}"
+        run: cargo xtask gates

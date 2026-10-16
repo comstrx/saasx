@@ -1,11 +1,8 @@
 use std::io::{Error as IoError, ErrorKind, Read, Result as IoResult, Write};
-use core::fmt::{Debug, Formatter, Result as FmtResult};
-use core::hash::{Hash, Hasher};
 use error::{Failure, Result};
 use core::iter::repeat_with;
-use core::ops::Deref;
 
-use crate::{Buffer, Space};
+use crate::{Buffer, Space as _};
 
 impl Buffer {
 
@@ -80,110 +77,6 @@ impl Default for Buffer {
 
 }
 
-impl Space for Buffer {
-
-    #[inline]
-    fn capacity ( &self ) -> usize {
-
-        self.bytes.len()
-
-    }
-
-    #[inline]
-    fn as_bytes ( &self ) -> &[u8] {
-
-        self.bytes.get(..self.len).unwrap_or_default()
-
-    }
-
-    #[inline]
-    fn push ( &mut self, bytes: &[u8] ) -> Result<&mut Self> {
-
-        let end  = self.len.checked_add(bytes.len()).ok_or_else(Self::exhausted)?;
-        let slot = self.bytes.get_mut(self.len..end).ok_or_else(Self::exhausted)?;
-
-        slot.copy_from_slice(bytes);
-        self.len = end;
-
-        Ok(self)
-
-    }
-
-    #[inline]
-    fn truncate ( &mut self, len: usize ) {
-
-        self.len = self.len.min(len);
-
-    }
-
-    #[inline]
-    fn room ( &mut self ) -> &mut [u8] {
-
-        self.bytes.get_mut(self.len..).unwrap_or_default()
-
-    }
-
-    #[inline]
-    fn advance ( &mut self, count: usize ) -> Result<&mut Self> {
-
-        let end = self.len.checked_add(count).filter(|&end| end <= self.bytes.len()).ok_or_else(Self::exhausted)?;
-
-        self.len = end;
-
-        Ok(self)
-
-    }
-
-}
-
-impl Deref for Buffer {
-
-    type Target = [u8];
-
-    #[inline]
-    fn deref ( &self ) -> &[u8] {
-
-        self.as_bytes()
-
-    }
-
-}
-
-impl AsRef<[u8]> for Buffer {
-
-    #[inline]
-    fn as_ref ( &self ) -> &[u8] {
-
-        self.as_bytes()
-
-    }
-
-}
-
-impl PartialEq for Buffer {
-
-    #[inline]
-    fn eq ( &self, other: &Self ) -> bool {
-
-        self.as_bytes() == other.as_bytes()
-
-    }
-
-}
-
-impl Eq for Buffer {}
-
-impl Hash for Buffer {
-
-    #[inline]
-    fn hash <H: Hasher> ( &self, state: &mut H ) {
-
-        self.as_bytes().hash(state);
-
-    }
-
-}
-
 impl Write for Buffer {
 
     #[inline]
@@ -205,18 +98,6 @@ impl Write for Buffer {
     fn flush ( &mut self ) -> IoResult<()> {
 
         Ok(())
-
-    }
-
-}
-
-impl Debug for Buffer {
-
-    #[inline]
-    #[expect(clippy::renamed_function_params, reason = "the workspace minimum identifier length forbids `f`")]
-    fn fmt ( &self, formatter: &mut Formatter<'_> ) -> FmtResult {
-
-        formatter.debug_struct("Buffer").field("capacity", &self.capacity()).field("bytes", &self.as_bytes()).finish()
 
     }
 

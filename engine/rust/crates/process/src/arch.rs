@@ -3,6 +3,7 @@ use core::time::Duration;
 use std::path::PathBuf;
 use std::ffi::OsString;
 use memory::Bytes;
+use log::Log;
 
 pub(crate) type Parser <T> = fn(&str) -> error::Result<T>;
 
@@ -168,6 +169,14 @@ pub struct Service {
 #[non_exhaustive]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Boot;
+
+/// A command-line tool, booted: its arguments, its logger, and the usage line every usage failure carries.
+#[derive(Debug, Clone)]
+pub struct Tool {
+    pub(crate) args:  Args,
+    pub(crate) log:   Log,
+    pub(crate) usage: &'static str,
+}
 
 /// Where a Cargo build put a binary, for tests and benchmarks that run the real thing.
 #[non_exhaustive]

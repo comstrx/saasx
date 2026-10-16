@@ -6,23 +6,20 @@ pub struct Form {
     pub(crate) problems: Vec<Problem>,
 }
 
-/// A text field under check; the first failed rule is kept, the rest are skipped.
+/// One field under check; the first failed rule is kept, the rest are skipped.
 #[derive(Debug)]
-pub struct Text <'f, 'v> {
+pub struct Check <'f, V> {
     pub(crate) form:   &'f mut Form,
     pub(crate) field:  &'static str,
-    pub(crate) value:  &'v str,
+    pub(crate) value:  V,
     pub(crate) failed: bool,
 }
 
-/// A number field under check; the first failed rule is kept, the rest are skipped.
-#[derive(Debug)]
-pub struct Number <'f> {
-    pub(crate) form:   &'f mut Form,
-    pub(crate) field:  &'static str,
-    pub(crate) value:  i64,
-    pub(crate) failed: bool,
-}
+/// A text field under check.
+pub type Text <'f, 'v> = Check<'f, &'v str>;
+
+/// A number field under check.
+pub type Number <'f> = Check<'f, i64>;
 
 /// The failures this crate raises, the form as a whole and each field problem a client translates.
 #[non_exhaustive]

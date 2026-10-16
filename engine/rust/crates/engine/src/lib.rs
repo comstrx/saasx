@@ -27,7 +27,7 @@ pub mod error {
 /// Bytes without surprises: shared bytes, a stack, a buffer, a pool, an arena, a cursor, SIMD lanes.
 pub mod memory {
 
-    pub use memory::{Arena, Buffer, Bytes, Cursor, Faults, Lease, Pool, Simd, Space, Split, Stack};
+    pub use memory::{Arena, Buffer, Bytes, Cursor, Faults, Lease, Pool, Simd, Space, Split, Stack, Store};
 
     #[cfg(feature = "alloc")]
     pub use memory::Alloc;
@@ -44,7 +44,7 @@ pub mod parse {
 /// Forms that collect every failed field into one failure, each field under a declared fault.
 pub mod validate {
 
-    pub use validate::{Faults, Form, Number, Text};
+    pub use validate::{Check, Faults, Form, Number, Text};
 
 }
 
@@ -97,7 +97,7 @@ pub mod http {
 #[cfg(feature = "process")]
 pub mod process {
 
-    pub use process::{Args, Boot, Cargo, Env, Faults, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Var};
+    pub use process::{Args, Boot, Cargo, Env, Faults, Flag, Manager, Named, Output, Package, Pid, Platform, Provider, Restart, Run, Service, Spec, State, System, Tool, Var};
 
 }
 

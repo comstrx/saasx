@@ -1,5 +1,5 @@
-//! Bytes without surprises: a [`Stack`] that never touches the heap, a [`Buffer`] allocated once
-//! and never grown, a [`Pool`] that lends buffers, an [`Arena`] that bumps out shared [`Bytes`],
+//! Bytes without surprises: a [`Stack`] that never touches the heap and a [`Buffer`] allocated once
+//! and never grown, both one [`Store`], a [`Pool`] that lends buffers, an [`Arena`] that bumps out shared [`Bytes`],
 //! a [`Cursor`] that reads without copying, and [`Simd`] lanes eight bytes at a time. Every store
 //! fails with `Exhausted` instead of growing; with the `alloc` feature, [`Alloc`] is the allocator
 //! a binary installs as its global one.
@@ -19,8 +19,9 @@ mod simd;
 mod space;
 mod split;
 mod stack;
+mod store;
 
-pub use crate::arch::{Arena, Buffer, Bytes, Cursor, Faults, Lease, Pool, Simd, Space, Split, Stack};
+pub use crate::arch::{Arena, Buffer, Bytes, Cursor, Faults, Lease, Pool, Simd, Space, Split, Stack, Store};
 
 #[cfg(feature = "alloc")]
 pub use mimalloc::MiMalloc as Alloc;

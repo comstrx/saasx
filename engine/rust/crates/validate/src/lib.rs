@@ -8,7 +8,8 @@ pub mod prelude;
 mod arch;
 mod faults;
 mod base;
+mod check;
 mod number;
 mod text;
 
-pub use crate::arch::{Faults, Form, Number, Text};
+pub use crate::arch::{Check, Faults, Form, Number, Text};

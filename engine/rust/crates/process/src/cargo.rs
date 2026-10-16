@@ -1,11 +1,27 @@
 use error::{Failure, Result};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::env::var_os;
+use std::env::{var_os, vars_os};
 
 use crate::{Cargo, Faults};
 
 impl Cargo {
+
+    /// The built binary of `package` as a command in this process's environment minus every variable
+    /// named `<prefix>…`, so the caller sets exactly the ones it means to.
+    ///
+    /// # Errors
+    /// What [`Cargo::binary`] refuses.
+    #[inline]
+    pub fn command ( root: &Path, package: &str, release: bool, prefix: &str ) -> Result<Command> {
+
+        let mut command = Command::new(Self::binary(root, package, release)?);
+
+        command.env_clear().envs(vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with(prefix)));
+
+        Ok(command)
+
+    }
 
     /// Builds `package` in the workspace at `root` with this process's own Cargo and returns the
     /// binary it reports, in debug or release.

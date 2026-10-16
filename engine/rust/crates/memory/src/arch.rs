@@ -19,18 +19,18 @@ pub struct Bytes {
     pub(crate) inner: Shared,
 }
 
-/// Bytes on the stack: a fixed array and a length, never the heap.
+/// Bytes in a region fixed at creation and a length: an append that does not fit fails instead of growing.
 #[derive(Clone, Copy)]
-pub struct Stack <const N: usize> {
-    pub(crate) bytes: [u8; N],
+pub struct Store <B> {
+    pub(crate) bytes: B,
     pub(crate) len:   usize,
 }
 
+/// Bytes on the stack: a fixed array and a length, never the heap.
+pub type Stack <const N: usize> = Store<[u8; N]>;
+
 /// Bytes on the heap, allocated once at a fixed capacity and never grown.
-pub struct Buffer {
-    pub(crate) bytes: Box<[u8]>,
-    pub(crate) len:   usize,
-}
+pub type Buffer = Store<Box<[u8]>>;
 
 /// A fixed set of buffers made once; a [`Lease`] hands one out and returns it when dropped.
 pub struct Pool {
@@ -78,11 +78,6 @@ pub trait Space {
     /// The bytes written so far.
     fn as_bytes ( &self ) -> &[u8];
 
-    /// Appends the bytes whole, or appends nothing and fails with `Exhausted`.
-    ///
-    /// # Errors
-    /// The bytes do not fit in what remains.
-    fn push ( &mut self, bytes: &[u8] ) -> Result<&mut Self>;
 
     /// Keeps the first `len` bytes; a longer `len` changes nothing.
     fn truncate ( &mut self, len: usize );
@@ -137,6 +132,20 @@ pub trait Space {
     fn clear ( &mut self ) {
 
         self.truncate(0);
+
+    }
+
+    /// Appends the bytes whole, or appends nothing and fails with `Exhausted`.
+    ///
+    /// # Errors
+    /// The bytes do not fit in what remains.
+    #[inline]
+    fn push ( &mut self, bytes: &[u8] ) -> Result<&mut Self> {
+
+        let slot = self.room().get_mut(..bytes.len()).ok_or_else(|| Faults::STORE_FULL.fail())?;
+
+        slot.copy_from_slice(bytes);
+        self.advance(bytes.len())
 
     }
 
