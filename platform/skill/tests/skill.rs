@@ -4,28 +4,17 @@
 mod tests {
 
     use std::io::{Error as IoError, Result as IoResult};
-    use std::process::{Command, Output, id};
     use std::fs::{remove_file, write};
-    use std::env::{temp_dir, vars_os};
-    use std::path::{Path, PathBuf};
+    use std::process::{Output, id};
     use engine::process::Cargo;
-    use std::ffi::OsString;
-
-    fn binary () -> IoResult<PathBuf> {
-
-        Cargo::binary(Path::new(env!("CARGO_MANIFEST_DIR")), "skill", false).map_err(|failure| IoError::other(failure.to_string()))
-
-    }
-
-    fn kept () -> impl Iterator<Item = ( OsString, OsString )> {
-
-        vars_os().filter(|( key, _ )| !key.to_string_lossy().starts_with("SKILL_"))
-
-    }
+    use std::env::temp_dir;
+    use std::path::Path;
 
     fn run ( args: &[&str], env: &[( &str, &str )] ) -> IoResult<Output> {
 
-        Command::new(binary()?).args(args).env_clear().envs(kept()).envs(env.iter().copied()).output()
+        let mut command = Cargo::command(Path::new(env!("CARGO_MANIFEST_DIR")), "skill", false, "SKILL_").map_err(|failure| IoError::other(failure.to_string()))?;
+
+        command.args(args).envs(env.iter().copied()).output()
 
     }
 

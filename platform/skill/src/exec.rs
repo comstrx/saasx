@@ -17,19 +17,19 @@ impl Skill {
 
     pub(crate) async fn exec ( &self ) -> Result<String> {
 
-        let ( program, args ) = self.args.rest().split_first().ok_or_else(|| Faults::NO_PROGRAM.fail())?;
-        let deadline = self.args.get("deadline").map(Parse::duration).transpose().map_err(|failure| failure.coded(Code::Usage).about("deadline"))?;
+        let ( program, args ) = self.tool.args().rest().split_first().ok_or_else(|| Faults::NO_PROGRAM.fail())?;
+        let deadline = self.tool.args().get("deadline").map(Parse::duration).transpose().map_err(|failure| failure.coded(Code::Usage).about("deadline"))?;
 
         let mut run = Run::new(program).args(args);
 
         if let Some(deadline) = deadline { run = run.deadline(deadline); }
 
-        if let Some(cwd) = self.args.get("cwd") { run = run.cwd(cwd); }
+        if let Some(cwd) = self.tool.args().get("cwd") { run = run.cwd(cwd); }
 
         let out = run.output().await?;
 
         stderr().lock().write_all(out.stderr())?;
-        self.log.info("exec").field("program", program.as_str()).field("code", out.code().map(i64::from)).field("ms", u64::try_from(out.elapsed().as_millis()).unwrap_or(u64::MAX)).emit();
+        self.tool.log().info("exec").field("program", program.as_str()).field("code", out.code().map(i64::from)).field("ms", u64::try_from(out.elapsed().as_millis()).unwrap_or(u64::MAX)).emit();
 
         match out.code() {
             Some(0)    => Ok(out.text()),

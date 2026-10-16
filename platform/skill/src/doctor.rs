@@ -15,7 +15,7 @@ impl Skill {
 
         for tool in ["cargo", "git", "bun", "docker"] { writeln!(out, "{tool}={}", Run::which(tool).map_or_else(|| "absent".to_owned(), |path| path.display().to_string()))?; }
 
-        self.log.info("doctor").field("platform", System::platform().name()).emit();
+        self.tool.log().info("doctor").field("platform", System::platform().name()).emit();
 
         Ok(out)
 
