@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC1091,SC2016,SC2317,SC2119,SC2120
+# shellcheck disable=SC2016
 set -Eeuo pipefail
 
 clr () {
@@ -36,6 +36,11 @@ succ () {
     tint 32 '[+]' "$*"
 
 }
+warn () {
+
+    tint 33 '[!]' "$*"
+
+}
 err () {
 
     tint 31 '[-]' "$*"
@@ -47,11 +52,6 @@ has () {
     [[ -n "${1:-}" ]] || return 1
 
     command -v -- "${1}" >/dev/null 2>&1
-
-}
-need () {
-
-    has "${1:-}" || { err "Missing: ${1:-}"; return; }
 
 }
 need-all () {
@@ -80,6 +80,19 @@ TOOLX_WORKFLOWS=( labeler labels global )
 TOOLX_PARTS=( engine/rust engine/bun platform/api platform/infra platform/skill platform/web platform/mobile )
 TOOLX_RUST="rustx"
 TOOLX_BUN="bunx"
+
+NOTIFY_CURL=( -sS --fail-with-body --connect-timeout 10 --max-time 20 --retry 3 --retry-max-time 60 --retry-connrefused )
+NOTIFY_JOBS='.jobs[] | select(.conclusion == "failure" or .conclusion == "timed_out") | .name'
+NOTIFY_RUN='.workflow_run | [
+    .conclusion, .name, .repository.full_name, .head_branch, .head_sha[:7], (.display_title // "" | split("\n")[0]),
+    .event, .triggering_actor.login, .run_attempt, .id, .html_url, (.updated_at | fromdate) - (.run_started_at | fromdate)
+] | map(. // "" | tostring) | join("\u001f")'
+NOTIFY_PAYLOAD='{
+    telegram: { chat_id: $chat, text: $text[:4096], disable_notification: $quiet, link_preview_options: { is_disabled: true } },
+    slack:    { text: ($text | gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;")) },
+    discord:  { content: $text[:2000], allowed_mentions: { parse: [] }, flags: (if $quiet then 4100 else 4 end) },
+    webhook:  { text: $text }
+}[$channel] | tojson | tojson'
 
 toolx-part () {
 
@@ -189,10 +202,7 @@ toolx-github () {
 
     toolx-yaml "${dir}/.github/dependabot.yml" "${path}" "${drop}" &&
     toolx-yaml "${dir}/.github/labels.yml"     "${path}" "${drop}|${path}" &&
-    toolx-yaml "${dir}/.github/labeler.yml"    "${path}" "${drop}|${path}" '^[^ #]' || return
-
-    ! grep -rlE -- "${drop}|${path}" "${dir}/.github" >&2 \
-        || { err "Unresolved part paths in the ${repo##*/} .github"; return; }
+    toolx-yaml "${dir}/.github/labeler.yml"    "${path}" "${drop}|${path}" '^[^ #]'
 
 }
 toolx-specs () {
@@ -219,7 +229,7 @@ toolx-specs () {
 }
 toolx-deps () {
 
-    local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}" path="${5:-}" drop="${6:-}"
+    local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}"
     local owner="${repo%%/*}" rust="" bun="" engine="" file="" linked=0
     local -a files=()
 
@@ -246,12 +256,9 @@ toolx-deps () {
 
     fi
 
-    ! grep -rlIE --exclude-dir=.git -- "(\.\./)+(${drop}|${path})" "${dir}" >&2 \
-        || { err "Unresolved part paths in ${repo##*/}"; return; }
-
     if (( ${#files[@]} )); then
 
-        need cargo || return
+        need-all cargo || return
         cargo fetch --quiet --manifest-path "${dir}/Cargo.toml" || return
 
     fi
@@ -297,8 +304,11 @@ toolx-sync () {
     toolx-tree   "${root}" "${tag}" "${repo}" "${dir}" "${path}" &&
     toolx-github "${repo}" "${dir}" "${path}" "${drop}" &&
     toolx-specs  "${dir}" &&
-    toolx-deps   "${root}" "${tag}" "${repo}" "${dir}" "${path}" "${drop}" &&
-    toolx-docs   "${root}" "${tag}" "${repo}" "${dir}" "${path}"
+    toolx-deps   "${root}" "${tag}" "${repo}" "${dir}" &&
+    toolx-docs   "${root}" "${tag}" "${repo}" "${dir}" "${path}" || return
+
+    ! grep -rlIE --exclude-dir=.git -- "${drop}|${path}" "${dir}" >&2 \
+        || { err "Monorepo paths left in ${repo##*/}"; return; }
 
 }
 toolx-args () {
@@ -346,7 +356,7 @@ toolx-args () {
 }
 toolx-prepare () {
 
-    need-all git gh jq bun || return
+    need-all git jq bun || return
 
     local repo="" tag="" root="" name="" release=0 dir="" branch="" message=""
 
@@ -357,12 +367,13 @@ toolx-prepare () {
 
     (( ! release )) || message="Track Release ${tag}"
 
-    branch="$(gh api "repos/${repo}" --jq .default_branch)" || { err "Repository not found: ${repo}"; return; }
+    branch="$(toolx-git ls-remote --symref "${TOOLX_HOST}/${repo}.git" HEAD)" || { err "Repository not reachable: ${repo}"; return; }
+    branch="$(awk '$1 == "ref:" { sub("refs/heads/", "", $2); print $2; exit }' <<< "${branch}")"
 
     {
         rm -rf -- "${dir:?}" && mkdir -p -- "${dir%/*}" &&
         toolx-git clone --quiet --depth 1 "${TOOLX_HOST}/${repo}.git" "${dir}" &&
-        git -C "${dir}" symbolic-ref HEAD "refs/heads/${branch}" &&
+        git -C "${dir}" symbolic-ref HEAD "refs/heads/${branch:-main}" &&
         toolx-sync "${root}" "${tag}" "${repo}" "${dir}" &&
         git -C "${dir}" add -A
     } || { err "Failed to prepare: ${repo}"; return; }
@@ -428,11 +439,100 @@ toolx-distribute () {
     succ "Released -> ${TOOLX_HOST}/${repo}/releases/tag/${tag}"
 
 }
+notify-curl () {
+
+    local channel="${1:-}" url="${2:-}" body="${3:-}" out=""
+
+    [[ "${url}" == https://* && "${url}" != *[[:space:]\"\\]* ]] || { err "Malformed ${channel} endpoint"; return; }
+
+    out="$(printf 'url = "%s"\njson = %s\n' "${url}" "${body}" | curl "${NOTIFY_CURL[@]}" "${@:4}" -K - 2>&1)" \
+        || { err "Failed to notify ${channel}: ${out:0:300}"; return; }
+
+}
+notify-post () {
+
+    need-all curl jq || return
+
+    local quiet=false text="" channel="" url="" body=""
+    local -a args=() sent=() failed=()
+
+    [[ "${1:-}" != --quiet ]] || { quiet=true; shift; }
+
+    text="$*"
+    [[ -n "${text}" ]] || { err "notify [--quiet] <text>"; return; }
+
+    for channel in telegram slack discord webhook; do
+
+        args=()
+
+        case "${channel}" in
+            telegram) url="${TELEGRAM_CHAT_ID:+${TELEGRAM_TOKEN:+https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage}}" ;;
+            slack)    url="${SLACK_WEBHOOK_URL:-}" ;;
+            discord)  url="${DISCORD_WEBHOOK_URL:-}"; args=( --url-query wait=true ) ;;
+            webhook)  url="${WEBHOOK_URL:-}" ;;
+        esac
+
+        [[ -n "${url}" ]] || continue
+
+        body="$(jq -rn --arg channel "${channel}" --arg chat "${TELEGRAM_CHAT_ID:-}" --arg text "${text}" --argjson quiet "${quiet}" "${NOTIFY_PAYLOAD}")" || return
+
+        if notify-curl "${channel}" "${url}" "${body}" "${args[@]}"; then sent+=( "${channel}" ); else failed+=( "${channel}" ); fi
+
+    done
+
+    (( ${#sent[@]} + ${#failed[@]} )) || { warn "No notification channel configured"; return 0; }
+    (( ! ${#sent[@]} )) || succ "Notified -> ${sent[*]}"
+
+    (( ! ${#failed[@]} ))
+
+}
+notify-report () {
+
+    need-all jq gh || return
+
+    local status="" name="" repo="" ref="" sha="" title="" event="" actor="" attempt="" id="" url="" took=""
+    local icon="❌" verb="failed" jobs="" line=""
+    local -a post=()
+
+    IFS=$'\x1f' read -r status name repo ref sha title event actor attempt id url took < <(jq -r "${NOTIFY_RUN}" "${GITHUB_EVENT_PATH:-}" 2>/dev/null) \
+        || { err "No workflow_run event to report"; return; }
+
+    case "${status}" in
+        success)         icon="✅"; verb="passed"; post=( --quiet ) ;;
+        failure)         ;;
+        timed_out)       icon="⏱️"; verb="timed out" ;;
+        startup_failure) icon="💥"; verb="failed to start" ;;
+        *)               icon="⚠️"; verb="${status//_/ }" ;;
+    esac
+
+    if [[ "${status}" != success ]]; then
+        jobs="$(gh api --paginate "repos/${repo}/actions/runs/${id}/attempts/${attempt}/jobs?per_page=100" --jq "${NOTIFY_JOBS}")" \
+            || warn "No job details for ${repo} run ${id}"
+    fi
+
+    if   (( took >= 3600 )); then took="$(( took / 3600 ))h $(( took % 3600 / 60 ))m"
+    elif (( took >= 60 ));   then took="$(( took / 60 ))m $(( took % 60 ))s"
+    else took="${took}s"
+    fi
+
+    line="${ref} @ ${sha} · ${event} by ${actor} · ${took}"
+    jobs="${jobs//$'\n'/, }"
+
+    (( attempt <= 1 ))            || line+=" · attempt ${attempt}"
+    [[ "${title}" != "${name}" ]] || title=""
+    (( ${#title} <= 100 ))        || title="${title:0:99}…"
+    (( ${#jobs} <= 300 ))         || jobs="${jobs:0:299}…"
+
+    notify-post "${post[@]}" "$(printf '%s\n' "${icon} ${repo##*/} · ${name} ${verb}" "${line}" ${title:+"${title}"} ${jobs:+"Failed: ${jobs}"} "${url}")"
+
+}
 main () {
 
     case "${1:-}" in
         prepare|distribute) "toolx-${1}" "${@:2}" ;;
-        *)                  err "Unknown command: ${1:-}" ;;
+        notify)             notify-post "${@:2}" ;;
+        report)             notify-report "${@:2}" ;;
+        *)                  err "prepare | distribute | notify [--quiet] <text> | report" ;;
     esac
 
 }
