@@ -1,5 +1,12 @@
 # ✨ Mobile Forge
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/5d991eac-988e-45b0-b069-cd5e0cc91958"/>
+  <br/>
+  <br/>
+</div>
+
 [![React Native](https://img.shields.io/badge/React_Native-Mobile_Engineering-0B1726?logo=react&logoColor=61DAFB)](https://reactnative.dev)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/mobile.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/mobile.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/mobilex?sort=semver)](https://github.com/comstrx/mobilex/releases/latest)

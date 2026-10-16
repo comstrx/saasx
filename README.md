@@ -1,7 +1,10 @@
-# ✨ SaaSX
+# ✨ SaasX
 
 <div align="center">
-  <img height="130" src="https://github.com/user-attachments/assets/b219c898-7bf8-4390-994f-71386b2209b9" alt="SaaSX" />
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/44494fd3-782f-47a8-9580-b9f0e75a1ac7"/>
+  <br/>
+  <br/>
 </div>
 
 [![Rust + Bun](https://img.shields.io/badge/Rust_%2B_Bun-Enterprise_SaaS-0D9488?logo=rust&logoColor=white)](https://github.com/comstrx/saasx)
@@ -11,7 +14,7 @@
 
 > **One Enterprise SaaS. Seven Engineering Tools. One Uncompromising Vision.**
 
-SaaSX is a real **multi-tenant, multi-role, multi-product enterprise SaaS** and the proving ground where seven reusable tools are forged into [ToolX](https://github.com/comstrx/toolx).
+SaasX is a real **multi-tenant, multi-role, multi-product enterprise SaaS** and the proving ground where seven reusable tools are forged into [ToolX](https://github.com/comstrx/toolx).
 
 **Build the hard system once. Make every system after it radically easier.**
 
@@ -23,7 +26,7 @@ SaaSX is a real **multi-tenant, multi-role, multi-product enterprise SaaS** and 
 
 **Build a real enterprise SaaS:** one unified catalog powering commerce and services across customer experiences, tenant websites, operational panels, and role-aware mobile applications.
 
-**Forge ToolX through reality:** develop the foundations and specialized tools inside SaaSX, challenge them with real requirements, and extract them into independent releases. No parallel implementations. No throwaway architecture.
+**Forge ToolX through reality:** develop the foundations and specialized tools inside SaasX, challenge them with real requirements, and extract them into independent releases. No parallel implementations. No throwaway architecture.
 
 The ambition is clear: **prove advanced engineering in a working product, then make that engineering reusable everywhere.**
 
@@ -47,7 +50,7 @@ Every capability serves a real product requirement while strengthening the reusa
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
-│                            SaaSX                             │
+│                            SaasX                             │
 │              Enterprise Product + ToolX Lab                  │
 └──────────────────────────────────────────────────────────────┘
                                │
@@ -76,7 +79,7 @@ Every capability serves a real product requirement while strengthening the reusa
 **Rust foundation:** [RustX](./engine/rust) → [APIX](./platform/api) · [InfraX](./platform/infra) · [SkillX](./platform/skill)  
 **Bun foundation:** [BunX](./engine/bun) → [WebX](./platform/web) · [MobileX](./platform/mobile)
 
-Each foundation owns generic capabilities. Each forge owns a specialized concern. SaaSX owns product-specific business logic, specs, manifests, and knowledge packs.
+Each foundation owns generic capabilities. Each forge owns a specialized concern. SaasX owns product-specific business logic, specs, manifests, and knowledge packs.
 
 **One-way dependencies. One owner per responsibility. No duplicated foundations.**
 
@@ -88,7 +91,7 @@ Each foundation owns generic capabilities. Each forge owns a specialized concern
 
 Shared capabilities are developed once in the right foundation. Specialized tools provide opinionated workflows without leaking product rules into reusable code. Explicit contracts, cohesive modules, provider boundaries, and independent workspaces preserve clarity at every layer.
 
-The independent ToolX repositories are **one-way release destinations**. SaaSX remains the single source of development; extraction is packaging, never a rewrite.
+The independent ToolX repositories are **one-way release destinations**. SaasX remains the single source of development; extraction is packaging, never a rewrite.
 
 **Maximum reuse. Minimum coupling. No architectural shortcuts.**
 
@@ -129,7 +132,7 @@ cd engine/rust && cargo xtask gates
 cd engine/bun && bun run gates
 ```
 
-**Build in SaaSX → prove in SaaSX → release through ToolX.**
+**Build in SaasX → prove in SaasX → release through ToolX.**
 
 [Contributing](./CONTRIBUTING.md) · [Security](./SECURITY.md) · [Support](./SUPPORT.md) · [Issues](https://github.com/comstrx/saasx/issues)
 

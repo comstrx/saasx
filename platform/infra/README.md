@@ -1,5 +1,12 @@
 # ✨ Infra Forge
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/a928b279-6844-468f-886f-7d99faaac8ab"/>
+  <br/>
+  <br/>
+</div>
+
 [![Rust](https://img.shields.io/badge/Rust-Infrastructure_Automation-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/infra.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/infra.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/infrax?sort=semver)](https://github.com/comstrx/infrax/releases/latest)

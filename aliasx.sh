@@ -78,6 +78,8 @@ TOOLX_STUB="schema/index.ts"
 TOOLX_EMPTY_DIRS=( brand schema )
 TOOLX_WORKFLOWS=( labeler labels global )
 TOOLX_PARTS=( engine/rust engine/bun platform/api platform/infra platform/skill platform/web platform/mobile )
+TOOLX_TAG='^v[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$'
+TOOLX_OWNER='^[A-Za-z0-9-]+$'
 TOOLX_RUST="rustx"
 TOOLX_BUN="bunx"
 
@@ -338,6 +340,8 @@ toolx-args () {
     { part="$(toolx-part "${repo}")" && [[ -n "${tag}" ]]; } \
         || { err "<prepare|distribute> <[owner/]repo> <tag> [--path <saasx>] [--release [name]]"; return; }
 
+    [[ "${tag}" =~ ${TOOLX_TAG} ]] || { err "Not a release tag (vX.Y.Z): ${tag}"; return; }
+
     root="$(git -C "${root:-.}" rev-parse --show-toplevel)" || return
 
     git -C "${root}" rev-parse -q --verify "refs/tags/${tag}^{commit}" >/dev/null \
@@ -350,6 +354,8 @@ toolx-args () {
         owner="${owner%/*}"
         owner="${owner##*[/:]}"
     fi
+
+    [[ "${owner}" =~ ${TOOLX_OWNER} ]] || { err "Not a repository owner: ${owner}"; return; }
 
     repo="${owner}/${part##*/}x"
 

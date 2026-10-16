@@ -1,5 +1,12 @@
 # ✨ Bun Engine
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/3beedd13-cdcd-4581-a7d7-5722386647e3"/>
+  <br/>
+  <br/>
+</div>
+
 [![Bun](https://img.shields.io/badge/Bun-TypeScript_Foundation-14151A?logo=bun&logoColor=white)](https://bun.com)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/bun.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/bun.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/bunx?sort=semver)](https://github.com/comstrx/bunx/releases/latest)

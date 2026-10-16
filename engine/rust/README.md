@@ -1,5 +1,12 @@
 # ✨ Rust Engine
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/142ab293-2773-4178-ac4a-54551c3c916d"/>
+  <br/>
+  <br/>
+</div>
+
 [![Rust](https://img.shields.io/badge/Rust-Systems_Engineering-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/rust.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/rustx?sort=semver)](https://github.com/comstrx/rustx/releases/latest)

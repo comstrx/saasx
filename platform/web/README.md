@@ -1,5 +1,12 @@
 # ✨ Web Forge
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/0b920c7f-c41e-4db6-b548-6a435d6d2396"/>
+  <br/>
+  <br/>
+</div>
+
 [![Next.js](https://img.shields.io/badge/Next.js-Web_Engineering-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/web.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/webx?sort=semver)](https://github.com/comstrx/webx/releases/latest)

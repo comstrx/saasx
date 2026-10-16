@@ -1,5 +1,12 @@
 # ✨ API Forge
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/6994627e-2414-4322-ac42-384a7e62ce6a"/>
+  <br/>
+  <br/>
+</div>
+
 [![Rust](https://img.shields.io/badge/Rust-Enterprise_Backend-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/api.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/api.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/apix?sort=semver)](https://github.com/comstrx/apix/releases/latest)

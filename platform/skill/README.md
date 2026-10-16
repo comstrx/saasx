@@ -1,5 +1,12 @@
 # ✨ Skill Forge
 
+<div align="center">
+  <br/>
+  <img height="150" src="https://github.com/user-attachments/assets/e5defe48-05e4-441b-932e-3aa08d9cfcbd"/>
+  <br/>
+  <br/>
+</div>
+
 [![Rust](https://img.shields.io/badge/Rust-Engineering_Intelligence-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![CI](https://github.com/comstrx/saasx/actions/workflows/skill.yml/badge.svg?branch=main)](https://github.com/comstrx/saasx/actions/workflows/skill.yml)
 [![Release](https://img.shields.io/github/v/release/comstrx/skillx?sort=semver)](https://github.com/comstrx/skillx/releases/latest)
