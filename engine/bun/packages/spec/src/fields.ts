@@ -1,9 +1,7 @@
 import { messageKeyPattern } from "engine/translate";
-import { key, path, text, word, z } from "engine/validate";
+import { text, z } from "engine/validate";
 
 export type SpecText = z.infer<typeof specText>;
-
-export { key, path, text, word };
 
 export const operation: z.ZodString = z.string().regex(/^[a-z][a-zA-Z0-9]*\.[a-z][a-zA-Z0-9]*$/);
 const specKey = z.strictObject({ key: z.string().regex(messageKeyPattern) });

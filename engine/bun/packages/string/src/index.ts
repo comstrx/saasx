@@ -21,7 +21,7 @@ export function slugify ( text: string, separator = "-" ): string {
         .join(separator);
 
 }
-export function capitalize ( text: string ): string {
+function capitalize ( text: string ): string {
 
     return text ? text[0]?.toUpperCase() + text.slice(1) : text;
 

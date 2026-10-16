@@ -12,11 +12,12 @@ import {
     type RequestOptions,
     requestContext,
 } from "engine/api";
+import type { Device } from "engine/device";
 import type { Route } from "engine/screen";
 import type { CompiledPort } from "engine/spec";
 import { type Binding, bind, type Defined, type Resource, type Runner } from "engine/state";
 import type { Store } from "engine/storage";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { type Gate, gateOf, granted } from "./access.ts";
 import { forgetPorts, type PortCache } from "./cache.ts";
 import { createOutbox, type Outbox } from "./outbox.ts";
@@ -24,6 +25,7 @@ import { fillInput } from "./port.ts";
 import { type PortLive, usePortResource } from "./read.ts";
 import { defineSession, type Session, type SessionActions } from "./session.ts";
 import { bindSignals, type SignalBinding } from "./signals.ts";
+import { touched } from "./touches.ts";
 import { type Input, type Queued, useOperation, type Written } from "./write.ts";
 
 export type ClientDoors<C extends Catalogue> = {
@@ -62,6 +64,7 @@ export type Client<C extends Catalogue> = {
     usePermission: ( port: CompiledPort | undefined ) => Permission;
     usePort: ( port: CompiledPort | undefined, route: Route ) => Resource<unknown, Pagination>;
     useWrite: ( port: CompiledPort | undefined, route?: Route, options?: { queue?: boolean | undefined } ) => Write;
+    useReplay: ( device: Device ) => void;
 };
 
 const nowhere: Route = { parameters: {}, query: {} };
@@ -222,6 +225,33 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
         return { ...runner, ...permission, run, queued };
 
     }
+    function useReplay ( device: Device ): void {
+
+        const api = useApi() as ApiSurface;
+        const outbox = useOutbox();
+
+        useEffect(() => {
+
+            const replay = async (): Promise<void> => {
+
+                const outcome = await outbox.replay(async ( entry ) => {
+
+                    await api[entry.feature]?.[entry.operation]?.(entry.input, { idempotencyKey: entry.idempotencyKey });
+                    touched([entry.feature]);
+
+                });
+
+                if ( outcome.sent ) touched([]);
+
+            };
+
+            if ( device.info().online ) void replay();
+
+            return device.watch("online", ( online ) => { if ( online ) void replay(); });
+
+        }, [api, device, outbox]);
+
+    }
     return {
         identity,
         locales,
@@ -241,6 +271,7 @@ export function defineClient<const C extends Catalogue> ( doors: ClientDoors<C> 
         usePermission,
         usePort,
         useWrite,
+        useReplay,
     };
 
 }

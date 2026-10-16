@@ -1,4 +1,4 @@
-export { bench, do_not_optimize, group, run } from "mitata";
+export { bench, do_not_optimize, run } from "mitata";
 export { type Analysis, analyze, type Layer, type Rules, type Sources, type SurfaceRules } from "./architecture.ts";
 export type { AssetFolder, Files, Skip } from "./assets.ts";
 export { type Buildable, type BuildPlan, type Built, type Compile, type Emitted, type Meta, type Prepared, prepareSpec } from "./build.ts";
@@ -23,14 +23,10 @@ export {
 } from "./compile.ts";
 export {
     type Core,
-    compare,
     createCore,
-    entries,
     type Found,
-    failure,
     guard,
     type Prune,
-    readJson,
     report,
     task,
     walk,

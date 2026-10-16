@@ -168,6 +168,15 @@ export function createForm<T> ({
 
     const current = locale ?? locales[0] ?? "";
     const start = fill(fields, initial ?? {}, locales, current);
+    const fresh: Pick<FormState<T>, "values" | "saved" | "errors" | "status" | "result" | "error" | "dirty"> = {
+        values: start,
+        saved: start,
+        errors: {},
+        status: "idle",
+        result: undefined,
+        error: undefined,
+        dirty: false,
+    };
     let key = uuid();
     let keyed: FormValues | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -197,13 +206,7 @@ export function createForm<T> ({
 
         return {
             fields,
-            values: start,
-            saved: start,
-            errors: {},
-            status: "idle",
-            result: undefined,
-            error: undefined,
-            dirty: false,
+            ...fresh,
             set: ( name, value ) =>
                 set(( state ) => {
 
@@ -282,15 +285,7 @@ export function createForm<T> ({
 
                 keyed = undefined;
                 quiet();
-                set({
-                    values: start,
-                    saved: start,
-                    errors: {},
-                    status: "idle",
-                    result: undefined,
-                    error: undefined,
-                    dirty: false,
-                });
+                set(fresh);
 
             },
         };

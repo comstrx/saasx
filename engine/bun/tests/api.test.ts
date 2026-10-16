@@ -13,8 +13,8 @@ import {
     post,
     requestContext,
     resolveApi,
-    z,
 } from "engine/api";
+import { z } from "engine/validate";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const catalogue = {

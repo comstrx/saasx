@@ -1,15 +1,10 @@
 export { type FieldFact, type FieldKind, fieldFacts } from "./facts.ts";
 export {
-    ack,
-    color,
-    count,
     currency,
     email,
     flag,
-    id,
     key,
     language,
-    list,
     localized,
     money,
     optionalText,

@@ -4,11 +4,10 @@ import {
     type CompiledFeature,
     countShape,
     createSpecSurface,
-    key,
     specText,
     stepShape,
 } from "engine/spec";
-import { z } from "engine/validate";
+import { key, z } from "engine/validate";
 import { iconNames } from "engine/world";
 import { core } from "../../api/core/index.ts";
 import { endpoints, entities } from "../../api/features/index.ts";

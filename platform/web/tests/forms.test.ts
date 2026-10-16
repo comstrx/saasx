@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { del, get, feature as group, many, need, post, z } from "engine/api";
+import { del, get, feature as group, many, need, post } from "engine/api";
 import { type Catalogue, catalogueFacts, type Features } from "engine/spec";
+import { z } from "engine/validate";
 import { block, feature, param, read, screen, type Tree, t, validateSpec, write } from "../src/lib/spec/surface.ts";
 
 const state = { loading: "Loading", failed: "Failed", offline: "Offline", cached: "Saved", empty: "Empty" };

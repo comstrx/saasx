@@ -6,7 +6,7 @@ import {
     configShapes,
     connectionShape,
     contentShape,
-    fontFace,
+    fontFaceShape,
     fontsShape,
     settingsInput,
     sharedSettingsDefaults,
@@ -17,7 +17,7 @@ const locale = z.enum(["en", "ar"]);
 const image = brandImage("/assets/images/brand", ["png", "webp"]);
 const settings = z.strictObject({
     app: z.strictObject({ slug: z.string() }),
-    ...baseSettings(locale, fontsShape(locale, fontFace(["ttf"], /^[1-9]00$/))),
+    ...baseSettings(locale, fontsShape(locale, fontFaceShape(["ttf"], /^[1-9]00$/))),
 });
 
 describe("contract", () => {
@@ -26,7 +26,7 @@ describe("contract", () => {
 
         expect(image.safeParse("/assets/images/brand/logo.webp").success).toBe(true);
         expect(image.safeParse("/images/logo.webp").success).toBe(false);
-        expect(fontFace(["ttf"], /^[1-9]00$/).safeParse({ file: "a.woff2", weight: "400" }).success).toBe(false);
+        expect(fontFaceShape(["ttf"], /^[1-9]00$/).safeParse({ file: "a.woff2", weight: "400" }).success).toBe(false);
 
     });
     test("settings input loosens records one level and keeps required names", () => {

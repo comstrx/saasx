@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { get, many, post, z } from "engine/api";
+import { get, many, post } from "engine/api";
 import { type Catalogue, catalogueFacts, type Features } from "engine/spec";
+import { z } from "engine/validate";
 import { block, feature, read, screen, site, type Tree, t, validateSpec, write } from "../src/lib/spec/surface.ts";
 
 const messages = { en: { nav: { home: "Home" } }, ar: { nav: { home: "الرئيسية" } } };

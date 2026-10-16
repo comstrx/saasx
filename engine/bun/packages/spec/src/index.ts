@@ -13,11 +13,10 @@ export {
     backendOptionFields,
     baseSettings,
     brandImage,
-    choice,
     configShapes,
     connectionShape,
     contentShape,
-    fontFace,
+    fontFaceShape,
     fontsShape,
     type Shape,
     type Shapes,
@@ -28,26 +27,19 @@ export {
 export { type Brand, type Contracts, createSpecSurface, type Vocabulary } from "./create.ts";
 export { type Motion, sharedSettingsDefaults, type ThemeName } from "./defaults.ts";
 export {
-    block,
     type Children,
     data,
     type FeatureSettings,
     feature,
     type Helpers,
-    helpers,
-    live,
-    param,
-    query,
     read,
     type ScreenOf,
     type SurfaceHelpers,
     site,
-    split,
-    t,
     write,
 } from "./define.ts";
 export { catalogueFacts } from "./facts.ts";
-export { key, operation, path, type SpecText, specText, text, word } from "./fields.ts";
+export { type SpecText, specText } from "./fields.ts";
 export { stateIssues } from "./options.ts";
 export {
     type CompiledSchemaBase,
@@ -62,7 +54,6 @@ export {
 } from "./schema.ts";
 export {
     type ApiPlan,
-    address,
     type Backend,
     type Choice,
     type Compiled,

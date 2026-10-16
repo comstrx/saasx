@@ -1,5 +1,5 @@
-import { type FieldFact, z } from "engine/validate";
-import { key, operation, word } from "./fields.ts";
+import { type FieldFact, key, word, z } from "engine/validate";
+import { operation } from "./fields.ts";
 
 const scalar = z.union([z.string().max(2048), z.number().finite(), z.boolean(), z.null()]);
 const reference = z.union([

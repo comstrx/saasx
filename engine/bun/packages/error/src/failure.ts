@@ -119,19 +119,6 @@ export function guarded<T> ( work: () => T, kind: Kind = "input" ): T {
     }
 
 }
-export async function attempt<T> ( work: () => Promise<T>, kind: Kind = "unknown" ): Promise<T> {
-
-    try {
-
-        return await work();
-
-    } catch ( error ) {
-
-        throw isFailure(error) ? error : new Failure(kind, { cause: error });
-
-    }
-
-}
 export function failureOf ( error: unknown ): Failure {
 
     if ( isFailure(error) ) return error;

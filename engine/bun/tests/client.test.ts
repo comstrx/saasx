@@ -1,10 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { feature, get, many, resolveApi, z } from "engine/api";
+import { feature, get, many, resolveApi } from "engine/api";
 import { bindDevice, defineClient, defineSession, deviceNote, gateOf, granted, permissionsOf } from "engine/client";
 import { createDevice } from "engine/device";
 import { Failure } from "engine/error";
 import { bind, defineStore } from "engine/state";
 import { memoryStore } from "engine/storage";
+import { z } from "engine/validate";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 

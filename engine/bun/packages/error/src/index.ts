@@ -1,5 +1,4 @@
 export {
-    attempt,
     type Detail,
     describe,
     type Facts,
@@ -12,7 +11,6 @@ export {
     type Issues,
     isFailure,
     type Kind,
-    kinds,
     reference,
     settled,
     transient,

@@ -5,7 +5,6 @@ import {
     lstatSync,
     mkdirSync,
     readdirSync,
-    readFileSync,
     realpathSync,
     writeFileSync,
 } from "node:fs";
@@ -84,11 +83,6 @@ export function directories ( folder: string ): string[] {
     return entries(folder)
         .filter(( entry ) => entry.isDirectory() && !entry.name.startsWith("."))
         .map(( entry ) => entry.name);
-
-}
-export function readJson<T> ( path: string ): T {
-
-    return JSON.parse(readFileSync(path, "utf8")) as T;
 
 }
 export function sha256 ( bytes: Uint8Array | string ): string {

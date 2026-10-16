@@ -1,5 +1,6 @@
-import { createApi, feature, get, many, post, requestContext, resolveApi, z } from "engine/api";
+import { createApi, feature, get, many, post, requestContext, resolveApi } from "engine/api";
 import { bench, do_not_optimize, run } from "engine/tooling";
+import { z } from "engine/validate";
 
 const item = z.object({ id: z.number(), title: z.string(), price: z.string().nullish() });
 const endpoints = {

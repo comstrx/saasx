@@ -1,4 +1,5 @@
-import { del, document, type Endpoint, feature, get, localized, many, need, password, post, put, z } from "engine/api";
+import { del, document, type Endpoint, feature, get, many, need, post, put } from "engine/api";
+import { localized, password, z } from "engine/validate";
 
 const money = z.object({ amount: z.string(), currency: z.string() }).nullish();
 const catalog = z.object({

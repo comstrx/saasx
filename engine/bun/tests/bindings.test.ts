@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { del, get, many, need, post, feature as spec, z } from "engine/api";
+import { del, get, many, need, post, feature as spec } from "engine/api";
 import {
     catalogueFacts,
     compileBlock,
@@ -11,6 +11,7 @@ import {
     stateIssues,
     write,
 } from "engine/spec";
+import { z } from "engine/validate";
 
 type Block = { gap: number };
 

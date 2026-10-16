@@ -1,5 +1,5 @@
 import type { Endpoint, Layer } from "engine/api";
-import { z } from "engine/validate";
+import { key, z } from "engine/validate";
 import type { Features } from "./compile.ts";
 import {
     backendOptionFields,
@@ -9,7 +9,7 @@ import {
     connectionShape,
     contentShape,
     contractOverrides,
-    fontFace,
+    fontFaceShape,
     fontsShape,
     realtimeShape,
     settingsInput,
@@ -17,7 +17,6 @@ import {
 } from "./contract.ts";
 import { sharedSettingsDefaults } from "./defaults.ts";
 import { defineSurface } from "./define.ts";
-import { key } from "./fields.ts";
 import { type CompiledSchemaBase, type Entities, entityRoute, screenShapes } from "./schema.ts";
 import type { Backend, CompiledScreen, ShellPart } from "./settings.ts";
 import { optionsShape } from "./shapes.ts";
@@ -102,7 +101,7 @@ export function createSpecSurface<
     } = vocabulary;
     const locale = z.enum(locales as [L, ...L[]]);
     const image = brandImage(brand.images, brand.imageFormats);
-    const fonts = fontsShape(locale, fontFace(brand.fontFormats, brand.fontWeight));
+    const fonts = fontsShape(locale, fontFaceShape(brand.fontFormats, brand.fontWeight));
     const shellValue = z.union([key, z.strictObject({ feature: key, options: optionsShape.optional() })]).nullable();
     const shellShape = z.strictObject(
         Object.fromEntries(shell.map(( part ) => [part, shellValue])) as Record<SH, typeof shellValue>,

@@ -2,8 +2,7 @@ import { apiInputShape, apiShape, contractShape, overridesShape, resourceShapes 
 import { mapValues } from "engine/base";
 import { isOrigin } from "engine/net";
 import { isTimeZone } from "engine/translate";
-import { currency, fluent, z } from "engine/validate";
-import { text, word } from "./fields.ts";
+import { currency, fluent, text, word, z } from "engine/validate";
 
 export type Shape = z.ZodType;
 export type Shapes = Record<string, Shape>;
@@ -46,14 +45,14 @@ export function brandImage ( root: string, formats: readonly string[] ): z.ZodSt
     return z.string().regex(new RegExp(`^${root}/[a-zA-Z0-9/_-]+\\.(?:${formats.join("|")})$`));
 
 }
-export function fontFace ( formats: readonly string[], weight: RegExp ) {
+export function fontFaceShape ( formats: readonly string[], weight: RegExp ) {
 
     const file = z.string().regex(new RegExp(`^[a-zA-Z0-9_-]+\\.(?:${formats.join("|")})$`));
 
     return z.strictObject({ file, weight: z.string().regex(weight) });
 
 }
-export function fontsShape<L extends z.ZodEnum> ( locale: L, face: ReturnType<typeof fontFace> ) {
+export function fontsShape<L extends z.ZodEnum> ( locale: L, face: ReturnType<typeof fontFaceShape> ) {
 
     return z.partialRecord(locale, z.array(face).min(1).max(10));
 

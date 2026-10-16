@@ -23,7 +23,7 @@ export const client = defineClient({
     observe: observeCall,
 });
 
-export const { useOutbox, useSession, useApi, useAccess, useGate, usePermission, usePort, useWrite } = client;
+export const { useSession, useApi, useAccess, useGate, usePermission, usePort, useWrite, useReplay } = client;
 export const { useSignal, useSignals, Provider: SignalsProvider } = client.signals;
 
 export function SessionProvider ({ children }: { children: ReactNode }) {

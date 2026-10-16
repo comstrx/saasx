@@ -138,11 +138,6 @@ export function sumBy<T> ( items: readonly T[], key: Key<T> ): number {
     return items.reduce(( total, item ) => total + Number(pick(item) ?? 0), 0);
 
 }
-export function lastOf<T> ( items: readonly T[] ): T | undefined {
-
-    return items.length ? items[items.length - 1] : undefined;
-
-}
 export function zip<A, B> ( left: readonly A[], right: readonly B[] ): [A, B][] {
 
     const length = Math.min(left.length, right.length);

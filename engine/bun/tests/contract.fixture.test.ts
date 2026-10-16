@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import process from "node:process";
-import { browserConfig, feature, get, many, post, resolveApi, z } from "engine/api";
+import { browserConfig, feature, get, many, post, resolveApi } from "engine/api";
 import { catalogueFacts, compileApi } from "engine/spec";
+import { z } from "engine/validate";
 
 const item = z.object({ id: z.number(), title: z.string() });
 const endpoints = {

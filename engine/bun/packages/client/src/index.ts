@@ -19,7 +19,6 @@ export {
     localizedTexts,
     type Saved,
     type Submit,
-    useForm,
     withTranslations,
 } from "./form.ts";
 export { type DeviceNote, type DeviceTexts, deviceNote } from "./note.ts";
