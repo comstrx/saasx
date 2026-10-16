@@ -21,7 +21,7 @@ task(import.meta.url, async () => {
 
     cpSync(resolve(root, "public"), resolve(app, "public"), { recursive: true });
     cpSync(resolve(root, ".next", "static"), resolve(app, ".next", "static"), { recursive: true });
-    process.env.PORT ??= "3001";
+    process.env.PORT ??= "3000";
     process.env.HOSTNAME ??= "0.0.0.0";
 
     await import(resolve(standalone, server));

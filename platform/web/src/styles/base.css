@@ -206,7 +206,7 @@ body {
 .fact-label { color: var(--muted); font-size: 0.8125rem; }
 .fact-value { margin: 0; }
 
-.table[data-selectable] .table-row { cursor: pointer; }
+.table[data-selectable] .table-row { cursor: pointer; transition: background-color var(--motion-fast) var(--ease-standard); }
 .table[data-selectable] .table-row:hover { background: color-mix(in srgb, var(--primary) 8%, transparent); }
 .table[data-selectable] .table-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .table-row[aria-selected="true"] { background: color-mix(in srgb, var(--primary) 14%, transparent); }
@@ -238,7 +238,6 @@ body {
 .input:disabled, .file:disabled { opacity: 0.6; cursor: progress; }
 .input[type="date"], .input[type="number"] { max-width: 16rem; }
 
-/* Typography scale and motion from the engine tokens */
 body { font-family: var(--font-sans, system-ui, sans-serif); font-size: var(--type-md-size); line-height: var(--type-md-line); }
 .heading[data-level="1"] { font-size: var(--type-xl-size); line-height: var(--type-xl-line); font-weight: var(--type-xl-weight); letter-spacing: -0.01em; }
 .heading[data-level="2"] { font-size: var(--type-lg-size); line-height: var(--type-lg-line); font-weight: var(--type-lg-weight); }
@@ -246,7 +245,7 @@ body { font-family: var(--font-sans, system-ui, sans-serif); font-size: var(--ty
 .text[data-size="sm"] { font-size: var(--type-sm-size); line-height: var(--type-sm-line); }
 .text[data-size="lg"] { font-size: var(--type-lg-size); line-height: var(--type-lg-line); }
 .field-label, .table-head, .fact-label { font-size: var(--type-xs-size); line-height: var(--type-xs-line); letter-spacing: 0.02em; }
-.button, .link[data-tone="button"], .menu-link, .table-row, .input, .select, .card { transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard); }
+.button, .link[data-tone="button"], .menu-link, .input, .select, .card { transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard); }
 .button:not(:disabled):active { transform: translateY(1px); }
 .button:not(:disabled):hover { filter: brightness(1.05); }
 .input:focus-visible, .select:focus-visible, .button:focus-visible, .link:focus-visible, .menu-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
