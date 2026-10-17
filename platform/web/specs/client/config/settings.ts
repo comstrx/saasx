@@ -1,4 +1,4 @@
-import { type SiteConfig, t } from "../../../src/lib/spec/surface.ts";
+import type { SiteConfig } from "../../../src/lib/spec/surface.ts";
 
 export default {
     delivery: "server",
@@ -42,10 +42,7 @@ export default {
         shadow: "none",
     },
     shell: {
-        nav: {
-            feature: "nav",
-            options: { brand: t("shell.brand"), home: t("nav.home"), login: t("shell.login"), account: t("shell.account") },
-        },
+        nav: null,
         footer: null,
         sidebar: null,
         loader: null,

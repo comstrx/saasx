@@ -20,8 +20,8 @@ export default {
         keywords: [],
         image: null,
         twitter: null,
-        robots: { allow: ["/"], disallow: ["/login", "/account"] },
-        sitemap: ["home", "catalog"],
+        robots: { allow: ["/"], disallow: [] },
+        sitemap: ["hello"],
         verification: {},
     },
 } satisfies SiteConfig["contents"];

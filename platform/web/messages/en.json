@@ -1,9 +1,11 @@
 {
+  "hello": {
+    "title": "Hello",
+    "description": "One page that says hello to the world.",
+    "world": "Hello, world!"
+  },
   "nav": {
-    "skip": "Skip to content",
-    "home": "Home",
-    "menu": "Menu",
-    "close": "Close"
+    "skip": "Skip to content"
   },
   "state": {
     "loading": "Loading",
@@ -16,190 +18,6 @@
     "cached": "Showing saved results",
     "saved": "Saved",
     "queued": "Saved on this device; it will be sent when you are back online"
-  },
-  "access": {
-    "signIn": "Sign in to continue",
-    "denied": "You do not have access to this area"
-  },
-  "home": {
-    "description": "Browse the catalogue"
-  },
-  "search": {
-    "placeholder": "Search the catalogue",
-    "go": "Search"
-  },
-  "catalogue": {
-    "title": "Catalogue",
-    "empty": "No results",
-    "from": "From"
-  },
-  "login": {
-    "title": "Sign in",
-    "description": "Sign in to your account",
-    "email": "Email",
-    "password": "Password",
-    "continue": "Continue",
-    "otp": "Verification code",
-    "verify": "Verify",
-    "sent": "We sent a code to {destination}",
-    "back": "Back"
-  },
-  "account": {
-    "hello": "Hello {name}",
-    "logout": "Sign out",
-    "loading": "Loading your account",
-    "offline": "Your account is unavailable offline",
-    "cached": "Showing your saved account",
-    "title": "Your account",
-    "description": "Your profile, location, photo and notifications",
-    "profile": "Profile",
-    "save": "Save changes",
-    "saved": "Your profile is saved",
-    "fields": {
-      "name": "Full name",
-      "gender": "Gender",
-      "birth_date": "Date of birth",
-      "address": {
-        "city": "City",
-        "country": "Country code"
-      }
-    },
-    "choices": {
-      "gender": {
-        "male": "Male",
-        "female": "Female"
-      }
-    }
-  },
-  "shell": {
-    "brand": "Catalogue",
-    "login": "Sign in",
-    "account": "Account"
-  },
-  "catalog": {
-    "title": "Catalog item",
-    "description": "Details of one catalog item",
-    "back": "Back to the catalogue",
-    "fields": {
-      "name": "Name",
-      "type": "Type",
-      "subtype": "Subtype",
-      "stock": "Stock",
-      "capacity": "Capacity",
-      "featured": "Featured",
-      "starts_at": "Starts",
-      "ends_at": "Ends",
-      "id": "ID",
-      "slug": "Slug",
-      "rating": "Rating",
-      "created_at": "Created",
-      "deleted_at": "Deleted"
-    },
-    "choices": {
-      "type": {
-        "hotel": "Hotel",
-        "room": "Room",
-        "property": "Property",
-        "tour": "Tour",
-        "travel": "Travel",
-        "ticket": "Ticket",
-        "visa": "Visa",
-        "product": "Product",
-        "service": "Service",
-        "event": "Event",
-        "insurance": "Insurance"
-      },
-      "subtype": {
-        "physical": "Physical",
-        "digital": "Digital",
-        "online": "Online",
-        "offline": "Offline",
-        "internal": "Internal",
-        "external": "External",
-        "individual": "Individual",
-        "collective": "Collective"
-      }
-    }
-  },
-  "admin": {
-    "brand": "Admin",
-    "home": "Dashboard",
-    "dashboard": "Dashboard",
-    "description": "Operations overview",
-    "catalogs": "Catalogs",
-    "menu": "Menu",
-    "settings": "Settings",
-    "settingsDescription": "Your language, currency and theme",
-    "newCatalog": "New catalog",
-    "newDescription": "Create a catalog item",
-    "editCatalog": "Edit catalog",
-    "editDescription": "Change a catalog item",
-    "create": "Create",
-    "save": "Save",
-    "saved": "Saved",
-    "edit": "Edit",
-    "remove": "Delete",
-    "restore": "Restore",
-    "removed": "Deleted",
-    "restored": "Restored",
-    "denied": "You cannot perform this action"
-  },
-  "table": {
-    "id": "ID",
-    "name": "Name",
-    "type": "Type",
-    "price": "Price",
-    "stock": "Stock",
-    "featured": "Featured",
-    "created": "Created",
-    "sort": "Sort by",
-    "page": "Page {page} of {pages}",
-    "previous": "Previous",
-    "next": "Next",
-    "sorts": {
-      "newest": "Newest",
-      "oldest": "Oldest",
-      "lowest_price": "Lowest price",
-      "highest_price": "Highest price",
-      "highest_rated": "Highest rated"
-    }
-  },
-  "preview": {
-    "title": "Preview",
-    "pick": "Select a row to preview it here"
-  },
-  "preferences": {
-    "title": "Preferences",
-    "language": "Language",
-    "currency": "Currency",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "Match the system",
-    "saved": "Saved"
-  },
-  "location": {
-    "title": "Your location",
-    "detail": "Saved at {latitude}, {longitude}",
-    "locate": "Use my location",
-    "saved": "Location saved",
-    "denied": "Location access was refused",
-    "unsupported": "This device cannot share its location"
-  },
-  "avatar": {
-    "title": "Your photo",
-    "pick": "Choose a photo",
-    "camera": "Take a photo",
-    "saved": "Photo saved",
-    "empty": "No photo yet"
-  },
-  "notifications": {
-    "title": "Notifications",
-    "detail": "Get order and account updates on this device",
-    "enable": "Enable notifications",
-    "saved": "This device will receive notifications",
-    "denied": "Notifications were refused",
-    "unsupported": "Push notifications are not available on this device"
   },
   "errors": {
     "reasons": {
@@ -246,41 +64,6 @@
       "choice": "Choose one of: {choices}",
       "unknown": "This field is not accepted",
       "invalid": "This value is not accepted"
-    },
-    "fields": {
-      "type": "The type is not accepted",
-      "subtype": "This subtype does not fit the type",
-      "name": "The name is not accepted",
-      "stock": "Stock must be a whole number",
-      "capacity": "Capacity must be a whole number",
-      "featured": "Featured must be yes or no",
-      "starts_at": "The start date is not accepted",
-      "ends_at": "The end date is not accepted",
-      "email": "The email address is not accepted",
-      "password": "The password is not accepted",
-      "otp": "The verification code is not accepted",
-      "challenge_token": "Start the sign-in again",
-      "latitude": "The latitude is not accepted",
-      "longitude": "The longitude is not accepted",
-      "image": "The image is not accepted",
-      "file": "The file is not accepted",
-      "token": "The device token is not accepted",
-      "platform": "The platform is not accepted",
-      "idempotency": "This request was already sent",
-      "account": "Nothing to update",
-      "panel": "This account cannot enter this panel",
-      "tenant": "Unknown workspace",
-      "catalog": "The catalog item is not available"
     }
-  },
-  "form": {
-    "leave": "You have unsaved changes. Leave anyway?",
-    "tags": "Separate items with commas"
-  },
-  "emoji": {
-    "title": "Emoji",
-    "description": "Every emoji in 3D, searchable in Arabic and English.",
-    "placeholder": "Search emoji",
-    "empty": "No emoji matches."
   }
 }

@@ -1,4 +1,4 @@
-import { type SiteConfig, t } from "../../../src/lib/spec/surface.ts";
+import type { SiteConfig } from "../../../src/lib/spec/surface.ts";
 
 export default {
     delivery: "server",
@@ -22,11 +22,11 @@ export default {
     mediaOrigins: ["http://127.0.0.1:8000"],
     frameOrigins: [],
     screen: {
-        render: "client",
+        render: "server",
         title: true,
         nav: true,
         footer: true,
-        sidebar: true,
+        sidebar: false,
         loader: true,
     },
     block: {
@@ -42,12 +42,9 @@ export default {
         shadow: "none",
     },
     shell: {
-        nav: {
-            feature: "nav",
-            options: { brand: t("admin.brand"), home: t("admin.home"), login: t("shell.login"), account: t("shell.account") },
-        },
+        nav: null,
         footer: null,
-        sidebar: { feature: "sidebar", options: { title: t("admin.menu") } },
+        sidebar: null,
         loader: null,
     },
 } satisfies SiteConfig["settings"];
