@@ -2,7 +2,9 @@ rules:
   forbidden-uses:
     config:
       allow:
+        - actions/attest
         - actions/checkout
+        - actions/download-artifact
         - actions/dependency-review-action
         - actions/setup-node
         - actions/upload-artifact

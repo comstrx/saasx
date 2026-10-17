@@ -41,13 +41,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          sparse-checkout: aliasx.sh
+          sparse-checkout: |
+            scripts/base.sh
+            scripts/notify.sh
           sparse-checkout-cone-mode: false
 
       - name: Report
         if: github.event_name == 'workflow_run'
-        run: bash aliasx.sh report
+        run: bash scripts/notify.sh report
 
       - name: Test
         if: github.event_name == 'workflow_dispatch'
-        run: bash aliasx.sh notify "🔔 ${GITHUB_REPOSITORY##*/} · Notify test"
+        run: bash scripts/notify.sh post "🔔 ${GITHUB_REPOSITORY##*/} · Notify test"

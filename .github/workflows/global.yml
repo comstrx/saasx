@@ -24,6 +24,7 @@ defaults:
 env:
   PRETTIER: prettier@3.9.10
   TAPLO: taplo-cli@0.10.0
+  ANALYZER: 1.25.0
 
 jobs:
   leaks:
@@ -156,10 +157,31 @@ jobs:
           --no-error-on-unmatched-pattern
           --check "**/*.{md,mdx,yml,yaml,json,jsonc}"
 
+  scripts:
+    name: scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: ShellCheck
+        if: hashFiles('scripts/*.sh') != ''
+        run: shellcheck -x scripts/*.sh
+
+      - name: PSScriptAnalyzer
+        if: hashFiles('scripts/*.ps1') != ''
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -RequiredVersion $env:ANALYZER -Scope CurrentUser -Force
+          Invoke-ScriptAnalyzer -Path scripts -Recurse -Severity Warning, Error -EnableExit
+
   gate:
     name: gate
     if: always()
-    needs: [leaks, vulns, sbom, review, actions, spelling, formatting]
+    needs: [leaks, vulns, sbom, review, actions, spelling, formatting, scripts]
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
