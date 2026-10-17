@@ -1,6 +1,8 @@
 use net::{Address, Bind, Bound, Listener, Peer, Protocol};
 use thread::Stop;
 use hyper::upgrade::{OnUpgrade, Upgraded};
+use hyper::client::conn::{http1, http2};
+use std::collections::HashMap;
 use tokio::sync::mpsc::{Receiver, Sender};
 use std::net::TcpStream as StdStream;
 use http_body::Frame as HttpFrame;
@@ -173,6 +175,25 @@ pub struct Client {
     pub(crate) protocol: Protocol,
     pub(crate) timeout:  Duration,
 }
+
+/// A [`Client`] that keeps its connections for the next request to the same authority.
+///
+/// A request goes over the open connection when it is free, one at a time over HTTP/1.1 and
+/// multiplexed over HTTP/2; a connection the peer closed is dropped on the next look. Clones share
+/// the same connections.
+#[derive(Debug, Clone)]
+pub struct Keep {
+    pub(crate) client: Client,
+    pub(crate) idle:   Arc<Mutex<Idle>>,
+}
+
+#[derive(Debug)]
+pub(crate) enum Conn {
+    Http1(http1::SendRequest<Body>),
+    Http2(http2::SendRequest<Body>),
+}
+
+pub(crate) type Idle = HashMap<Box<str>, Vec<Conn>>;
 
 /// Logs one line per request: method, path, status, elapsed, peer and id.
 #[derive(Debug, Clone)]

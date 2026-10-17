@@ -166,6 +166,45 @@ mod tests {
 
     }
 
+    async fn repeated ( base: &str ) -> Result<( Vec<u16>, usize )> {
+
+        let keep      = Client::new().timeout(Duration::from_secs(5)).keep();
+        let mut codes = Vec::new();
+
+        for _round in 0..3 {
+
+            let mut response = keep.get(&format!("{base}/health")).await?;
+
+            response.text_body(64).await?;
+            codes.push(response.code());
+
+        }
+
+        Ok(( codes, keep.idle() ))
+
+    }
+
+    fn peers ( lines: &str ) -> HashSet<String> {
+
+        lines.lines().filter(|line| line.contains("\"message\":\"request\"")).filter_map(|line| line.split("\"peer\":\"").nth(1).and_then(|rest| rest.split('"').next()).map(str::to_owned)).collect()
+
+    }
+
+    #[test]
+    fn a_kept_client_reuses_its_connection () {
+
+        let mut runs = Vec::new();
+        let ( local, capture ) = host(&mut runs);
+
+        let outcome = Runtime::block_on(repeated(&format!("http://{local}"))).ok().and_then(Result::ok);
+        let lines   = capture.contents();
+
+        assert!(finish(runs));
+        assert_eq!(outcome, Some(( vec![200, 200, 200], 1 )));
+        assert_eq!(peers(&lines).len(), 1, "{lines}");
+
+    }
+
     async fn over_h2 ( base: &str ) -> Result<( u16, String, bool )> {
 
         let client = Client::new().protocol(Protocol::Http2).timeout(Duration::from_secs(5));

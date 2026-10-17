@@ -89,7 +89,7 @@ pub mod net {
 #[cfg(feature = "http")]
 pub mod http {
 
-    pub use http::{Body, Client, Faults, Header, Ident, Limit, Message, Method, Middleware, Next, Param, Params, Pending, Posted, Request, Response, Router, Server, Settings, Socket, Timeout, Trace, Upgrade, Version};
+    pub use http::{Body, Client, Faults, Header, Ident, Keep, Limit, Message, Method, Middleware, Next, Param, Params, Pending, Posted, Request, Response, Router, Server, Settings, Socket, Timeout, Trace, Upgrade, Version};
 
 }
 
