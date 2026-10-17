@@ -18,6 +18,8 @@ impl Infra {
 
     async fn dispatch ( &self ) -> Result<()> {
 
+        if let Some(line) = self.tool.args().version("infra", env!("CARGO_PKG_VERSION")) { return self.tool.answer(&line); }
+
         let text = match self.tool.command()? {
             "doctor"  => self.doctor().await?,
             "service" => self.service().await?,
