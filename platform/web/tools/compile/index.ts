@@ -63,6 +63,15 @@ export const compileSpec = tools.build(import.meta.url, {
         const ownedBy = ( owner: string ) => spec.schema.features.filter(( name ) => facts[name]?.owner === owner);
         const site = spec.config.content.url;
         const origins = connectionOrigins(spec.config.api);
+        const gated = spec.schema.screens.some(( screen ) => screen.access !== "any");
+        const wired = spec.schema.features.some(( name ) => {
+
+            const manifest = facts[name];
+
+            return manifest !== undefined && (Object.keys(manifest.ports).length > 0 || manifest.access.length > 0 || manifest.signals.length > 0);
+
+        });
+        const runtime = gated || wired || config.realtime !== null || (config.api !== null && config.api.context.sessionCookie !== null);
 
         const exported = spec.config.settings.delivery === "static";
         const known = wellKnown(assets);
@@ -85,6 +94,7 @@ export const compileSpec = tools.build(import.meta.url, {
             },
             meta: {
                 delivery: spec.config.settings.delivery,
+                runtime,
                 secure: typeof site === "string" && site.startsWith("https://"),
                 insecure: spec.config.insecure,
                 media: unique([...origins, ...spec.config.settings.mediaOrigins]),

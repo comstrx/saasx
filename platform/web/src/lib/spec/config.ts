@@ -13,6 +13,8 @@ export const identity = selected;
 
 export const delivery: Delivery = process.env.NEXT_PUBLIC_DELIVERY === "static" ? "static" : "server";
 
+export const runtime = process.env.NEXT_PUBLIC_RUNTIME === "on";
+
 export const preferences = {
     cookies: { language: `${selected}.locale`, currency: `${selected}.currency`, theme: `${selected}.theme` },
     choices: { languages: settings.languages, currencies: settings.currencies, themes: settings.themes },

@@ -3,7 +3,6 @@ import "server-only";
 
 import type { ReactNode } from "react";
 import Shell from "@/elements/shell";
-import { SignalsProvider } from "@/hooks/use-client";
 import type { Screen as Facing, Route } from "@/lib/spec/feature";
 import type { Locale } from "@/lib/spec/languages";
 import { shellAt, text } from "@/lib/spec/server";
@@ -13,6 +12,7 @@ import { Boundary } from "./boundary";
 import { ClientOnly } from "./client-only";
 import { Gate } from "./gate";
 import { Preload } from "./mount";
+import { Signals } from "./signals";
 
 type Props = { screen: Facing; locale: Locale; route: Route };
 
@@ -37,7 +37,7 @@ export async function Screen ({ screen, locale, route }: Props) {
             retry={text({ key: "state.retry" }, locale)}
         >
 
-            <SignalsProvider><Blocks blocks={screen.blocks} facts={facts} /></SignalsProvider>
+            <Signals><Blocks blocks={screen.blocks} facts={facts} /></Signals>
 
         </Boundary>
 

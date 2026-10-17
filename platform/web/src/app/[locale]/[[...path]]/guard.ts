@@ -7,7 +7,7 @@ import { useGate } from "@/hooks/use-client";
 
 type Props = { access: readonly string[]; guest?: boolean; redirect?: string | null; children: ReactNode };
 
-export function Gate ({ access, guest = false, redirect = null, children }: Props) {
+export function Guard ({ access, guest = false, redirect = null, children }: Props) {
 
     const router = useRouter();
     const { allowed, refused } = useGate(access, guest);

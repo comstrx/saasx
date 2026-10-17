@@ -4,7 +4,7 @@ import { dirname, resolve, sep } from "node:path";
 import type { NextConfig } from "next";
 import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
 
-type Meta = { identity: string; delivery: "server" | "static"; secure: boolean; insecure: boolean; media: string[]; aliases: Record<string, string> };
+type Meta = { identity: string; delivery: "server" | "static"; runtime: boolean; secure: boolean; insecure: boolean; media: string[]; aliases: Record<string, string> };
 
 const root = import.meta.dirname;
 const engine = dirname(realpathSync(createRequire(import.meta.url).resolve("engine/package.json")));
@@ -61,7 +61,7 @@ export default function nextConfig ( phase: string ): NextConfig {
             dangerouslyAllowLocalIP: spec.insecure,
             minimumCacheTTL: 2592000,
         },
-        env: { NEXT_PUBLIC_SPEC: spec.identity, NEXT_PUBLIC_DELIVERY: spec.delivery },
+        env: { NEXT_PUBLIC_SPEC: spec.identity, NEXT_PUBLIC_DELIVERY: spec.delivery, NEXT_PUBLIC_RUNTIME: spec.runtime ? "on" : "off" },
         transpilePackages: ["engine"],
         outputFileTracingRoot: workspace,
         turbopack: { root: workspace, resolveAlias: spec.aliases },
