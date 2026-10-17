@@ -4,6 +4,7 @@ use engine::process::{Args, Boot, Env};
 use engine::thread::Runtime;
 use engine::net::Address;
 use engine::validate::Form;
+use std::io::{Write as _, stdout};
 use alloc::sync::Arc;
 
 use crate::arch::{Iam, Operator, Service, Store};
@@ -12,7 +13,16 @@ impl Iam {
 
     pub(crate) fn run () -> Result<()> {
 
-        Failure::ensure(Args::current().is_bare(), Code::Usage, "iam takes no arguments; it is configured by IAM_* variables")?;
+        let args = Args::current();
+
+        if let Some(line) = args.version("iam", env!("CARGO_PKG_VERSION")) {
+
+            stdout().lock().write_all(line.as_bytes())?;
+            return Ok(());
+
+        }
+
+        Failure::ensure(args.is_bare(), Code::Usage, "iam takes no arguments; it is configured by IAM_* variables")?;
 
         let env = Runtime::run(Boot::env())?;
         let iam = Self::configure(&env)?;
