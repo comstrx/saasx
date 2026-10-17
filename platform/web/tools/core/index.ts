@@ -24,7 +24,7 @@ export const tools = createTools<Compiled, Locale>({
     architecture: {
         foundation: /^(react(?:\/|$)|next(?:\/|$)|server-only$|engine\/)/,
         html: true,
-        structure: ["proxy.ts"],
+        structure: ["proxy.server.ts"],
         owners: {
             "lib/spec/config.ts": ["@spec/routing", "@spec/settings"],
             "lib/spec/server.ts": ["@spec/config", "@spec/schema", "@spec/messages"],
@@ -33,7 +33,7 @@ export const tools = createTools<Compiled, Locale>({
             "app/[locale]/[[...path]]/blocks.tsx": ["@spec/registry"],
             "app/[locale]/[[...path]]/mount.ts": ["@spec/mount"],
             "app/[locale]/[[...path]]/warm.ts": ["@spec/preload"],
-            "app/.well-known/[...path]/route.ts": ["@spec/well-known"],
+            "app/.well-known/[...path]/route.server.ts": ["@spec/well-known"],
         },
         layers: [
             ["lib/providers/", "types/", "../specs/"],
@@ -47,7 +47,7 @@ export const tools = createTools<Compiled, Locale>({
             ["elements/", "icons/"],
             ["components/", /^features\/[^/]+\/components\//],
             ["features/"],
-            ["app/", "proxy.ts"],
+            ["app/", "proxy.server.ts"],
         ],
     },
 });

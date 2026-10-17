@@ -1,3 +1,4 @@
+import { rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { browserConfig, connectionOrigins } from "engine/api";
 import { unique } from "engine/array";
@@ -6,7 +7,7 @@ import { mimeOf } from "engine/file";
 import { settingsResource } from "engine/spec";
 import { type Files, featureEntry, featureFacts, iconFont, registryModule } from "engine/tooling";
 import { emojis, iconAliases, iconNames } from "engine/world";
-import { root, tools } from "../core/index.ts";
+import { root, tools, writeFile } from "../core/index.ts";
 
 import { themeCss } from "./theme.ts";
 
@@ -18,6 +19,19 @@ function wellKnown ( assets: Files ): Record<string, { type: string; body: strin
     const entries = [...assets].filter(( [name] ) => name.startsWith(prefix));
 
     return Object.fromEntries(entries.map(( [name, bytes] ) => [name.slice(prefix.length), { type: mimeOf(name), body: base64(bytes) }]));
+
+}
+function entrance ( locale: string, name: string ): string {
+
+    const target = `/${locale}/`;
+
+    return `<!doctype html>\n<html lang="${locale}">\n<head>\n<meta charset="utf-8">\n<meta name="robots" content="noindex">\n<meta http-equiv="refresh" content="0; url=${target}">\n<title>${name}</title>\n</head>\n<body><a href="${target}">${name}</a></body>\n</html>\n`;
+
+}
+function door ( exported: boolean, locale: string, name: string ): void {
+
+    if ( exported ) writeFile("public/index.html", entrance(locale, name));
+    else rmSync(resolve(root, "public/index.html"), { force: true });
 
 }
 function mountModule ( folder: string, names: readonly string[] ): string {
@@ -50,11 +64,18 @@ export const compileSpec = tools.build(import.meta.url, {
         const site = spec.config.content.url;
         const origins = connectionOrigins(spec.config.api);
 
+        const exported = spec.config.settings.delivery === "static";
+        const known = wellKnown(assets);
+
+        if ( exported && Object.keys(known).length ) throw new Error(`A static delivery serves no .well-known route; found ${Object.keys(known).join(", ")}.`);
+
+        door(exported, spec.config.settings.locale.default, spec.config.content.name);
+
         return {
             data: {
                 settings: settingsResource(config.settings),
                 browser: config.api ? { ...browserConfig(config.api, config.contract), realtime: config.realtime } : null,
-                "well-known": wellKnown(assets),
+                "well-known": known,
             },
             registry: ownedBy("server"),
             modules: {

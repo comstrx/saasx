@@ -4,7 +4,6 @@ import "server-only";
 import type { ReactNode } from "react";
 import Shell from "@/elements/shell";
 import { SignalsProvider } from "@/hooks/use-client";
-import { requestLocale } from "@/lib/site/request";
 import type { Screen as Facing, Route } from "@/lib/spec/feature";
 import type { Locale } from "@/lib/spec/languages";
 import { shellAt, text } from "@/lib/spec/server";
@@ -15,21 +14,20 @@ import { ClientOnly } from "./client-only";
 import { Gate } from "./gate";
 import { Preload } from "./mount";
 
-type Props = { screen: Facing; route: Route };
+type Props = { screen: Facing; locale: Locale; route: Route };
 
 const parts = ["nav", "sidebar", "footer", "loader"] as const;
 
-async function part ( name: keyof ShellParts, screen: Facing, route: Route ): Promise<ReactNode> {
+async function part ( name: keyof ShellParts, screen: Facing, locale: Locale, route: Route ): Promise<ReactNode> {
 
-    const part = shellAt(screen, name, await requestLocale() as Locale);
+    const part = shellAt(screen, name, locale);
 
     return part ? placed(part.feature, { options: part.options, ports: {}, screen, route }) : null;
 
 }
-export async function Screen ({ screen, route }: Props) {
+export async function Screen ({ screen, locale, route }: Props) {
 
-    const [nav, sidebar, footer, loader] = await Promise.all(parts.map(( name ) => part(name, screen, route)));
-    const locale = await requestLocale() as Locale;
+    const [nav, sidebar, footer, loader] = await Promise.all(parts.map(( name ) => part(name, screen, locale, route)));
     const facts: Facts = { screen, route, loader };
     const blocks = (
 

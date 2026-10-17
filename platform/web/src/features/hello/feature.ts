@@ -1,6 +1,6 @@
 import type { ManifestInput } from "engine/spec";
 
 export default {
-    owner: "server",
+    owner: "client",
     options: { text: "" },
 } satisfies ManifestInput;

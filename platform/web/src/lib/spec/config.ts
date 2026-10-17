@@ -3,11 +3,15 @@ import settings from "@spec/settings";
 
 export { routing };
 
+export type Delivery = "server" | "static";
+
 const selected = process.env.NEXT_PUBLIC_SPEC;
 
 if ( !selected ) throw new Error("The build must select NEXT_PUBLIC_SPEC.");
 
 export const identity = selected;
+
+export const delivery: Delivery = process.env.NEXT_PUBLIC_DELIVERY === "static" ? "static" : "server";
 
 export const preferences = {
     cookies: { language: `${selected}.locale`, currency: `${selected}.currency`, theme: `${selected}.theme` },

@@ -17,6 +17,8 @@ const headers = [
 ];
 const transport = { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" };
 const lasting = [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" }];
+const served = ["server.tsx", "server.ts"];
+const pages = ["tsx", "ts"];
 
 function shared ( a: string, b: string ): string {
     const left = a.split(sep);
@@ -35,12 +37,15 @@ function compiled ( mode: "development" | "production" ): Meta {
 export default function nextConfig ( phase: string ): NextConfig {
     const development = phase === PHASE_DEVELOPMENT_SERVER;
     const spec = compiled(development ? "development" : "production");
+    const exported = spec.delivery === "static";
     const workspace = shared(root, engine);
     const devOrigins = (process.env.NEXT_DEV_ORIGINS ?? "").split(/[\s,]+/).filter(Boolean);
 
     return {
-        output: spec.delivery === "static" ? "export" : "standalone",
+        output: exported ? "export" : "standalone",
         distDir: ".next/out",
+        pageExtensions: exported ? pages : [...served, ...pages],
+        trailingSlash: exported,
         productionBrowserSourceMaps: false,
         reactCompiler: true,
         experimental: { staleTimes: { dynamic: 30, static: 180 } },
@@ -48,7 +53,7 @@ export default function nextConfig ( phase: string ): NextConfig {
         poweredByHeader: false,
         agentRules: false,
         images: {
-            unoptimized: spec.delivery === "static",
+            unoptimized: exported,
             formats: ["image/avif", "image/webp"],
             deviceSizes: [640, 828, 1080, 1440, 1920],
             imageSizes: [96, 192, 256, 384],
@@ -56,14 +61,16 @@ export default function nextConfig ( phase: string ): NextConfig {
             dangerouslyAllowLocalIP: spec.insecure,
             minimumCacheTTL: 2592000,
         },
-        env: { NEXT_PUBLIC_SPEC: spec.identity },
+        env: { NEXT_PUBLIC_SPEC: spec.identity, NEXT_PUBLIC_DELIVERY: spec.delivery },
         transpilePackages: ["engine"],
         outputFileTracingRoot: workspace,
         turbopack: { root: workspace, resolveAlias: spec.aliases },
         ...(development && devOrigins.length ? { allowedDevOrigins: devOrigins } : {}),
-        headers: async () => [
-            { source: "/(.*)", headers: spec.secure ? [...headers, transport] : headers },
-            { source: "/_generated/world/:path*", headers: lasting },
-        ],
+        ...(exported ? {} : {
+            headers: async () => [
+                { source: "/(.*)", headers: spec.secure ? [...headers, transport] : headers },
+                { source: "/_generated/world/:path*", headers: lasting },
+            ],
+        }),
     };
 }
