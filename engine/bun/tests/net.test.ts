@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { Failure } from "engine/error";
 import {
     contentSecurityPolicy,
+    forwarded,
     forwardedFor,
     hostname,
     isEndpoint,
@@ -76,6 +77,18 @@ describe("same origin", () => {
 });
 describe("edges", () => {
 
+    test("forwarded headers trust the hop the outermost proxy wrote and give up past the chain, never the one the client sent", () => {
+
+        const headers = new Headers({ "x-forwarded-host": "evil.test, shop.test, inner.test", "x-forwarded-proto": "https" });
+
+        expect(forwarded(headers, "x-forwarded-host", 2)).toBe("shop.test");
+        expect(forwarded(headers, "x-forwarded-host", 1)).toBe("inner.test");
+        expect(forwarded(headers, "x-forwarded-proto", 2)).toBeUndefined();
+        expect(forwarded(headers, "x-forwarded-proto", 1)).toBe("https");
+        expect(forwarded(headers, "x-forwarded-host", 0)).toBeUndefined();
+        expect(forwarded(new Headers(), "x-forwarded-host", 1)).toBeUndefined();
+
+    });
     test("forwarded-for counts hops from the right and gives up past the chain", () => {
 
         expect(forwardedFor("1.1.1.1, 2.2.2.2, 3.3.3.3", 1)).toBe("3.3.3.3");

@@ -16,7 +16,14 @@ export function forwardedFor ( header: string | null, proxies: number ): string 
 }
 export function forwarded ( headers: Headers, name: string, proxies: number ): string | undefined {
 
-    return (proxies > 0 && headers.get(name)?.split(",")[0]?.trim()) || undefined;
+    if ( proxies <= 0 ) return undefined;
+
+    const hops = (headers.get(name) ?? "")
+        .split(",")
+        .map(( part ) => part.trim())
+        .filter(Boolean);
+
+    return hops[hops.length - proxies];
 
 }
 export function nonce ( size = 16 ): string {
