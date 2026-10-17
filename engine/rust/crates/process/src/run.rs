@@ -1,15 +1,16 @@
+use std::process::{Output as StdOutput, Stdio};
+use tokio::process::{Child, ChildStdin, Command};
 use std::env::{split_paths, var_os};
-use error::{Failure, Result};
-use tokio::io::AsyncWriteExt as _;
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
-use tokio::process::Command;
+use tokio::io::AsyncWriteExt as _;
+use error::{Failure, Result};
+use std::io::ErrorKind;
 use core::time::Duration;
-use thread::Time;
-use std::process::Stdio;
 use std::time::Instant;
 use core::iter::once;
 use memory::Bytes;
+use thread::{Task, Time};
 
 use crate::{Faults, Output, Run};
 
@@ -114,17 +115,39 @@ impl Run {
         command.stdin(if self.input.is_some() { Stdio::piped() } else { Stdio::null() }).stdout(Stdio::piped()).stderr(Stdio::piped()).kill_on_drop(true);
 
         let mut child = command.spawn().map_err(|error| Failure::from(error).context(format!("starting {}", self.program.to_string_lossy())))?;
+        let stdin = child.stdin.take();
 
-        if let ( Some(input), Some(mut stdin) ) = ( self.input.clone(), child.stdin.take() ) { stdin.write_all(&input).await.map_err(|error| Failure::from(error).context("feeding standard input"))?; }
+        let feeding = Task::spawn(Self::feed(self.input.clone(), stdin));
+        let waited  = self.gathered(child).await;
+        let fed     = feeding.join().await;
+
+        fed??;
+
+        let out = waited?;
+
+        Ok(Output { code: out.status.code(), stdout: Bytes::from(out.stdout), stderr: Bytes::from(out.stderr), elapsed: started.elapsed() })
+
+    }
+
+    async fn feed ( input: Option<Bytes>, stdin: Option<ChildStdin> ) -> Result<()> {
+
+        let ( Some(input), Some(mut stdin) ) = ( input, stdin ) else { return Ok(()); };
+
+        match stdin.write_all(&input).await {
+            Err(error) if error.kind() != ErrorKind::BrokenPipe => Err(Failure::from(error).context("feeding standard input")),
+            _                                                   => Ok(()),
+        }
+
+    }
+
+    async fn gathered ( &self, child: Child ) -> Result<StdOutput> {
 
         let waited = match self.timeout {
             Some(after) => Time::within(after, child.wait_with_output()).await.ok_or_else(|| Faults::COMMAND_TIMEOUT.because(format!("{} did not finish in time", self.program.to_string_lossy())))?,
             None        => child.wait_with_output().await,
         };
 
-        let out = waited.map_err(|error| Failure::from(error).context(format!("waiting for {}", self.program.to_string_lossy())))?;
-
-        Ok(Output { code: out.status.code(), stdout: Bytes::from(out.stdout), stderr: Bytes::from(out.stderr), elapsed: started.elapsed() })
+        waited.map_err(|error| Failure::from(error).context(format!("waiting for {}", self.program.to_string_lossy())))
 
     }
 

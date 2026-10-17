@@ -132,6 +132,25 @@ mod tests {
 
     }
 
+    async fn echoed () -> Result<usize> {
+
+        let input = "x\n".repeat(200_000);
+        let run   = if cfg!(windows) { Run::new("findstr").arg("^") } else { Run::new("cat") };
+        let out   = run.input(input.into_bytes()).deadline(Duration::from_secs(30)).output().await?;
+
+        Ok(out.text().len())
+
+    }
+
+    #[test]
+    fn a_talkative_program_is_fed_while_it_is_heard () {
+
+        let echoed = Runtime::block_on(echoed()).ok().and_then(Result::ok);
+
+        assert!(echoed.is_some_and(|len| len >= 400_000), "{echoed:?}");
+
+    }
+
     async fn slow () -> Result<Option<&'static str>> {
 
         let run = if cfg!(windows) { Run::new("cmd").args(["/C", "ping -n 4 127.0.0.1 > NUL"]) } else { Run::new("sleep").arg("3") };
