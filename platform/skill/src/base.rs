@@ -18,6 +18,8 @@ impl Skill {
 
     async fn dispatch ( &self ) -> Result<()> {
 
+        if let Some(line) = self.tool.args().version("skill", env!("CARGO_PKG_VERSION")) { return self.tool.answer(&line); }
+
         let text = match self.tool.command()? {
             "doctor" => self.doctor().await?,
             "env"    => self.env().await?,
