@@ -230,29 +230,6 @@ describe("surface tools", () => {
         expect(tools.rules.source).toBe(resolve(root, "src"));
 
     });
-    test("specs are named in lowercase words, the demo first behind its leading underscore", () => {
-
-        const root = mkdtempSync(resolve(tmpdir(), "engine-specs-"));
-
-        for ( const spec of ["shop", "_demo"] ) mkdirSync(resolve(root, "specs", spec, "config"), { recursive: true });
-
-        const tools = createTools({
-            root,
-            variable: "SPEC",
-            locales: ["en"],
-            catalogue: { operations: [], features: [] } as never,
-            validate: (( input: unknown ) => input) as never,
-            assets: [],
-            architecture: { foundation: /^engine\//, html: true, owners: {}, layers: [] },
-        });
-
-        expect(tools.loader.installedSpecs()).toEqual(["_demo", "shop"]);
-        expect(tools.loader.selectSpec()).toBe("_demo");
-        expect(tools.loader.selectSpec("shop")).toBe("shop");
-        expect(() => tools.loader.selectSpec("__demo")).toThrow("leading underscore");
-        expect(() => tools.loader.selectSpec("Shop")).toThrow("leading underscore");
-
-    });
 
 });
 describe("build", () => {

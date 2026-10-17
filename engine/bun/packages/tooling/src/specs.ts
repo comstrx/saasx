@@ -4,7 +4,7 @@ import process from "node:process";
 import { pathToFileURL } from "node:url";
 import type { Catalogue } from "engine/spec";
 import { specName } from "engine/validate";
-import { directories, entries, failure, guard } from "./core.ts";
+import { compare, directories, entries, failure, guard } from "./core.ts";
 import { type Features, featureFacts } from "./features.ts";
 import { composeMessages, type Dictionaries } from "./messages.ts";
 
@@ -27,10 +27,44 @@ export type LoaderOptions<C, L extends string> = {
 export type Loaded<C, L extends string> = C & { messages: Dictionaries<L>; identity: string; folder: string };
 export type Loader<C, L extends string> = {
     installedSpecs: ( directory?: string ) => string[];
+    specFolder: ( identity: string, directory?: string ) => string;
     selectSpec: ( value?: string, directory?: string ) => string;
     specFromEnvironment: () => string;
     loadSpec: ( identity: string, directory?: string ) => Promise<Loaded<C, L>>;
 };
+
+type Installed = { identity: string; folder: string };
+
+const group = /^\(.+\)$/;
+
+function installed ( directory: string ): Installed[] {
+
+    return directories(directory).flatMap(( name ) => {
+
+        const folder = resolve(directory, name);
+
+        return group.test(name) ? installed(folder) : [{ identity: name, folder }];
+
+    });
+
+}
+function specMap ( directory: string ): Map<string, string> {
+
+    const map = new Map<string, string>();
+
+    for ( const { identity, folder } of installed(directory) ) {
+
+        const seen = map.get(identity);
+
+        if ( seen ) throw new Error(`Spec "${identity}" exists twice: ${seen} and ${folder}.`);
+
+        map.set(identity, folder);
+
+    }
+
+    return map;
+
+}
 
 function entry ( folder: string, part: string, directory: string ): string {
 
@@ -62,10 +96,16 @@ export function createLoader<C, L extends string> ( options: LoaderOptions<C, L>
     const specs = resolve(root, "specs");
     const features = resolve(root, "src", "features");
     const messages = resolve(root, "messages");
-    const installedSpecs = ( directory = specs ): string[] =>
-        directories(directory).filter(( folder ) =>
-            ["config", "schema"].some(( part ) => existsSync(resolve(directory, folder, part))),
-        );
+    const installedSpecs = ( directory = specs ): string[] => [...specMap(directory).keys()].sort(compare);
+    const specFolder = ( identity: string, directory = specs ): string => {
+
+        const folder = specMap(directory).get(identity);
+
+        if ( !folder ) throw new Error(`Unknown spec "${identity}" in ${directory}.`);
+
+        return folder;
+
+    };
     const selectSpec = ( value = "", directory = specs ): string => {
 
         const asked = value.trim();
@@ -108,6 +148,7 @@ export function createLoader<C, L extends string> ( options: LoaderOptions<C, L>
 
     return {
         installedSpecs,
+        specFolder,
         selectSpec,
         specFromEnvironment: () => {
 
@@ -132,7 +173,9 @@ export function createLoader<C, L extends string> ( options: LoaderOptions<C, L>
 
             try {
 
-                return await load(selectSpec(identity, directory), resolve(directory, identity), directory);
+                const chosen = selectSpec(identity, directory);
+
+                return await load(chosen, specFolder(chosen, directory), directory);
 
             } catch ( error ) {
 

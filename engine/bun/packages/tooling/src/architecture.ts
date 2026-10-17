@@ -63,6 +63,14 @@ const call = /(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(/g;
 const branching = /\b(?:if|for|while|switch|function|await|class)\b|\bnew\s+[A-Za-z_$]|=>|\?[^.?]/;
 const fetching = /(?<![\w$.])fetch\s*\(/;
 
+function specHome ( path: string ): string {
+
+    const parts = path.split("/");
+    const end = parts.findIndex(( part, index ) => index >= 2 && !/^\(.+\)$/.test(part));
+
+    return parts.slice(0, end + 1).join("/");
+
+}
 function scopeOf ( path: string, rules: Rules ): Scope {
 
     return {
@@ -94,7 +102,7 @@ function dependencyIssues ( scope: Scope, name: string, rules: Rules ): string[]
     );
     const own =
         entry !== undefined && (target.startsWith(`features/${entry}/components/`) || rules.foundation.test(name));
-    const home = path.split("/").slice(0, 3).join("/");
+    const home = specHome(path);
 
     return [
         ...(selected && !rules.owners[path]?.includes(name) ? ["Selected specs belong behind lib/spec."] : []),

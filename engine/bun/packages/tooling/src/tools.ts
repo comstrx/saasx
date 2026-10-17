@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import process from "node:process";
 import { ruleNames } from "engine/validate";
 import { inspect, layoutIssues, type Rules, readSources, type SurfaceRules } from "./architecture.ts";
@@ -86,10 +86,10 @@ export function createTools<
 
         for ( const name of loader.installedSpecs() ) {
 
-            const { schema } = await loader.loadSpec(name);
+            const { schema, folder } = await loader.loadSpec(name);
             const chosen = name === selected ? " (selected)" : "";
 
-            report(`Spec: ${name} — ${tally(schema)}${chosen}.`);
+            report(`Spec: ${relative(resolve(core.root, "specs"), folder)} — ${tally(schema)}${chosen}.`);
 
         }
 
