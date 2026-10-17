@@ -35,7 +35,7 @@ describe("spec loader", () => {
         expect(() => tools.loader.selectSpec("Shop")).toThrow("leading underscore");
 
     });
-    test("parenthesised folders group specs at any depth, a plain folder is the spec, and a name exists once", () => {
+    test("parenthesized folders group specs at any depth, a plain folder is the spec, and a name exists once", () => {
 
         const root = mkdtempSync(resolve(tmpdir(), "engine-groups-"));
         const tools = toolsAt(root);
