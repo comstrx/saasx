@@ -1,7 +1,7 @@
 import type { SiteConfig } from "../../../src/lib/spec/surface.ts";
 
 export default {
-    delivery: "server",
+    delivery: "static",
     motion: "system",
     maintenance: false,
     maintenanceMessage: "",
@@ -22,7 +22,7 @@ export default {
     mediaOrigins: ["http://127.0.0.1:8000"],
     frameOrigins: [],
     screen: {
-        render: "server",
+        render: "client",
         title: true,
         nav: true,
         footer: true,
