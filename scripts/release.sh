@@ -44,7 +44,7 @@ release-bins () {
         part="${manifest%/Cargo.toml}"
         part="${part##*/}"
 
-        cargo metadata --quiet --no-deps --locked --format-version 1 --manifest-path "${manifest}" | jq -r --arg part "${part}" "${pick}" || return
+        cargo metadata --quiet --no-deps --locked --format-version 1 --manifest-path "${manifest}" | jq -r --arg part "${part}" "${pick}" | tr -d '\r' || return
 
     done | sort
 
@@ -55,7 +55,7 @@ release-version () {
 
     for file in "${root}"/engine/rust/Cargo.toml "${root}"/platform/*/Cargo.toml "${root}"/engine/bun/package.json "${root}"/platform/*/package.json; do
 
-        if [[ "${file}" == *.json ]]; then version="$(jq -r '.version // empty' "${file}")"
+        if [[ "${file}" == *.json ]]; then version="$(jq -r '.version // empty' "${file}" | tr -d '\r')"
         else version="$(awk '/^\[/ { on = ($0 == "[workspace.package]") } on && $1 == "version" { gsub(/[" ]/, "", $3); print $3; exit }' "${file}")"
         fi
 
