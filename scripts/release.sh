@@ -19,10 +19,12 @@ release-host () {
 
     arch="$(uname -m)" && os="$(uname -s)" || return
 
+    [[ "${os}" != MINGW* && "${os}" != MSYS* && "${os}" != CYGWIN* ]] || arch="${PROCESSOR_ARCHITEW6432:-${PROCESSOR_ARCHITECTURE:-${arch}}}"
+
     case "${arch}" in
-        x86_64|amd64)  arch=x86_64 ;;
-        aarch64|arm64) arch=aarch64 ;;
-        *)             err "Not a release CPU: ${arch}"; return ;;
+        x86_64|amd64|AMD64)  arch=x86_64 ;;
+        aarch64|arm64|ARM64) arch=aarch64 ;;
+        *)                   err "Not a release CPU: ${arch}"; return ;;
     esac
 
     case "${os}" in

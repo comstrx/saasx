@@ -20,11 +20,12 @@ function Write-Step ([string] $Text) {
 
 function Get-Target {
 
-    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+    $native = [System.Environment]::GetEnvironmentVariable('PROCESSOR_ARCHITECTURE', 'Machine')
+    $arch = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } elseif ($native) { $native } else { $env:PROCESSOR_ARCHITECTURE }
 
     switch ($arch) {
-        'X64'   { return 'x86_64-pc-windows-msvc' }
-        'Arm64' { return 'aarch64-pc-windows-msvc' }
+        'AMD64' { return 'x86_64-pc-windows-msvc' }
+        'ARM64' { return 'aarch64-pc-windows-msvc' }
         default { throw "unsupported CPU: $arch" }
     }
 
