@@ -1,9 +1,9 @@
 //! Scenario: what one request to the real `hello` server costs over the loopback, and what its pieces cost alone.
 
-use criterion::{Criterion, criterion_group, criterion_main};
-use engine::error::{Code, Failure, Fault};
+use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
+use engine::error::{Code, Failure, Fault, Result};
 use std::io::{BufRead as _, BufReader};
-use engine::http::{Client, Response};
+use engine::http::{Client, Keep, Response};
 use std::process::{Child, Stdio};
 use engine::thread::Runtime;
 use engine::process::Cargo;
@@ -53,8 +53,26 @@ fn measure ( harness: &mut Criterion, base: Option<&str> ) {
     let client    = Client::new().timeout(Duration::from_secs(5));
 
     group.bench_function("greeting/loopback", |bencher| bencher.iter(|| Runtime::block_on(async { match base { Some(uri) => client.get(uri).await.map(|response| response.code()), None => Err(Failure::internal("no server")) } })));
+    group.bench_function("greeting/kept", |bencher| bencher.iter_batched(|| client.keep(), |keep| Runtime::block_on(async { match base { Some(uri) => drained(&keep, uri).await, None => Err(Failure::internal("no server")) } }), BatchSize::SmallInput));
     group.bench_function("response/failure-wire", |bencher| bencher.iter(|| Response::from(black_box(NOT_HERE).fail()).code()));
     group.finish();
+
+}
+
+async fn drained ( keep: &Keep, uri: &str ) -> Result<u16> {
+
+    let mut code = 0;
+
+    for _round in 0..8 {
+
+        let mut response = keep.get(uri).await?;
+
+        response.text_body(64).await?;
+        code = response.code();
+
+    }
+
+    Ok(code)
 
 }
 
