@@ -59,6 +59,15 @@ impl Args {
 
     }
 
+    /// `<name> <version>` and a newline when `--version` was given, for a binary to answer before anything else.
+    #[inline]
+    #[must_use]
+    pub fn version ( &self, name: &str, version: &str ) -> Option<String> {
+
+        self.has("version").then(|| format!("{name} {version}\n"))
+
+    }
+
     /// The value of `--name value` or `--name=value`, the last one when repeated.
     #[inline]
     #[must_use]

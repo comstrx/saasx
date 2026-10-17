@@ -62,6 +62,8 @@ mod tests {
         assert_eq!(Args::from_words(&["tool", "--json", "run"]).command(), None);
         assert_eq!(Args::from_words(&["tool", "--x", "1", "--x", "2"]).all("x").collect::<Vec<_>>(), ["1", "2"]);
         assert_eq!(Args::from_words(&["tool", "--x", "1", "--x", "2"]).get("x"), Some("2"));
+        assert_eq!(Args::from_words(&["tool", "--version"]).version("tool", "1.2.3").as_deref(), Some("tool 1.2.3\n"));
+        assert_eq!(Args::from_words(&["tool", "go"]).version("tool", "1.2.3"), None);
         assert_ne!(Args::current().program(), "");
 
     }
