@@ -1,6 +1,6 @@
 [package]
 name         = "infra"
-version      = "0.0.1"
+version      = "0.0.2"
 edition      = "2024"
 rust-version = "1.99"
 license      = "Apache-2.0"
@@ -10,7 +10,7 @@ publish      = false
 description  = "An infrastructure engine: define, provision, deploy, operate and roll back."
 
 [dependencies]
-engine = { path = "../../engine/rust/crates/engine", version = "0.0.1", features = ["process"] }
+engine = { path = "../../engine/rust/crates/engine", version = "0.0.2", features = ["process"] }
 
 [dev-dependencies]
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }

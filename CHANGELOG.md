@@ -2,7 +2,7 @@
 
 Every release of SaaSX, one section per tag, one block per part.
 
-## v0.0.1 — 2026-10-17
+## v0.0.2 — 2026-10-17
 
 ### engine/rust
 
