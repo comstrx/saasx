@@ -2,6 +2,26 @@
 
 Every release of SaaSX, one section per tag, one block per part.
 
+## v0.1.1 — 2026-10-17
+
+### engine/rust
+
+- `http::Router::check` names the first route pattern that is malformed or conflicts with an earlier one, and a server refuses to start on it (`bad_route`, a `Config` failure) instead of answering 404 for a route that was declared.
+
+### platform/api
+
+- `hello` replaces `iam`: the first service is the whole lifecycle of a service on the engine — booted from `HELLO_*`, audited at start and stop, served thread per core, stopped by a signal — answering `hello world` at `/` and `ok` at `/health`; its binary ships as `api-hello`.
+
+### platform/web
+
+- A spec with `settings.delivery: "static"` builds a static export: the server-only files (the proxy, the API routes, the sitemap, the `.well-known` route) carry `.server.ts` and leave that build, every locale and screen is pre-rendered, `/` enters the default locale, robots stays static and browser beacons stay quiet.
+- The hello feature is client-owned, so a `render: "client"` panel renders it after hydration while a server-delivered site still ships it in the HTML.
+- The demo spec is gone: `admin` is a static, client-rendered panel and `client` a server-rendered site.
+
+### platform/mobile
+
+- The demo spec is gone: `admin` and `client` are the two apps.
+
 ## v0.0.2 — 2026-10-17
 
 ### engine/rust
