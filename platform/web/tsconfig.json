@@ -40,7 +40,9 @@
     "**/*.tsx",
     "next.config.ts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next/out/types/**/*.ts",
+    ".next/out/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "public", ".next/cache"]
 }

@@ -40,6 +40,7 @@ export default function nextConfig ( phase: string ): NextConfig {
 
     return {
         output: spec.delivery === "static" ? "export" : "standalone",
+        distDir: ".next/out",
         productionBrowserSourceMaps: false,
         reactCompiler: true,
         experimental: { staleTimes: { dynamic: 30, static: 180 } },

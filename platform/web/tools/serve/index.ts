@@ -3,7 +3,8 @@ import { dirname, resolve } from "node:path";
 import { task } from "engine/tooling";
 
 const root = resolve(import.meta.dir, "../..");
-const standalone = resolve(root, ".next", "standalone");
+const dist = resolve(root, ".next", "out");
+const standalone = resolve(dist, "standalone");
 
 export function serverOf ( paths: Iterable<string> ): string | undefined {
 
@@ -20,7 +21,7 @@ task(import.meta.url, async () => {
     const app = dirname(resolve(standalone, server));
 
     cpSync(resolve(root, "public"), resolve(app, "public"), { recursive: true });
-    cpSync(resolve(root, ".next", "static"), resolve(app, ".next", "static"), { recursive: true });
+    cpSync(resolve(dist, "static"), resolve(app, ".next", "out", "static"), { recursive: true });
     process.env.PORT ??= "3000";
     process.env.HOSTNAME ??= "0.0.0.0";
 
