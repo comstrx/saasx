@@ -129,7 +129,7 @@ toolx-github () {
 
     done
 
-    toolx-yaml "${dir}/.github/dependabot.yml" "${path}" "${drop}" &&
+    rm -f -- "${dir}/.github/dependabot.yml" &&
     toolx-yaml "${dir}/.github/labels.yml"     "${path}" "${drop}|${path}" &&
     toolx-yaml "${dir}/.github/labeler.yml"    "${path}" "${drop}|${path}" '^[^ #]'
 
