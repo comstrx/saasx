@@ -41,8 +41,9 @@ const featureFlags: ConfigPlugin = ( config ) => withMainApplication(config, ( a
 
     return app;
 });
-const push = resolve(root, "google-services.json");
-const labProject = "aec4ba01-bed1-4811-8ab3-50f5f5b202ac";
+const push = process.env.GOOGLE_SERVICES_JSON ? resolve(root, process.env.GOOGLE_SERVICES_JSON) : undefined;
+
+if ( push && !existsSync(push) ) throw new Error(`No Firebase file at ${push}.`);
 
 export default ( { config }: ConfigContext ): ExpoConfig => {
     const { identity, insecure, icons, fonts, app } = compiled();
@@ -69,11 +70,11 @@ export default ( { config }: ConfigContext ): ExpoConfig => {
             build,
         ],
         android: {
-            package: process.env.APP_LAB === "1" && existsSync(push) ? "com.zainlak.app" : `com.${app.slug}.lab`,
-            ...(process.env.APP_LAB === "1" && existsSync(push) ? { googleServicesFile: push } : {}),
+            package: process.env.APP_PACKAGE ?? `com.${app.slug}.lab`,
+            ...(push ? { googleServicesFile: push } : {}),
             ...config.android,
         },
         experiments: { tsconfigPaths: true, reactCompiler: true },
-        extra: { ...config.extra, spec: identity, ...(process.env.APP_LAB === "1" && existsSync(push) ? { eas: { projectId: labProject } } : {}) },
+        extra: { ...config.extra, spec: identity, ...(process.env.APP_PROJECT ? { eas: { projectId: process.env.APP_PROJECT } } : {}) },
     }));
 };

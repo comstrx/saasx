@@ -1,4 +1,4 @@
-import { type SiteConfig, t } from "../../../src/lib/spec/surface.ts";
+import type { SiteConfig } from "../../../src/lib/spec/surface.ts";
 
 export default {
     app: {
@@ -43,8 +43,8 @@ export default {
         radius: "none",
     },
     shell: {
-        header: { feature: "nav", options: { brand: t("admin.brand"), login: t("shell.login"), account: t("shell.account") } },
-        tabs: { feature: "tabs", options: { label: t("nav.menu") } },
+        header: null,
+        tabs: null,
         loader: null,
     },
 } satisfies SiteConfig["settings"];

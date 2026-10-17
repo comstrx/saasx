@@ -2,9 +2,19 @@ import { $ } from "bun";
 import { parseInteger } from "engine/parse";
 import { report, task } from "engine/tooling";
 
-const app = process.env.APP_ID ?? "com.zainlak.app";
+function need ( name: string ): string {
+
+    const value = process.env[name];
+
+    if ( !value ) throw new Error(`${name} names the app under test; set it before measuring.`);
+
+    return value;
+
+}
+
+const app = need("APP_PACKAGE");
 const activity = process.env.APP_ACTIVITY ?? ".MainActivity";
-const landing = process.env.LANDING ?? "dashboard-table";
+const landing = need("LANDING");
 const maestro = process.env.MAESTRO ?? "maestro";
 const coldBudgetMs = parseInteger(process.env.COLD_MS ?? "") ?? 1500;
 const jankBudgetPercent = Number(process.env.JANK_PERCENT ?? "1");
