@@ -11,7 +11,7 @@
     "start": "bun tools/compile/index.ts development && expo start",
     "android": "bun tools/compile/index.ts development && expo run:android",
     "ios": "bun tools/compile/index.ts development && expo run:ios",
-    "export": "bun tools/compile/index.ts production && NODE_ENV=production expo export --platform android --output-dir .expo/export",
+    "export": "bun tools/export/index.ts",
     "check": "biome ci . && bun tools/core/index.ts",
     "fmt": "biome check --write .",
     "typecheck": "bun tools/compile/index.ts production && tsc --noEmit -p . && tsc --noEmit -p tsconfig.tools.json",
