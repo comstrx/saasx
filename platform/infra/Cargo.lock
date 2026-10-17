@@ -165,7 +165,7 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 
 [[package]]
 name = "engine"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-crypto",
  "engine-error",
@@ -180,7 +180,7 @@ dependencies = [
 
 [[package]]
 name = "engine-crypto"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
  "engine-memory",
@@ -189,14 +189,14 @@ dependencies = [
 
 [[package]]
 name = "engine-error"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-log",
 ]
 
 [[package]]
 name = "engine-file"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
  "engine-memory",
@@ -205,11 +205,11 @@ dependencies = [
 
 [[package]]
 name = "engine-log"
-version = "0.1.0"
+version = "0.0.1"
 
 [[package]]
 name = "engine-memory"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "bytes",
  "engine-error",
@@ -217,14 +217,14 @@ dependencies = [
 
 [[package]]
 name = "engine-parse"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
 ]
 
 [[package]]
 name = "engine-process"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
  "engine-file",
@@ -237,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "engine-rand"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
  "getrandom",
@@ -245,7 +245,7 @@ dependencies = [
 
 [[package]]
 name = "engine-thread"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
  "tokio",
@@ -253,7 +253,7 @@ dependencies = [
 
 [[package]]
 name = "engine-validate"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "engine-error",
 ]
@@ -298,7 +298,7 @@ dependencies = [
 
 [[package]]
 name = "infra"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "criterion",
  "engine",
