@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "bun tools/compile/index.ts development && next dev --hostname 0.0.0.0 --port 3000",
-    "build": "bun tools/compile/index.ts production && next build",
+    "build": "bun tools/deliver/index.ts",
     "start": "bun tools/serve/index.ts",
     "check": "biome ci . && bun tools/core/index.ts",
     "fmt": "biome check --write .",
