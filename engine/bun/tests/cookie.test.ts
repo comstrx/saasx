@@ -7,6 +7,7 @@ describe("cookie", () => {
     test("parse and serialize round-trip with options", () => {
 
         expect(parseCookies("a=1; b=x%20y")).toEqual({ a: "1", b: "x y" });
+        expect(() => serializeCookie("s", "v", { sameSite: "none" })).toThrow("without Secure");
         expect(serializeCookie("s", "v", { maxAge: 60, httpOnly: true, secure: true, sameSite: "lax" })).toBe(
             "s=v; Max-Age=60; Path=/; HttpOnly; Secure; SameSite=Lax",
         );

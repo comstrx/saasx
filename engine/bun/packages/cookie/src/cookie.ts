@@ -56,6 +56,7 @@ export function parseCookies ( header: string | null | undefined ): Record<strin
 export function serializeCookie ( key: string, value: string, options: CookieOptions = {} ): string {
 
     if ( !name.test(key) ) throw new Error(`Invalid cookie name: ${key}`);
+    if ( options.sameSite === "none" && !options.secure ) throw new Error(`Cookie ${key} asks SameSite=None without Secure; browsers drop it.`);
 
     const parts = [`${key}=${encodeURIComponent(value)}`];
 
