@@ -15,8 +15,8 @@ engine.workspace = true
 criterion.workspace = true
 
 [[bench]]
-name    = "iam"
-path    = "iam.rs"
+name    = "hello"
+path    = "hello.rs"
 harness = false
 
 [lints]

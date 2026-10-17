@@ -1,4 +1,4 @@
-//! Scenario: what one request to the real `iam` server costs over the loopback, and what its pieces cost alone.
+//! Scenario: what one request to the real `hello` server costs over the loopback, and what its pieces cost alone.
 
 use criterion::{Criterion, criterion_group, criterion_main};
 use engine::error::{Code, Failure, Fault};
@@ -12,16 +12,14 @@ use core::time::Duration;
 use std::thread::spawn;
 use std::path::Path;
 
-const BAD_CREDENTIALS: Fault = Fault::new("bad_credentials", Code::Unauthenticated, "the email or the password is wrong");
+const NOT_HERE: Fault = Fault::new("not_here", Code::NotFound, "nothing lives at this path");
 
 fn launch () -> Option<( Child, String )> {
 
-    let mut child = Cargo::command(&Path::new(env!("CARGO_MANIFEST_DIR")).join(".."), "iam", true, "IAM_")
+    let mut child = Cargo::command(&Path::new(env!("CARGO_MANIFEST_DIR")).join(".."), "hello", true, "HELLO_")
         .ok()?
-        .env("IAM_ADDR", "127.0.0.1:0")
-        .env("IAM_USER", "bench@example.com")
-        .env("IAM_PASSWORD", "a-long-bench-secret")
-        .env("IAM_LOG", "info")
+        .env("HELLO_ADDR", "127.0.0.1:0")
+        .env("HELLO_LOG", "info")
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
@@ -34,11 +32,11 @@ fn launch () -> Option<( Child, String )> {
 
     spawn(move || lines.for_each(drop));
 
-    Some(( child, format!("http://{addr}/health") ))
+    Some(( child, format!("http://{addr}/") ))
 
 }
 
-fn bench_iam ( harness: &mut Criterion ) {
+fn bench_hello ( harness: &mut Criterion ) {
 
     let server = launch();
     let base   = server.as_ref().map(|( _, base )| base.clone());
@@ -51,14 +49,14 @@ fn bench_iam ( harness: &mut Criterion ) {
 
 fn measure ( harness: &mut Criterion, base: Option<&str> ) {
 
-    let mut group = harness.benchmark_group("iam");
+    let mut group = harness.benchmark_group("hello");
     let client    = Client::new().timeout(Duration::from_secs(5));
 
-    group.bench_function("health/loopback", |bencher| bencher.iter(|| Runtime::block_on(async { match base { Some(uri) => client.get(uri).await.map(|response| response.code()), None => Err(Failure::internal("no server")) } })));
-    group.bench_function("response/failure-wire", |bencher| bencher.iter(|| Response::from(black_box(BAD_CREDENTIALS).fail()).code()));
+    group.bench_function("greeting/loopback", |bencher| bencher.iter(|| Runtime::block_on(async { match base { Some(uri) => client.get(uri).await.map(|response| response.code()), None => Err(Failure::internal("no server")) } })));
+    group.bench_function("response/failure-wire", |bencher| bencher.iter(|| Response::from(black_box(NOT_HERE).fail()).code()));
     group.finish();
 
 }
 
-criterion_group!(benches, bench_iam);
+criterion_group!(benches, bench_hello);
 criterion_main!(benches);

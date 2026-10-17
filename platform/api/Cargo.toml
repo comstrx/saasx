@@ -1,9 +1,9 @@
 [workspace]
 resolver = "3"
-members  = ["benches", "tests", "bloats", "crates/iam"]
+members  = ["benches", "tests", "bloats", "crates/hello"]
 
 [workspace.package]
-version      = "0.0.2"
+version      = "0.1.1"
 edition      = "2024"
 rust-version = "1.99"
 license      = "Apache-2.0"
@@ -12,7 +12,7 @@ readme       = "README.md"
 publish      = false
 
 [workspace.dependencies]
-engine    = { path = "../../engine/rust/crates/engine", version = "0.0.2", features = ["http", "process"] }
+engine    = { path = "../../engine/rust/crates/engine", version = "0.1.1", features = ["http", "process"] }
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
 
 [workspace.lints.rust]

@@ -12,8 +12,8 @@ description            = "Binary-size probes for cargo bloat: the floor every se
 engine.workspace = true
 
 [[bin]]
-name = "bloat-iam"
-path = "iam.rs"
+name = "bloat-hello"
+path = "hello.rs"
 
 [lints]
 workspace = true

@@ -1,18 +1,18 @@
 [package]
-name                   = "iam"
+name                   = "hello"
 publish.workspace      = true
 version.workspace      = true
 edition.workspace      = true
 rust-version.workspace = true
 license.workspace      = true
 authors.workspace      = true
-description            = "The identity service: sessions over HTTP, audited, served thread per core by the engine, stopped by a signal."
+description            = "The first service: the whole lifecycle of a service on the engine, booted, audited, served thread per core and stopped by a signal, answering hello."
 
 [dependencies]
 engine.workspace = true
 
 [[bin]]
-name = "iam"
+name = "hello"
 path = "src/main.rs"
 
 [lints]

@@ -12,8 +12,8 @@ description            = "Scenario tests of the services, consuming the foundati
 engine.workspace = true
 
 [[test]]
-name = "iam"
-path = "iam.rs"
+name = "hello"
+path = "hello.rs"
 
 [lints]
 workspace = true
