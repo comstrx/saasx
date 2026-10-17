@@ -1,6 +1,7 @@
 import * as z from "./z.ts";
 
 export const key: z.ZodString = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const specName: z.ZodString = z.string().regex(/^_?[a-z0-9]+(?:-[a-z0-9]+)*$/);
 export const word: z.ZodString = z.string().regex(/^[a-z][a-zA-Z0-9]*$/);
 export const slug: z.ZodString = z.string().regex(/^[a-z0-9][a-z0-9-]*$/);
 export const text: z.ZodString = z.string().refine(( value ) => value.trim().length > 0, "Expected non-empty text.");

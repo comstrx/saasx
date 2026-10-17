@@ -12,6 +12,7 @@ export {
     path,
     phone,
     slug,
+    specName,
     text,
     word,
 } from "./fields.ts";

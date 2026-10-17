@@ -1,5 +1,5 @@
 import { unique } from "engine/array";
-import { currency, z } from "engine/validate";
+import { currency, specName, z } from "engine/validate";
 import { nameShape, url } from "./wire.ts";
 
 export const connectionDefaults = {
@@ -24,7 +24,7 @@ const connectionShape = z.strictObject({
 });
 export const apiShape = z.strictObject({
     context: z.strictObject({
-        spec: nameShape,
+        spec: specName,
         currency,
         sessionCookie: z
             .string()

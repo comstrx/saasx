@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 import type { Catalogue } from "engine/spec";
+import { specName } from "engine/validate";
 import { directories, entries, failure, guard } from "./core.ts";
 import { type Features, featureFacts } from "./features.ts";
 import { composeMessages, type Dictionaries } from "./messages.ts";
@@ -30,8 +31,6 @@ export type Loader<C, L extends string> = {
     specFromEnvironment: () => string;
     loadSpec: ( identity: string, directory?: string ) => Promise<Loaded<C, L>>;
 };
-
-const name = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function entry ( folder: string, part: string, directory: string ): string {
 
@@ -73,7 +72,7 @@ export function createLoader<C, L extends string> ( options: LoaderOptions<C, L>
         const installed = installedSpecs(directory);
         const chosen = asked || installed[0];
 
-        if ( asked && !name.test(asked) ) throw new Error(`${variable} must use lowercase letters, numbers and hyphens.`);
+        if ( asked && !specName.safeParse(asked).success ) throw new Error(`${variable} must use lowercase letters, numbers and hyphens, after an optional leading underscore.`);
 
         if ( !chosen || !installed.includes(chosen) ) {
 
