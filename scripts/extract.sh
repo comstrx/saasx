@@ -17,6 +17,11 @@ toolx-parts () {
         "platform/mobile MobileX  mobile"
 
 }
+toolx-specs () {
+
+    printf '%s\n' admin client
+
+}
 toolx-part () {
 
     local name="${1##*/}"
@@ -97,7 +102,7 @@ toolx-changelog () {
 }
 toolx-tree () {
 
-    local root="${1:-}" tag="${2:-}" dir="${3:-}" path="${4:-}"
+    local root="${1:-}" tag="${2:-}" dir="${3:-}" path="${4:-}" spec=""
     local -a flows=( labeler labels global ) own=()
 
     read -r -a own <<< "$(toolx-part "${path##*/}" | cut -d' ' -f3-)"
@@ -109,7 +114,9 @@ toolx-tree () {
     git -C "${root}" archive "${tag}" -- "${flows[@]/%/.yml}" | tar -x -C "${dir}" &&
     git -C "${root}" archive "${tag}:${path}" -- ':(exclude)specs' | tar -x -C "${dir}" || return
 
-    if git -C "${root}" cat-file -e "${tag}:${path}/specs/_demo" 2>/dev/null; then git -C "${root}" archive "${tag}:${path}" -- specs/_demo | tar -x -C "${dir}"; fi
+    for spec in $(toolx-specs); do
+        if git -C "${root}" cat-file -e "${tag}:${path}/specs/${spec}" 2>/dev/null; then git -C "${root}" archive "${tag}:${path}" -- "specs/${spec}" | tar -x -C "${dir}" || return; fi
+    done
 
 }
 toolx-github () {
