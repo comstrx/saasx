@@ -43,7 +43,7 @@
     "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
   },
   "dependencies": {
-    "lucide-static": "1.52.0",
+    "lucide-static": "1.55.0",
     "mitata": "1.0.34",
     "subset-font": "2.9.0",
     "zod": "4.6.5",
