@@ -11,4 +11,4 @@ randomize = true
 root = "tests"
 
 [serve.static]
-plugins = ["./tools/bundle/alias.ts"]
+plugins = ["./tools/serve/plugin.ts"]

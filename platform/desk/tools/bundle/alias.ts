@@ -34,7 +34,3 @@ export function aliasPlugin ( aliases: Record<string, string> ): BunPlugin {
     };
 
 }
-
-const mode = process.env.NODE_ENV === "production" ? "production" : "development";
-
-export default aliasPlugin(compiled(mode).aliases);
