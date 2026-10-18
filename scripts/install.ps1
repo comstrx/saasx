@@ -1,9 +1,7 @@
-param (
-    [string] $Dir = (Join-Path $HOME '.local\bin'),
-    [string] $From = ''
-)
+param ( [string] $Dir = (Join-Path $HOME '.local\bin'), [string] $From = '' )
 
 Set-StrictMode -Version Latest
+
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
@@ -12,12 +10,11 @@ $tag = ''
 $id = ''
 $bin = ''
 
-function Write-Step ([string] $Text) {
+function Write-Step ( [string] $Text ) {
 
     Write-Information $Text -InformationAction Continue
 
 }
-
 function Get-Target {
 
     $native = [System.Environment]::GetEnvironmentVariable('PROCESSOR_ARCHITECTURE', 'Machine')
@@ -30,8 +27,7 @@ function Get-Target {
     }
 
 }
-
-function Get-Asset ([string] $Name, [string] $Into, [string] $Source) {
+function Get-Asset ( [string] $Name, [string] $Into, [string] $Source ) {
 
     $path = Join-Path $Into $Name
 
@@ -41,8 +37,7 @@ function Get-Asset ([string] $Name, [string] $Into, [string] $Source) {
     return $path
 
 }
-
-function Invoke-Installer ([string] $Into, [string] $Source) {
+function Invoke-Installer ( [string] $Into, [string] $Source ) {
 
     if (-not ($repo -and $tag -and $id -and $bin)) { throw 'this installer was never stamped for a release' }
 

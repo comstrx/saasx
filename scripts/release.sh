@@ -447,7 +447,7 @@ release-verify () {
     (( fail == 0 ))
 
 }
-release-main () {
+main () {
 
     case "${1:-}" in
         plan|build|seal|publish|verify) "release-${1}" "${@:2}" ;;
@@ -456,4 +456,4 @@ release-main () {
 
 }
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then release-main "$@"; fi
+main "$@"

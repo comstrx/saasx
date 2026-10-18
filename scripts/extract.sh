@@ -5,7 +5,7 @@ set -Eeuo pipefail
 # shellcheck source=scripts/base.sh
 source -- "$(dirname -- "${BASH_SOURCE[0]}")/base.sh"
 
-toolx-parts () {
+extract-parts () {
 
     printf '%s\n' \
         "engine/rust     RustX    rust daily" \
@@ -18,34 +18,34 @@ toolx-parts () {
         "platform/desk   DeskX    desk"
 
 }
-toolx-specs () {
+extract-specs () {
 
     printf '%s\n' admin client
 
 }
-toolx-part () {
+extract-part () {
 
     local name="${1##*/}"
 
-    toolx-parts | awk -v name="${name%x}" '{ n = split($1, p, "/") } p[n] == name { $1 = $1; print; found = 1; exit } END { exit !found }'
+    extract-parts | awk -v name="${name%x}" '{ n = split($1, p, "/") } p[n] == name { $1 = $1; print; found = 1; exit } END { exit !found }'
 
 }
-toolx-drop () {
+extract-drop () {
 
-    toolx-parts | awk -v path="${1:-}" '$1 != path { drop = drop (drop ? "|" : "") $1 } END { print drop }'
+    extract-parts | awk -v path="${1:-}" '$1 != path { drop = drop (drop ? "|" : "") $1 } END { print drop }'
 
 }
-toolx-git () {
+extract-git () {
 
     GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c 'credential.helper=!gh auth git-credential' "$@"
 
 }
-toolx-tokenless () {
+extract-tokenless () {
 
     env -u GH_TOKEN -u GITHUB_TOKEN "$@"
 
 }
-toolx-edit () {
+extract-edit () {
 
     local file="${1:-}" body=""
 
@@ -53,11 +53,11 @@ toolx-edit () {
     printf '%s\n' "${body}" > "${file}"
 
 }
-toolx-yaml () {
+extract-yaml () {
 
     local file="${1:-}" own="${2:-}" drop="${3:-}" item="${4:-^ *- }" keys="paths|cache-workspaces"
 
-    [[ ! -f "${file}" ]] || toolx-edit "${file}" awk -v keys="${keys}" -v own="${own}" -v drop="${drop}" -v item="${item}" '
+    [[ ! -f "${file}" ]] || extract-edit "${file}" awk -v keys="${keys}" -v own="${own}" -v drop="${drop}" -v item="${item}" '
         function ind ( s ) { match(s, /^ */); return RLENGTH }
         function cut ( i,  d ) { d = ind(L[i]); X[i] = 1; while ( ++i <= n && (L[i] !~ /[^ ]/ || ind(L[i]) > d) ) X[i] = (L[i] ~ /[^ ]/) }
         { L[++n] = $0 }
@@ -71,7 +71,7 @@ toolx-yaml () {
     '
 
 }
-toolx-rename () {
+extract-rename () {
 
     local source="${1:-}" name="${2:-}" title="${3:-}" letter="" any="" i=0
 
@@ -85,12 +85,12 @@ toolx-rename () {
     sed -e "s/${source,,}/${name}/g" -e "s/${any}/${title}/g"
 
 }
-toolx-newest () {
+extract-newest () {
 
     sed 's/-/~/' | sort -V | sed -n '$ { s/~/-/; p; }'
 
 }
-toolx-changelog () {
+extract-changelog () {
 
     local root="${1:-}" tag="${2:-}" path="${3:-}" only="${4:-}"
 
@@ -101,12 +101,12 @@ toolx-changelog () {
     '
 
 }
-toolx-tree () {
+extract-tree () {
 
     local root="${1:-}" tag="${2:-}" dir="${3:-}" path="${4:-}" spec=""
     local -a flows=( labeler labels global ) own=()
 
-    read -r -a own <<< "$(toolx-part "${path##*/}" | cut -d' ' -f3-)"
+    read -r -a own <<< "$(extract-part "${path##*/}" | cut -d' ' -f3-)"
     flows+=( "${own[@]}" )
     flows=( "${flows[@]/#/.github/workflows/}" )
 
@@ -115,27 +115,27 @@ toolx-tree () {
     git -C "${root}" archive "${tag}" -- "${flows[@]/%/.yml}" | tar -x -C "${dir}" &&
     git -C "${root}" archive "${tag}:${path}" -- ':(exclude)specs' | tar -x -C "${dir}" || return
 
-    for spec in $(toolx-specs); do
+    for spec in $(extract-specs); do
         if git -C "${root}" cat-file -e "${tag}:${path}/specs/${spec}" 2>/dev/null; then git -C "${root}" archive "${tag}:${path}" -- "specs/${spec}" | tar -x -C "${dir}" || return; fi
     done
 
 }
-toolx-github () {
+extract-github () {
 
     local dir="${1:-}" path="${2:-}" drop="${3:-}" file=""
 
     for file in "${dir}"/.github/workflows/*.yml; do
 
-        if grep -qF -- "${path}" "${file}"; then toolx-yaml "${file}" "${path}" "${drop}" || return; fi
+        if grep -qF -- "${path}" "${file}"; then extract-yaml "${file}" "${path}" "${drop}" || return; fi
 
     done
 
     rm -f -- "${dir}/.github/dependabot.yml" &&
-    toolx-yaml "${dir}/.github/labels.yml"     "${path}" "${drop}|${path}" &&
-    toolx-yaml "${dir}/.github/labeler.yml"    "${path}" "${drop}|${path}" '^[^ #]'
+    extract-yaml "${dir}/.github/labels.yml"     "${path}" "${drop}|${path}" &&
+    extract-yaml "${dir}/.github/labeler.yml"    "${path}" "${drop}|${path}" '^[^ #]'
 
 }
-toolx-deps () {
+extract-deps () {
 
     local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}" host="${5:-}"
     local owner="${repo%%/*}" rust="engine/rust" bun="engine/bun" engine="" file="" linked=0
@@ -148,7 +148,7 @@ toolx-deps () {
 
     for file in "${files[@]}"; do
 
-        toolx-edit "${file}" sed -E "s#path = \"(\.\./)+${rust}[^\"]*\"#git = \"${host}/${owner}/${rust##*/}x.git\", tag = \"${tag}\"#" \
+        extract-edit "${file}" sed -E "s#path = \"(\.\./)+${rust}[^\"]*\"#git = \"${host}/${owner}/${rust##*/}x.git\", tag = \"${tag}\"#" \
             || return
 
     done
@@ -157,41 +157,41 @@ toolx-deps () {
 
         linked=1
 
-        toolx-edit "${dir}/package.json" jq --arg name "${engine}" --arg spec "git+${host}/${owner}/${bun##*/}x.git#${tag}" \
+        extract-edit "${dir}/package.json" jq --arg name "${engine}" --arg spec "git+${host}/${owner}/${bun##*/}x.git#${tag}" \
             "(${depends} | objects | select(has(\$name)) | .[\$name]) = \$spec" || return
 
-        [[ ! -f "${dir}/bunfig.toml" ]] || toolx-edit "${dir}/bunfig.toml" sed -E "\#\"(\.\./)+${bun}[/\"]#d" || return
+        [[ ! -f "${dir}/bunfig.toml" ]] || extract-edit "${dir}/bunfig.toml" sed -E "\#\"(\.\./)+${bun}[/\"]#d" || return
 
     fi
 
     for file in "${files[@]}"; do
 
-        need-all cargo && toolx-tokenless cargo fetch --quiet --manifest-path "${file}" || return
+        need-all cargo && extract-tokenless cargo fetch --quiet --manifest-path "${file}" || return
 
     done
     if (( linked )); then
 
         (
             cache="$(mktemp -d)" && trap 'rm -rf -- "${cache}"' EXIT &&
-            cd -- "${dir}" && BUN_INSTALL_CACHE_DIR="${cache}" toolx-tokenless bun install --lockfile-only --silent
+            cd -- "${dir}" && BUN_INSTALL_CACHE_DIR="${cache}" extract-tokenless bun install --lockfile-only --silent
         ) || return
 
     fi
 
 }
-toolx-docs () {
+extract-docs () {
 
     local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}" path="${5:-}" source="${6:-}" title="" body="" prettier="" file=""
 
-    title="$(toolx-part "${repo}" | cut -d' ' -f2)"
-    body="$(toolx-changelog "${root}" "${tag}" "${path}")"
+    title="$(extract-part "${repo}" | cut -d' ' -f2)"
+    body="$(extract-changelog "${root}" "${tag}" "${path}")"
 
     if [[ -n "${body//[[:space:]]/}" ]]; then printf '# Changelog\n\nEvery release of %s.\n%s\n' "${title}" "${body}" > "${dir}/CHANGELOG.md"
     else rm -f -- "${dir}/CHANGELOG.md"
     fi || return
 
     while IFS= read -r -d '' file; do
-        toolx-edit "${file}" toolx-rename "${source}" "${repo##*/}" "${title}" || return
+        extract-edit "${file}" extract-rename "${source}" "${repo##*/}" "${title}" || return
     done < <(find "${dir}" -maxdepth 1 -type f -name '*.md' -print0; find "${dir}/.github" -type f -print0)
 
     prettier="$(git -C "${root}" show "${tag}:.github/workflows/global.yml" | awk '$1 == "PRETTIER:" { print $2 }')"
@@ -199,21 +199,21 @@ toolx-docs () {
 
     (
         cd -- "${dir}" &&
-        toolx-tokenless bun x "${prettier}" --config .prettierrc.yml --ignore-path .gitignore --no-error-on-unmatched-pattern --log-level warn \
+        extract-tokenless bun x "${prettier}" --config .prettierrc.yml --ignore-path .gitignore --no-error-on-unmatched-pattern --log-level warn \
             --write "**/*.{md,mdx,yml,yaml,json,jsonc}"
     )
 
 }
-toolx-sync () {
+extract-sync () {
 
     local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}" host="${5:-}" source="${6:-}" path="" drop="" file="" text=""
 
-    path="$(toolx-part "${repo}" | cut -d' ' -f1)" && drop="$(toolx-drop "${path}")" || return
+    path="$(extract-part "${repo}" | cut -d' ' -f1)" && drop="$(extract-drop "${path}")" || return
 
-    toolx-tree   "${root}" "${tag}" "${dir}" "${path}" &&
-    toolx-github "${dir}" "${path}" "${drop}" &&
-    toolx-deps   "${root}" "${tag}" "${repo}" "${dir}" "${host}" &&
-    toolx-docs   "${root}" "${tag}" "${repo}" "${dir}" "${path}" "${source}" || return
+    extract-tree   "${root}" "${tag}" "${dir}" "${path}" &&
+    extract-github "${dir}" "${path}" "${drop}" &&
+    extract-deps   "${root}" "${tag}" "${repo}" "${dir}" "${host}" &&
+    extract-docs   "${root}" "${tag}" "${repo}" "${dir}" "${path}" "${source}" || return
 
     ! grep -rlIE --exclude-dir=.git -- "${drop}|${path}" "${dir}" >&2 \
         || { err "Monorepo paths left in ${repo##*/}"; return; }
@@ -228,7 +228,7 @@ toolx-sync () {
     done < <(grep -rlIi --exclude-dir=.git -- "${source}" "${dir}")
 
 }
-toolx-args () {
+extract-args () {
 
     local part="" owner=""
     local semver='^v[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$' login='^[A-Za-z0-9-]+$' address='^(https|file)://[A-Za-z0-9._~/:@%+-]+$'
@@ -255,7 +255,7 @@ toolx-args () {
 
     done
 
-    { part="$(toolx-part "${repo}" | cut -d' ' -f1)" && [[ -n "${tag}" ]]; } \
+    { part="$(extract-part "${repo}" | cut -d' ' -f1)" && [[ -n "${tag}" ]]; } \
         || { err "<prepare|push|tag|release> <[owner/]repo> <tag> [--path <saasx>] [--dist <dir>] [--host <url>] [--name <title>]"; return; }
 
     host="${host:-https://github.com}"
@@ -280,15 +280,15 @@ toolx-args () {
     [[ "${owner}" =~ ${login} ]] || { err "Not a repository owner: ${owner}"; return; }
 
     repo="${owner}/${part##*/}x"
-    dir="${dist:-/tmp/toolx/extracted}"
+    dir="${dist:-/tmp/tools/extracted}"
     dir="${dir%/}/${repo##*/}"
 
 }
-toolx-checkout () {
+extract-checkout () {
 
     local repo="${1:-}" dir="${2:-}" url="${3:-}/${1:-}.git" head="" branch="" tip=""
 
-    head="$(toolx-git ls-remote --symref "${url}" HEAD)" || { err "Repository not reachable: ${repo}"; return; }
+    head="$(extract-git ls-remote --symref "${url}" HEAD)" || { err "Repository not reachable: ${repo}"; return; }
     branch="$(awk '$1 == "ref:" { sub("refs/heads/", "", $2); print $2; exit }' <<< "${head}")"
     branch="${branch:-main}"
     tip="$(awk '$1 != "ref:" && $2 == "HEAD" { print $1; exit }' <<< "${head}")"
@@ -300,7 +300,7 @@ toolx-checkout () {
 
     else
 
-        mkdir -p -- "${dir%/*}" && toolx-git clone --quiet --depth 1 "${url}" "${dir}" || return
+        mkdir -p -- "${dir%/*}" && extract-git clone --quiet --depth 1 "${url}" "${dir}" || return
 
     fi
 
@@ -308,7 +308,7 @@ toolx-checkout () {
 
     if [[ -n "${tip}" ]]; then
 
-        toolx-git -C "${dir}" fetch --quiet --depth 1 origin "+refs/heads/${branch}:refs/remotes/origin/${branch}" &&
+        extract-git -C "${dir}" fetch --quiet --depth 1 origin "+refs/heads/${branch}:refs/remotes/origin/${branch}" &&
         git -C "${dir}" reset --quiet --hard "origin/${branch}"
 
     elif git -C "${dir}" rev-parse -q --verify HEAD >/dev/null; then
@@ -318,17 +318,17 @@ toolx-checkout () {
     fi
 
 }
-toolx-prepare () {
+extract-prepare () {
 
     need-all git tar jq bun || return
 
     local repo="" tag="" root="" dist="" dir="" name="" host="" source=""
 
-    toolx-args "$@" || return
+    extract-args "$@" || return
 
     {
-        toolx-checkout "${repo}" "${dir}" "${host}" &&
-        toolx-sync "${root}" "${tag}" "${repo}" "${dir}" "${host}" "${source}" &&
+        extract-checkout "${repo}" "${dir}" "${host}" &&
+        extract-sync "${root}" "${tag}" "${repo}" "${dir}" "${host}" "${source}" &&
         git -C "${dir}" add -A
     } || { err "Failed to prepare: ${repo}"; return; }
 
@@ -340,56 +340,56 @@ toolx-prepare () {
     succ "Prepared -> ${dir}"
 
 }
-toolx-push () {
+extract-push () {
 
     local repo="" tag="" root="" dist="" dir="" name="" host="" source=""
 
-    toolx-prepare "$@" && toolx-args "$@" || return
+    extract-prepare "$@" && extract-args "$@" || return
 
-    toolx-git -C "${dir}" push --quiet origin HEAD || { err "Failed to push: ${repo}"; return; }
+    extract-git -C "${dir}" push --quiet origin HEAD || { err "Failed to push: ${repo}"; return; }
 
     succ "Pushed -> ${repo}"
 
 }
-toolx-tag () {
+extract-tag () {
 
     need-all git || return
 
     local repo="" tag="" root="" dist="" dir="" name="" host="" source="" tags="" latest=""
 
-    toolx-args "$@" || return
+    extract-args "$@" || return
 
-    tags="$(toolx-git ls-remote --tags --refs "${host}/${repo}.git")" || { err "Repository not reachable: ${repo}"; return; }
+    tags="$(extract-git ls-remote --tags --refs "${host}/${repo}.git")" || { err "Repository not reachable: ${repo}"; return; }
     tags="$(awk -F 'refs/tags/' '{ print $2 }' <<< "${tags}")"
-    latest="$(toolx-newest <<< "${tags}")"
+    latest="$(extract-newest <<< "${tags}")"
 
     if grep -qxF -- "${tag}" <<< "${tags}"; then info "Tag exists: ${repo}@${tag}"; return 0; fi
 
-    [[ -z "${latest}" || "$(printf '%s\n' "${latest}" "${tag}" | toolx-newest)" == "${tag}" ]] \
+    [[ -z "${latest}" || "$(printf '%s\n' "${latest}" "${tag}" | extract-newest)" == "${tag}" ]] \
         || { err "Refusing ${tag}: ${repo} is already at ${latest}"; return; }
 
-    toolx-prepare "$@" || return
+    extract-prepare "$@" || return
 
-    toolx-git -C "${dir}" push --quiet --atomic origin HEAD "HEAD:refs/tags/${tag}" \
+    extract-git -C "${dir}" push --quiet --atomic origin HEAD "HEAD:refs/tags/${tag}" \
         || { err "Failed to tag: ${repo}@${tag}"; return; }
 
     succ "Tagged -> ${repo}@${tag}"
 
 }
-toolx-release () {
+extract-release () {
 
     need-all gh || return
 
     local repo="" tag="" root="" dist="" dir="" name="" host="" source="" title="" notes=""
 
-    toolx-tag "$@" && toolx-args "$@" || return
+    extract-tag "$@" && extract-args "$@" || return
 
     if gh release view "${tag}" --repo "${repo}" >/dev/null 2>&1; then info "Release exists: ${repo}@${tag}"; return 0; fi
 
-    title="$(toolx-part "${repo}" | cut -d' ' -f2)"
-    notes="$(toolx-changelog "${root}" "${tag}" "$(toolx-part "${repo}" | cut -d' ' -f1)" "${tag}" | toolx-rename "${source}" "${repo##*/}" "${title}")"
+    title="$(extract-part "${repo}" | cut -d' ' -f2)"
+    notes="$(extract-changelog "${root}" "${tag}" "$(extract-part "${repo}" | cut -d' ' -f1)" "${tag}" | extract-rename "${source}" "${repo##*/}" "${title}")"
     notes="${notes#$'\n'}"
-    name="$(toolx-rename "${source}" "${repo##*/}" "${title}" <<< "${name:-${tag}}")"
+    name="$(extract-rename "${source}" "${repo##*/}" "${title}" <<< "${name:-${tag}}")"
 
     gh release create "${tag}" \
         --repo "${repo}" \
@@ -404,10 +404,10 @@ toolx-release () {
 main () {
 
     case "${1:-}" in
-        prepare|push|tag|release) "toolx-${1}" "${@:2}" ;;
+        prepare|push|tag|release) "extract-${1}" "${@:2}" ;;
         *)                        err "prepare | push | tag | release <[owner/]repo> <tag>" ;;
     esac
 
 }
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi
+main "$@"
