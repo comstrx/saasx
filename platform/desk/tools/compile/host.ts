@@ -24,13 +24,20 @@ export type HostInput = {
 
 export const granted = ["core:default"] as const;
 export const label = "main";
+export const program = "desk";
+
+export function binary ( identity: string ): string {
+
+    return `${program}-${identity}`;
+
+}
 
 export function hostConfig ({ identity, name, app, window, permissions }: HostInput ): Host {
 
     const allowed = [...new Set([...granted, ...permissions])].sort();
 
     return {
-        productName: identity,
+        productName: binary(identity),
         identifier: app.identifier,
         app: {
             windows: [{ label, title: name, ...window }],

@@ -39,7 +39,7 @@ Every release of SaaSX, one section per tag, one block per part.
 
 ### platform/desk
 
-- The desktop engine: a Tauri host on the Rust engine answering typed calls, a React page on the Bun engine, specs that declare identity, window and permissions, and one binary per spec with the page embedded — `desk-<spec>` for every release target.
+- The desktop engine: a Tauri host on the Rust engine answering typed calls, a React page on the Bun engine, specs that declare identity, window and permissions, and one binary per spec with the page embedded — `desk-<spec>`, built, packed and installed under that name for every release target and answering `--version` with it.
 
 ## v0.1.1 — 2026-10-17
 

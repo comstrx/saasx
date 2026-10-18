@@ -10,7 +10,7 @@ describe("host config", () => {
 
         const host = hostConfig(input);
 
-        expect(host.productName).toBe("client");
+        expect(host.productName).toBe("desk-client");
         expect(host.identifier).toBe("app.desk.client");
         expect(host.app.windows).toEqual([{ label: "main", title: "App", ...window }]);
 

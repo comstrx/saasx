@@ -54,7 +54,7 @@ release-bins () {
         if [[ -f "${root}/platform/desk/src-tauri/Cargo.toml" ]]; then
             for spec in "${root}"/platform/desk/specs/*/; do
                 spec="${spec%/}"; spec="${spec##*/}"
-                [[ "${spec}" == \(* ]] || printf 'desk desk-%s desk\n' "${spec}"
+                [[ "${spec}" == \(* ]] || printf 'desk desk-%s desk-%s\n' "${spec}" "${spec}"
             done
         fi
     } | sort
@@ -71,7 +71,7 @@ release-binary () {
 
     local root="${1:-}" part="${2:-}" id="${3:-}" bin="${4:-}" target="${5:-}" exe="${6:-}"
 
-    if [[ "${part}" == desk ]]; then printf '%s\n' "${root}/platform/desk/dist/apps/${id#desk-}${exe}"
+    if [[ "${part}" == desk ]]; then printf '%s\n' "${root}/platform/desk/dist/apps/${bin}${exe}"
     else printf '%s\n' "${root}/platform/${part}/target/${target}/release/${bin}${exe}"
     fi
 
