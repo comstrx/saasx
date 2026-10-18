@@ -56,7 +56,7 @@ fetch () {
 }
 main () {
 
-    dir="${XDG_BIN_HOME:-${HOME}/.local/bin}"
+    dir=''
     from=''
 
     while [ "$#" -gt 0 ]; do
@@ -72,19 +72,26 @@ main () {
 
     done
 
-    if [ -z "${repo}" ] || [ -z "${tag}" ] || [ -z "${id}" ] || [ -z "${bin}" ]; then fail "this installer was never stamped for a release"; fi
+    if [ -z "${repo}" ] || [ -z "${tag}" ] || [ -z "${id}" ]; then fail "this installer was never stamped for a release"; fi
     [ -n "${from}" ] || command -v curl >/dev/null 2>&1 || fail "curl is required"
     command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1 || fail "sha256sum or shasum is required"
 
-    triple="$(target)"
-    base="${id}-${tag#v}-${triple}"
+    if [ -n "${bin}" ]; then
+        triple="$(target)"
+        base="${id}-${tag#v}-${triple}"
+        dir="${dir:-${XDG_BIN_HOME:-${HOME}/.local/bin}}"
+        say "installing ${id} ${tag} for ${triple}"
+    else
+        base="${id}-${tag#v}"
+        dir="${dir:-${PWD}/${id}}"
+        say "unpacking ${id} ${tag}"
+    fi
+
     asset="${base}.tar.gz"
     tmp="$(mktemp -d)"
 
     trap 'rm -rf -- "${tmp}"' EXIT
     trap 'exit 130' INT TERM
-
-    say "installing ${id} ${tag} for ${triple}"
 
     fetch "${asset}"
     fetch "${asset}.sha256"
@@ -94,6 +101,20 @@ main () {
     [ "${sum:-}" = "$(digest "${tmp}/${asset}")" ] || fail "checksum mismatch for ${asset}"
 
     tar -xzf "${tmp}/${asset}" -C "${tmp}"
+
+    if [ -z "${bin}" ]; then
+
+        [ -d "${tmp}/${base}" ] || fail "${base} is missing from ${asset}"
+
+        mkdir -p -- "${dir}"
+        [ -z "$(ls -A -- "${dir}")" ] || fail "${dir} is not empty"
+        cp -R -- "${tmp}/${base}/." "${dir}/"
+
+        say "unpacked ${dir}"
+        return 0
+
+    fi
+
     [ -f "${tmp}/${base}/${bin}" ] || fail "${bin} is missing from ${asset}"
 
     mkdir -p -- "${dir}"

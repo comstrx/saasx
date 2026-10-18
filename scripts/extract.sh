@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 # shellcheck source=scripts/base.sh
 source -- "$(dirname -- "${BASH_SOURCE[0]}")/base.sh"
+# shellcheck source=scripts/assets.sh
+source -- "$(dirname -- "${BASH_SOURCE[0]}")/assets.sh"
 
 extract-parts () {
 
@@ -95,7 +97,7 @@ extract-changelog () {
     local root="${1:-}" tag="${2:-}" path="${3:-}" only="${4:-}"
 
     { git -C "${root}" show "${tag}:CHANGELOG.md" 2>/dev/null || true; } | awk -v part="### ${path}" -v only="${only}" '
-        /^## /  { head = $0; hit = (only == "" || $2 == only); next }
+        /^## /  { head = $0; hit = (only == "" || $2 == only); on = 0; next }
         /^### / { on = (hit && $0 == part); if ( on && only == "" ) print "\n" head; next }
         on
     '
@@ -191,6 +193,7 @@ extract-docs () {
     fi || return
 
     while IFS= read -r -d '' file; do
+        extract-edit "${file}" sed -e "s#${source,,}/${path}#${repo##*/}#g" || return
         extract-edit "${file}" extract-rename "${source}" "${repo##*/}" "${title}" || return
     done < <(find "${dir}" -maxdepth 1 -type f -name '*.md' -print0; find "${dir}/.github" -type f -print0)
 
@@ -230,7 +233,7 @@ extract-sync () {
 }
 extract-args () {
 
-    local part="" owner=""
+    local part="" owner="" origin=""
     local semver='^v[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$' login='^[A-Za-z0-9-]+$' address='^(https|file)://[A-Za-z0-9._~/:@%+-]+$'
 
     while (( $# )); do
@@ -260,6 +263,7 @@ extract-args () {
 
     host="${host:-https://github.com}"
     source="SaaSX"
+    source_repo=""
 
     [[ "${tag}" =~ ${semver} ]]   || { err "Not a release tag (vX.Y.Z): ${tag}"; return; }
     [[ "${host}" =~ ${address} ]] || { err "Not a repository host: ${host}"; return; }
@@ -269,19 +273,21 @@ extract-args () {
     git -C "${root}" rev-parse -q --verify "refs/tags/${tag}^{commit}" >/dev/null \
         || { err "Tag not found in ${root}: ${tag}"; return; }
 
+    origin="$(git -C "${root}" remote get-url origin)" || return
+    origin="${origin%.git}"
+    source_repo="${origin#*github.com[:/]}"
     owner="${repo%/*}"
 
-    if [[ "${repo}" != */* ]]; then
-        owner="$(git -C "${root}" remote get-url origin)" || return
-        owner="${owner%/*}"
-        owner="${owner##*[/:]}"
-    fi
+    [[ "${repo}" == */* ]] || owner="${source_repo%/*}"
 
     [[ "${owner}" =~ ${login} ]] || { err "Not a repository owner: ${owner}"; return; }
+
+    if has cygpath; then root="$(cygpath -u "${root}")" || return; fi
 
     repo="${owner}/${part##*/}x"
     dir="${dist:-/tmp/tools/extracted}"
     dir="${dir%/}/${repo##*/}"
+    out="${dir%/*}/assets/${repo##*/}"
 
 }
 extract-checkout () {
@@ -322,7 +328,7 @@ extract-prepare () {
 
     need-all git tar jq bun || return
 
-    local repo="" tag="" root="" dist="" dir="" name="" host="" source=""
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out=""
 
     extract-args "$@" || return
 
@@ -342,7 +348,7 @@ extract-prepare () {
 }
 extract-push () {
 
-    local repo="" tag="" root="" dist="" dir="" name="" host="" source=""
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out=""
 
     extract-prepare "$@" && extract-args "$@" || return
 
@@ -355,7 +361,7 @@ extract-tag () {
 
     need-all git || return
 
-    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" tags="" latest=""
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out="" tags="" latest=""
 
     extract-args "$@" || return
 
@@ -376,13 +382,112 @@ extract-tag () {
     succ "Tagged -> ${repo}@${tag}"
 
 }
-extract-release () {
+extract-pack () {
 
-    need-all gh || return
+    local root="${1:-}" tag="${2:-}" repo="${3:-}" dir="${4:-}" out="${5:-}" source_repo="${6:-}" path="" part="" list="" id="" bin="" triple="" file="" version=""
 
-    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" title="" notes=""
+    version="${tag#v}"
 
-    extract-tag "$@" && extract-args "$@" || return
+    path="$(extract-part "${repo}" | cut -d' ' -f1)" && part="${path##*/}" || return
+    list="$(assets-bins "${root}" | awk -v part="${part}" '$1 == part { print $2, $3 }')" || return
+
+    rm -rf -- "${out}" && mkdir -p -- "${out}" || return
+
+    if [[ -n "${list}" ]]; then
+
+        while read -r id bin; do
+
+            for triple in $(assets-targets); do
+
+                file="${id}-${version}-$(assets-triple "${id}" "${triple}").$(assets-ext "${triple}")"
+
+                gh release download "${tag}" --repo "${source_repo}" --pattern "${file}" --pattern "${file}.sha256" --dir "${out}" \
+                    || { err "Cannot download ${file} from ${source_repo}@${tag}"; return; }
+
+                assets-check "${out}/${file}" || return
+
+            done
+
+            assets-installers "${root}/scripts" "${out}" "${repo}" "${tag}" "${id}" "${bin}" || return
+
+        done <<< "${list}"
+
+    else
+
+        id="${repo##*/}"
+
+        git -C "${dir}" archive --format=tar.gz --prefix="${id}-${version}/" --output="${out}/${id}-${version}.tar.gz" HEAD &&
+        git -C "${dir}" archive --format=zip    --prefix="${id}-${version}/" --output="${out}/${id}-${version}.zip"    HEAD &&
+        assets-sum "${out}/${id}-${version}.tar.gz" &&
+        assets-sum "${out}/${id}-${version}.zip" &&
+        assets-installers "${root}/scripts" "${out}" "${repo}" "${tag}" "${id}" "" || return
+
+    fi
+
+    syft scan "dir:${dir}" --config "${dir}/.syft.yml" --source-name "${repo##*/}" --source-version "${tag}" --output "cyclonedx-json=${out}/sbom.cdx.json" \
+        && assets-sum "${out}/sbom.cdx.json" \
+        && assets-sums "${out}" || return
+
+    succ "Packed -> ${out}"
+
+}
+extract-assets () {
+
+    need-all git gh jq cargo syft || return
+
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out=""
+
+    extract-prepare "$@" && extract-args "$@" || return
+
+    extract-pack "${root}" "${tag}" "${repo}" "${dir}" "${out}" "${source_repo}"
+
+}
+extract-verify () {
+
+    need-all git gh jq cargo curl || return
+
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out="" path="" list="" id="" bin="" tmp="" line="" want="" file="" fail=0
+    local -a files=()
+
+    extract-args "$@" || return
+
+    path="$(extract-part "${repo}" | cut -d' ' -f1)" || return
+    list="$(assets-bins "${root}" | awk -v part="${path##*/}" '$1 == part { print $2, $3 }')" && host="$(assets-host)" || return
+
+    [[ -n "${list}" ]] || list="${repo##*/} "
+
+    while read -r id bin; do
+
+        tmp="$(mktemp -d)" || return
+
+        line="$(assets-install "https://github.com/${repo}/releases/download/${tag}/${id}-installer" "${bin}" "${tmp}/bin")" || line=""
+        want="unpacked"
+        [[ -z "${bin}" ]] || want="${bin} ${tag#v}"
+
+        if [[ "${line}" == "${want}" ]]; then succ "Installs -> ${repo##*/} ${id}"; else err "The public ${id} installer gave: ${line:-nothing}" || fail=1; fi
+
+        if [[ -n "${bin}" ]]; then files=( "${id}-${tag#v}-$(assets-triple "${id}" "${host}").$(assets-ext "${host}")" ); else files=( "${id}-${tag#v}.tar.gz" "${id}-${tag#v}.zip" ); fi
+        files+=( "${id}-installer.sh" "${id}-installer.ps1" sbom.cdx.json SHA256SUMS )
+
+        for file in "${files[@]}"; do
+
+            if gh release download "${tag}" --repo "${repo}" --pattern "${file}" --dir "${tmp}" && assets-attested "${source_repo}" "${tag}" "${tmp}/${file}"
+            then succ "Attested -> ${repo##*/} ${file}"
+            else err "No provenance for ${repo##*/} ${file}" || fail=1
+            fi
+
+        done
+
+        rm -rf -- "${tmp}"
+
+    done <<< "${list}"
+
+    (( fail == 0 ))
+
+}
+extract-publish () {
+
+    local root="${1:-}" tag="${2:-}" repo="${3:-}" host="${4:-}" source="${5:-}" name="${6:-}" title="" notes=""
 
     if gh release view "${tag}" --repo "${repo}" >/dev/null 2>&1; then info "Release exists: ${repo}@${tag}"; return 0; fi
 
@@ -401,11 +506,27 @@ extract-release () {
     succ "Released -> ${host}/${repo}/releases/tag/${tag}"
 
 }
+extract-release () {
+
+    need-all gh syft cargo || return
+
+    local repo="" tag="" root="" dist="" dir="" name="" host="" source="" source_repo="" out=""
+
+    extract-tag "$@" && extract-args "$@" || return
+
+    extract-publish "${root}" "${tag}" "${repo}" "${host}" "${source}" "${name}" &&
+    extract-pack "${root}" "${tag}" "${repo}" "${dir}" "${out}" "${source_repo}" || return
+
+    gh release upload "${tag}" --repo "${repo}" --clobber "${out}"/* >/dev/null || { err "Failed to upload the assets of ${repo}@${tag}"; return; }
+
+    succ "Uploaded -> $(find "${out}" -type f | wc -l | tr -d ' ') assets to ${repo}@${tag}"
+
+}
 main () {
 
     case "${1:-}" in
-        prepare|push|tag|release) "extract-${1}" "${@:2}" ;;
-        *)                        err "prepare | push | tag | release <[owner/]repo> <tag>" ;;
+        prepare|push|tag|assets|release|verify) "extract-${1}" "${@:2}" ;;
+        *)                                      err "prepare | push | tag | assets | release | verify <[owner/]repo> <tag>" ;;
     esac
 
 }

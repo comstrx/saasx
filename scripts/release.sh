@@ -4,69 +4,9 @@ set -Eeuo pipefail
 
 # shellcheck source=scripts/base.sh
 source -- "$(dirname -- "${BASH_SOURCE[0]}")/base.sh"
+# shellcheck source=scripts/assets.sh
+source -- "$(dirname -- "${BASH_SOURCE[0]}")/assets.sh"
 
-release-targets () {
-
-    printf '%s\n' \
-        x86_64-unknown-linux-musl  aarch64-unknown-linux-musl \
-        x86_64-apple-darwin        aarch64-apple-darwin \
-        x86_64-pc-windows-msvc     aarch64-pc-windows-msvc
-
-}
-release-host () {
-
-    local arch="" os=""
-
-    arch="$(uname -m)" && os="$(uname -s)" || return
-
-    [[ "${os}" != MINGW* && "${os}" != MSYS* && "${os}" != CYGWIN* ]] || arch="${PROCESSOR_ARCHITEW6432:-${PROCESSOR_ARCHITECTURE:-${arch}}}"
-
-    case "${arch}" in
-        x86_64|amd64|AMD64)  arch=x86_64 ;;
-        aarch64|arm64|ARM64) arch=aarch64 ;;
-        *)                   err "Not a release CPU: ${arch}"; return ;;
-    esac
-
-    case "${os}" in
-        Linux)                printf '%s-unknown-linux-musl\n' "${arch}" ;;
-        Darwin)               printf '%s-apple-darwin\n' "${arch}" ;;
-        MINGW*|MSYS*|CYGWIN*) printf '%s-pc-windows-msvc\n' "${arch}" ;;
-        *)                    err "Not a release OS: ${os}"; return ;;
-    esac
-
-}
-release-bins () {
-
-    local root="${1:-}" manifest="" part="" spec=""
-    local pick='.packages[] | .name as $name | .targets[] | select(.name == $name and any(.kind[]; . == "bin"))
-        | "\($part) \(if .name == $part then .name else "\($part)-\(.name)" end) \(.name)"'
-
-    {
-        for manifest in "${root}"/platform/*/Cargo.toml; do
-
-            part="${manifest%/Cargo.toml}"
-            part="${part##*/}"
-
-            cargo metadata --quiet --no-deps --locked --format-version 1 --manifest-path "${manifest}" | jq -r --arg part "${part}" "${pick}" | tr -d '\r' || return
-
-        done
-
-        if [[ -f "${root}/platform/desk/src-tauri/Cargo.toml" ]]; then
-            for spec in "${root}"/platform/desk/specs/*/; do
-                spec="${spec%/}"; spec="${spec##*/}"
-                [[ "${spec}" == \(* ]] || printf 'desk desk-%s desk-%s\n' "${spec}" "${spec}"
-            done
-        fi
-    } | sort
-
-}
-release-triple () {
-
-    local id="${1:-}" target="${2:-}"
-
-    if [[ "${id}" == desk-* ]]; then printf '%s\n' "${target/-unknown-linux-musl/-unknown-linux-gnu}"; else printf '%s\n' "${target}"; fi
-
-}
 release-binary () {
 
     local root="${1:-}" part="${2:-}" id="${3:-}" bin="${4:-}" target="${5:-}" exe="${6:-}"
@@ -115,48 +55,6 @@ release-version () {
     printf '%s\n' "${first}"
 
 }
-release-digest () {
-
-    if has sha256sum; then sha256sum -- "${1:-}"; else shasum -a 256 -- "${1:-}"; fi | cut -d ' ' -f 1
-
-}
-release-sum () {
-
-    local file="${1:-}" sum=""
-
-    sum="$(release-digest "${file}")" && printf '%s  %s\n' "${sum}" "${file##*/}" > "${file}.sha256"
-
-}
-release-check () {
-
-    local file="${1:-}"
-
-    [[ -f "${file}" && -f "${file}.sha256" ]] || { err "Missing: ${file##*/}"; return; }
-    [[ "$(< "${file}.sha256")" == "$(release-digest "${file}")  ${file##*/}" ]] || { err "Checksum mismatch: ${file##*/}"; return; }
-
-}
-release-stamp () {
-
-    local source="${1:-}" file="${2:-}" repo="${3:-}" tag="${4:-}" id="${5:-}" bin="${6:-}" name="" linux="musl"
-
-    [[ "${id}" =~ ^[a-z0-9][a-z0-9-]*$ && "${bin}" =~ ^[a-z0-9][a-z0-9-]*$ ]] || { err "Not a binary name: ${id} ${bin}"; return; }
-    [[ "${id}" != desk-* ]] || linux="gnu"
-
-    sed -E \
-        -e "s#^(\\\$?)repo( = |=)''\$#\\1repo\\2'${repo}'#" \
-        -e "s#^(\\\$?)tag( = |=)''\$#\\1tag\\2'${tag}'#" \
-        -e "s#^(\\\$?)id( = |=)''\$#\\1id\\2'${id}'#" \
-        -e "s#^(\\\$?)bin( = |=)''\$#\\1bin\\2'${bin}'#" \
-        -e "s#^linux=''\$#linux='${linux}'#" \
-        "${source}" > "${file}" || return
-
-    for name in repo tag id bin; do
-        grep -qE "^\\\$?${name}( = |=)'[^']+'\$" "${file}" || { err "Cannot stamp ${name} into ${file##*/}"; return; }
-    done
-
-    [[ "${file}" != *.sh ]] || grep -qE "^linux='(musl|gnu)'\$" "${file}" || { err "Cannot stamp linux into ${file##*/}"; return; }
-
-}
 release-zip () {
 
     local dir="${1:-}" base="${2:-}" file="${3:-}" tar=""
@@ -170,24 +68,12 @@ release-zip () {
 }
 release-try () {
 
-    local root="${1:-}" out="${2:-}" repo="${3:-}" tag="${4:-}" id="${5:-}" bin="${6:-}" target="${7:-}" tmp="" line=""
+    local root="${1:-}" out="${2:-}" repo="${3:-}" tag="${4:-}" id="${5:-}" bin="${6:-}" tmp="" line=""
 
     tmp="$(mktemp -d)" || return
 
-    if [[ "${target}" == *-windows-* ]]; then
-
-        release-stamp "${root}/scripts/install.ps1" "${tmp}/installer.ps1" "${repo}" "${tag}" "${id}" "${bin}" &&
-        powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$(cygpath -w "${tmp}/installer.ps1")" \
-            -From "$(cygpath -w "${out}")" -Dir "$(cygpath -w "${tmp}/bin")" &&
-        line="$("${tmp}/bin/${bin}.exe" --version)"
-
-    else
-
-        release-stamp "${root}/scripts/install.sh" "${tmp}/installer.sh" "${repo}" "${tag}" "${id}" "${bin}" &&
-        sh "${tmp}/installer.sh" --from "${out}" --dir "${tmp}/bin" &&
-        line="$("${tmp}/bin/${bin}" --version)"
-
-    fi
+    assets-installers "${root}/scripts" "${tmp}" "${repo}" "${tag}" "${id}" "${bin}" &&
+    line="$(assets-install "${tmp}/${id}-installer" "${bin}" "${tmp}/bin" "${out}")" || line=""
 
     rm -rf -- "${tmp}"
 
@@ -227,7 +113,7 @@ release-args () {
 
     [[ -z "${tag}" || "${tag}" =~ ${semver} ]]                  || { err "Not a release tag (vX.Y.Z): ${tag}"; return; }
     [[ "${repo}" =~ ${slug} ]]                                  || { err "Not a repository: ${repo}"; return; }
-    [[ -z "${target}" ]] || release-targets | grep -xF -- "${target}" >/dev/null || { err "Not a release target: ${target}"; return; }
+    [[ -z "${target}" ]] || assets-targets | grep -xF -- "${target}" >/dev/null || { err "Not a release target: ${target}"; return; }
 
 }
 release-plan () {
@@ -264,7 +150,7 @@ release-build () {
 
     [[ -n "${tag}" && -n "${target}" ]] || { err "build --target <triple> --tag <vX.Y.Z> [--repo <owner/name>] [--out <dir>]"; return; }
 
-    list="$(release-bins "${root}")" || return
+    list="$(assets-bins "${root}")" || return
 
     [[ -n "${list}" ]] || { err "No binary to release"; return; }
 
@@ -274,7 +160,7 @@ release-build () {
 
     while read -r part; do
 
-        if [[ "${part}" == desk ]]; then release-desk "${root}" "$(release-triple desk- "${target}")" || return; continue; fi
+        if [[ "${part}" == desk ]]; then release-desk "${root}" "$(assets-triple desk- "${target}")" || return; continue; fi
 
         read -r -a bins <<< "$(awk -v part="${part}" '$1 == part { printf "--bin %s ", $3 }' <<< "${list}")"
 
@@ -288,7 +174,7 @@ release-build () {
 
     while read -r part id bin; do
 
-        base="${id}-${tag#v}-$(release-triple "${id}" "${target}")"
+        base="${id}-${tag#v}-$(assets-triple "${id}" "${target}")"
         binary="$(release-binary "${root}" "${part}" "${id}" "${bin}" "${target}" "${exe}")"
         line="$("${binary}" --version)" || line=""
 
@@ -297,8 +183,8 @@ release-build () {
         stage="$(mktemp -d)" && mkdir -- "${stage}/${base}" &&
         cp -- "${binary}" "${root}/LICENSE" "${root}/platform/${part}/README.md" "${stage}/${base}/" || return
 
-        if [[ -n "${exe}" ]]; then release-zip "${stage}" "${base}" "${out}/${base}.zip" && release-sum "${out}/${base}.zip"
-        else COPYFILE_DISABLE=1 tar -czf "${out}/${base}.tar.gz" -C "${stage}" "${base}" && release-sum "${out}/${base}.tar.gz"
+        if [[ -n "${exe}" ]]; then release-zip "${stage}" "${base}" "${out}/${base}.zip" && assets-sum "${out}/${base}.zip"
+        else COPYFILE_DISABLE=1 tar -czf "${out}/${base}.tar.gz" -C "${stage}" "${base}" && assets-sum "${out}/${base}.tar.gz"
         fi || { rm -rf -- "${stage}"; err "Failed to pack ${base}"; return; }
 
         rm -rf -- "${stage}"
@@ -314,32 +200,27 @@ release-seal () {
 
     need-all git cargo jq || return
 
-    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" triple="" ext="" file=""
+    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" triple="" file=""
     local -a expected=()
 
     release-args "$@" || return
 
     [[ -n "${tag}" ]] || { err "seal --tag <vX.Y.Z> [--repo <owner/name>] [--out <dir>]"; return; }
 
-    list="$(release-bins "${root}")" || return
+    list="$(assets-bins "${root}")" || return
 
     while read -r part id bin; do
 
-        for triple in $(release-targets); do
+        for triple in $(assets-targets); do
 
-            ext="tar.gz"
-            [[ "${triple}" != *-windows-* ]] || ext="zip"
-            triple="$(release-triple "${id}" "${triple}")"
+            file="${id}-${tag#v}-$(assets-triple "${id}" "${triple}").$(assets-ext "${triple}")"
 
-            release-check "${out}/${id}-${tag#v}-${triple}.${ext}" || return
-            expected+=( "${id}-${tag#v}-${triple}.${ext}" )
+            assets-check "${out}/${file}" || return
+            expected+=( "${file}" )
 
         done
 
-        release-stamp "${root}/scripts/install.sh"  "${out}/${id}-installer.sh"  "${repo}" "${tag}" "${id}" "${bin}" &&
-        release-stamp "${root}/scripts/install.ps1" "${out}/${id}-installer.ps1" "${repo}" "${tag}" "${id}" "${bin}" &&
-        release-sum "${out}/${id}-installer.sh" &&
-        release-sum "${out}/${id}-installer.ps1" || return
+        assets-installers "${root}/scripts" "${out}" "${repo}" "${tag}" "${id}" "${bin}" || return
 
         expected+=( "${id}-installer.sh" "${id}-installer.ps1" )
 
@@ -347,7 +228,7 @@ release-seal () {
 
     [[ -f "${out}/sbom.cdx.json" ]] || { err "Missing: sbom.cdx.json"; return; }
 
-    release-sum "${out}/sbom.cdx.json" && expected+=( sbom.cdx.json ) || return
+    assets-sum "${out}/sbom.cdx.json" && expected+=( sbom.cdx.json ) || return
 
     for file in "${out}"/*; do
 
@@ -358,7 +239,7 @@ release-seal () {
 
     done
 
-    ( cd -- "${out}" && cat -- "${expected[@]/%/.sha256}" | sort -k 2 > SHA256SUMS ) || return
+    assets-sums "${out}" || return
 
     succ "Sealed -> ${#expected[@]} assets in ${out}"
 
@@ -405,35 +286,25 @@ release-verify () {
 
     need-all git cargo jq curl gh || return
 
-    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" tmp="" line="" url="" host="" ext="tar.gz" file="" fail=0
+    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" tmp="" line="" host="" file="" fail=0
 
     release-args "$@" || return
 
     [[ -n "${tag}" ]] || { err "verify --tag <vX.Y.Z> [--repo <owner/name>]"; return; }
 
-    list="$(release-bins "${root}")" && host="$(release-host)" || return
-
-    [[ "${host}" != *-windows-* ]] || ext="zip"
+    list="$(assets-bins "${root}")" && host="$(assets-host)" || return
 
     while read -r part id bin; do
 
         tmp="$(mktemp -d)" || return
-        url="https://github.com/${repo}/releases/download/${tag}/${id}-installer"
 
-        if [[ "${host}" == *-windows-* ]]; then
-            powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((Invoke-RestMethod '${url}.ps1'))) -Dir '$(cygpath -w "${tmp}/bin")'" &&
-            line="$("${tmp}/bin/${bin}.exe" --version)" || line=""
-        else
-            curl --proto '=https' --tlsv1.2 -LsSf "${url}.sh" | sh -s -- --dir "${tmp}/bin" &&
-            line="$("${tmp}/bin/${bin}" --version)" || line=""
-        fi
+        line="$(assets-install "https://github.com/${repo}/releases/download/${tag}/${id}-installer" "${bin}" "${tmp}/bin")" || line=""
 
         if [[ "${line}" == "${bin} ${tag#v}" ]]; then succ "Installs -> ${id}"; else err "The public ${id} installer gave: ${line:-nothing}" || fail=1; fi
 
-        for file in "${id}-${tag#v}-$(release-triple "${id}" "${host}").${ext}" "${id}-installer.sh" "${id}-installer.ps1"; do
+        for file in "${id}-${tag#v}-$(assets-triple "${id}" "${host}").$(assets-ext "${host}")" "${id}-installer.sh" "${id}-installer.ps1"; do
 
-            if gh release download "${tag}" --repo "${repo}" --pattern "${file}" --dir "${tmp}" &&
-                gh attestation verify "${tmp}/${file}" --repo "${repo}" --signer-workflow "${repo}/.github/workflows/release.yml" --source-ref "refs/tags/${tag}" >/dev/null
+            if gh release download "${tag}" --repo "${repo}" --pattern "${file}" --dir "${tmp}" && assets-attested "${repo}" "${tag}" "${tmp}/${file}"
             then succ "Attested -> ${file}"
             else err "No provenance for ${file}" || fail=1
             fi

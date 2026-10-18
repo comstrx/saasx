@@ -1,4 +1,4 @@
-param ( [string] $Dir = (Join-Path $HOME '.local\bin'), [string] $From = '' )
+param ( [string] $Dir = '', [string] $From = '' )
 
 Set-StrictMode -Version Latest
 
@@ -39,19 +39,32 @@ function Get-Asset ( [string] $Name, [string] $Into, [string] $Source ) {
 }
 function Invoke-Installer ( [string] $Into, [string] $Source ) {
 
-    if (-not ($repo -and $tag -and $id -and $bin)) { throw 'this installer was never stamped for a release' }
+    if (-not ($repo -and $tag -and $id)) { throw 'this installer was never stamped for a release' }
 
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-    $triple = Get-Target
-    $base = "$id-$($tag.TrimStart('v'))-$triple"
+    $version = $tag.TrimStart('v')
     $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+
+    if ($bin) {
+
+        $triple = Get-Target
+        $base = "$id-$version-$triple"
+        if (-not $Into) { $Into = Join-Path $HOME '.local\bin' }
+        Write-Step "installing $id $tag for $triple"
+
+    }
+    else {
+
+        $base = "$id-$version"
+        if (-not $Into) { $Into = Join-Path (Get-Location) $id }
+        Write-Step "unpacking $id $tag"
+
+    }
 
     New-Item -ItemType Directory -Path $tmp | Out-Null
 
     try {
-
-        Write-Step "installing $id $tag for $triple"
 
         $archive = Get-Asset "$base.zip" $tmp $Source
         $sum = Get-Asset "$base.zip.sha256" $tmp $Source
@@ -63,7 +76,22 @@ function Invoke-Installer ( [string] $Into, [string] $Source ) {
 
         Expand-Archive -LiteralPath $archive -DestinationPath $tmp
 
-        $file = Join-Path (Join-Path $tmp $base) "$bin.exe"
+        $root = Join-Path $tmp $base
+
+        if (-not $bin) {
+
+            if (-not (Test-Path -LiteralPath $root -PathType Container)) { throw "$base is missing from $base.zip" }
+
+            New-Item -ItemType Directory -Force -Path $Into | Out-Null
+            if (Get-ChildItem -LiteralPath $Into -Force | Select-Object -First 1) { throw "$Into is not empty" }
+            Get-ChildItem -LiteralPath $root -Force | Move-Item -Destination $Into
+
+            Write-Step "unpacked $Into"
+            return
+
+        }
+
+        $file = Join-Path $root "$bin.exe"
 
         if (-not (Test-Path -LiteralPath $file)) { throw "$bin.exe is missing from $base.zip" }
 
