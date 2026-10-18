@@ -164,12 +164,11 @@ toolx-deps () {
 
     fi
 
-    if (( ${#files[@]} )); then
+    for file in "${files[@]}"; do
 
-        need-all cargo || return
-        toolx-tokenless cargo fetch --quiet --manifest-path "${dir}/Cargo.toml" || return
+        need-all cargo && toolx-tokenless cargo fetch --quiet --manifest-path "${file}" || return
 
-    fi
+    done
     if (( linked )); then
 
         (
