@@ -32,6 +32,37 @@ The ambition: **build once where logic is shared, specialize where the device de
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+`mobilex-installer` unpacks the release's source into `./mobilex`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/mobilex/releases/latest/download/mobilex-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/mobilex/releases/latest/download/mobilex-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx/platform/mobile
+bun install --frozen-lockfile
+bun run start
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving system for demanding mobile applications.**

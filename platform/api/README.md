@@ -32,6 +32,36 @@ The ambition: **make hard backend engineering repeatable without making it rigid
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+`api-hello` is the `hello` service; it answers `GET /` and `GET /health`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/saasx/releases/latest/download/api-hello-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/saasx/releases/latest/download/api-hello-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx/platform/api
+cargo run --release -p hello
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving foundation for demanding backend systems.**

@@ -32,6 +32,36 @@ The mission: **give any capable agent the knowledge it needs without surrenderin
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+`skill` answers `skill hello` and `skill --version`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/saasx/releases/latest/download/skill-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/saasx/releases/latest/download/skill-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx/platform/skill
+cargo run --release -- hello
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving knowledge foundation for serious software engineering.**

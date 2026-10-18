@@ -32,6 +32,37 @@ The ambition: **make independently branded desktop applications as deliberate to
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+Two apps from two specs — `desk-admin` and `desk-client`; the commands take `desk-admin`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/saasx/releases/latest/download/desk-admin-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/saasx/releases/latest/download/desk-admin-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx/platform/desk
+bun install --frozen-lockfile
+bun run dev
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving foundation for modern desktop applications.**

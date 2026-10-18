@@ -32,6 +32,36 @@ The mission is ambitious: **combine the depth of systems programming with the el
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+`rustx-installer` unpacks the release's source into `./rustx`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/rustx/releases/latest/download/rustx-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/rustx/releases/latest/download/rustx-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx/engine/rust
+cargo xtask gates
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving foundation for the entire software lifecycle.**

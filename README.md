@@ -32,6 +32,36 @@ The ambition is clear: **prove advanced engineering in a working product, then m
 
 ---
 
+## 📦 Download
+
+**The latest release — checksummed, attested, one command per platform.**
+
+Pick a binary — `infra` · `skill` · `api-hello` · `desk-admin` · `desk-client`; the commands take `infra`.
+
+Linux and macOS:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/comstrx/saasx/releases/latest/download/infra-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/comstrx/saasx/releases/latest/download/infra-installer.ps1)))
+```
+
+From source:
+
+```bash
+git clone https://github.com/comstrx/saasx.git
+cd saasx
+cargo run --release --manifest-path platform/infra/Cargo.toml -- hello
+```
+
+Every asset carries a `.sha256` sidecar and build provenance: `gh attestation verify <asset> --owner comstrx`.
+
+---
+
 ## 🧩 Capabilities
 
 **A continuously evolving system spanning the complete enterprise lifecycle.**
