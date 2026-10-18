@@ -2,6 +2,45 @@
 
 Every release of SaaSX, one section per tag, one block per part.
 
+## v0.1.2 — 2026-10-18
+
+### engine/rust
+
+- `http::Keep`: a client that keeps its connections — one at a time over HTTP/1.1, multiplexed over HTTP/2, dropped once the peer closes — measured at 138 µs a request against 235 µs over a fresh connection.
+- `process::Run` feeds standard input on a task while it gathers output, so a program that answers as it reads cannot deadlock the pipe, and a program that never reads is not an error.
+- `http::Router::check` names the first malformed or conflicting pattern and a server refuses to start on it with `bad_route`.
+
+### engine/bun
+
+- `net`: a forwarded host or proto is read from the hop the outermost trusted proxy wrote, counted from the right like forwarded-for and absent past the chain, never from the value a client sent first.
+- `cookie`: a cookie asking `SameSite=None` without `Secure` is refused instead of being dropped silently by browsers.
+- `tooling`: `themeCss` renders a surface's tokens, motion, fonts and icon face from one input; `device`: the platform `desktop` joins web, ios and android.
+
+### platform/api
+
+- The hello bench measures eight greetings over one kept connection beside one over a fresh connection.
+
+### platform/infra
+
+- `infra hello`: the whole lifecycle of a command-line tool on the engine — booted, logged, answering hello, `--version`, usage on anything else — and nothing more until real requirements arrive.
+
+### platform/skill
+
+- `skill hello`: the same lifecycle, the same promise.
+
+### platform/web
+
+- The client runtime (session, signals and the access guard) loads only when the spec declares ports, access, signals, a session cookie or realtime; a static panel without them ships none of it.
+- `bun run build --all` builds every installed spec, so both deliveries are gated; the theme stylesheet comes from the engine.
+
+### platform/mobile
+
+- `bun run export --all` exports every installed spec.
+
+### platform/desk
+
+- The desktop engine: a Tauri host on the Rust engine answering typed calls, a React page on the Bun engine, specs that declare identity, window and permissions, and one binary per spec with the page embedded — `desk-<spec>` for every release target.
+
 ## v0.1.1 — 2026-10-17
 
 ### engine/rust
