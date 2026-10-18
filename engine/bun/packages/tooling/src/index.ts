@@ -37,4 +37,5 @@ export { type StaticFont, staticFonts } from "./fonts.ts";
 export { type IconFont, type IconFormat, iconFont } from "./icons.ts";
 export { composeMessages, type Dictionaries, type MessageContracts, type MessageSources, messageIssues } from "./messages.ts";
 export type { Loaded, Loader, LoaderOptions, Validate } from "./specs.ts";
+export { type ThemeInput, themeCss } from "./theme.ts";
 export { createTools, type SurfaceAssets, type Tools, type ToolsOptions } from "./tools.ts";

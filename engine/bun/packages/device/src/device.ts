@@ -1,7 +1,7 @@
 import { Failure } from "engine/error";
 import type { FileRef } from "engine/file";
 
-export type Platform = "web" | "ios" | "android" | "unknown";
+export type Platform = "web" | "ios" | "android" | "desktop" | "unknown";
 export type Permission = "location" | "camera" | "microphone" | "notifications" | "clipboard" | "contacts" | "photos";
 export type Grant = "granted" | "denied" | "prompt" | "unsupported";
 export type Screen = { width: number; height: number; scale: number };
