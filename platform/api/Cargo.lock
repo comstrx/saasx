@@ -46,7 +46,7 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
 name = "benches"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "criterion",
  "engine",
@@ -54,7 +54,7 @@ dependencies = [
 
 [[package]]
 name = "bloats"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine",
 ]
@@ -186,7 +186,7 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 
 [[package]]
 name = "engine"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-crypto",
  "engine-error",
@@ -203,7 +203,7 @@ dependencies = [
 
 [[package]]
 name = "engine-crypto"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "engine-memory",
@@ -212,14 +212,14 @@ dependencies = [
 
 [[package]]
 name = "engine-error"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-log",
 ]
 
 [[package]]
 name = "engine-file"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "engine-memory",
@@ -228,7 +228,7 @@ dependencies = [
 
 [[package]]
 name = "engine-http"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "bytes",
  "engine-crypto",
@@ -248,11 +248,11 @@ dependencies = [
 
 [[package]]
 name = "engine-log"
-version = "0.1.2"
+version = "0.1.3"
 
 [[package]]
 name = "engine-memory"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "bytes",
  "engine-error",
@@ -260,7 +260,7 @@ dependencies = [
 
 [[package]]
 name = "engine-net"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "engine-thread",
@@ -270,14 +270,14 @@ dependencies = [
 
 [[package]]
 name = "engine-parse"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
 ]
 
 [[package]]
 name = "engine-process"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "engine-file",
@@ -290,7 +290,7 @@ dependencies = [
 
 [[package]]
 name = "engine-rand"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "getrandom",
@@ -298,7 +298,7 @@ dependencies = [
 
 [[package]]
 name = "engine-thread"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
  "tokio",
@@ -306,7 +306,7 @@ dependencies = [
 
 [[package]]
 name = "engine-validate"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine-error",
 ]
@@ -409,7 +409,7 @@ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
 
 [[package]]
 name = "hello"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine",
 ]
@@ -753,7 +753,7 @@ dependencies = [
 
 [[package]]
 name = "tests"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "engine",
 ]

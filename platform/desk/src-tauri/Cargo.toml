@@ -1,6 +1,6 @@
 [package]
 name         = "desk"
-version      = "0.1.2"
+version      = "0.1.3"
 edition      = "2024"
 rust-version = "1.99"
 license      = "Apache-2.0"
@@ -10,7 +10,7 @@ publish      = false
 description  = "A desktop host: one window for the app its spec describes, driven by the engine, answering typed calls from the page."
 
 [dependencies]
-engine = { path = "../../../engine/rust/crates/engine", version = "0.1.2", features = ["process"] }
+engine = { path = "../../../engine/rust/crates/engine", version = "0.1.3", features = ["process"] }
 serde  = { version = "=1.0.229", features = ["derive"] }
 tauri  = { version = "=2.12.4", features = [] }
 

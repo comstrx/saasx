@@ -2,6 +2,42 @@
 
 Every release of SaaSX, one section per tag, one block per part.
 
+## v0.1.3 — 2026-10-18
+
+Every tool's release now carries its own assets, attested by the SaaSX release workflow: a part's binaries for the six targets with their `.sha256` sidecars, installers stamped for that repository, a per-tool SBOM and `SHA256SUMS`; a tool without a binary ships its source as `<tool>-<version>.tar.gz` and `.zip`, which the same installers unpack. Every README opens with a Download block — the Linux and macOS installer, the Windows installer, and the source — and a part's path in SaaSX becomes the tool at extraction. `scripts/assets.sh` holds the asset naming and integrity the release and the extraction share, and a `tools` job verifies all eight releases on Linux, macOS and Windows.
+
+### engine/rust
+
+- The README's Download block: `rustx-installer.sh` / `.ps1` unpack the latest release's source, or clone and run `cargo xtask gates`.
+
+### engine/bun
+
+- The README's Download block: `bunx-installer.sh` / `.ps1` unpack the latest release's source, or clone and run `bun run gates`.
+
+### platform/api
+
+- The README's Download block: `api-hello-installer.sh` / `.ps1` install the latest `hello`, or clone and run `cargo run --release -p hello`.
+
+### platform/infra
+
+- The README's Download block: `infra-installer.sh` / `.ps1` install the latest `infra`, or clone and run `cargo run --release -- hello`.
+
+### platform/skill
+
+- The README's Download block: `skill-installer.sh` / `.ps1` install the latest `skill`, or clone and run `cargo run --release -- hello`.
+
+### platform/web
+
+- The README's Download block: `webx-installer.sh` / `.ps1` unpack the latest release's source, or clone and run `bun run dev`.
+
+### platform/mobile
+
+- The README's Download block: `mobilex-installer.sh` / `.ps1` unpack the latest release's source, or clone and run `bun run start`.
+
+### platform/desk
+
+- The README's Download block: `desk-admin-installer.sh` / `.ps1` and `desk-client-installer.sh` / `.ps1` install the latest apps, or clone and run `bun run dev`.
+
 ## v0.1.2 — 2026-10-18
 
 ### engine/rust

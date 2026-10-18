@@ -1,6 +1,6 @@
 {
   "name": "engine",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "type": "module",
   "description": "A curated TypeScript foundation shared by every web and mobile surface: one package, one subpath per concern.",
