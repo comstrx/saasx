@@ -52,6 +52,11 @@ has () {
     command -v -- "${1}" >/dev/null 2>&1
 
 }
+tokenless () {
+
+    env -u GH_TOKEN -u GITHUB_TOKEN "$@"
+
+}
 need-all () {
 
     local bin="" fail=0

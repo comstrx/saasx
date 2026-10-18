@@ -42,11 +42,6 @@ extract-git () {
     GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c 'credential.helper=!gh auth git-credential' "$@"
 
 }
-extract-tokenless () {
-
-    env -u GH_TOKEN -u GITHUB_TOKEN "$@"
-
-}
 extract-edit () {
 
     local file="${1:-}" body=""
@@ -168,14 +163,14 @@ extract-deps () {
 
     for file in "${files[@]}"; do
 
-        need-all cargo && extract-tokenless cargo fetch --quiet --manifest-path "${file}" || return
+        need-all cargo && tokenless cargo fetch --quiet --manifest-path "${file}" || return
 
     done
     if (( linked )); then
 
         (
             cache="$(mktemp -d)" && trap 'rm -rf -- "${cache}"' EXIT &&
-            cd -- "${dir}" && BUN_INSTALL_CACHE_DIR="${cache}" extract-tokenless bun install --lockfile-only --silent
+            cd -- "${dir}" && BUN_INSTALL_CACHE_DIR="${cache}" tokenless bun install --lockfile-only --silent
         ) || return
 
     fi
@@ -202,7 +197,7 @@ extract-docs () {
 
     (
         cd -- "${dir}" &&
-        extract-tokenless bun x "${prettier}" --config .prettierrc.yml --ignore-path .gitignore --no-error-on-unmatched-pattern --log-level warn \
+        tokenless bun x "${prettier}" --config .prettierrc.yml --ignore-path .gitignore --no-error-on-unmatched-pattern --log-level warn \
             --write "**/*.{md,mdx,yml,yaml,json,jsonc}"
     )
 
@@ -450,6 +445,8 @@ extract-verify () {
     local -a files=()
 
     extract-args "$@" || return
+
+    if [[ "$(gh repo view "${repo}" --json isPrivate --jq .isPrivate 2>/dev/null)" != false ]]; then warn "Private or unreachable, nothing public to verify: ${repo}"; return 0; fi
 
     path="$(extract-part "${repo}" | cut -d' ' -f1)" || return
     list="$(assets-bins "${root}" | awk -v part="${path##*/}" '$1 == part { print $2, $3 }')" && host="$(assets-host)" || return

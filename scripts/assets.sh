@@ -140,15 +140,15 @@ assets-install () {
         [[ -z "${from}" ]] || args+=" -From '$(cygpath -w "${from}")'"
 
         if [[ "${source}" == https://* ]]; then
-            powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((Invoke-RestMethod '${source}.ps1'))) ${args}"
+            tokenless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((Invoke-RestMethod '${source}.ps1'))) ${args}"
         else
-            powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& '$(cygpath -w "${source}.ps1")' ${args}"
+            tokenless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "& '$(cygpath -w "${source}.ps1")' ${args}"
         fi
 
     elif [[ "${source}" == https://* ]]; then
-        curl --proto '=https' --tlsv1.2 -LsSf "${source}.sh" | sh -s -- --dir "${dir}" ${from:+--from "${from}"}
+        curl --proto '=https' --tlsv1.2 -LsSf "${source}.sh" | tokenless sh -s -- --dir "${dir}" ${from:+--from "${from}"}
     else
-        sh "${source}.sh" --dir "${dir}" ${from:+--from "${from}"}
+        tokenless sh "${source}.sh" --dir "${dir}" ${from:+--from "${from}"}
     fi || return
 
     if [[ -n "${bin}" ]]; then "${dir}/${bin}${exe}" --version

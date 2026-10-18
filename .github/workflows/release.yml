@@ -374,7 +374,7 @@ jobs:
 
       - name: Verify
         env:
-          GH_TOKEN: ${{ secrets.TOOLX_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.repository_owner }}
           TAG: ${{ needs.plan.outputs.tag }}
         run: |
