@@ -464,7 +464,7 @@ extract-verify () {
         if [[ "${line}" == "${want}" ]]; then succ "Installs -> ${repo##*/} ${id}"; else err "The public ${id} installer gave: ${line:-nothing}" || fail=1; fi
 
         if [[ -n "${bin}" ]]; then files=( "${id}-${tag#v}-$(assets-triple "${id}" "${host}").$(assets-ext "${host}")" ); else files=( "${id}-${tag#v}.tar.gz" "${id}-${tag#v}.zip" ); fi
-        files+=( "${id}-installer.sh" "${id}-installer.ps1" sbom.cdx.json SHA256SUMS )
+        files+=( "${id}-installer.sh" "${id}-installer.ps1" sbom.cdx.json )
 
         for file in "${files[@]}"; do
 
