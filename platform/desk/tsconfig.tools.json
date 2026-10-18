@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["bun"]
+  },
+  "include": [
+    "tools/**/*.ts",
+    "tests/**/*.ts",
+    "benches/**/*.ts",
+    "src/lib/spec/**/*.ts",
+    "src/api/features/*.ts",
+    "src/api/core/*.ts",
+    "src/types/**/*.d.ts"
+  ]
+}

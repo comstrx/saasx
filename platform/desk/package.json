@@ -1,0 +1,35 @@
+{
+  "name": "desk",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.4.3",
+  "engines": {
+    "bun": ">=1.4.3"
+  },
+  "scripts": {
+    "dev": "tauri dev",
+    "serve": "bun tools/serve/index.ts",
+    "build": "bun tools/bundle/index.ts",
+    "app": "bun tools/app/index.ts",
+    "check": "biome ci . && bun tools/core/index.ts",
+    "fmt": "biome check --write .",
+    "typecheck": "bun tools/compile/index.ts production && tsc --noEmit -p . && tsc --noEmit -p tsconfig.tools.json",
+    "test": "bun test",
+    "compile": "bun tools/compile/index.ts production",
+    "bench": "set -e; for file in benches/*.bench.ts; do bun \"$file\"; done"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "engine": "link:engine",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@tauri-apps/cli": "2.12.3",
+    "@types/bun": "1.4.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

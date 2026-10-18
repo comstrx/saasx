@@ -1,0 +1,69 @@
+{
+  "hello": {
+    "title": "Hello",
+    "description": "One screen that says hello to the world.",
+    "world": "Hello, world!"
+  },
+  "nav": {
+    "skip": "Skip to content"
+  },
+  "state": {
+    "loading": "Loading",
+    "empty": "Nothing here yet",
+    "failed": "Something went wrong",
+    "missing": "Page not found",
+    "maintenance": "We are down for maintenance",
+    "retry": "Try again",
+    "offline": "You are offline",
+    "cached": "Showing saved results",
+    "saved": "Saved",
+    "queued": "Saved on this device; it will be sent when you are back online"
+  },
+  "errors": {
+    "reasons": {
+      "done": "operation completed",
+      "created": "resource created",
+      "updated": "resource updated",
+      "deleted": "resource deleted",
+      "failed": "operation failed",
+      "not_found": "resource not found",
+      "forbidden": "access denied",
+      "unauthenticated": "authentication required",
+      "verification_required": "verification required",
+      "invalid_input": "invalid input",
+      "not_writable": "not writable",
+      "invalid_credentials": "invalid credentials",
+      "invalid_code": "invalid or expired code",
+      "invalid_token": "invalid or expired token",
+      "invalid_state": "operation not valid in the current state",
+      "invalid_signature": "invalid signature",
+      "expired": "no longer available",
+      "exists": "already exists",
+      "out_of_stock": "out of stock",
+      "insufficient_balance": "insufficient balance",
+      "not_allowed": "action not allowed",
+      "not_available": "not available",
+      "not_started": "not yet available",
+      "limit_exceeded": "limit exceeded",
+      "below_minimum": "below the required minimum",
+      "payment_failed": "payment failed",
+      "price_changed": "the price changed, request a new quote",
+      "requote_required": "the offer changed, request a new quote",
+      "currency_unavailable": "the currency is unavailable right now",
+      "subscription_expired": "subscription expired",
+      "in_flight": "a matching request is already in flight",
+      "key_reused": "this idempotency key was already used with a different request",
+      "server_error": "server error"
+    },
+    "rules": {
+      "required": "This field is required",
+      "min": "At least {minimum}",
+      "max": "At most {maximum}",
+      "type": "Expected a {expected}",
+      "format": "Not a valid {format}",
+      "choice": "Choose one of: {choices}",
+      "unknown": "This field is not accepted",
+      "invalid": "This value is not accepted"
+    }
+  }
+}
