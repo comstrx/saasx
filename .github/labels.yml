@@ -26,6 +26,10 @@
   color: 'C2E0C6'
   description: The mobile engine (platform/mobile)
 
+- name: desk
+  color: '24C8D8'
+  description: The desktop engine (platform/desk)
+
 - name: global
   color: 'BFDADC'
   description: Root governance, shared by every part

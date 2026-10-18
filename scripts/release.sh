@@ -37,28 +37,69 @@ release-host () {
 }
 release-bins () {
 
-    local root="${1:-}" manifest="" part=""
+    local root="${1:-}" manifest="" part="" spec=""
     local pick='.packages[] | .name as $name | .targets[] | select(.name == $name and any(.kind[]; . == "bin"))
         | "\($part) \(if .name == $part then .name else "\($part)-\(.name)" end) \(.name)"'
 
-    for manifest in "${root}"/platform/*/Cargo.toml; do
+    {
+        for manifest in "${root}"/platform/*/Cargo.toml; do
 
-        part="${manifest%/Cargo.toml}"
-        part="${part##*/}"
+            part="${manifest%/Cargo.toml}"
+            part="${part##*/}"
 
-        cargo metadata --quiet --no-deps --locked --format-version 1 --manifest-path "${manifest}" | jq -r --arg part "${part}" "${pick}" | tr -d '\r' || return
+            cargo metadata --quiet --no-deps --locked --format-version 1 --manifest-path "${manifest}" | jq -r --arg part "${part}" "${pick}" | tr -d '\r' || return
 
-    done | sort
+        done
+
+        if [[ -f "${root}/platform/desk/src-tauri/Cargo.toml" ]]; then
+            for spec in "${root}"/platform/desk/specs/*/; do
+                spec="${spec%/}"; spec="${spec##*/}"
+                [[ "${spec}" == \(* ]] || printf 'desk desk-%s desk\n' "${spec}"
+            done
+        fi
+    } | sort
+
+}
+release-triple () {
+
+    local id="${1:-}" target="${2:-}"
+
+    if [[ "${id}" == desk-* ]]; then printf '%s\n' "${target/-unknown-linux-musl/-unknown-linux-gnu}"; else printf '%s\n' "${target}"; fi
+
+}
+release-binary () {
+
+    local root="${1:-}" part="${2:-}" id="${3:-}" bin="${4:-}" target="${5:-}" exe="${6:-}"
+
+    if [[ "${part}" == desk ]]; then printf '%s\n' "${root}/platform/desk/dist/apps/${id#desk-}${exe}"
+    else printf '%s\n' "${root}/platform/${part}/target/${target}/release/${bin}${exe}"
+    fi
+
+}
+release-desk () {
+
+    local root="${1:-}" target="${2:-}"
+
+    need-all bun || return
+
+    info "Building desk for ${target}"
+
+    if ! ( cd "${root}/engine/bun" && bun install --frozen-lockfile && bun link ) ||
+        ! ( cd "${root}/platform/desk" && bun install --frozen-lockfile && NODE_ENV=production bun run app --all --target "${target}" ); then
+        err "Failed to build desk for ${target}"; return
+    fi
 
 }
 release-version () {
 
     local root="${1:-}" file="" version="" first="" fail=0
 
-    for file in "${root}"/engine/rust/Cargo.toml "${root}"/platform/*/Cargo.toml "${root}"/engine/bun/package.json "${root}"/platform/*/package.json; do
+    for file in "${root}"/engine/rust/Cargo.toml "${root}"/platform/*/Cargo.toml "${root}"/platform/*/src-tauri/Cargo.toml "${root}"/engine/bun/package.json "${root}"/platform/*/package.json; do
+
+        [[ -f "${file}" ]] || continue
 
         if [[ "${file}" == *.json ]]; then version="$(jq -r '.version // empty' "${file}" | tr -d '\r')"
-        else version="$(awk '/^\[/ { on = ($0 == "[workspace.package]") } on && $1 == "version" { gsub(/[" ]/, "", $3); print $3; exit }' "${file}")"
+        else version="$(awk '/^\[/ { on = ($0 == "[workspace.package]" || $0 == "[package]") } on && $1 == "version" { gsub(/[" ]/, "", $3); print $3; exit }' "${file}")"
         fi
 
         [[ -n "${version}" ]] || continue
@@ -96,20 +137,24 @@ release-check () {
 }
 release-stamp () {
 
-    local source="${1:-}" file="${2:-}" repo="${3:-}" tag="${4:-}" id="${5:-}" bin="${6:-}" name=""
+    local source="${1:-}" file="${2:-}" repo="${3:-}" tag="${4:-}" id="${5:-}" bin="${6:-}" name="" linux="musl"
 
     [[ "${id}" =~ ^[a-z0-9][a-z0-9-]*$ && "${bin}" =~ ^[a-z0-9][a-z0-9-]*$ ]] || { err "Not a binary name: ${id} ${bin}"; return; }
+    [[ "${id}" != desk-* ]] || linux="gnu"
 
     sed -E \
         -e "s#^(\\\$?)repo( = |=)''\$#\\1repo\\2'${repo}'#" \
         -e "s#^(\\\$?)tag( = |=)''\$#\\1tag\\2'${tag}'#" \
         -e "s#^(\\\$?)id( = |=)''\$#\\1id\\2'${id}'#" \
         -e "s#^(\\\$?)bin( = |=)''\$#\\1bin\\2'${bin}'#" \
+        -e "s#^linux=''\$#linux='${linux}'#" \
         "${source}" > "${file}" || return
 
     for name in repo tag id bin; do
         grep -qE "^\\\$?${name}( = |=)'[^']+'\$" "${file}" || { err "Cannot stamp ${name} into ${file##*/}"; return; }
     done
+
+    [[ "${file}" != *.sh ]] || grep -qE "^linux='(musl|gnu)'\$" "${file}" || { err "Cannot stamp linux into ${file##*/}"; return; }
 
 }
 release-zip () {
@@ -212,7 +257,7 @@ release-build () {
 
     need-all git cargo cargo-auditable jq tar || return
 
-    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" exe="" base="" stage="" line="" flags=""
+    local tag="" repo="" out="" target="" root="" list="" part="" id="" bin="" exe="" base="" stage="" line="" flags="" binary=""
     local -a bins=()
 
     release-args "$@" || return
@@ -229,6 +274,8 @@ release-build () {
 
     while read -r part; do
 
+        if [[ "${part}" == desk ]]; then release-desk "${root}" "$(release-triple desk- "${target}")" || return; continue; fi
+
         read -r -a bins <<< "$(awk -v part="${part}" '$1 == part { printf "--bin %s ", $3 }' <<< "${list}")"
 
         info "Building ${part} for ${target}"
@@ -241,13 +288,14 @@ release-build () {
 
     while read -r part id bin; do
 
-        base="${id}-${tag#v}-${target}"
-        line="$("${root}/platform/${part}/target/${target}/release/${bin}${exe}" --version)" || line=""
+        base="${id}-${tag#v}-$(release-triple "${id}" "${target}")"
+        binary="$(release-binary "${root}" "${part}" "${id}" "${bin}" "${target}" "${exe}")"
+        line="$("${binary}" --version)" || line=""
 
         [[ "${line}" == "${bin} ${tag#v}" ]] || { err "${bin} --version gave: ${line:-nothing}"; return; }
 
         stage="$(mktemp -d)" && mkdir -- "${stage}/${base}" &&
-        cp -- "${root}/platform/${part}/target/${target}/release/${bin}${exe}" "${root}/LICENSE" "${root}/platform/${part}/README.md" "${stage}/${base}/" || return
+        cp -- "${binary}" "${root}/LICENSE" "${root}/platform/${part}/README.md" "${stage}/${base}/" || return
 
         if [[ -n "${exe}" ]]; then release-zip "${stage}" "${base}" "${out}/${base}.zip" && release-sum "${out}/${base}.zip"
         else COPYFILE_DISABLE=1 tar -czf "${out}/${base}.tar.gz" -C "${stage}" "${base}" && release-sum "${out}/${base}.tar.gz"
@@ -281,6 +329,7 @@ release-seal () {
 
             ext="tar.gz"
             [[ "${triple}" != *-windows-* ]] || ext="zip"
+            triple="$(release-triple "${id}" "${triple}")"
 
             release-check "${out}/${id}-${tag#v}-${triple}.${ext}" || return
             expected+=( "${id}-${tag#v}-${triple}.${ext}" )
@@ -381,7 +430,7 @@ release-verify () {
 
         if [[ "${line}" == "${bin} ${tag#v}" ]]; then succ "Installs -> ${id}"; else err "The public ${id} installer gave: ${line:-nothing}" || fail=1; fi
 
-        for file in "${id}-${tag#v}-${host}.${ext}" "${id}-installer.sh" "${id}-installer.ps1"; do
+        for file in "${id}-${tag#v}-$(release-triple "${id}" "${host}").${ext}" "${id}-installer.sh" "${id}-installer.ps1"; do
 
             if gh release download "${tag}" --repo "${repo}" --pattern "${file}" --dir "${tmp}" &&
                 gh attestation verify "${tmp}/${file}" --repo "${repo}" --signer-workflow "${repo}/.github/workflows/release.yml" --source-ref "refs/tags/${tag}" >/dev/null

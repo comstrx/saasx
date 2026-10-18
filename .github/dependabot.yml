@@ -112,3 +112,31 @@ updates:
     labels: [deps]
     commit-message:
       prefix: 'mobile(deps)'
+
+  - package-ecosystem: bun
+    directory: /platform/desk
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    groups:
+      bun:
+        patterns: ['*']
+    labels: [deps]
+    commit-message:
+      prefix: 'desk(deps)'
+
+  - package-ecosystem: cargo
+    directory: /platform/desk/src-tauri
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    groups:
+      rust:
+        patterns: ['*']
+    labels: [deps]
+    commit-message:
+      prefix: 'desk(deps)'

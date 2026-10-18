@@ -5,6 +5,7 @@ repo=''
 tag=''
 id=''
 bin=''
+linux=''
 
 say () {
 
@@ -36,7 +37,7 @@ target () {
     esac
 
     case "${os}" in
-        Linux)  printf '%s-unknown-linux-musl\n' "${arch}" ;;
+        Linux)  printf '%s-unknown-linux-%s\n' "${arch}" "${linux:-musl}" ;;
         Darwin)
             if [ "${arch}" = x86_64 ] && [ "$(sysctl -n sysctl.proc_translated 2>/dev/null || true)" = 1 ]; then arch=aarch64; fi
             printf '%s-apple-darwin\n' "${arch}"

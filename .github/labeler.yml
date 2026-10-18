@@ -26,6 +26,10 @@ mobile:
   - changed-files:
       - any-glob-to-any-file: ['platform/mobile/**']
 
+desk:
+  - changed-files:
+      - any-glob-to-any-file: ['platform/desk/**']
+
 global:
   - changed-files:
       - any-glob-to-any-file: ['*', '.*', '.github/**']

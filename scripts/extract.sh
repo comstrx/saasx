@@ -14,7 +14,8 @@ toolx-parts () {
         "platform/infra  InfraX   infra" \
         "platform/skill  SkillX   skill" \
         "platform/web    WebX     web" \
-        "platform/mobile MobileX  mobile"
+        "platform/mobile MobileX  mobile" \
+        "platform/desk   DeskX    desk"
 
 }
 toolx-specs () {
