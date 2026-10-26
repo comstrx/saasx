@@ -108,7 +108,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+      - uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
         with:
           config: .zizmor.yml
           persona: pedantic
@@ -142,7 +142,7 @@ jobs:
         with:
           bun-version: 1.4.3
 
-      - uses: cargo-bins/cargo-binstall@3be4ad2b146f3302f92e5956c54fedbb6ae8cccc # v1.25.3
+      - uses: cargo-bins/cargo-binstall@8a2045612414e945291083f820cd50b4d8fc2218 # v1.26.0
 
       - name: Install taplo
         run: cargo binstall --no-confirm "${TAPLO}"
