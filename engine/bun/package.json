@@ -43,10 +43,10 @@
     "gates": "bun install --frozen-lockfile && bun run check && bun run lint && bun test && bun audit"
   },
   "dependencies": {
-    "lucide-static": "1.52.0",
+    "lucide-static": "1.59.0",
     "mitata": "1.0.34",
     "subset-font": "2.9.0",
-    "zod": "4.6.5",
+    "zod": "4.6.7",
     "zustand": "5.0.15"
   },
   "peerDependencies": {
@@ -54,10 +54,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@types/bun": "1.4.2",
+    "@types/bun": "1.4.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "react-dom": "19.3.0",
+    "react-dom": "19.3.1",
     "typescript": "7.0.2"
   }
 }
