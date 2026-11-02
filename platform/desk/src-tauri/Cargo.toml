@@ -15,7 +15,7 @@ serde  = { version = "=1.0.229", features = ["derive"] }
 tauri  = { version = "=2.12.4", features = [] }
 
 [build-dependencies]
-tauri-build = { version = "=2.7.3", features = [] }
+tauri-build = { version = "=2.7.4", features = [] }
 
 [dev-dependencies]
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
